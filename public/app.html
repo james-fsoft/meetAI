@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meeting AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0a0a0a;--paper:#ffffff;--grey:#6b6b6b;--faint:#a8a8a8;--hair:#e6e6e6;--soft:#f4f4f4;--acc:#0a0a0a}
+/* SotaTek theme: deep navy + brand blue */
+body.sota{--ink:#e9eefb;--paper:#0a1124;--grey:#9fb0d4;--faint:#5c6a8c;--hair:#1c2945;--soft:#121c34;--acc:#1f6bff}
+body.sota .btn{background:var(--acc);border-color:var(--acc);color:#fff}
+body.sota .btn:hover{box-shadow:5px 5px 0 rgba(31,107,255,.35)}
+body.sota .btn.out{background:transparent;color:var(--ink);border-color:var(--ink)}
+body.sota .btn.out:hover{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:none}
+body.sota .btn:disabled{background:var(--soft);color:var(--faint);border-color:var(--hair)}
+body.sota .mark svg,body.sota .hero-mark svg{color:var(--acc)}
+body.sota .lang button.on,body.sota .res-tabs button.on,body.sota .theme-seg button.on{background:var(--acc);color:#fff}
+body.sota .lvtog.on .sw{background:var(--acc)}
+body.sota .lvtog.on .sw::after{background:#fff}
+body.sota .lv-pair{border-left-color:var(--acc)}
+body.sota .num{background:var(--acc);color:#fff}
+body.sota input:focus,body.sota select:focus,body.sota .set-body input:focus{box-shadow:0 0 0 3px rgba(31,107,255,.3)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);
+  line-height:1.5;letter-spacing:-.015em;display:flex;flex-direction:column;min-height:100vh}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:var(--ink)}
+
+.top{display:flex;align-items:center;padding:20px 26px;border-bottom:2px solid var(--ink)}
+.mark{display:flex;align-items:center;gap:11px}
+.mark svg{width:38px;height:auto;display:block}
+.mark b{font-size:16px;font-weight:900;letter-spacing:-.04em;text-transform:uppercase}
+.top-r{margin-left:auto;display:flex;align-items:center;gap:18px}
+.hist-btn{background:none;border:none;cursor:pointer;padding:4px;display:grid;place-items:center;color:var(--ink)}
+.hist-btn svg{width:22px;height:22px}
+.lang{display:flex;border:2px solid var(--ink)}
+.lang button{border:none;background:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:800;
+  color:var(--faint);padding:6px 11px;letter-spacing:.02em;transition:.12s;border-right:2px solid var(--ink)}
+.lang button:last-child{border-right:none}
+.lang button.on{background:var(--ink);color:var(--paper)}
+
+.stage{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 26px}
+.screen{display:none;width:100%;max-width:440px;text-align:center;animation:in .35s ease}
+.screen.on{display:block}
+.screen#sc-res{max-width:580px}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.hero-mark{margin:0 auto 22px;width:88px}
+.hero-mark svg{width:100%;height:auto;display:block}
+h1{font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1;margin-bottom:10px}
+.lead{font-size:14.5px;color:var(--grey);margin-bottom:30px}
+.step-tag{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.16em;
+  color:var(--faint);text-transform:uppercase;margin-bottom:14px}
+
+.btn{cursor:pointer;border:2px solid var(--ink);background:var(--ink);color:var(--paper);
+  font-family:inherit;font-size:16px;font-weight:800;letter-spacing:-.01em;padding:17px 26px;width:100%;
+  transition:.12s;display:inline-flex;align-items:center;justify-content:center;gap:10px;margin-top:18px}
+.btn:hover{box-shadow:5px 5px 0 var(--ink);transform:translate(-1px,-1px)}
+.btn:active{box-shadow:2px 2px 0 var(--ink);transform:translate(1px,1px)}
+.btn:disabled{background:var(--soft);color:var(--faint);border-color:var(--hair);cursor:not-allowed;box-shadow:none;transform:none}
+.btn.out{background:var(--paper);color:var(--ink)}
+.btn.out:hover{background:var(--ink);color:var(--paper)}
+.btn.big{font-size:18px;padding:22px}
+.link{display:inline-block;margin-top:20px;background:none;border:none;cursor:pointer;font-family:inherit;
+  font-size:13px;font-weight:600;color:var(--grey);text-decoration:underline;text-underline-offset:3px}
+.link:hover{color:var(--ink)}
+
+.timer{font-family:'Space Mono',monospace;font-size:64px;font-weight:700;letter-spacing:2px;line-height:1;
+  margin-bottom:6px;font-variant-numeric:tabular-nums}
+.viz{display:flex;align-items:center;justify-content:center;gap:5px;height:44px;margin-bottom:18px}
+.viz span{width:5px;height:6px;background:var(--ink);opacity:.18;transition:height .09s}
+.recing .viz span{opacity:1}
+.rec-hint{font-size:13px;color:var(--grey);min-height:20px;margin-bottom:6px;font-weight:500}
+.rec-hint .live{display:inline-block;width:9px;height:9px;background:var(--ink);margin-right:7px;
+  animation:bl 1s steps(2) infinite;vertical-align:1px}
+@keyframes bl{50%{opacity:0}}
+.dual{display:flex;gap:12px}.dual .btn{margin-top:0}
+
+.res-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.res-tabs{display:flex;border:2px solid var(--ink)}
+.res-tabs button{border:none;background:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:800;
+  color:var(--faint);padding:7px 14px;letter-spacing:.02em;border-right:2px solid var(--ink);transition:.12s}
+.res-tabs button:last-child{border-right:none}
+.res-tabs button.on{background:var(--ink);color:var(--paper)}
+.wc{font-family:'Space Mono',monospace;font-size:11px;color:var(--faint);font-weight:700}
+.out{border:2px solid var(--ink);padding:22px;font-size:14.5px;line-height:1.7;text-align:left;
+  max-height:46vh;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.out h2,.out h3{font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;
+  margin:20px 0 9px;padding-bottom:6px;border-bottom:2px solid var(--hair)}
+.out h2:first-child{margin-top:0}
+.out b{font-weight:800}
+.out .ck{font-weight:900}
+/* who-said-what transcript */
+.tr-turn{margin-bottom:13px}
+.tr-turn .sp{font-family:'Space Mono',monospace;font-weight:700;font-size:12px;text-transform:uppercase;
+  letter-spacing:.03em;display:block;margin-bottom:1px}
+.tr-turn .tx{display:block}
+.proc{padding:54px 0;text-align:center}
+.spinner{width:54px;height:54px;margin:0 auto 22px;border:3px solid var(--hair);border-top-color:var(--ink);
+  border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.proc p{font-size:15px;font-weight:600;color:var(--grey)}
+.proc small{display:block;margin-top:8px;color:var(--faint);font-size:12.5px}
+
+/* rename box — subtle, at bottom */
+.spbox{margin-top:26px;border-top:1px solid var(--hair);padding-top:14px;text-align:left}
+.spbox summary{cursor:pointer;font-size:12px;color:var(--faint);font-weight:600;list-style:none;
+  display:flex;align-items:center;gap:6px;user-select:none}
+.spbox summary::-webkit-details-marker{display:none}
+.spbox summary:hover{color:var(--grey)}
+.spbox summary .arr{transition:.2s;font-size:10px}
+.spbox[open] summary .arr{transform:rotate(90deg)}
+.sp-rows{margin-top:12px}
+.sprow{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.sprow .lab{font-family:'Space Mono',monospace;font-weight:700;font-size:12px;color:var(--grey);min-width:82px}
+.sprow input{flex:1;border:1px solid var(--hair);background:var(--paper);color:var(--ink);
+  padding:8px 11px;font-size:13px;font-family:inherit;outline:none;border-radius:0}
+.sprow input:focus{border-color:var(--ink)}
+.sp-apply{margin-top:6px;border:1px solid var(--ink);background:var(--paper);cursor:pointer;
+  font-family:inherit;font-size:12px;font-weight:700;padding:7px 14px;transition:.12s}
+.sp-apply:hover{background:var(--ink);color:var(--paper)}
+
+.overlay{position:fixed;inset:0;background:rgba(10,10,10,.45);display:none;z-index:60;
+  align-items:flex-start;justify-content:center;padding:80px 20px}
+.overlay.on{display:flex}
+.panel{background:var(--paper);border:2px solid var(--ink);width:100%;max-width:480px;max-height:75vh;
+  display:flex;flex-direction:column;box-shadow:8px 8px 0 var(--ink)}
+.panel-h{display:flex;align-items:center;padding:18px 20px;border-bottom:2px solid var(--ink)}
+.panel-h b{font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+.panel-h .x{margin-left:auto;background:none;border:none;cursor:pointer;font-size:22px;line-height:1;color:var(--ink)}
+.mlist{list-style:none;overflow:auto}
+.mlist li{display:flex;align-items:center;gap:12px;padding:15px 20px;border-bottom:1px solid var(--hair)}
+.mlist .mt{flex:1;min-width:0;text-align:left}
+.mlist .mt b{display:block;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mlist .mt span{font-family:'Space Mono',monospace;font-size:11px;color:var(--faint)}
+.mini{border:2px solid var(--ink);background:var(--paper);cursor:pointer;font-family:inherit;font-size:12px;
+  font-weight:800;padding:7px 12px;transition:.12s}
+.mini:hover{background:var(--ink);color:var(--paper)}
+.mempty{padding:50px 20px;text-align:center;color:var(--faint);font-size:13px}
+.set-body{padding:22px 20px;overflow:auto}
+.set-body label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
+  color:var(--grey);margin-bottom:7px}
+.set-body input{width:100%;border:2px solid var(--ink);background:var(--paper);color:var(--ink);
+  padding:12px 14px;font-size:14px;font-family:'Space Mono',monospace;outline:none}
+.set-body input:focus{box-shadow:3px 3px 0 var(--ink)}
+.set-link{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:var(--grey);
+  text-decoration:underline;text-underline-offset:3px}
+.set-link:hover{color:var(--ink)}
+.set-note{font-size:12px;color:var(--faint);margin-top:18px;line-height:1.6}
+/* live translate */
+.live-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;justify-content:center}
+.lvtog{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;font-weight:600;
+  color:var(--grey);user-select:none}
+.lvtog .sw{width:36px;height:21px;border:2px solid var(--ink);background:var(--paper);position:relative;
+  transition:.18s;flex-shrink:0}
+.lvtog .sw::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;background:var(--ink);transition:.18s}
+.lvtog.on .sw{background:var(--ink)}
+.lvtog.on .sw::after{transform:translateX(15px);background:var(--paper)}
+.lvtog input{display:none}
+.lvto-sel{border:2px solid var(--ink);background:var(--paper);color:var(--ink);padding:7px 10px;
+  font-size:13px;font-family:inherit;font-weight:700;outline:none;cursor:pointer;appearance:none}
+.lvto-sel:disabled{opacity:.35;cursor:not-allowed}
+.live-feed{border:2px solid var(--ink);min-height:120px;max-height:34vh;overflow:auto;padding:16px;
+  text-align:left;display:flex;flex-direction:column;gap:12px;margin-bottom:8px}
+.lv-pair{border-left:3px solid var(--ink);padding-left:12px}
+.lv-src{font-size:13px;color:var(--grey);margin-bottom:2px}
+.lv-tgt{font-size:15px;font-weight:600}
+.lv-tgt.pending{color:var(--faint);font-weight:400;font-style:italic}
+.live-interim{min-height:20px;margin-bottom:10px;font-size:13.5px;color:var(--faint);text-align:left;font-style:italic}
+
+.note{font-size:12px;color:var(--faint);margin-top:18px;line-height:1.6}
+audio{width:100%;margin-top:16px;height:42px;filter:grayscale(1)}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--ink);
+  color:var(--paper);padding:13px 24px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;
+  transition:.22s;z-index:90;letter-spacing:.01em}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:520px){h1{font-size:26px}.timer{font-size:52px}.stage{padding:28px 18px}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="mark">
+    <svg viewBox="0 0 200 132" fill="none" stroke="currentColor" stroke-width="9" stroke-linejoin="miter">
+      <path d="M6 40 L6 16 L100 78 L194 16 L194 40 L100 102 Z"/>
+      <path d="M28 96 L28 52 L100 100 L172 52 L172 96 L100 128 Z"/>
+    </svg>
+    <b>Meeting AI</b>
+  </div>
+  <div class="top-r">
+    <button class="hist-btn" id="setBtn" title="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+    <button class="hist-btn" id="histBtn" title="History">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square">
+        <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 4v4h4"/><path d="M12 7v5l3 2"/>
+      </svg>
+    </button>
+    <div class="lang theme-seg" id="theme">
+      <button data-th="mono">MONO</button><button data-th="sota">SOTA</button>
+    </div>
+    <div class="lang" id="lang">
+      <button data-l="en">EN</button><button data-l="vi">VI</button><button data-l="ko">KO</button>
+    </div>
+  </div>
+</div>
+
+<div class="stage">
+
+  <!-- CAPTURE (start) -->
+  <div class="screen on" id="sc-cap">
+    <div class="hero-mark">
+      <svg viewBox="0 0 200 132" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="miter">
+        <path d="M6 40 L6 16 L100 78 L194 16 L194 40 L100 102 Z"/>
+        <path d="M28 96 L28 52 L100 100 L172 52 L172 96 L100 128 Z"/>
+      </svg>
+    </div>
+    <div class="viz" id="viz"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="timer" id="timer">00:00</div>
+    <div class="rec-hint" id="recHint" data-t="c_hint">Press record to start</div>
+
+    <!-- live translation toggle + target lang -->
+    <div class="live-bar">
+      <label class="lvtog on" id="lvToggle"><span class="sw"></span><input type="checkbox" id="lvOn" checked>
+        <span data-t="c_translate">Live translate</span></label>
+      <select id="lvTo" class="lvto-sel">
+        <option value="Vietnamese">→ Tiếng Việt</option>
+        <option value="English">→ English</option>
+        <option value="Korean">→ 한국어</option>
+        <option value="Japanese">→ 日本語</option>
+        <option value="Chinese">→ 中文</option>
+      </select>
+    </div>
+
+    <!-- live caption feed (only while recording with translate on) -->
+    <div class="live-feed" id="lvFeed" style="display:none"></div>
+    <div class="live-interim" id="lvInterim" style="display:none"></div>
+
+    <div id="capIdle">
+      <button class="btn big" id="btnRec" data-t="c_record">● Record</button>
+      <a class="link" id="btnUpload" data-t="c_upload">or upload an audio file</a>
+      <input type="file" id="fileIn" accept="audio/*" style="display:none">
+    </div>
+    <div id="capRec" style="display:none">
+      <div class="dual">
+        <button class="btn out" id="btnPause" data-t="c_pause">Pause</button>
+        <button class="btn" id="btnStop" data-t="c_stop">Stop</button>
+      </div>
+    </div>
+    <div id="capReady" style="display:none">
+      <button class="btn big" id="btnSummarize" data-t="c_summarize">Summarize →</button>
+      <a class="link" id="btnRedo" data-t="c_redo">Start over</a>
+      <audio id="player" controls></audio>
+    </div>
+    <p class="note" data-t="c_diar">👥 Voices are separated automatically (Speaker 1, 2, 3…).</p>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="sc-res">
+    <div id="resProc" class="proc">
+      <div class="spinner"></div>
+      <p id="procMsg">Transcribing…</p>
+      <small id="procSub"></small>
+    </div>
+    <div id="resBody" style="display:none">
+      <div class="res-head">
+        <div class="res-tabs">
+          <button id="tabSum" class="on" data-t="r_summary">Summary</button>
+          <button id="tabTr" data-t="r_transcript">Transcript</button>
+        </div>
+        <span class="wc" id="wc"></span>
+      </div>
+      <div class="out" id="summary"></div>
+      <div class="out" id="transcript" style="display:none"></div>
+      <div class="dual" style="margin-top:18px">
+        <button class="btn out" id="btnCopy" data-t="r_copy">Copy</button>
+        <button class="btn out" id="btnDl" data-t="r_download">Download</button>
+      </div>
+      <button class="btn" id="btnNew" data-t="r_new" style="margin-top:12px">+ New meeting</button>
+
+      <!-- rename: subtle, collapsed, at the very bottom -->
+      <details class="spbox" id="spbox">
+        <summary><span class="arr">▶</span><span data-t="sp_title">Rename speakers (optional)</span></summary>
+        <div class="sp-rows" id="spRows"></div>
+        <button class="sp-apply" id="spApply" data-t="sp_apply">Apply</button>
+      </details>
+    </div>
+  </div>
+
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="panel">
+    <div class="panel-h"><b data-t="h_title">History</b><button class="x" id="histClose">×</button></div>
+    <ul class="mlist" id="mlist"></ul>
+  </div>
+</div>
+
+<div class="overlay" id="setOverlay">
+  <div class="panel">
+    <div class="panel-h"><b data-t="set_title">Settings · API Keys</b><button class="x" id="setClose">×</button></div>
+    <div class="set-body">
+      <label data-t="set_oa">OpenAI key — for the summary</label>
+      <input type="password" id="setOpenai" placeholder="sk-proj-...">
+      <a class="set-link" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener" data-t="set_oa_link">Get OpenAI key →</a>
+      <label style="margin-top:18px" data-t="set_aai">AssemblyAI key — to separate speakers</label>
+      <input type="password" id="setAai" placeholder="••••••••••••••••">
+      <a class="set-link" href="https://www.assemblyai.com/dashboard/signup" target="_blank" rel="noopener" data-t="set_aai_link">Get AssemblyAI key (free) →</a>
+      <p class="set-note" data-t="set_note">🔒 Keys are stored only on this device.</p>
+      <button class="btn" id="setSave" data-t="set_save">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   CONFIG — keys are entered via the ⚙ Settings dialog and stored
+   locally in the browser (localStorage). Nothing is hard-coded.
+   ============================================================ */
+const CONFIG = {
+  OPENAI_KEY: localStorage.getItem('mr_openai') || "",
+  ASSEMBLYAI_KEY: localStorage.getItem('mr_aai') || ""
+};
+
+const I={
+ en:{c_hint:"Press record to start",c_record:"● Record",c_upload:"or upload an audio file",
+   c_pause:"Pause",c_resume:"Resume",c_stop:"Stop",c_summarize:"Summarize →",c_redo:"Start over",
+   c_recording:"Recording",c_paused:"Paused",c_ready:"Ready",
+   c_diar:"👥 Voices are separated automatically (Speaker 1, 2, 3…).",
+   p_upload:"Uploading audio…",p_diar:"Separating voices…",p_sum:"Writing the summary…",p_wait:"This can take a moment for long recordings.",
+   r_summary:"Summary",r_transcript:"Transcript",r_copy:"Copy",r_download:"Download",r_new:"+ New meeting",words:"words",
+   h_title:"History",open:"Open",empty:"No meetings yet",
+   sp_title:"Rename speakers (optional)",sp_apply:"Apply",sp_ph:"Real name",sp_done:"Names applied",
+   c_translate:"Live translate",lv_listening:"Listening…",
+   lv_file:"Live translate needs the page served over http(s), not opened as a file.",
+   lv_net:"Speech service unreachable (check internet / not file://).",
+   lv_nosupport:"Live translate needs Chrome or Edge (Web Speech API).",lv_mic:"Microphone permission was denied.",
+   copied:"Copied",err:"Error: ",delq:"Delete this meeting?",deflt:"Meeting",
+   set_title:"Settings · API Keys",set_oa:"OpenAI key — for the summary",set_oa_link:"Get OpenAI key →",
+   set_aai:"AssemblyAI key — to separate speakers",set_aai_link:"Get AssemblyAI key (free) →",
+   set_note:"🔒 Keys are stored only on this device. AssemblyAI is optional — without it, speakers are guessed from context.",
+   set_save:"Save",set_saved:"Keys saved",
+   nokey:"Open Settings (⚙ top right) and add your API key first.",
+   sys:"You are a professional meeting-minutes assistant. The transcript is labeled by speaker (Speaker 1, Speaker 2, …) — keep these exact labels. Write minutes in English, in Markdown:\n## Participants\n(**Speaker 1** — one-line role/clue)\n## Overview\n(2-4 sentences)\n## Key points\n(bullets, attribute: \"Speaker 1: ...\")\n## Decisions\n(\"None\" if none)\n## Action items\n(- [ ] Task — Owner (Speaker N) — Due)\n## Open issues\nNever invent anything not in the transcript."},
+ vi:{c_hint:"Bấm để bắt đầu ghi",c_record:"● Ghi âm",c_upload:"hoặc tải lên file audio",
+   c_pause:"Tạm dừng",c_resume:"Tiếp tục",c_stop:"Dừng",c_summarize:"Tóm tắt →",c_redo:"Làm lại",
+   c_recording:"Đang ghi",c_paused:"Tạm dừng",c_ready:"Sẵn sàng",
+   c_diar:"👥 Tự động tách giọng từng người (Speaker 1, 2, 3…).",
+   p_upload:"Đang tải audio lên…",p_diar:"Đang tách giọng nói…",p_sum:"Đang viết tóm tắt…",p_wait:"File dài có thể mất chút thời gian.",
+   r_summary:"Tóm tắt",r_transcript:"Bản ghi",r_copy:"Copy",r_download:"Tải xuống",r_new:"+ Cuộc họp mới",words:"từ",
+   h_title:"Lịch sử",open:"Mở",empty:"Chưa có cuộc họp",
+   sp_title:"Đổi tên người nói (tùy chọn)",sp_apply:"Áp dụng",sp_ph:"Tên thật",sp_done:"Đã áp dụng tên",
+   c_translate:"Dịch trực tiếp",lv_listening:"Đang nghe…",
+   lv_file:"Dịch trực tiếp cần mở qua http(s), không mở bằng cách nhấp đúp file.",
+   lv_net:"Không kết nối được dịch vụ giọng nói (kiểm tra mạng / không dùng file://).",
+   lv_nosupport:"Dịch trực tiếp cần Chrome hoặc Edge (Web Speech API).",lv_mic:"Micro đã bị từ chối quyền.",
+   copied:"Đã copy",err:"Lỗi: ",delq:"Xóa cuộc họp này?",deflt:"Cuộc họp",
+   set_title:"Cài đặt · API Key",set_oa:"OpenAI key — để tóm tắt",set_oa_link:"Lấy OpenAI key →",
+   set_aai:"AssemblyAI key — để tách giọng nói",set_aai_link:"Lấy AssemblyAI key (miễn phí) →",
+   set_note:"🔒 Key chỉ lưu trên máy này. AssemblyAI là tùy chọn — không có thì người nói được suy đoán theo ngữ cảnh.",
+   set_save:"Lưu",set_saved:"Đã lưu key",
+   nokey:"Mở Cài đặt (⚙ góc trên phải) và nhập API key trước.",
+   sys:"Bạn là trợ lý ghi biên bản họp chuyên nghiệp. Transcript đã được gắn nhãn theo người nói (Speaker 1, Speaker 2, …) — giữ nguyên các nhãn này. Viết biên bản bằng Tiếng Việt, định dạng Markdown:\n## Thành phần tham dự\n(**Speaker 1** — vai trò/manh mối một dòng)\n## Tóm tắt chung\n(2-4 câu)\n## Điểm chính\n(gạch đầu dòng, gán: \"Speaker 1: ...\")\n## Quyết định\n(\"Không có\" nếu trống)\n## Việc cần làm\n(- [ ] Việc — Người phụ trách (Speaker N) — Hạn)\n## Vấn đề còn mở\nKhông bịa thông tin ngoài transcript."},
+ ko:{c_hint:"녹음하려면 누르세요",c_record:"● 녹음",c_upload:"또는 오디오 파일 업로드",
+   c_pause:"일시정지",c_resume:"계속",c_stop:"정지",c_summarize:"요약하기 →",c_redo:"다시 시작",
+   c_recording:"녹음 중",c_paused:"일시정지됨",c_ready:"준비됨",
+   c_diar:"👥 화자를 자동으로 분리합니다 (Speaker 1, 2, 3…).",
+   p_upload:"오디오 업로드 중…",p_diar:"화자 분리 중…",p_sum:"요약 작성 중…",p_wait:"긴 녹음은 시간이 걸릴 수 있어요.",
+   r_summary:"요약",r_transcript:"전체 기록",r_copy:"복사",r_download:"다운로드",r_new:"+ 새 회의",words:"단어",
+   h_title:"기록",open:"열기",empty:"회의가 없습니다",
+   sp_title:"화자 이름 변경 (선택)",sp_apply:"적용",sp_ph:"실명",sp_done:"이름이 적용됨",
+   c_translate:"실시간 번역",lv_listening:"듣는 중…",
+   lv_file:"실시간 번역은 파일 더블클릭이 아니라 http(s)로 열어야 합니다.",
+   lv_net:"음성 서비스에 연결할 수 없습니다 (인터넷 확인 / file:// 사용 불가).",
+   lv_nosupport:"실시간 번역은 Chrome 또는 Edge가 필요합니다 (Web Speech API).",lv_mic:"마이크 권한이 거부되었습니다.",
+   copied:"복사됨",err:"오류: ",delq:"이 회의를 삭제할까요?",deflt:"회의",
+   set_title:"설정 · API 키",set_oa:"OpenAI 키 — 요약용",set_oa_link:"OpenAI 키 받기 →",
+   set_aai:"AssemblyAI 키 — 화자 분리용",set_aai_link:"AssemblyAI 키 받기 (무료) →",
+   set_note:"🔒 키는 이 기기에만 저장됩니다. AssemblyAI는 선택 사항 — 없으면 화자는 문맥으로 추정됩니다.",
+   set_save:"저장",set_saved:"키가 저장됨",
+   nokey:"설정(⚙ 오른쪽 위)을 열고 API 키를 먼저 입력하세요.",
+   sys:"당신은 전문 회의록 작성 비서입니다. 기록은 화자(Speaker 1, Speaker 2, …)로 라벨링되어 있습니다 — 이 라벨을 그대로 유지하세요. 한국어로 Markdown 회의록을 작성하세요:\n## 참석자\n(**Speaker 1** — 한 줄 역할/단서)\n## 개요\n(2-4문장)\n## 핵심 사항\n(불릿, 표기: \"Speaker 1: ...\")\n## 결정 사항\n(없으면 \"없음\")\n## 액션 아이템\n(- [ ] 할 일 — 담당자 (Speaker N) — 기한)\n## 미해결 사항\n기록에 없는 내용을 지어내지 마세요."}
+};
+let L=localStorage.getItem('mr_lang')||'en';
+const $=id=>document.getElementById(id);
+const t=k=>I[L][k]||k;
+function applyLang(){
+  document.documentElement.lang=L;
+  document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));
+  document.querySelectorAll('#lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===L));
+  refreshDyn();renderHist();
+}
+$('lang').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+  L=b.dataset.l;localStorage.setItem('mr_lang',L);applyLang();};
+function show(sc){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(sc).classList.add('on');}
+
+let mediaRecorder,chunks=[],audioBlob=null,audioStream=null,extra=[];
+let startTime=0,elapsed=0,timerInt=null,paused=false;
+let curTr="",curSum="",view="summary",capState="idle",curId=null;
+let actx=null,analyser=null,raf=null;
+let recog=null,lvRunning=false,lvWantOn=false;
+
+function toast(m){const el=$('toast');el.textContent=m;el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),1800);}
+function fmt(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
+function refreshDyn(){
+  if(capState==='recording')$('recHint').innerHTML='<span class="live"></span>'+t('c_recording');
+  else if(capState==='paused')$('recHint').textContent=t('c_paused');
+  else if(capState==='ready')$('recHint').textContent='✓ '+t('c_ready');
+  else $('recHint').textContent=t('c_hint');
+}
+
+/* ---- Visualizer ---- */
+function startViz(stream){try{actx=new(window.AudioContext||window.webkitAudioContext)();
+  analyser=actx.createAnalyser();analyser.fftSize=64;actx.createMediaStreamSource(stream).connect(analyser);
+  const bars=$('viz').children,d=new Uint8Array(analyser.frequencyBinCount);
+  const draw=()=>{analyser.getByteFrequencyData(d);
+    for(let i=0;i<bars.length;i++)bars[i].style.height=Math.max(6,(d[i*2]||0)/255*40)+'px';
+    raf=requestAnimationFrame(draw);};draw();}catch(e){}}
+function stopViz(){if(raf)cancelAnimationFrame(raf);
+  [...$('viz').children].forEach(b=>b.style.height='6px');
+  if(actx){actx.close().catch(()=>{});actx=null;}}
+
+/* ---- Record ---- */
+async function buildStream(){const mic=await navigator.mediaDevices.getUserMedia({audio:true});extra=[mic];return mic;}
+function setCap(s){capState=s;
+  $('capIdle').style.display=s==='idle'?'':'none';
+  $('capRec').style.display=(s==='recording'||s==='paused')?'':'none';
+  $('capReady').style.display=s==='ready'?'':'none';
+  document.body.classList.toggle('recing',s==='recording');refreshDyn();}
+$('btnRec').onclick=async()=>{
+  try{audioStream=await buildStream();chunks=[];
+    mediaRecorder=new MediaRecorder(audioStream);
+    mediaRecorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+    mediaRecorder.onstop=()=>{audioBlob=new Blob(chunks,{type:chunks[0]?.type||'audio/webm'});
+      $('player').src=URL.createObjectURL(audioBlob);stopViz();setCap('ready');};
+    mediaRecorder.start();elapsed=0;startTime=Date.now();paused=false;timerInt=setInterval(tick,250);
+    startViz(audioStream);setCap('recording');
+    if($('lvOn').checked)startLive();
+  }catch(e){toast(e.message);}};
+function tick(){if(!paused)$('timer').textContent=fmt(Math.round((elapsed+(Date.now()-startTime))/1000));}
+$('btnPause').onclick=()=>{if(!mediaRecorder)return;
+  if(!paused){mediaRecorder.pause();paused=true;elapsed+=Date.now()-startTime;
+    $('btnPause').textContent=t('c_resume');setCap('paused');stopViz();pauseLive();}
+  else{mediaRecorder.resume();paused=false;startTime=Date.now();
+    $('btnPause').textContent=t('c_pause');setCap('recording');startViz(audioStream);if($('lvOn').checked)startLive();}};
+$('btnStop').onclick=()=>{if(!mediaRecorder)return;
+  if(!paused)elapsed+=Date.now()-startTime;mediaRecorder.stop();clearInterval(timerInt);
+  audioStream.getTracks().forEach(x=>x.stop());extra.forEach(s=>s.getTracks().forEach(x=>x.stop()));
+  $('btnPause').textContent=t('c_pause');stopLive();};
+$('btnUpload').onclick=()=>$('fileIn').click();
+$('fileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;audioBlob=f;
+  $('player').src=URL.createObjectURL(f);$('timer').textContent='00:00';setCap('ready');toast(f.name);};
+$('btnRedo').onclick=()=>{audioBlob=null;$('timer').textContent='00:00';setCap('idle');
+  $('lvFeed').style.display='none';$('lvInterim').style.display='none';$('lvFeed').innerHTML='';};
+
+/* ---- Process ---- */
+function setProc(msg,sub){$('procMsg').textContent=msg;$('procSub').textContent=sub||'';}
+$('btnSummarize').onclick=async()=>{
+  if(!CONFIG.OPENAI_KEY&&!CONFIG.ASSEMBLYAI_KEY){alert(t('nokey'));return;}
+  show('sc-res');$('resProc').style.display='';$('resBody').style.display='none';
+  const ok=await transcribe();if(!ok)return;
+  setProc(t('p_sum'),'');await summarize();};
+
+async function transcribe(){
+  try{
+    if(CONFIG.ASSEMBLYAI_KEY){curTr=await transcribeAAI();}
+    else{curTr=await transcribeWhisper();}
+    return !!curTr;
+  }catch(e){show('sc-cap');toast(t('err')+e.message);return false;}
+}
+
+/* AssemblyAI: real speaker separation */
+async function transcribeAAI(){
+  const H={authorization:CONFIG.ASSEMBLYAI_KEY};
+  setProc(t('p_upload'),t('p_wait'));
+  const up=await fetch('https://api.assemblyai.com/v2/upload',{method:'POST',headers:H,body:audioBlob});
+  const uj=await up.json();if(!up.ok)throw new Error(uj.error||'upload failed');
+  setProc(t('p_diar'),t('p_wait'));
+  const cr=await fetch('https://api.assemblyai.com/v2/transcript',{method:'POST',
+    headers:{...H,'content-type':'application/json'},
+    body:JSON.stringify({audio_url:uj.upload_url,speech_models:["universal-2"],speaker_labels:true,language_detection:true})});
+  const cj=await cr.json();if(!cr.ok)throw new Error(cj.error||'request failed');
+  const id=cj.id;
+  for(let i=0;i<400;i++){
+    await new Promise(r=>setTimeout(r,3000));
+    const pr=await fetch('https://api.assemblyai.com/v2/transcript/'+id,{headers:H});
+    const pj=await pr.json();
+    if(pj.status==='completed'){
+      if(pj.utterances&&pj.utterances.length){
+        const map={};let n=0;
+        return pj.utterances.map(u=>{
+          if(!(u.speaker in map))map[u.speaker]='Speaker '+(++n);
+          return map[u.speaker]+': '+u.text;
+        }).join('\n');
+      }
+      return pj.text||'';
+    }
+    if(pj.status==='error')throw new Error(pj.error||'transcription error');
+  }
+  throw new Error('timeout');
+}
+
+/* OpenAI Whisper fallback (flat text) */
+async function transcribeWhisper(){
+  setProc(t('p_diar'),t('p_wait'));
+  let ext='webm';const ty=audioBlob.type||'';
+  if(ty.includes('mp4')||ty.includes('m4a'))ext='m4a';else if(ty.includes('mpeg')||ty.includes('mp3'))ext='mp3';
+  else if(ty.includes('wav'))ext='wav';else if(audioBlob.name&&audioBlob.name.includes('.'))ext=audioBlob.name.split('.').pop();
+  const fd=new FormData();fd.append('file',audioBlob,'m.'+ext);fd.append('model','whisper-1');
+  const r=await fetch('https://api.openai.com/v1/audio/transcriptions',
+    {method:'POST',headers:{'Authorization':'Bearer '+CONFIG.OPENAI_KEY},body:fd});
+  const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'HTTP '+r.status);
+  return d.text.trim();
+}
+
+async function summarize(){
+  if(!CONFIG.OPENAI_KEY){ // no summary engine; still show transcript
+    curSum="";renderResult();save();return;}
+  try{const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',
+      headers:{'Authorization':'Bearer '+CONFIG.OPENAI_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({model:'gpt-4o-mini',temperature:.3,
+        messages:[{role:'system',content:t('sys')},{role:'user',content:curTr}]})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'HTTP '+r.status);
+    curSum=d.choices[0].message.content.trim();renderResult();save();
+  }catch(e){show('sc-cap');toast(t('err')+e.message);}}
+
+function renderResult(){
+  $('resProc').style.display='none';$('resBody').style.display='';
+  $('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=fmtTr(curTr);
+  $('wc').textContent=curTr.split(/\s+/).filter(Boolean).length+' '+t('words');
+  buildSpeakers();setView(curSum?'summary':'transcript');}
+
+/* who-said-what rendering */
+function fmtTr(text){
+  if(!text)return'';
+  return text.split('\n').filter(Boolean).map(line=>{
+    const m=line.match(/^(.{1,40}?):\s*(.*)$/);
+    if(m)return `<div class="tr-turn"><span class="sp">${esc(m[1])}</span><span class="tx">${esc(m[2])}</span></div>`;
+    return `<div class="tr-turn"><span class="tx">${esc(line)}</span></div>`;
+  }).join('');
+}
+
+/* ---- Speaker rename (subtle, bottom) ---- */
+function buildSpeakers(){
+  const labels=[...new Set((curTr.match(/Speaker \d+/g)||[]))]
+    .sort((a,b)=>parseInt(a.slice(8))-parseInt(b.slice(8)));
+  const box=$('spbox'),rows=$('spRows');
+  if(labels.length<1){box.style.display='none';rows.innerHTML='';return;}
+  box.style.display='';
+  rows.innerHTML=labels.map(l=>`<div class="sprow"><span class="lab">${l}</span>
+    <input data-label="${l}" placeholder="${t('sp_ph')}"></div>`).join('');
+}
+$('spApply').onclick=()=>{
+  let changed=false;
+  $('spRows').querySelectorAll('input').forEach(inp=>{
+    const name=inp.value.trim();if(!name)return;
+    const re=new RegExp(inp.dataset.label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g');
+    curSum=curSum.replace(re,name);curTr=curTr.replace(re,name);changed=true;});
+  if(!changed)return;
+  $('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=fmtTr(curTr);
+  buildSpeakers();save(true);toast(t('sp_done'));};
+
+/* ---- Result UI ---- */
+function setView(v){view=v;$('tabSum').classList.toggle('on',v==='summary');
+  $('tabTr').classList.toggle('on',v==='transcript');
+  $('summary').style.display=v==='summary'?'':'none';$('transcript').style.display=v==='transcript'?'':'none';}
+$('tabSum').onclick=()=>setView('summary');
+$('tabTr').onclick=()=>setView('transcript');
+$('btnCopy').onclick=()=>{const x=view==='summary'?curSum:curTr;navigator.clipboard.writeText(x||'').then(()=>toast(t('copied')));};
+$('btnDl').onclick=()=>{const x=view==='summary'?curSum:curTr;if(!x)return;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([x],{type:'text/plain;charset=utf-8'}));
+  a.download=view==='summary'?'summary.md':'transcript.txt';a.click();};
+$('btnNew').onclick=()=>{curTr="";curSum="";curId=null;audioBlob=null;$('timer').textContent='00:00';setCap('idle');show('sc-cap');};
+
+/* ---- History ---- */
+function save(update){let list=JSON.parse(localStorage.getItem('mr_m')||'[]');
+  const tt=(curSum.match(/##.*\n+(.+)/)||[])[1]||(curTr.split('\n')[0])||t('deflt');
+  const title=tt.replace(/[*_#•-]/g,'').replace(/^Speaker \d+:\s*/,'').trim().slice(0,52)||t('deflt');
+  if(update&&curId){list=list.map(m=>m.id===curId?{...m,title,transcript:curTr,summary:curSum}:m);}
+  else{curId=Date.now();list.unshift({id:curId,date:new Date().toLocaleString(),title,transcript:curTr,summary:curSum});}
+  localStorage.setItem('mr_m',JSON.stringify(list.slice(0,40)));renderHist();}
+function renderHist(){const list=JSON.parse(localStorage.getItem('mr_m')||'[]');
+  $('mlist').innerHTML=list.length?list.map(m=>`<li>
+    <div class="mt"><b>${esc(m.title)}</b><span>${m.date}</span></div>
+    <button class="mini" onclick="openM(${m.id})">${t('open')}</button>
+    <button class="mini" onclick="delM(${m.id})">🗑</button></li>`).join('')
+    :`<li class="mempty">${t('empty')}</li>`;}
+function openM(id){const m=JSON.parse(localStorage.getItem('mr_m')||'[]').find(x=>x.id===id);if(!m)return;
+  curTr=m.transcript;curSum=m.summary;curId=id;$('overlay').classList.remove('on');
+  show('sc-res');$('resProc').style.display='none';$('resBody').style.display='';renderResult();}
+function delM(id){if(!confirm(t('delq')))return;
+  localStorage.setItem('mr_m',JSON.stringify(JSON.parse(localStorage.getItem('mr_m')||'[]').filter(x=>x.id!==id)));renderHist();}
+$('histBtn').onclick=()=>$('overlay').classList.add('on');
+$('histClose').onclick=()=>$('overlay').classList.remove('on');
+$('overlay').onclick=e=>{if(e.target===$('overlay'))$('overlay').classList.remove('on');};
+
+/* ---- Settings (API keys) ---- */
+$('setBtn').onclick=()=>{
+  $('setOpenai').value=localStorage.getItem('mr_openai')||'';
+  $('setAai').value=localStorage.getItem('mr_aai')||'';
+  $('setOverlay').classList.add('on');};
+$('setClose').onclick=()=>$('setOverlay').classList.remove('on');
+$('setOverlay').onclick=e=>{if(e.target===$('setOverlay'))$('setOverlay').classList.remove('on');};
+$('setSave').onclick=()=>{
+  const oa=$('setOpenai').value.trim(),aai=$('setAai').value.trim();
+  localStorage.setItem('mr_openai',oa);localStorage.setItem('mr_aai',aai);
+  CONFIG.OPENAI_KEY=oa;CONFIG.ASSEMBLYAI_KEY=aai;
+  $('setOverlay').classList.remove('on');toast(t('set_saved'));};
+
+/* ---- Live translation (runs alongside recording) ---- */
+$('lvToggle').onclick=e=>{
+  if(e.target.tagName!=='INPUT')$('lvOn').checked=!$('lvOn').checked;
+  $('lvToggle').classList.toggle('on',$('lvOn').checked);
+  localStorage.setItem('mr_lvon',$('lvOn').checked?'1':'0');};
+$('lvTo').onchange=()=>localStorage.setItem('mr_lvto',$('lvTo').value);
+
+function lvInfo(msg){$('lvFeed').style.display='flex';$('lvInterim').style.display='block';
+  $('lvInterim').textContent=msg;}
+function startLive(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){lvInfo('⚠ '+t('lv_nosupport'));return;}
+  if(!CONFIG.OPENAI_KEY){lvInfo('⚠ '+t('nokey'));return;}
+  if(location.protocol==='file:'){lvInfo('⚠ '+t('lv_file'));return;}
+  $('lvFeed').style.display='flex';$('lvInterim').style.display='block';
+  $('lvInterim').textContent='🎤 '+t('lv_listening');
+  recog=new SR();
+  const map={Vietnamese:'vi-VN',English:'en-US',Korean:'ko-KR',Japanese:'ja-JP',Chinese:'zh-CN'};
+  recog.lang=localStorage.getItem('mr_lvfrom')||(map[$('lvTo').value]==='vi-VN'?'en-US':'vi-VN');
+  recog.continuous=true;recog.interimResults=true;
+  recog.onstart=()=>{$('lvInterim').textContent='🎤 '+t('lv_listening');};
+  recog.onresult=e=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const r=e.results[i];
+      if(r.isFinal){addPair(r[0].transcript.trim());}
+      else interim+=r[0].transcript;
+    }
+    $('lvInterim').textContent=interim||('🎤 '+t('lv_listening'));
+  };
+  recog.onerror=ev=>{
+    if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){lvInfo('⚠ '+t('lv_mic'));lvWantOn=false;}
+    else if(ev.error==='no-speech'){/* keep going */}
+    else if(ev.error==='network'){lvInfo('⚠ '+t('lv_net'));}
+    else lvInfo('⚠ '+ev.error);
+  };
+  recog.onend=()=>{lvRunning=false;if(lvWantOn){try{recog.start();lvRunning=true;}catch(e){}}};
+  lvWantOn=true;
+  try{recog.start();lvRunning=true;}catch(e){lvInfo('⚠ '+e.message);}
+}
+function pauseLive(){lvWantOn=false;if(recog){try{recog.stop();}catch(e){}}}
+function stopLive(){lvWantOn=false;$('lvInterim').textContent='';
+  if(recog){try{recog.stop();}catch(e){}recog=null;}}
+
+async function addPair(src){
+  if(!src)return;
+  const row=document.createElement('div');row.className='lv-pair';
+  row.innerHTML=`<div class="lv-src">${esc(src)}</div><div class="lv-tgt pending">…</div>`;
+  $('lvFeed').appendChild(row);$('lvFeed').scrollTop=$('lvFeed').scrollHeight;
+  try{
+    const to=$('lvTo').value;
+    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',
+      headers:{'Authorization':'Bearer '+CONFIG.OPENAI_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({model:'gpt-4o-mini',temperature:.2,
+        messages:[{role:'system',content:`Translate the user's text into ${to}. Output ONLY the translation, no quotes, no notes.`},
+          {role:'user',content:src}]})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'HTTP '+r.status);
+    const tgt=d.choices[0].message.content.trim();
+    const el=row.querySelector('.lv-tgt');el.classList.remove('pending');el.textContent=tgt;
+    $('lvFeed').scrollTop=$('lvFeed').scrollHeight;
+  }catch(e){const el=row.querySelector('.lv-tgt');el.classList.remove('pending');el.textContent='⚠ '+e.message;}
+}
+
+/* ---- Utils ---- */
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function md(x){if(!x)return'';return esc(x)
+  .replace(/^### (.*)$/gm,'<h3>$1</h3>').replace(/^#{1,2} (.*)$/gm,'<h2>$1</h2>')
+  .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
+  .replace(/^- \[x\] (.*)$/gmi,'<span class="ck">☑</span> $1').replace(/^- \[ \] (.*)$/gm,'☐ $1')
+  .replace(/^[-*] (.*)$/gm,'• $1').replace(/\n/g,'<br>');}
+
+/* ---- Theme ---- */
+$('theme').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+  setTheme(b.dataset.th);localStorage.setItem('mr_theme',b.dataset.th);};
+function setTheme(th){document.body.classList.toggle('sota',th==='sota');
+  document.querySelectorAll('#theme button').forEach(x=>x.classList.toggle('on',x.dataset.th===th));}
+setTheme(localStorage.getItem('mr_theme')||'mono');
+
+/* restore live-translate prefs — ON by default unless explicitly turned off */
+const _lvon=localStorage.getItem('mr_lvon')!=='0';
+$('lvOn').checked=_lvon;$('lvToggle').classList.toggle('on',_lvon);
+if(localStorage.getItem('mr_lvto'))$('lvTo').value=localStorage.getItem('mr_lvto');
+applyLang();
+</script>
+</body>
+</html>

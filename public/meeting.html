@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meeting AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0a1124;--paper:#ffffff;--grey:#5b6b8c;--faint:#9aa6bd;--hair:#e3e8f2;--soft:#f5f7fc;--acc:#1f6bff}
+body.mono{--ink:#0a0a0a;--grey:#6b6b6b;--faint:#a8a8a8;--hair:#e6e6e6;--soft:#f4f4f4;--acc:#0a0a0a}
+.btn{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn:hover{box-shadow:5px 5px 0 rgba(31,107,255,.28)}
+.btn.out{background:var(--paper);color:var(--ink);border-color:var(--ink)}
+.btn.out:hover{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:none}
+.btn:disabled{background:var(--soft);color:var(--faint);border-color:var(--hair)}
+.mark svg,.hero-mark svg{color:var(--acc)}
+.lang button.on,.res-tabs button.on{background:var(--acc);color:#fff}
+.lvtog.on .sw{background:var(--acc)}
+.lvtog.on .sw::after{background:#fff}
+input:focus,select:focus,.set-body input:focus{box-shadow:0 0 0 3px rgba(31,107,255,.22)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;letter-spacing:-.015em;
+  display:flex;flex-direction:column;min-height:100vh;
+  background:radial-gradient(900px 480px at 12% -6%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
+    radial-gradient(820px 460px at 100% 0%,color-mix(in srgb,var(--acc) 7%,transparent),transparent 55%),var(--paper)}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:var(--hair);border-radius:8px}
+.top{display:flex;align-items:center;padding:18px 26px;border-bottom:1.5px solid var(--hair)}
+.mark{display:flex;align-items:center;gap:11px}
+.mark svg{width:34px;height:34px;display:block}
+.mark b{font-size:16px;font-weight:900;letter-spacing:-.04em}
+.top-r{margin-left:auto;display:flex;align-items:center;gap:14px}
+.hist-btn{background:none;border:none;cursor:pointer;padding:4px;display:grid;place-items:center;color:var(--ink)}
+.hist-btn svg{width:21px;height:21px}
+.lang{display:flex;border:1.5px solid var(--ink);border-radius:9px;overflow:hidden}
+.lang button{border:none;background:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:800;
+  color:var(--faint);padding:6px 11px;letter-spacing:.02em;transition:.12s;border-right:1.5px solid var(--ink)}
+.lang button:last-child{border-right:none}
+.lang button.on{background:var(--ink);color:var(--paper)}
+.theme-seg{display:flex;gap:6px;align-items:center}
+.theme-seg button{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid var(--hair);padding:0;transition:.15s;outline:none}
+.theme-seg button.sw-sota{background:#1f6bff}
+.theme-seg button.sw-mono{background:#0a0a0a}
+.theme-seg button.on{box-shadow:0 0 0 2px var(--paper),0 0 0 4px currentColor}
+.theme-seg button.sw-sota.on{color:#1f6bff}
+.theme-seg button.sw-mono.on{color:#0a0a0a}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 26px}
+.screen{display:none;width:100%;max-width:520px;text-align:center;animation:in .35s ease}
+.screen.on{display:block}
+.screen#sc-res{max-width:600px}.screen#sc-hero{max-width:760px}
+/* widen the capture card while recording so subtitles read comfortably */
+body.recing #sc-cap{max-width:640px}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hero-mark{margin:0 auto 22px;width:84px}
+.hero-mark svg{width:100%;height:auto;display:block}
+h1{font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1;margin-bottom:10px}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--acc);
+  background:color-mix(in srgb,var(--acc) 10%,transparent);padding:6px 13px;border-radius:30px;margin-bottom:22px}
+.hero-badge .live-dot{width:7px;height:7px;border-radius:50%;background:#e5484d;animation:bl 1s steps(2) infinite}
+.hero-h{font-size:46px;font-weight:900;letter-spacing:-.04em;line-height:1.04;margin-bottom:16px}
+.hero-h .accent{color:var(--acc)}
+.hero-sub{font-size:17px;color:var(--grey);max-width:540px;margin:0 auto 30px;line-height:1.55}
+.hero-cta{display:inline-flex;align-items:center;gap:9px;cursor:pointer;border:none;border-radius:14px;
+  background:var(--acc);color:#fff;font-family:inherit;font-size:17px;font-weight:800;padding:17px 38px;
+  transition:.15s;box-shadow:0 14px 30px -10px var(--acc)}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 20px 40px -10px var(--acc)}
+.hero-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:46px}
+.feat{background:var(--paper);border:1px solid var(--hair);border-radius:18px;padding:24px 20px;text-align:left;
+  box-shadow:0 12px 30px -22px rgba(10,17,36,.5);transition:.18s}
+.feat:hover{transform:translateY(-3px);box-shadow:0 20px 40px -22px var(--acc);border-color:color-mix(in srgb,var(--acc) 40%,var(--hair))}
+.feat .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;margin-bottom:14px;
+  background:color-mix(in srgb,var(--acc) 12%,transparent)}
+.feat h3{font-size:15.5px;font-weight:800;margin-bottom:6px}
+.feat p{font-size:13px;color:var(--grey);line-height:1.5}
+.app-card{background:var(--paper);border:1px solid var(--hair);border-radius:24px;padding:34px 30px 30px;
+  box-shadow:0 30px 60px -34px rgba(10,17,36,.45)}
+.btn{cursor:pointer;border:2px solid var(--acc);font-family:inherit;font-size:16px;font-weight:800;
+  letter-spacing:-.01em;padding:17px 26px;width:100%;border-radius:13px;transition:.12s;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;margin-top:18px}
+.btn:hover{transform:translate(-1px,-1px)}
+.btn:active{transform:translate(1px,1px)}
+.btn:disabled{cursor:not-allowed;transform:none;box-shadow:none}
+.btn.big{font-size:18px;padding:22px}
+.link{display:inline-block;margin-top:20px;background:none;border:none;cursor:pointer;font-family:inherit;
+  font-size:13px;font-weight:600;color:var(--grey);text-decoration:underline;text-underline-offset:3px}
+.link:hover{color:var(--ink)}
+.timer{font-family:'Space Mono',monospace;font-size:64px;font-weight:700;letter-spacing:2px;line-height:1;
+  margin-bottom:6px;font-variant-numeric:tabular-nums;transition:font-size .25s}
+/* shrink timer + hero mark while recording to give subtitles more room */
+body.recing .timer{font-size:38px;margin-bottom:2px}
+body.recing .hero-mark{width:0;height:0;margin:0;overflow:hidden}
+body.recing .viz{height:30px;margin-bottom:10px}
+body.recing #diarNote{display:none}
+body.recing .rec-hint{margin-bottom:10px}
+.viz{display:flex;align-items:center;justify-content:center;gap:5px;height:44px;margin-bottom:18px}
+.viz span{width:5px;height:6px;background:var(--acc);opacity:.18;transition:height .09s;border-radius:3px}
+.recing .viz span{opacity:1}
+.rec-hint{font-size:13px;color:var(--grey);min-height:20px;margin-bottom:6px;font-weight:500}
+.rec-hint .live{display:inline-block;width:9px;height:9px;background:#e5484d;border-radius:50%;margin-right:7px;
+  animation:bl 1s steps(2) infinite;vertical-align:1px}
+@keyframes bl{50%{opacity:0}}
+.dual{display:flex;gap:12px}.dual .btn{margin-top:0}
+.res-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.res-tabs{display:flex;border:1.5px solid var(--ink);border-radius:9px;overflow:hidden}
+.res-tabs button{border:none;background:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:800;
+  color:var(--faint);padding:7px 14px;letter-spacing:.02em;border-right:1.5px solid var(--ink);transition:.12s}
+.res-tabs button:last-child{border-right:none}
+.res-tabs button.on{background:var(--ink);color:var(--paper)}
+.wc{font-family:'Space Mono',monospace;font-size:11px;color:var(--faint);font-weight:700}
+.out{border:1.5px solid var(--hair);border-radius:14px;padding:22px;font-size:14.5px;line-height:1.7;text-align:left;
+  max-height:46vh;overflow:auto;white-space:pre-wrap;word-break:break-word;background:var(--soft)}
+.out h2,.out h3{font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;color:var(--acc);
+  margin:20px 0 9px;padding-bottom:6px;border-bottom:1.5px solid var(--hair)}
+.out h2:first-child{margin-top:0}
+.out b{font-weight:800}.out .ck{font-weight:900;color:var(--acc)}
+.tr-turn{margin-bottom:13px}
+.tr-turn .sp{font-family:'Space Mono',monospace;font-weight:700;font-size:12px;text-transform:uppercase;
+  letter-spacing:.03em;display:block;margin-bottom:1px;color:var(--acc)}
+.tr-turn .tx{display:block}
+.proc{padding:48px 0;text-align:center}
+.proc p{font-size:16px;font-weight:700;color:var(--ink);margin-top:6px}
+.proc small{display:block;margin-top:8px;color:var(--faint);font-size:12.5px}
+.bot{position:relative;width:140px;height:140px;margin:0 auto 14px;animation:botBob 2.4s ease-in-out infinite}
+@keyframes botBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.bot-svg{width:140px;height:140px;display:block;overflow:visible}
+.bot-svg [class^="bot-"]{fill:none;stroke:var(--acc);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.bot-head{fill:color-mix(in srgb,var(--acc) 12%,transparent)}
+.bot-body{fill:color-mix(in srgb,var(--acc) 18%,transparent)}
+.bot-ant-dot{fill:var(--acc);stroke:none;animation:botBlinkDot 1.2s ease-in-out infinite}
+@keyframes botBlinkDot{0%,100%{opacity:1}50%{opacity:.3}}
+.bot-eye{fill:var(--acc);stroke:none;transform-origin:center;animation:botBlink 3.2s infinite}
+@keyframes botBlink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+.bot-hand{fill:var(--acc);stroke:none}
+.h-l{animation:botType .42s ease-in-out infinite}
+.h-r{animation:botType .42s ease-in-out infinite .21s}
+@keyframes botType{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.bot-spark{position:absolute;color:var(--acc);font-size:14px;opacity:0;font-weight:700}
+.bot-spark.s1{top:6px;right:18px;animation:botSpark 1.8s ease-in-out infinite}
+.bot-spark.s2{top:30px;right:2px;font-size:11px;animation:botSpark 1.8s ease-in-out infinite .6s}
+.bot-spark.s3{top:18px;left:8px;font-size:12px;animation:botSpark 1.8s ease-in-out infinite 1.1s}
+@keyframes botSpark{0%{opacity:0;transform:translateY(4px) scale(.6)}40%{opacity:1;transform:translateY(-2px) scale(1)}100%{opacity:0;transform:translateY(-8px) scale(.7)}}
+.spbox{margin-top:26px;border-top:1px solid var(--hair);padding-top:14px;text-align:left}
+.spbox summary{cursor:pointer;font-size:12px;color:var(--faint);font-weight:600;list-style:none;display:flex;align-items:center;gap:6px;user-select:none}
+.spbox summary::-webkit-details-marker{display:none}
+.spbox summary:hover{color:var(--grey)}
+.spbox summary .arr{transition:.2s;font-size:10px}
+.spbox[open] summary .arr{transform:rotate(90deg)}
+.sp-rows{margin-top:12px}
+.sprow{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.sprow .lab{font-family:'Space Mono',monospace;font-weight:700;font-size:12px;color:var(--grey);min-width:82px}
+.sprow input{flex:1;border:1px solid var(--hair);background:var(--paper);color:var(--ink);padding:8px 11px;font-size:13px;font-family:inherit;outline:none;border-radius:8px}
+.sprow input:focus{border-color:var(--acc)}
+.sp-apply{margin-top:6px;border:1.5px solid var(--acc);background:var(--paper);color:var(--acc);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;padding:7px 14px;border-radius:8px;transition:.12s}
+.sp-apply:hover{background:var(--acc);color:#fff}
+.overlay{position:fixed;inset:0;background:rgba(10,17,36,.45);display:none;z-index:60;align-items:flex-start;justify-content:center;padding:80px 20px;backdrop-filter:blur(2px)}
+.overlay.on{display:flex}
+.panel{background:var(--paper);border:1.5px solid var(--hair);border-radius:16px;width:100%;max-width:480px;max-height:75vh;display:flex;flex-direction:column;box-shadow:0 30px 60px -20px rgba(10,17,36,.4)}
+.panel-h{display:flex;align-items:center;padding:18px 20px;border-bottom:1.5px solid var(--hair)}
+.panel-h b{font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+.panel-h .x{margin-left:auto;background:none;border:none;cursor:pointer;font-size:22px;line-height:1;color:var(--ink)}
+.mlist{list-style:none;overflow:auto}
+.mlist li{display:flex;align-items:center;gap:12px;padding:15px 20px;border-bottom:1px solid var(--hair)}
+.mlist .mt{flex:1;min-width:0;text-align:left}
+.mlist .mt b{display:block;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mlist .mt span{font-family:'Space Mono',monospace;font-size:11px;color:var(--faint)}
+.mini{border:1.5px solid var(--ink);background:var(--paper);cursor:pointer;font-family:inherit;font-size:12px;font-weight:800;padding:7px 12px;border-radius:8px;transition:.12s;color:var(--ink)}
+.mini:hover{background:var(--ink);color:var(--paper)}
+.mempty{padding:50px 20px;text-align:center;color:var(--faint);font-size:13px}
+.set-body{padding:22px 20px;overflow:auto}
+.set-body label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--grey);margin-bottom:7px}
+.set-body input{width:100%;border:1.5px solid var(--hair);background:var(--paper);color:var(--ink);padding:12px 14px;font-size:14px;font-family:'Space Mono',monospace;outline:none;border-radius:10px}
+.set-link{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:var(--acc);text-decoration:underline;text-underline-offset:3px}
+.set-note{font-size:12px;color:var(--faint);margin-top:18px;line-height:1.6}
+.live-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;justify-content:center;flex-wrap:wrap}
+.lvtog{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;font-weight:700;color:var(--grey);user-select:none}
+.lvtog .live-ic{display:inline-flex;align-items:center;gap:5px}
+.lvtog .live-dot{width:9px;height:9px;border-radius:50%;background:var(--faint);transition:.2s}
+.lvtog.on .live-dot{background:#e5484d;animation:livedot 1.4s ease-out infinite}
+@keyframes livedot{0%{box-shadow:0 0 0 0 rgba(229,72,77,.55)}70%{box-shadow:0 0 0 7px rgba(229,72,77,0)}100%{box-shadow:0 0 0 0 rgba(229,72,77,0)}}
+.lvtog .live-txt{font-weight:800;letter-spacing:.05em;font-size:11px;text-transform:uppercase;color:var(--faint)}
+.lvtog.on .live-txt{color:#e5484d}
+.lvtog .sw{width:34px;height:20px;border:2px solid var(--ink);background:var(--paper);position:relative;transition:.18s;flex-shrink:0;border-radius:20px}
+.lvtog .sw::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;background:var(--ink);transition:.18s;border-radius:50%}
+.lvtog.on .sw::after{transform:translateX(14px);background:#fff}
+.lvtog input{display:none}
+.lvto-sel{border:1.5px solid var(--hair);background:var(--paper);color:var(--ink);padding:7px 10px;font-size:13px;font-family:inherit;font-weight:700;outline:none;cursor:pointer;appearance:none;border-radius:8px}
+.live-feed{position:relative;border:1px solid var(--hair);border-radius:18px;min-height:140px;max-height:34vh;width:100%;overflow:auto;padding:18px 20px 14px;text-align:left;display:flex;flex-direction:column;gap:0;margin-bottom:12px;background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 7%,transparent),transparent 130px),var(--soft);box-shadow:0 14px 34px -24px var(--acc)}
+.live-feed::-webkit-scrollbar{width:6px}
+.live-feed::-webkit-scrollbar-thumb{background:var(--hair);border-radius:10px}
+.lv-pair{position:relative;padding:14px 0 14px 20px;border-bottom:1px solid color-mix(in srgb,var(--hair) 60%,transparent);animation:lvIn .35s cubic-bezier(.2,.7,.3,1)}
+.lv-pair:last-child{border-bottom:none}
+.lv-pair::before{content:"";position:absolute;left:0;top:15px;bottom:15px;width:3px;border-radius:3px;background:linear-gradient(var(--acc),color-mix(in srgb,var(--acc) 30%,transparent))}
+@keyframes lvIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.lv-src{font-size:13px;color:var(--grey);margin-bottom:5px;line-height:1.45}
+.lv-tgt{font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-.02em;color:var(--ink)}
+.lv-tgt.pending{color:var(--faint);font-weight:500}
+.lv-tgt.pending::after{content:"";display:inline-block;animation:lvDots 1.2s steps(4,end) infinite}
+@keyframes lvDots{0%{content:""}25%{content:"·"}50%{content:"··"}75%{content:"···"}}
+.live-interim{min-height:24px;margin-bottom:12px;font-size:14px;color:var(--acc);text-align:left;font-weight:600;display:flex;align-items:center;gap:9px}
+.live-interim:empty{display:none}
+.live-interim .eq{display:inline-flex;align-items:flex-end;gap:2px;height:14px;flex-shrink:0}
+.live-interim .eq i{width:3px;background:var(--acc);border-radius:2px;height:4px;animation:eq 1s ease-in-out infinite}
+.live-interim .eq i:nth-child(2){animation-delay:.2s}.live-interim .eq i:nth-child(3){animation-delay:.4s}.live-interim .eq i:nth-child(4){animation-delay:.15s}
+@keyframes eq{0%,100%{height:4px}50%{height:14px}}
+.note{font-size:12px;color:var(--faint);margin-top:18px;line-height:1.6}
+.foot{text-align:center;padding:16px;font-size:11px;color:var(--faint);border-top:1px solid var(--hair)}
+.foot b{color:var(--acc);font-weight:800}
+audio{width:100%;margin-top:16px;height:42px}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--ink);color:#fff;padding:13px 24px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;border-radius:30px;transition:.22s;z-index:90}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:620px){.hero-h{font-size:34px}.hero-feats{grid-template-columns:1fr}.app-card{padding:24px 18px}h1{font-size:26px}.timer{font-size:52px}.stage{padding:28px 18px}}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="mark">
+    <svg viewBox="0 0 100 100" aria-label="Meeting AI">
+      <path d="M22 8 H78 a16 16 0 0 1 16 16 V60 a16 16 0 0 1 -16 16 H50 l-20 18 v-18 H22 a16 16 0 0 1 -16 -16 V24 A16 16 0 0 1 22 8 Z" fill="currentColor"/>
+      <g fill="#fff"><rect x="26" y="38" width="7.5" height="12" rx="3.75"/><rect x="39" y="29" width="7.5" height="30" rx="3.75"/><rect x="52" y="22" width="7.5" height="44" rx="3.75"/><rect x="65" y="32" width="7.5" height="24" rx="3.75"/></g>
+    </svg>
+    <b>Meeting AI</b>
+  </div>
+  <div class="top-r">
+    <button class="hist-btn" id="setBtn" title="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+    <button class="hist-btn" id="histBtn" title="History">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 4v4h4"/><path d="M12 7v5l3 2"/></svg>
+    </button>
+    <div class="theme-seg" id="theme" title="Theme">
+      <button data-th="sota" class="sw-sota" title="Blue"></button><button data-th="mono" class="sw-mono" title="Black"></button>
+    </div>
+    <div class="lang" id="lang">
+      <button data-l="en">EN</button><button data-l="vi">VI</button><button data-l="ko">KO</button>
+    </div>
+  </div>
+</div>
+<div class="stage">
+
+  <div class="screen on" id="sc-hero">
+    <div class="hero-badge"><span class="live-dot"></span><span data-t="hero_badge">AI · Đa ngôn ngữ · Tách giọng</span></div>
+    <h1 class="hero-h" data-t="hero_h">Ghi âm cuộc họp.<br><span class="accent" data-t="hero_h2">AI lo phần còn lại.</span></h1>
+    <p class="hero-sub" data-t="hero_sub">Tách giọng từng người, dịch trực tiếp, và tóm tắt cuộc họp tự động — Việt · Anh · Hàn.</p>
+    <button class="hero-cta" id="goApp"><span data-t="hero_cta">Bắt đầu ngay</span> →</button>
+    <div class="hero-feats">
+      <div class="feat"><div class="ic">👥</div><h3 data-t="hf1t">Tách giọng nói</h3><p data-t="hf1d">Tự nhận diện Speaker 1, 2, 3… ai nói gì rõ ràng.</p></div>
+      <div class="feat"><div class="ic">🌐</div><h3 data-t="hf2t">Dịch trực tiếp</h3><p data-t="hf2d">Phụ đề song ngữ ngay khi đang họp, đa ngôn ngữ.</p></div>
+      <div class="feat"><div class="ic">✨</div><h3 data-t="hf3t">Tóm tắt AI</h3><p data-t="hf3d">Biên bản, quyết định, việc cần làm — tự động.</p></div>
+    </div>
+  </div>
+
+  <div class="screen" id="sc-cap">
+   <div class="app-card" style="display:flex;flex-direction:column">
+    <div class="hero-mark">
+      <svg viewBox="0 0 100 100" aria-label="Meeting AI">
+        <path d="M22 8 H78 a16 16 0 0 1 16 16 V60 a16 16 0 0 1 -16 16 H50 l-20 18 v-18 H22 a16 16 0 0 1 -16 -16 V24 A16 16 0 0 1 22 8 Z" fill="currentColor"/>
+        <g fill="#fff"><rect x="26" y="38" width="7.5" height="12" rx="3.75"/><rect x="39" y="29" width="7.5" height="30" rx="3.75"/><rect x="52" y="22" width="7.5" height="44" rx="3.75"/><rect x="65" y="32" width="7.5" height="24" rx="3.75"/></g>
+      </svg>
+    </div>
+    <div class="viz" id="viz"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="timer" id="timer">00:00</div>
+    <div class="rec-hint" id="recHint" data-t="c_hint">Press record to start</div>
+    <div class="live-bar">
+      <label class="lvtog on" id="lvToggle">
+        <span class="live-ic"><span class="live-dot"></span><span class="live-txt">LIVE</span></span>
+        <span class="sw"></span><input type="checkbox" id="lvOn" checked>
+        <span data-t="c_translate">Live translate</span></label>
+      <select id="lvMode" class="lvto-sel" title="Live mode">
+        <option value="fast" data-t="lv_fast">⚡ Fast</option>
+        <option value="multi" data-t="lv_multi">🌐 Multi</option>
+      </select>
+      <select id="lvFrom" class="lvto-sel">
+        <option value="auto" data-t="lv_auto">Auto</option>
+        <option value="en-US">EN</option><option value="vi-VN">VI</option><option value="ko-KR">KO</option>
+        <option value="ja-JP">JA</option><option value="zh-CN">ZH</option>
+      </select>
+      <span style="font-weight:800;color:var(--faint)">→</span>
+      <select id="lvTo" class="lvto-sel">
+        <option value="Vietnamese">Tiếng Việt</option><option value="English">English</option>
+        <option value="Korean">한국어</option><option value="Japanese">日本語</option><option value="Chinese">中文</option>
+      </select>
+    </div>
+    <div class="live-feed" id="lvFeed" style="display:none"></div>
+    <div class="live-interim" id="lvInterim" style="display:none"></div>
+    <div id="capIdle">
+      <button class="btn big" id="btnRec" data-t="c_record">● Record</button>
+      <a class="link" id="btnUpload" data-t="c_upload">or upload an audio file</a>
+      <input type="file" id="fileIn" accept="audio/*" style="display:none">
+    </div>
+    <div id="capRec" style="display:none">
+      <div class="dual" style="margin-top:4px"><button class="btn out" id="btnPause" data-t="c_pause">Pause</button><button class="btn" id="btnStop" data-t="c_stop">Stop</button></div>
+    </div>
+    <div id="capReady" style="display:none">
+      <button class="btn big" id="btnSummarize" data-t="c_summarize">Summarize →</button>
+      <a class="link" id="btnRedo" data-t="c_redo">Start over</a>
+      <audio id="player" controls></audio>
+    </div>
+    <p class="note" id="diarNote" data-t="c_diar">👥 Voices are separated automatically (Speaker 1, 2, 3…).</p>
+   </div>
+  </div>
+
+  <div class="screen" id="sc-res">
+    <div id="resProc" class="proc">
+      <div class="bot" aria-hidden="true">
+        <div class="bot-spark s1">✦</div><div class="bot-spark s2">✦</div><div class="bot-spark s3">+</div>
+        <svg viewBox="0 0 120 120" class="bot-svg">
+          <line class="bot-ant" x1="60" y1="20" x2="60" y2="32"/><circle class="bot-ant-dot" cx="60" cy="16" r="5"/>
+          <rect class="bot-head" x="28" y="32" width="64" height="50" rx="14"/>
+          <circle class="bot-eye" cx="48" cy="56" r="6"/><circle class="bot-eye" cx="72" cy="56" r="6"/>
+          <path class="bot-mouth" d="M50 68 Q60 76 70 68"/>
+          <rect class="bot-body" x="40" y="86" width="40" height="20" rx="8"/>
+          <circle class="bot-hand h-l" cx="44" cy="104" r="4"/><circle class="bot-hand h-r" cx="76" cy="104" r="4"/>
+        </svg>
+      </div>
+      <p id="procMsg">Transcribing…</p><small id="procSub"></small>
+    </div>
+    <div id="resBody" style="display:none">
+      <div class="res-head">
+        <div class="res-tabs"><button id="tabSum" class="on" data-t="r_summary">Summary</button><button id="tabTr" data-t="r_transcript">Transcript</button></div>
+        <span class="wc" id="wc"></span>
+      </div>
+      <div class="out" id="summary"></div>
+      <div class="out" id="transcript" style="display:none"></div>
+      <div class="dual" style="margin-top:18px"><button class="btn out" id="btnCopy" data-t="r_copy">Copy</button><button class="btn out" id="btnDl" data-t="r_download">Download</button></div>
+      <button class="btn out" id="btnDlLive" data-t="r_dl_live" style="margin-top:10px;display:none">⬇ Live translation</button>
+      <button class="btn" id="btnNew" data-t="r_new" style="margin-top:10px">+ New meeting</button>
+      <details class="spbox" id="spbox">
+        <summary><span class="arr">▶</span><span data-t="sp_title">Rename speakers (optional)</span></summary>
+        <div class="sp-rows" id="spRows"></div>
+        <button class="sp-apply" id="spApply" data-t="sp_apply">Apply</button>
+      </details>
+    </div>
+  </div>
+
+</div>
+<div class="foot">© <span id="yr"></span> <b>V-Kookmin™</b> · Meeting AI</div>
+
+<div class="overlay" id="overlay">
+  <div class="panel">
+    <div class="panel-h"><b data-t="h_title">History</b><button class="x" id="histClose">×</button></div>
+    <ul class="mlist" id="mlist"></ul>
+  </div>
+</div>
+<div class="overlay" id="setOverlay">
+  <div class="panel">
+    <div class="panel-h"><b data-t="set_title">Settings · API Keys</b><button class="x" id="setClose">×</button></div>
+    <div class="set-body">
+      <label data-t="set_oa">OpenAI key — for the summary</label>
+      <input type="password" id="setOpenai" placeholder="sk-proj-...">
+      <a class="set-link" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener" data-t="set_oa_link">Get OpenAI key →</a>
+      <label style="margin-top:18px" data-t="set_aai">AssemblyAI key — to separate speakers</label>
+      <input type="password" id="setAai" placeholder="••••••••••••••••">
+      <a class="set-link" href="https://www.assemblyai.com/dashboard/signup" target="_blank" rel="noopener" data-t="set_aai_link">Get AssemblyAI key (free) →</a>
+      <p class="set-note" data-t="set_note">🔒 Keys are stored only on this device.</p>
+      <button class="btn" id="setSave" data-t="set_save">Save</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const CONFIG={OPENAI_KEY:localStorage.getItem('mr_openai')||"",ASSEMBLYAI_KEY:localStorage.getItem('mr_aai')||""};
+const I={
+ en:{hero_badge:"AI · Multilingual · Speaker split",hero_h:"Record the meeting.",hero_h2:"AI does the rest.",hero_sub:"Separate every speaker, translate live, and summarize meetings automatically — Vietnamese · English · Korean.",hero_cta:"Get started",
+   hf1t:"Speaker separation",hf1d:"Auto-detects Speaker 1, 2, 3… so you know who said what.",hf2t:"Live translation",hf2d:"Bilingual subtitles while you meet, multi-language.",hf3t:"AI summary",hf3d:"Minutes, decisions, action items — automatic.",
+   c_hint:"Press record to start",c_record:"● Record",c_upload:"or upload an audio file",c_pause:"Pause",c_resume:"Resume",c_stop:"Stop",c_summarize:"Summarize →",c_redo:"Start over",
+   c_recording:"Recording",c_paused:"Paused",c_ready:"Ready",lv_auto:"Auto",lv_fast:"⚡ Fast",lv_multi:"🌐 Multi",
+   c_diar:"👥 Voices are separated automatically (Speaker 1, 2, 3…).",
+   p_upload:"Uploading audio…",p_diar:"Separating voices…",p_sum:"Writing the summary…",p_wait:"Your AI assistant is hard at work…",
+   r_summary:"Summary",r_transcript:"Transcript",r_copy:"Copy",r_download:"Download",r_new:"+ New meeting",r_dl_live:"⬇ Live translation",words:"words",
+   h_title:"History",open:"Open",empty:"No meetings yet",
+   sp_title:"Rename speakers (optional)",sp_apply:"Apply",sp_ph:"Real name",sp_done:"Names applied",
+   c_translate:"Live translate",lv_listening:"Listening…",lv_file:"Live translate needs the page served over http(s).",lv_net:"Reconnecting…",lv_nosupport:"Live translate needs Chrome or Edge (Web Speech API).",lv_mic:"Microphone permission was denied.",
+   copied:"Copied",err:"Error: ",delq:"Delete this meeting?",deflt:"Meeting",
+   set_title:"Settings · API Keys",set_oa:"OpenAI key — for the summary",set_oa_link:"Get OpenAI key →",set_aai:"AssemblyAI key — to separate speakers",set_aai_link:"Get AssemblyAI key (free) →",set_note:"🔒 Keys are stored only on this device. AssemblyAI is optional — without it, speakers are guessed from context.",set_save:"Save",set_saved:"Keys saved",
+   nokey:"Open Settings (⚙ top right) and add your API key first.",
+   sys:"You are a professional meeting-minutes assistant. The transcript is labeled by speaker (Speaker 1, Speaker 2, …) — keep these exact labels. Write minutes in English, in Markdown:\n## Participants\n## Overview\n## Key points\n## Decisions\n## Action items\n## Open issues\nNever invent anything not in the transcript."},
+ vi:{hero_badge:"AI · Đa ngôn ngữ · Tách giọng",hero_h:"Ghi âm cuộc họp.",hero_h2:"AI lo phần còn lại.",hero_sub:"Tách giọng từng người, dịch trực tiếp, và tóm tắt cuộc họp tự động — Việt · Anh · Hàn.",hero_cta:"Bắt đầu ngay",
+   hf1t:"Tách giọng nói",hf1d:"Tự nhận diện Speaker 1, 2, 3… ai nói gì rõ ràng.",hf2t:"Dịch trực tiếp",hf2d:"Phụ đề song ngữ ngay khi đang họp, đa ngôn ngữ.",hf3t:"Tóm tắt AI",hf3d:"Biên bản, quyết định, việc cần làm — tự động.",
+   c_hint:"Bấm để bắt đầu ghi",c_record:"● Ghi âm",c_upload:"hoặc tải lên file audio",c_pause:"Tạm dừng",c_resume:"Tiếp tục",c_stop:"Dừng",c_summarize:"Tóm tắt →",c_redo:"Làm lại",
+   c_recording:"Đang ghi",c_paused:"Tạm dừng",c_ready:"Sẵn sàng",lv_auto:"Tự động",lv_fast:"⚡ Nhanh",lv_multi:"🌐 Đa ngữ",
+   c_diar:"👥 Tự động tách giọng từng người (Speaker 1, 2, 3…).",
+   p_upload:"Đang tải audio lên…",p_diar:"Đang tách giọng nói…",p_sum:"Đang viết tóm tắt…",p_wait:"Trợ lý AI đang chăm chỉ làm việc…",
+   r_summary:"Tóm tắt",r_transcript:"Bản ghi",r_copy:"Copy",r_download:"Tải xuống",r_new:"+ Cuộc họp mới",r_dl_live:"⬇ Bản dịch trực tiếp",words:"từ",
+   h_title:"Lịch sử",open:"Mở",empty:"Chưa có cuộc họp",
+   sp_title:"Đổi tên người nói (tùy chọn)",sp_apply:"Áp dụng",sp_ph:"Tên thật",sp_done:"Đã áp dụng tên",
+   c_translate:"Dịch trực tiếp",lv_listening:"Đang nghe…",lv_file:"Dịch trực tiếp cần mở qua http(s).",lv_net:"Đang kết nối lại…",lv_nosupport:"Dịch trực tiếp cần Chrome hoặc Edge (Web Speech API).",lv_mic:"Micro đã bị từ chối quyền.",
+   copied:"Đã copy",err:"Lỗi: ",delq:"Xóa cuộc họp này?",deflt:"Cuộc họp",
+   set_title:"Cài đặt · API Key",set_oa:"OpenAI key — để tóm tắt",set_oa_link:"Lấy OpenAI key →",set_aai:"AssemblyAI key — để tách giọng nói",set_aai_link:"Lấy AssemblyAI key (miễn phí) →",set_note:"🔒 Key chỉ lưu trên máy này. AssemblyAI là tùy chọn.",set_save:"Lưu",set_saved:"Đã lưu key",
+   nokey:"Mở Cài đặt (⚙ góc trên phải) và nhập API key trước.",
+   sys:"Bạn là trợ lý ghi biên bản họp chuyên nghiệp. Transcript đã gắn nhãn người nói (Speaker 1, Speaker 2, …) — giữ nguyên. Viết biên bản bằng Tiếng Việt, Markdown:\n## Thành phần tham dự\n## Tóm tắt chung\n## Điểm chính\n## Quyết định\n## Việc cần làm\n## Vấn đề còn mở\nKhông bịa thông tin ngoài transcript."},
+ ko:{hero_badge:"AI · 다국어 · 화자 분리",hero_h:"회의를 녹음하세요.",hero_h2:"나머지는 AI가.",hero_sub:"화자를 분리하고, 실시간 번역하고, 회의를 자동 요약합니다 — 베트남어 · 영어 · 한국어.",hero_cta:"시작하기",
+   hf1t:"화자 분리",hf1d:"Speaker 1, 2, 3…을 자동 감지해 누가 말했는지 명확히.",hf2t:"실시간 번역",hf2d:"회의 중 이중 언어 자막, 다국어 지원.",hf3t:"AI 요약",hf3d:"회의록, 결정, 액션 아이템 — 자동.",
+   c_hint:"녹음하려면 누르세요",c_record:"● 녹음",c_upload:"또는 오디오 파일 업로드",c_pause:"일시정지",c_resume:"계속",c_stop:"정지",c_summarize:"요약하기 →",c_redo:"다시 시작",
+   c_recording:"녹음 중",c_paused:"일시정지됨",c_ready:"준비됨",lv_auto:"자동",lv_fast:"⚡ 빠름",lv_multi:"🌐 다국어",
+   c_diar:"👥 화자를 자동으로 분리합니다 (Speaker 1, 2, 3…).",
+   p_upload:"오디오 업로드 중…",p_diar:"화자 분리 중…",p_sum:"요약 작성 중…",p_wait:"AI 비서가 열심히 작업 중…",
+   r_summary:"요약",r_transcript:"전체 기록",r_copy:"복사",r_download:"다운로드",r_new:"+ 새 회의",r_dl_live:"⬇ 실시간 번역",words:"단어",
+   h_title:"기록",open:"열기",empty:"회의가 없습니다",
+   sp_title:"화자 이름 변경 (선택)",sp_apply:"적용",sp_ph:"실명",sp_done:"이름이 적용됨",
+   c_translate:"실시간 번역",lv_listening:"듣는 중…",lv_file:"실시간 번역은 http(s)로 열어야 합니다.",lv_net:"다시 연결 중…",lv_nosupport:"실시간 번역은 Chrome 또는 Edge가 필요합니다.",lv_mic:"마이크 권한이 거부되었습니다.",
+   copied:"복사됨",err:"오류: ",delq:"이 회의를 삭제할까요?",deflt:"회의",
+   set_title:"설정 · API 키",set_oa:"OpenAI 키 — 요약용",set_oa_link:"OpenAI 키 받기 →",set_aai:"AssemblyAI 키 — 화자 분리용",set_aai_link:"AssemblyAI 키 받기 (무료) →",set_note:"🔒 키는 이 기기에만 저장됩니다. AssemblyAI는 선택 사항.",set_save:"저장",set_saved:"키가 저장됨",
+   nokey:"설정(⚙ 오른쪽 위)을 열고 API 키를 입력하세요.",
+   sys:"당신은 전문 회의록 작성 비서입니다. 기록은 화자(Speaker 1, Speaker 2, …)로 라벨링되어 있습니다 — 유지하세요. 한국어 Markdown 회의록:\n## 참석자\n## 개요\n## 핵심 사항\n## 결정 사항\n## 액션 아이템\n## 미해결 사항\n기록에 없는 내용을 지어내지 마세요."}
+};
+let L=localStorage.getItem('mr_lang')||'en';
+const $=id=>document.getElementById(id);
+const t=k=>I[L][k]||k;
+function applyLang(){document.documentElement.lang=L;
+  document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));
+  document.querySelectorAll('#lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===L));
+  refreshDyn();renderHist();}
+$('lang').onclick=e=>{const b=e.target.closest('button');if(!b)return;L=b.dataset.l;localStorage.setItem('mr_lang',L);applyLang();};
+function show(sc){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(sc).classList.add('on');}
+$('goApp').onclick=()=>show('sc-cap');
+
+let mediaRecorder,chunks=[],audioBlob=null,audioStream=null,extra=[];
+let startTime=0,elapsed=0,timerInt=null,paused=false;
+let curTr="",curSum="",view="summary",capState="idle",curId=null;
+let actx=null,analyser=null,raf=null;
+let recog=null,lvRunning=false,lvWantOn=false,lvHistory=[],lvAll=[];
+let mlRec=null,mlTimer=null,mlStream=null;const ML_SEGMENT_MS=7000;
+function toast(m){const el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),1800);}
+function fmt(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
+function refreshDyn(){
+  if(capState==='recording')$('recHint').innerHTML='<span class="live"></span>'+t('c_recording');
+  else if(capState==='paused')$('recHint').textContent=t('c_paused');
+  else if(capState==='ready')$('recHint').textContent='✓ '+t('c_ready');
+  else $('recHint').textContent=t('c_hint');}
+function startViz(stream){try{actx=new(window.AudioContext||window.webkitAudioContext)();
+  analyser=actx.createAnalyser();analyser.fftSize=64;actx.createMediaStreamSource(stream).connect(analyser);
+  const bars=$('viz').children,d=new Uint8Array(analyser.frequencyBinCount);
+  const draw=()=>{analyser.getByteFrequencyData(d);for(let i=0;i<bars.length;i++)bars[i].style.height=Math.max(6,(d[i*2]||0)/255*40)+'px';raf=requestAnimationFrame(draw);};draw();}catch(e){}}
+function stopViz(){if(raf)cancelAnimationFrame(raf);[...$('viz').children].forEach(b=>b.style.height='6px');if(actx){actx.close().catch(()=>{});actx=null;}}
+async function buildStream(){const mic=await navigator.mediaDevices.getUserMedia({audio:true});extra=[mic];return mic;}
+function setCap(s){capState=s;$('capIdle').style.display=s==='idle'?'':'none';$('capRec').style.display=(s==='recording'||s==='paused')?'':'none';$('capReady').style.display=s==='ready'?'':'none';document.body.classList.toggle('recing',s==='recording');refreshDyn();}
+$('btnRec').onclick=async()=>{
+  try{audioStream=await buildStream();chunks=[];
+    $('lvFeed').innerHTML='';$('lvFeed').style.display='none';$('lvInterim').textContent='';$('lvInterim').style.display='none';
+    curTr="";curSum="";lvHistory=[];lvAll=[];
+    mediaRecorder=new MediaRecorder(audioStream);
+    mediaRecorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+    mediaRecorder.onstop=()=>{audioBlob=new Blob(chunks,{type:chunks[0]?.type||'audio/webm'});$('player').src=URL.createObjectURL(audioBlob);stopViz();setCap('ready');};
+    mediaRecorder.start();elapsed=0;startTime=Date.now();paused=false;timerInt=setInterval(tick,250);
+    startViz(audioStream);setCap('recording');
+    if($('lvOn').checked)startLive();
+  }catch(e){toast(e.message);}};
+function tick(){if(!paused)$('timer').textContent=fmt(Math.round((elapsed+(Date.now()-startTime))/1000));}
+$('btnPause').onclick=()=>{if(!mediaRecorder)return;
+  if(!paused){mediaRecorder.pause();paused=true;elapsed+=Date.now()-startTime;$('btnPause').textContent=t('c_resume');setCap('paused');stopViz();pauseLive();}
+  else{mediaRecorder.resume();paused=false;startTime=Date.now();$('btnPause').textContent=t('c_pause');setCap('recording');startViz(audioStream);if($('lvOn').checked)startLive();}};
+$('btnStop').onclick=()=>{if(!mediaRecorder)return;if(!paused)elapsed+=Date.now()-startTime;mediaRecorder.stop();clearInterval(timerInt);audioStream.getTracks().forEach(x=>x.stop());extra.forEach(s=>s.getTracks().forEach(x=>x.stop()));$('btnPause').textContent=t('c_pause');stopLive();};
+$('btnUpload').onclick=()=>$('fileIn').click();
+$('fileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;audioBlob=f;$('player').src=URL.createObjectURL(f);$('timer').textContent='00:00';setCap('ready');toast(f.name);};
+$('btnRedo').onclick=()=>{audioBlob=null;$('timer').textContent='00:00';setCap('idle');$('lvFeed').style.display='none';$('lvInterim').style.display='none';$('lvFeed').innerHTML='';};
+function setProc(msg,sub){$('procMsg').textContent=msg;$('procSub').textContent=sub||'';}
+$('btnSummarize').onclick=async()=>{if(!CONFIG.OPENAI_KEY&&!CONFIG.ASSEMBLYAI_KEY){alert(t('nokey'));return;}
+  show('sc-res');$('resProc').style.display='';$('resBody').style.display='none';
+  const ok=await transcribe();if(!ok)return;setProc(t('p_sum'),t('p_wait'));await summarize();};
+async function transcribe(){try{
+    if(CONFIG.ASSEMBLYAI_KEY){curTr=await transcribeAAI();}else{curTr=await transcribeWhisper();}
+    return !!curTr;
+  }catch(e){curTr='';curSum='⚠ '+t('err')+e.message;renderResult();toast(t('err')+e.message);return false;}}
+async function transcribeAAI(){const H={authorization:CONFIG.ASSEMBLYAI_KEY};setProc(t('p_upload'),t('p_wait'));
+  const up=await fetch('https://api.assemblyai.com/v2/upload',{method:'POST',headers:H,body:audioBlob});
+  const uj=await up.json();if(!up.ok)throw new Error(uj.error||'upload failed');setProc(t('p_diar'),t('p_wait'));
+  const cr=await fetch('https://api.assemblyai.com/v2/transcript',{method:'POST',headers:{...H,'content-type':'application/json'},body:JSON.stringify({audio_url:uj.upload_url,speech_models:["universal-2"],speaker_labels:true,language_detection:true})});
+  const cj=await cr.json();if(!cr.ok)throw new Error(cj.error||'request failed');const id=cj.id;
+  for(let i=0;i<400;i++){await new Promise(r=>setTimeout(r,3000));
+    const pr=await fetch('https://api.assemblyai.com/v2/transcript/'+id,{headers:H});const pj=await pr.json();
+    if(pj.status==='completed'){if(pj.utterances&&pj.utterances.length){const map={};let n=0;
+        return pj.utterances.map(u=>{if(!(u.speaker in map))map[u.speaker]='Speaker '+(++n);return map[u.speaker]+': '+u.text;}).join('\n');}
+      return pj.text||'';}
+    if(pj.status==='error')throw new Error(pj.error||'transcription error');}
+  throw new Error('timeout');}
+async function transcribeWhisper(){setProc(t('p_diar'),t('p_wait'));let ext='webm';const ty=audioBlob.type||'';
+  if(ty.includes('mp4')||ty.includes('m4a'))ext='m4a';else if(ty.includes('mpeg')||ty.includes('mp3'))ext='mp3';else if(ty.includes('wav'))ext='wav';else if(audioBlob.name&&audioBlob.name.includes('.'))ext=audioBlob.name.split('.').pop();
+  const fd=new FormData();fd.append('file',audioBlob,'m.'+ext);fd.append('model','whisper-1');
+  const r=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{'Authorization':'Bearer '+CONFIG.OPENAI_KEY},body:fd});
+  const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'HTTP '+r.status);return d.text.trim();}
+async function summarize(){if(!CONFIG.OPENAI_KEY){curSum="";renderResult();save();return;}
+  try{const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+CONFIG.OPENAI_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-4o-mini',temperature:.3,messages:[{role:'system',content:t('sys')},{role:'user',content:curTr}]})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'HTTP '+r.status);curSum=d.choices[0].message.content.trim();renderResult();save();
+  }catch(e){curSum='⚠ '+t('err')+e.message;renderResult();toast(t('err')+e.message);}}
+function renderResult(){$('resProc').style.display='none';$('resBody').style.display='';
+  $('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=fmtTr(curTr);
+  $('wc').textContent=curTr.split(/\s+/).filter(Boolean).length+' '+t('words');
+  $('btnDlLive').style.display=lvAll.length?'':'none';buildSpeakers();setView(curSum?'summary':'transcript');}
+function fmtTr(text){if(!text)return'';return text.split('\n').filter(Boolean).map(line=>{
+    const m=line.match(/^(.{1,40}?):\s*(.*)$/);
+    if(m)return `<div class="tr-turn"><span class="sp">${esc(m[1])}</span><span class="tx">${esc(m[2])}</span></div>`;
+    return `<div class="tr-turn"><span class="tx">${esc(line)}</span></div>`;}).join('');}
+function buildSpeakers(){const labels=[...new Set((curTr.match(/Speaker \d+/g)||[]))].sort((a,b)=>parseInt(a.slice(8))-parseInt(b.slice(8)));
+  const box=$('spbox'),rows=$('spRows');if(labels.length<1){box.style.display='none';rows.innerHTML='';return;}box.style.display='';
+  rows.innerHTML=labels.map(l=>`<div class="sprow"><span class="lab">${l}</span><input data-label="${l}" placeholder="${t('sp_ph')}"></div>`).join('');}
+$('spApply').onclick=()=>{let changed=false;
+  $('spRows').querySelectorAll('input').forEach(inp=>{const name=inp.value.trim();if(!name)return;
+    const re=new RegExp(inp.dataset.label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g');curSum=curSum.replace(re,name);curTr=curTr.replace(re,name);changed=true;});
+  if(!changed)return;$('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=fmtTr(curTr);buildSpeakers();save(true);toast(t('sp_done'));};
+function setView(v){view=v;$('tabSum').classList.toggle('on',v==='summary');$('tabTr').classList.toggle('on',v==='transcript');$('summary').style.display=v==='summary'?'':'none';$('transcript').style.display=v==='transcript'?'':'none';}
+$('tabSum').onclick=()=>setView('summary');$('tabTr').onclick=()=>setView('transcript');
+$('btnCopy').onclick=()=>{const x=view==='summary'?curSum:curTr;navigator.clipboard.writeText(x||'').then(()=>toast(t('copied')));};
+$('btnDl').onclick=()=>{const x=view==='summary'?curSum:curTr;if(!x)return;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([x],{type:'text/plain;charset=utf-8'}));a.download=view==='summary'?'summary.md':'transcript.txt';a.click();};
+$('btnDlLive').onclick=()=>{if(!lvAll.length)return;const txt=lvAll.map(p=>p.src+'\n'+p.tgt).join('\n\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));a.download='live-translation.txt';a.click();};
+$('btnNew').onclick=()=>{curTr="";curSum="";curId=null;audioBlob=null;lvHistory=[];lvAll=[];$('timer').textContent='00:00';setCap('idle');show('sc-cap');};
+function save(update){let list=JSON.parse(localStorage.getItem('mr_m')||'[]');
+  const tt=(curSum.match(/##.*\n+(.+)/)||[])[1]||(curTr.split('\n')[0])||t('deflt');
+  const title=tt.replace(/[*_#•-]/g,'').replace(/^Speaker \d+:\s*/,'').trim().slice(0,52)||t('deflt');
+  if(update&&curId){list=list.map(m=>m.id===curId?{...m,title,transcript:curTr,summary:curSum}:m);}
+  else{curId=Date.now();list.unshift({id:curId,date:new Date().toLocaleString(),title,transcript:curTr,summary:curSum});}
+  localStorage.setItem('mr_m',JSON.stringify(list.slice(0,40)));renderHist();}
+function renderHist(){const list=JSON.parse(localStorage.getItem('mr_m')||'[]');
+  $('mlist').innerHTML=list.length?list.map(m=>`<li><div class="mt"><b>${esc(m.title)}</b><span>${m.date}</span></div><button class="mini" onclick="openM(${m.id})">${t('open')}</button><button class="mini" onclick="delM(${m.id})">🗑</button></li>`).join(''):`<li class="mempty">${t('empty')}</li>`;}
+function openM(id){const m=JSON.parse(localStorage.getItem('mr_m')||'[]').find(x=>x.id===id);if(!m)return;curTr=m.transcript;curSum=m.summary;curId=id;$('overlay').classList.remove('on');show('sc-res');$('resProc').style.display='none';$('resBody').style.display='';renderResult();}
+function delM(id){if(!confirm(t('delq')))return;localStorage.setItem('mr_m',JSON.stringify(JSON.parse(localStorage.getItem('mr_m')||'[]').filter(x=>x.id!==id)));renderHist();}
+$('histBtn').onclick=()=>$('overlay').classList.add('on');
+$('histClose').onclick=()=>$('overlay').classList.remove('on');
+$('overlay').onclick=e=>{if(e.target===$('overlay'))$('overlay').classList.remove('on');};
+$('setBtn').onclick=()=>{$('setOpenai').value=localStorage.getItem('mr_openai')||'';$('setAai').value=localStorage.getItem('mr_aai')||'';$('setOverlay').classList.add('on');};
+$('setClose').onclick=()=>$('setOverlay').classList.remove('on');
+$('setOverlay').onclick=e=>{if(e.target===$('setOverlay'))$('setOverlay').classList.remove('on');};
+$('setSave').onclick=()=>{const oa=$('setOpenai').value.trim(),aai=$('setAai').value.trim();localStorage.setItem('mr_openai',oa);localStorage.setItem('mr_aai',aai);CONFIG.OPENAI_KEY=oa;CONFIG.ASSEMBLYAI_KEY=aai;$('setOverlay').classList.remove('on');toast(t('set_saved'));};
+$('lvToggle').onclick=e=>{if(e.target.tagName!=='INPUT')$('lvOn').checked=!$('lvOn').checked;$('lvToggle').classList.toggle('on',$('lvOn').checked);localStorage.setItem('mr_lvon',$('lvOn').checked?'1':'0');};
+$('lvTo').onchange=()=>localStorage.setItem('mr_lvto',$('lvTo').value);
+$('lvFrom').onchange=()=>localStorage.setItem('mr_lvfrom',$('lvFrom').value);
+$('lvMode').onchange=()=>{localStorage.setItem('mr_lvmode',$('lvMode').value);$('lvFrom').style.display=$('lvMode').value==='multi'?'none':'';
+  if(lvWantOn||(capState==='recording'&&$('lvOn').checked)){stopLive();if($('lvOn').checked&&capState==='recording')startLive();}};
+function lvInfo(msg){$('lvFeed').style.display='flex';$('lvInterim').style.display='flex';$('lvInterim').textContent=msg;}
+const EQ='<span class="eq"><i></i><i></i><i></i><i></i></span>';
+function setInterim(txt){$('lvInterim').innerHTML=EQ+'<span>'+(txt?esc(txt):t('lv_listening'))+'</span>';}
+async function startLiveML(){if(!CONFIG.OPENAI_KEY){lvInfo('⚠ '+t('nokey'));return;}
+  $('lvFeed').style.display='flex';$('lvInterim').style.display='flex';$('lvInterim').innerHTML=EQ+'<span>'+t('lv_listening')+'</span>';lvWantOn=true;
+  try{mlStream=await navigator.mediaDevices.getUserMedia({audio:true});}catch(e){lvInfo('⚠ '+t('lv_mic'));lvWantOn=false;return;}
+  const loop=()=>{if(!lvWantOn||!mlStream)return;let seg=[];try{mlRec=new MediaRecorder(mlStream);}catch(e){lvInfo('⚠ '+e.message);return;}
+    mlRec.ondataavailable=e=>{if(e.data.size)seg.push(e.data);};
+    mlRec.onstop=()=>{const blob=new Blob(seg,{type:seg[0]?.type||'audio/webm'});if(lvWantOn)loop();if(blob.size>2000)transcribeChunk(blob);};
+    mlRec.start();mlTimer=setTimeout(()=>{if(mlRec&&mlRec.state!=='inactive')mlRec.stop();},ML_SEGMENT_MS);};
+  loop();}
+async function transcribeChunk(blob){try{const fd=new FormData();fd.append('file',blob,'seg.webm');fd.append('model','gpt-4o-transcribe');
+    const r=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{'Authorization':'Bearer '+CONFIG.OPENAI_KEY},body:fd});
+    const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'HTTP '+r.status);const txt=(d.text||'').trim();
+    if(txt&&!/^[\s.,!?…]*$/.test(txt)&&txt.length>1)addPair(txt);}catch(e){}}
+function startLive(){if($('lvMode').value==='multi'){startLiveML();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){lvInfo('⚠ '+t('lv_nosupport'));return;}if(!CONFIG.OPENAI_KEY){lvInfo('⚠ '+t('nokey'));return;}if(location.protocol==='file:'){lvInfo('⚠ '+t('lv_file'));return;}
+  $('lvFeed').style.display='flex';$('lvInterim').style.display='flex';setInterim('');
+  recog=new SR();const fl=$('lvFrom').value;recog.lang=(fl&&fl!=='auto')?fl:(navigator.language||'en-US');
+  recog.continuous=true;recog.interimResults=true;recog.onstart=()=>setInterim('');
+  recog.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal){addPair(r[0].transcript.trim());}else interim+=r[0].transcript;}setInterim(interim);};
+  recog.onerror=ev=>{if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){lvInfo('⚠ '+t('lv_mic'));lvWantOn=false;}else if(ev.error==='no-speech'||ev.error==='aborted'){}else if(ev.error==='network'){setInterim('');}};
+  recog.onend=()=>{lvRunning=false;if(lvWantOn){setTimeout(()=>{if(lvWantOn){try{recog.start();lvRunning=true;}catch(e){}}},400);}};
+  lvWantOn=true;try{recog.start();lvRunning=true;}catch(e){lvInfo('⚠ '+e.message);}}
+function stopML(){if(mlTimer)clearTimeout(mlTimer);if(mlRec&&mlRec.state!=='inactive'){try{mlRec.stop();}catch(e){}}mlRec=null;if(mlStream){mlStream.getTracks().forEach(t=>t.stop());mlStream=null;}}
+function pauseLive(){lvWantOn=false;if(recog){try{recog.stop();}catch(e){}}stopML();}
+function stopLive(){lvWantOn=false;$('lvInterim').textContent='';if(recog){try{recog.stop();}catch(e){}recog=null;}stopML();}
+async function addPair(src){if(!src)return;const row=document.createElement('div');row.className='lv-pair';
+  row.innerHTML=`<div class="lv-src">${esc(src)}</div><div class="lv-tgt pending"></div>`;
+  $('lvFeed').appendChild(row);$('lvFeed').scrollTop=$('lvFeed').scrollHeight;
+  try{const to=$('lvTo').value;const ctx=lvHistory.slice(-3).map(p=>`${p.src} => ${p.tgt}`).join('\n');
+    const sys=`You are a professional real-time meeting interpreter. The source language may be anything — auto-detect it. Translate the speaker's line into natural, fluent ${to} as a human interpreter would — convey meaning, not word-for-word. Fix obvious speech-recognition errors from context. Keep it concise. Output ONLY the ${to} translation: no quotes, no notes, no original text.`;
+    const user=(ctx?`Recent context (for flow only, do NOT re-translate it):\n${ctx}\n\n`:'')+`Translate this line:\n${src}`;
+    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+CONFIG.OPENAI_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-4o',temperature:.3,messages:[{role:'system',content:sys},{role:'user',content:user}]})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'HTTP '+r.status);const tgt=d.choices[0].message.content.trim();
+    const el=row.querySelector('.lv-tgt');el.classList.remove('pending');el.textContent=tgt;lvHistory.push({src,tgt});if(lvHistory.length>8)lvHistory.shift();lvAll.push({src,tgt});$('lvFeed').scrollTop=$('lvFeed').scrollHeight;
+  }catch(e){const el=row.querySelector('.lv-tgt');el.classList.remove('pending');el.textContent='⚠ '+e.message;}}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function md(x){if(!x)return'';return esc(x).replace(/^### (.*)$/gm,'<h3>$1</h3>').replace(/^#{1,2} (.*)$/gm,'<h2>$1</h2>').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/^- \[x\] (.*)$/gmi,'<span class="ck">☑</span> $1').replace(/^- \[ \] (.*)$/gm,'☐ $1').replace(/^[-*] (.*)$/gm,'• $1').replace(/\n/g,'<br>');}
+$('theme').onclick=e=>{const b=e.target.closest('button');if(!b)return;setTheme(b.dataset.th);localStorage.setItem('mr_theme',b.dataset.th);};
+function setTheme(th){document.body.classList.toggle('mono',th==='mono');document.querySelectorAll('#theme button').forEach(x=>x.classList.toggle('on',x.dataset.th===th));}
+setTheme(localStorage.getItem('mr_theme')||'sota');
+$('yr').textContent=new Date().getFullYear();
+const _lvon=localStorage.getItem('mr_lvon')!=='0';$('lvOn').checked=_lvon;$('lvToggle').classList.toggle('on',_lvon);
+if(localStorage.getItem('mr_lvto'))$('lvTo').value=localStorage.getItem('mr_lvto');
+if(localStorage.getItem('mr_lvfrom'))$('lvFrom').value=localStorage.getItem('mr_lvfrom');
+if(localStorage.getItem('mr_lvmode'))$('lvMode').value=localStorage.getItem('mr_lvmode');
+$('lvFrom').style.display=$('lvMode').value==='multi'?'none':'';
+applyLang();
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+:root{--ink:#0a0a0a;--paper:#ffffff;--grey:#6b6b6b;--faint:#a8a8a8;--hair:#e6e6e6;--soft:#f4f4f4;--acc:#0a0a0a}
+body.sota{--ink:#e9eefb;--paper:#0a1124;--grey:#9fb0d4;--faint:#5c6a8c;--hair:#1c2945;--soft:#121c34;--acc:#1f6bff}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5;letter-spacing:-.015em}
+/* The full component styles are injected by the MeetingApp component. */
