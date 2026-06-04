@@ -223,7 +223,7 @@ audio{width:100%;margin-top:16px;height:42px}
     <b>Meeting AI</b>
   </div>
   <div class="top-r">
-    <button class="hist-btn" id="setBtn" title="Settings">
+    <button class="hist-btn" id="setBtn" title="Settings" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
     <button class="hist-btn" id="histBtn" title="History">
@@ -360,7 +360,9 @@ audio{width:100%;margin-top:16px;height:42px}
 </div>
 <div class="toast" id="toast"></div>
 <script>
-const CONFIG={OPENAI_KEY:localStorage.getItem('mr_openai')||"",ASSEMBLYAI_KEY:localStorage.getItem('mr_aai')||""};
+// Keys now live on the server (Vercel env vars). These placeholders keep the
+// existing "has a key?" guards happy so every feature stays enabled.
+const CONFIG={OPENAI_KEY:'server',ASSEMBLYAI_KEY:'server'};
 const I={
  en:{hero_badge:"AI · Multilingual · Speaker split",hero_h:"Record the meeting.",hero_h2:"AI does the rest.",hero_sub:"Separate every speaker, translate live, and summarize meetings automatically — Vietnamese · English · Korean.",hero_cta:"Get started",
    hf1t:"Speaker separation",hf1d:"Auto-detects Speaker 1, 2, 3… so you know who said what.",hf2t:"Live translation",hf2d:"Bilingual subtitles while you meet, multi-language.",hf3t:"AI summary",hf3d:"Minutes, decisions, action items — automatic.",
@@ -463,26 +465,18 @@ async function transcribe(){try{
     if(CONFIG.ASSEMBLYAI_KEY){curTr=await transcribeAAI();}else{curTr=await transcribeWhisper();}
     return !!curTr;
   }catch(e){curTr='';curSum='⚠ '+t('err')+e.message;renderResult();toast(t('err')+e.message);return false;}}
-async function transcribeAAI(){const H={authorization:CONFIG.ASSEMBLYAI_KEY};setProc(t('p_upload'),t('p_wait'));
-  const up=await fetch('https://api.assemblyai.com/v2/upload',{method:'POST',headers:H,body:audioBlob});
-  const uj=await up.json();if(!up.ok)throw new Error(uj.error||'upload failed');setProc(t('p_diar'),t('p_wait'));
-  const cr=await fetch('https://api.assemblyai.com/v2/transcript',{method:'POST',headers:{...H,'content-type':'application/json'},body:JSON.stringify({audio_url:uj.upload_url,speech_models:["universal-2"],speaker_labels:true,language_detection:true})});
-  const cj=await cr.json();if(!cr.ok)throw new Error(cj.error||'request failed');const id=cj.id;
-  for(let i=0;i<400;i++){await new Promise(r=>setTimeout(r,3000));
-    const pr=await fetch('https://api.assemblyai.com/v2/transcript/'+id,{headers:H});const pj=await pr.json();
-    if(pj.status==='completed'){if(pj.utterances&&pj.utterances.length){const map={};let n=0;
-        return pj.utterances.map(u=>{if(!(u.speaker in map))map[u.speaker]='Speaker '+(++n);return map[u.speaker]+': '+u.text;}).join('\n');}
-      return pj.text||'';}
-    if(pj.status==='error')throw new Error(pj.error||'transcription error');}
-  throw new Error('timeout');}
+async function transcribeAAI(){setProc(t('p_upload'),t('p_wait'));
+  const fd=new FormData();fd.append('file',audioBlob,audioBlob.name||'audio.webm');
+  const r=await fetch('/api/transcribe',{method:'POST',body:fd});
+  const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);return d.transcript||'';}
 async function transcribeWhisper(){setProc(t('p_diar'),t('p_wait'));let ext='webm';const ty=audioBlob.type||'';
   if(ty.includes('mp4')||ty.includes('m4a'))ext='m4a';else if(ty.includes('mpeg')||ty.includes('mp3'))ext='mp3';else if(ty.includes('wav'))ext='wav';else if(audioBlob.name&&audioBlob.name.includes('.'))ext=audioBlob.name.split('.').pop();
   const fd=new FormData();fd.append('file',audioBlob,'m.'+ext);fd.append('model','whisper-1');
-  const r=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{'Authorization':'Bearer '+CONFIG.OPENAI_KEY},body:fd});
-  const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'HTTP '+r.status);return d.text.trim();}
-async function summarize(){if(!CONFIG.OPENAI_KEY){curSum="";renderResult();save();return;}
-  try{const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+CONFIG.OPENAI_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-4o-mini',temperature:.3,messages:[{role:'system',content:t('sys')},{role:'user',content:curTr}]})});
-    const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'HTTP '+r.status);curSum=d.choices[0].message.content.trim();renderResult();save();
+  const r=await fetch('/api/transcribe-openai',{method:'POST',body:fd});
+  const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);return (d.text||'').trim();}
+async function summarize(){
+  try{const r=await fetch('/api/summarize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:curTr,system:t('sys')})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);curSum=(d.summary||'').trim();renderResult();save();
   }catch(e){curSum='⚠ '+t('err')+e.message;renderResult();toast(t('err')+e.message);}}
 function renderResult(){$('resProc').style.display='none';$('resBody').style.display='';
   $('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=fmtTr(curTr);
@@ -539,8 +533,8 @@ async function startLiveML(){if(!CONFIG.OPENAI_KEY){lvInfo('⚠ '+t('nokey'));re
     mlRec.start();mlTimer=setTimeout(()=>{if(mlRec&&mlRec.state!=='inactive')mlRec.stop();},ML_SEGMENT_MS);};
   loop();}
 async function transcribeChunk(blob){try{const fd=new FormData();fd.append('file',blob,'seg.webm');fd.append('model','gpt-4o-transcribe');
-    const r=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{'Authorization':'Bearer '+CONFIG.OPENAI_KEY},body:fd});
-    const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'HTTP '+r.status);const txt=(d.text||'').trim();
+    const r=await fetch('/api/transcribe-openai',{method:'POST',body:fd});
+    const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);const txt=(d.text||'').trim();
     if(txt&&!/^[\s.,!?…]*$/.test(txt)&&txt.length>1)addPair(txt);}catch(e){}}
 function startLive(){if($('lvMode').value==='multi'){startLiveML();return;}
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -559,10 +553,8 @@ async function addPair(src){if(!src)return;const row=document.createElement('div
   row.innerHTML=`<div class="lv-src">${esc(src)}</div><div class="lv-tgt pending"></div>`;
   $('lvFeed').appendChild(row);$('lvFeed').scrollTop=$('lvFeed').scrollHeight;
   try{const to=$('lvTo').value;const ctx=lvHistory.slice(-3).map(p=>`${p.src} => ${p.tgt}`).join('\n');
-    const sys=`You are a professional real-time meeting interpreter. The source language may be anything — auto-detect it. Translate the speaker's line into natural, fluent ${to} as a human interpreter would — convey meaning, not word-for-word. Fix obvious speech-recognition errors from context. Keep it concise. Output ONLY the ${to} translation: no quotes, no notes, no original text.`;
-    const user=(ctx?`Recent context (for flow only, do NOT re-translate it):\n${ctx}\n\n`:'')+`Translate this line:\n${src}`;
-    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+CONFIG.OPENAI_KEY,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-4o',temperature:.3,messages:[{role:'system',content:sys},{role:'user',content:user}]})});
-    const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'HTTP '+r.status);const tgt=d.choices[0].message.content.trim();
+    const r=await fetch('/api/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,src,context:ctx})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);const tgt=(d.translation||'').trim();
     const el=row.querySelector('.lv-tgt');el.classList.remove('pending');el.textContent=tgt;lvHistory.push({src,tgt});if(lvHistory.length>8)lvHistory.shift();lvAll.push({src,tgt});$('lvFeed').scrollTop=$('lvFeed').scrollHeight;
   }catch(e){const el=row.querySelector('.lv-tgt');el.classList.remove('pending');el.textContent='⚠ '+e.message;}}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
