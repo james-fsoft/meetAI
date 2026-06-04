@@ -1,11 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PREFIXES = ["/login", "/pricing", "/auth"];
-
-// Keeps the Supabase session fresh and gates the app behind sign-in.
-//   - not signed in + visiting a protected page → redirect to /login
-//   - signed in    + visiting /login            → redirect to "/"
+// Keeps the Supabase session fresh.
+//   - anonymous visitors are allowed (10-minute client-side trial)
+//   - signed in + visiting /login → redirect to "/"
 export async function middleware(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -30,11 +28,9 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
-  const isPublic = PUBLIC_PREFIXES.some((p) => path === p || path.startsWith(p + "/"));
 
-  if (!user && !isPublic) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
+  // Anonymous visitors may use the app (with a client-side trial limit).
+  // Only bounce signed-in users away from the login page.
   if (user && path === "/login") {
     return NextResponse.redirect(new URL("/", request.url));
   }

@@ -556,8 +556,34 @@ function sxHints(){return['en','vi','ko','ja','zh'];}
 // Pick an audio container the browser actually supports (iOS lacks webm).
 function pickMime(){const c=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/aac','audio/mpeg'];
   if(window.MediaRecorder&&MediaRecorder.isTypeSupported)for(const m of c)if(MediaRecorder.isTypeSupported(m))return m;return'';}
+// ── Free trial: anonymous visitors get 10 minutes of live translation ──
+const TRIAL=new URLSearchParams(location.search).get('trial')==='1';
+const TRIAL_LIMIT=600; // seconds
+let trialUsed=parseInt(localStorage.getItem('mr_trial_used')||'0',10)||0;
+let trialInt=null;
+function trialStart(){if(!TRIAL||trialInt)return;trialInt=setInterval(()=>{
+  trialUsed++;localStorage.setItem('mr_trial_used',trialUsed);
+  if(trialUsed>=TRIAL_LIMIT){trialStop();stopLive();showTrial();}},1000);}
+function trialStop(){if(trialInt){clearInterval(trialInt);trialInt=null;}}
+function trialOk(){if(TRIAL&&trialUsed>=TRIAL_LIMIT){showTrial();return false;}return true;}
+function goTop(url){try{window.top.location.href=url;}catch(e){window.parent.location.href=url;}}
+function showTrial(){if(document.getElementById('trialOv'))return;
+  const ov=document.createElement('div');ov.id='trialOv';
+  ov.style.cssText='position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(10,17,36,.55);backdrop-filter:blur(4px)';
+  ov.innerHTML='<div style="background:#fff;border-radius:20px;max-width:380px;width:100%;padding:30px 26px;text-align:center;box-shadow:0 30px 60px -30px rgba(10,17,36,.5);font-family:inherit">'+
+    '<div style="font-size:38px;margin-bottom:8px">⏱️</div>'+
+    '<h2 style="font-size:20px;font-weight:900;color:#0a1124;margin-bottom:10px">Đã hết 10 phút dùng thử</h2>'+
+    '<p style="font-size:14px;color:#5b6b8c;line-height:1.55;margin-bottom:22px">Đăng nhập để tiếp tục dùng dịch trực tiếp không giới hạn theo gói của bạn.</p>'+
+    '<button id="trialLogin" style="width:100%;border:none;background:#1f6bff;color:#fff;font-weight:800;font-size:15px;padding:13px;border-radius:12px;cursor:pointer;font-family:inherit">Đăng nhập</button>'+
+    '<a href="#" id="trialPlans" style="display:inline-block;margin-top:14px;font-size:13px;color:#5b6b8c;text-decoration:none">Xem các gói →</a>'+
+    '</div>';
+  document.body.appendChild(ov);
+  document.getElementById('trialLogin').onclick=()=>goTop('/login');
+  document.getElementById('trialPlans').onclick=e=>{e.preventDefault();goTop('/pricing');};}
 async function startLive(){
-  if(sx.ws)return;lvWantOn=true;
+  if(sx.ws)return;
+  if(!trialOk())return;
+  lvWantOn=true;
   $('lvFeed').style.display='flex';$('lvInterim').style.display='flex';setInterim('');
   if(location.protocol==='file:'){lvInfo('⚠ '+t('lv_file'));lvWantOn=false;return;}
   let tok;
@@ -572,7 +598,7 @@ async function startLive(){
       translation:{type:'one_way',target_language:SX_ISO[$('lvTo').value]||'vi'}}));
     let rec;const mime=pickMime();try{rec=mime?new MediaRecorder(sx.stream,{mimeType:mime}):new MediaRecorder(sx.stream);}catch(e){try{rec=new MediaRecorder(sx.stream);}catch(e2){lvInfo('⚠ '+e2.message);return;}}
     sx.rec=rec;rec.ondataavailable=async e=>{if(e.data.size&&ws.readyState===1)ws.send(await e.data.arrayBuffer());};
-    rec.start(240);};
+    rec.start(240);trialStart();};
   ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data);}catch(e){return;}
     if(m.error_code){lvInfo('⚠ '+(m.error_message||m.error_code));return;}
     let oI='',tI='';
@@ -615,6 +641,7 @@ function feedScroll(row){if(row&&row.scrollIntoView)row.scrollIntoView({behavior
 function keepInView(el){const r=el.getBoundingClientRect(),vh=window.innerHeight||document.documentElement.clientHeight;
   if(r.bottom>vh-80||r.top<64)el.scrollIntoView({block:'center'});}
 function sxStop(){
+  trialStop();
   if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
   if(sx.ws){try{if(sx.ws.readyState===1)sx.ws.send('');sx.ws.close();}catch(e){}}sx.ws=null;
   if(sx.stream){sx.stream.getTracks().forEach(t=>t.stop());sx.stream=null;}

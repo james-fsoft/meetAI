@@ -8,34 +8,46 @@ const PLAN_LABEL: Record<string, string> = {
 };
 
 /**
- * Meeting AI — main shell: a slim signed-in bar above the meeting UI
+ * Meeting AI — main shell: a slim top bar above the meeting UI
  * (served from public/meeting.html inside an iframe).
+ * Anonymous visitors get a 10-minute live-translation trial (?trial=1);
+ * signed-in users run without the trial limit.
  */
 export default function MeetingApp({ email, plan = "free" }: { email?: string; plan?: string }) {
   const router = useRouter();
+  const signedIn = !!email;
 
   async function signOut() {
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
     } catch {}
-    router.push("/login");
     router.refresh();
   }
+
+  const iframeSrc = signedIn ? "/meeting.html?v=25" : "/meeting.html?v=25&trial=1";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <div style={bar}>
         <span style={brand}>🎙️ Meeting AI</span>
         <span style={{ flex: 1 }} />
-        <a href="/pricing" style={planBadge(plan)} title="Quản lý gói">
-          {PLAN_LABEL[plan] || "Free"}
-        </a>
-        {email && <span style={mail}>👤 {email}</span>}
-        <button onClick={signOut} style={out}>Đăng xuất</button>
+        {signedIn ? (
+          <>
+            <a href="/pricing" style={planBadge(plan)} title="Quản lý gói">{PLAN_LABEL[plan] || "Free"}</a>
+            <span style={mail}>👤 {email}</span>
+            <button onClick={signOut} style={out}>Đăng xuất</button>
+          </>
+        ) : (
+          <>
+            <span style={trialBadge}>Dùng thử · 10 phút</span>
+            <a href="/pricing" style={linkBtn}>Các gói</a>
+            <a href="/login" style={primaryBtn}>Đăng nhập</a>
+          </>
+        )}
       </div>
       <iframe
-        src="/meeting.html?v=24"
+        src={iframeSrc}
         title="Meeting AI"
         allow="microphone; display-capture; clipboard-write"
         style={{ border: "none", width: "100%", flex: 1, display: "block" }}
@@ -54,6 +66,17 @@ const mail: React.CSSProperties = { fontSize: 12.5 };
 const out: React.CSSProperties = {
   border: "1.5px solid #e3e8f2", background: "#fff", color: "#0a1124", cursor: "pointer",
   fontFamily: "inherit", fontSize: 12, fontWeight: 700, padding: "6px 14px", borderRadius: 8,
+};
+const linkBtn: React.CSSProperties = {
+  fontSize: 12, fontWeight: 700, color: "#5b6b8c", textDecoration: "none", padding: "6px 10px",
+};
+const primaryBtn: React.CSSProperties = {
+  fontSize: 12, fontWeight: 800, color: "#fff", background: "#1f6bff", textDecoration: "none",
+  padding: "7px 16px", borderRadius: 8,
+};
+const trialBadge: React.CSSProperties = {
+  fontSize: 11, fontWeight: 800, letterSpacing: ".03em", color: "#b45309",
+  background: "#fffbeb", border: "1px solid #fde68a", padding: "4px 10px", borderRadius: 20,
 };
 const planBadge = (plan: string): React.CSSProperties => ({
   fontSize: 11, fontWeight: 800, letterSpacing: ".03em", textDecoration: "none",
