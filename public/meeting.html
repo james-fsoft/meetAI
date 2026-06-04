@@ -27,7 +27,8 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
   background:radial-gradient(900px 480px at 12% -6%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
     radial-gradient(820px 460px at 100% 0%,color-mix(in srgb,var(--acc) 7%,transparent),transparent 55%),var(--paper)}
 ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:var(--hair);border-radius:8px}
-.top{display:flex;align-items:center;padding:18px 26px;border-bottom:1.5px solid var(--hair)}
+.top{display:flex;align-items:center;padding:18px 26px;border-bottom:1.5px solid var(--hair);
+  position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px)}
 .mark{display:flex;align-items:center;gap:11px}
 .mark svg{width:34px;height:34px;display:block}
 .mark b{font-size:16px;font-weight:900;letter-spacing:-.04em}
@@ -549,7 +550,7 @@ const EQ='<span class="eq"><i></i><i></i><i></i><i></i></span>';
 function setInterim(txt){$('lvInterim').innerHTML=EQ+'<span>'+(txt?esc(txt):t('lv_listening'))+'</span>';}
 // ── Live translation via Soniox real-time WebSocket (STT + translation) ──
 const SX_ISO={Vietnamese:'vi',English:'en',Korean:'ko',Japanese:'ja',Chinese:'zh'};
-let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:'',segSpk:null};
+let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:'',segSpk:null,curRow:null};
 // Source language is always auto-detected by Soniox; hint the common ones.
 function sxHints(){return['en','vi','ko','ja','zh'];}
 // Pick an audio container the browser actually supports (iOS lacks webm).
@@ -574,32 +575,50 @@ async function startLive(){
     rec.start(240);};
   ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data);}catch(e){return;}
     if(m.error_code){lvInfo('⚠ '+(m.error_message||m.error_code));return;}
-    let interim='';
+    let oI='',tI='';
     (m.tokens||[]).forEach(tk=>{const x=tk.text;if(x==null)return;
-      if(x==='<end>'){sxFlush();return;}
-      if(tk.translation_status==='translation'){if(tk.is_final)sx.segTrans+=x;}
-      else{if(tk.is_final){sx.segOrig+=x;if(tk.speaker!=null)sx.segSpk=tk.speaker;}else interim+=x;}});
-    if(sx.segOrig||interim)setInterim((sx.segOrig+interim).trim());
-    if(m.finished)sxFlush();};
+      if(x==='<end>'){sxFinalize();return;}
+      if(tk.translation_status==='translation'){if(tk.is_final)sx.segTrans+=x;else tI+=x;}
+      else{if(tk.is_final){sx.segOrig+=x;if(tk.speaker!=null)sx.segSpk=tk.speaker;}else oI+=x;}});
+    sxRender(oI,tI);
+    if(m.finished)sxFinalize();};
   ws.onerror=()=>{if(lvWantOn)lvInfo('⚠ '+t('lv_net'));};
   ws.onclose=()=>{sx.ws=null;};
 }
-function sxFlush(){const o=sx.segOrig.trim(),tr=sx.segTrans.trim(),spk=sx.segSpk;sx.segOrig='';sx.segTrans='';sx.segSpk=null;if(!o&&!tr)return;
-  const label=spk!=null?'Speaker '+spk:'';const ini=spk!=null?String(spk):'•';const hue=spk!=null?((spk-1)%6+6)%6:0;
-  const row=document.createElement('div');row.className='lv-msg';
-  row.innerHTML=`<div class="lv-av" data-s="${hue}">${esc(ini)}</div>`+
-    `<div class="lv-msg-b">${label?`<div class="lv-name">${esc(label)}</div>`:''}`+
-    `<div class="lv-bubble"><div class="lv-orig">${esc(o)}</div>`+(tr?`<div class="lv-trans">${esc(tr)}</div>`:'')+`</div></div>`;
-  $('lvFeed').appendChild(row);feedScroll(row);
-  if(o)curTr+=(curTr?'\n':'')+(label?label+': ':'')+o;lvAll.push({src:o,tgt:tr});setInterim('');}
-// Teleprompter-style: keep the newest line centered on screen so it's always readable.
-function feedScroll(row){if(row&&row.scrollIntoView)row.scrollIntoView({behavior:'smooth',block:'center'});
-  else window.scrollTo(0,document.documentElement.scrollHeight);}
+// Update the live bubble token-by-token so text streams in smoothly (no jumps).
+function sxRender(oI,tI){const o=(sx.segOrig+(oI||'')).trim(),tr=(sx.segTrans+(tI||'')).trim();
+  if(!o&&!tr)return;
+  if(!sx.curRow){
+    const row=document.createElement('div');row.className='lv-msg';
+    row.innerHTML='<div class="lv-av"></div><div class="lv-msg-b"><div class="lv-name"></div>'+
+      '<div class="lv-bubble"><div class="lv-orig"></div><div class="lv-trans"></div></div></div>';
+    $('lvFeed').appendChild(row);sx.curRow=row;feedScroll(row);
+  }
+  const row=sx.curRow,spk=sx.segSpk,av=row.querySelector('.lv-av');
+  if(spk!=null){av.textContent=String(spk);av.dataset.s=((spk-1)%6+6)%6;row.querySelector('.lv-name').textContent='Speaker '+spk;}
+  else{av.textContent='•';av.dataset.s=0;}
+  row.querySelector('.lv-orig').textContent=o;
+  const tEl=row.querySelector('.lv-trans');tEl.textContent=tr;tEl.style.display=tr?'':'none';
+  keepInView(row);setInterim('');}
+// Commit the current segment as a finished bubble and start fresh.
+function sxFinalize(){const o=sx.segOrig.trim(),tr=sx.segTrans.trim(),spk=sx.segSpk;
+  if(sx.curRow){if(!o&&!tr){sx.curRow.remove();}else{
+    sx.curRow.querySelector('.lv-orig').textContent=o;
+    const tEl=sx.curRow.querySelector('.lv-trans');tEl.textContent=tr;tEl.style.display=tr?'':'none';
+    feedScroll(sx.curRow);}}
+  if(o)curTr+=(curTr?'\n':'')+(spk!=null?'Speaker '+spk+': ':'')+o;
+  if(o||tr)lvAll.push({src:o,tgt:tr});
+  sx.segOrig='';sx.segTrans='';sx.segSpk=null;sx.curRow=null;setInterim('');}
+// Smoothly center a finished/new line (teleprompter feel).
+function feedScroll(row){if(row&&row.scrollIntoView)row.scrollIntoView({behavior:'smooth',block:'center'});}
+// While streaming, only nudge (instantly) if the active line drifts out of view — avoids jitter.
+function keepInView(el){const r=el.getBoundingClientRect(),vh=window.innerHeight||document.documentElement.clientHeight;
+  if(r.bottom>vh-80||r.top<64)el.scrollIntoView({block:'center'});}
 function sxStop(){
   if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
   if(sx.ws){try{if(sx.ws.readyState===1)sx.ws.send('');sx.ws.close();}catch(e){}}sx.ws=null;
   if(sx.stream){sx.stream.getTracks().forEach(t=>t.stop());sx.stream=null;}
-  sxFlush();}
+  sxFinalize();}
 function pauseLive(){lvWantOn=false;sxStop();}
 function stopLive(){lvWantOn=false;$('lvInterim').textContent='';sxStop();}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
