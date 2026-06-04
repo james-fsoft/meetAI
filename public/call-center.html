@@ -34,6 +34,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
 .cbtn.start{background:#16a34a}.cbtn.start:hover{background:#15903f}
 .cbtn.end{background:#dc2626}.cbtn.end:hover{background:#c01d1d}
 .cbtn.reset{background:rgba(255,255,255,.14)}.cbtn.reset:hover{background:rgba(255,255,255,.24)}
+.cbtn.resume{background:#f59e0b}.cbtn.resume:hover{background:#d98806}
 .cbtn:disabled{opacity:.45;cursor:not-allowed}
 /* ── layout ── */
 .wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:18px 22px 40px;align-items:start}
@@ -86,8 +87,16 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
 .chip.on .ic{background:#dcfce7;color:var(--green)}.chip.on .stt{color:var(--green)}
 .chip.live .ic{background:#fee2e2;color:#dc2626}.chip.live .stt{color:#dc2626}
 /* ── live feed ── */
-.feed{border:1px solid var(--hair);border-radius:14px;background:var(--soft);padding:14px 14px 8px;height:340px;overflow:auto;
+.feed{position:relative;border:1px solid var(--hair);border-radius:14px;background:var(--soft);padding:14px 14px 8px;height:340px;overflow:auto;
   display:flex;flex-direction:column;scroll-behavior:smooth}
+.count{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;
+  background:rgba(245,247,252,.94);z-index:6;border-radius:14px}
+.count.on{display:flex}
+.count .n{font-family:'Space Mono',monospace;font-size:66px;font-weight:700;color:var(--teal2);line-height:1;animation:cpop .9s ease}
+@keyframes cpop{0%{transform:scale(.6);opacity:.3}40%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.count .t{font-size:13px;color:var(--grey);margin-top:10px;font-weight:700}
+.paused-note{font-size:12.5px;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:9px;
+  padding:9px 12px;margin-top:8px;text-align:center;font-weight:600}
 .feed.empty{align-items:center;justify-content:center}
 .fhint{color:var(--faint);font-size:13px;text-align:center;padding:20px}
 .msg{display:flex;gap:9px;align-items:flex-start;padding:8px 0;animation:in .3s ease}
@@ -140,11 +149,12 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
 
 <div class="democ">
   <div>
-    <h2>🎧 Live PoC Demo</h2>
-    <p>Bấm <b>걸기 (Start Call)</b> để bắt đầu cuộc gọi mô phỏng. Hệ thống nhận diện ngôn ngữ tự động và dịch trực tiếp đa ngôn ngữ.</p>
+    <h2>🎧 라이브 PoC 데모</h2>
+    <p><b>걸기 (Start Call)</b>를 누르면 모의 상담 통화가 시작됩니다. 시스템이 언어를 자동으로 인식하고 다국어를 실시간으로 번역합니다.</p>
   </div>
   <div class="ctrls">
     <button class="cbtn start" id="btnStart">▶ 걸기 (Start Call)</button>
+    <button class="cbtn resume" id="btnResume" style="display:none">▶ 재개 (Resume)</button>
     <button class="cbtn end" id="btnEnd" disabled>■ 끝기 (End Call)</button>
     <button class="cbtn reset" id="btnReset">↻ Reset</button>
   </div>
@@ -220,7 +230,10 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
         <div class="chip" data-c="sum"><div class="ic">✨</div><div class="nm">자동 요약</div><div class="stt">SUMMARY</div></div>
       </div>
 
-      <div class="feed empty" id="feed"><div class="fhint" id="fhint">통화를 시작하면 실시간 번역이 여기에 표시됩니다.<br>Bắt đầu cuộc gọi để xem bản dịch trực tiếp.</div></div>
+      <div class="feed empty" id="feed">
+        <div class="count" id="count"></div>
+        <div class="fhint" id="fhint">통화를 시작하면 실시간 번역이 여기에 표시됩니다.<br>Bắt đầu cuộc gọi để xem bản dịch trực tiếp.</div>
+      </div>
       <div class="interim" id="interim"></div>
 
       <div class="sum hide" id="sum">
@@ -240,10 +253,12 @@ const ISO_NAME={ko:'한국어',vi:'Tiếng Việt',en:'English',ja:'日本語',z
 function toast(m){const e=$('toast');e.textContent=m;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2000);}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-// ── timer ──
-let tStart=0,tInt=null;
-function startTimer(){tStart=Date.now();tInt=setInterval(()=>{const s=Math.round((Date.now()-tStart)/1000);$('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');},500);}
-function stopTimer(){if(tInt)clearInterval(tInt);tInt=null;}
+// ── timer (resumable) ──
+let tElapsed=0,tMark=0,tInt=null;
+function showTime(){const s=Math.round((tElapsed+(tInt?Date.now()-tMark:0))/1000);$('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function startTimer(){tMark=Date.now();tInt=setInterval(showTime,500);}
+function pauseTimer(){if(tInt){clearInterval(tInt);tInt=null;tElapsed+=Date.now()-tMark;}}
+function resetTimer(){pauseTimer();tElapsed=0;$('timer').textContent='00:00';}
 
 // ── status chips ──
 function setChips(state){const c=$('chips').children;['stt','tr','kb','sum'].forEach((k,i)=>{c[i].className='chip';});
@@ -254,41 +269,74 @@ function setChips(state){const c=$('chips').children;['stt','tr','kb','sum'].for
 // ── Soniox live engine (auto-detect source → selected target) ──
 const SONIOX_WS='wss://stt-rt.soniox.com/transcribe-websocket';
 let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:'',segSpk:null,curRow:null};
-let callLog=[],running=false;
+let callLog=[],running=false,paused=false,lastVoice=0,silenceInt=null;
+const SILENCE_MS=120000; // auto-pause after 2 minutes with no speech
 function pickMime(){const c=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/aac','audio/mpeg'];
   if(window.MediaRecorder&&MediaRecorder.isTypeSupported)for(const m of c)if(MediaRecorder.isTypeSupported(m))return m;return'';}
-function feedClear(){$('feed').innerHTML='';$('feed').classList.remove('empty');}
+function feedClear(){[...$('feed').querySelectorAll('.msg,.fhint,.paused-note')].forEach(e=>e.remove());$('feed').classList.remove('empty');}
 function setInterim(t){$('interim').innerHTML=t?('<span class="eq"><i></i><i></i><i></i><i></i></span><span>'+esc(t)+'</span>'):'';}
 
-async function startCall(){
-  if(running)return;running=true;
-  $('btnStart').disabled=true;$('btnEnd').disabled=false;
-  $('sum').classList.add('hide');callLog=[];feedClear();
+// 3-2-1 countdown so the connection/mic warm up and the first words are caught.
+function countdown(){return new Promise(res=>{const el=$('count');el.classList.add('on');let n=3;
+  el.innerHTML='<div class="n">'+n+'</div><div class="t">잠시 후 시작합니다…</div>';
+  const iv=setInterval(()=>{n--;if(n>=1){el.querySelector('.n').textContent=n;}
+    else{clearInterval(iv);el.innerHTML='<div class="n">●</div><div class="t">지금 말씀하세요 / Hãy nói</div>';
+      setTimeout(()=>{el.classList.remove('on');res();},600);}},900);});}
+
+async function startCall(resume){
+  if(running)return;running=true;paused=false;
+  $('btnStart').disabled=true;$('btnResume').style.display='none';$('btnEnd').disabled=false;
   $('sessTitle').textContent='상담 진행 중 · Live';$('rStatus').innerHTML='<span class="d"></span>LIVE';
-  setChips('live');startTimer();
-  let tok;
-  try{const r=await fetch('/api/soniox-token',{method:'POST'});const d=await r.json();if(!r.ok)throw new Error(d.error||'token');tok=d.api_key;}
-  catch(e){failCall('토큰 오류: '+e.message);return;}
-  try{sx.stream=await navigator.mediaDevices.getUserMedia({audio:true});}
-  catch(e){failCall('마이크 권한이 필요합니다 / Cần quyền micro');return;}
-  const ws=new WebSocket(SONIOX_WS);sx.ws=ws;
-  ws.onopen=()=>{
-    ws.send(JSON.stringify({api_key:tok,model:'stt-rt-v4',audio_format:'auto',
-      language_hints:['ko','vi','en','ja','zh','th','es','fr'],enable_speaker_diarization:true,enable_endpoint_detection:true,
-      translation:{type:'one_way',target_language:$('target').value}}));
-    let rec;const mime=pickMime();try{rec=mime?new MediaRecorder(sx.stream,{mimeType:mime}):new MediaRecorder(sx.stream);}catch(e){try{rec=new MediaRecorder(sx.stream);}catch(e2){failCall(e2.message);return;}}
-    sx.rec=rec;rec.ondataavailable=async e=>{if(e.data.size&&ws.readyState===1)ws.send(await e.data.arrayBuffer());};rec.start(240);};
-  ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data);}catch(e){return;}
-    if(m.error_code){setInterim('⚠ '+(m.error_message||m.error_code));return;}
-    let oI='',tI='';
-    (m.tokens||[]).forEach(tk=>{const x=tk.text;if(x==null)return;
-      if(x==='<end>'){sxFinalize();return;}
-      if(tk.translation_status==='translation'){if(tk.is_final)sx.segTrans+=x;else tI+=x;}
-      else{if(tk.is_final){sx.segOrig+=x;if(tk.speaker!=null)sx.segSpk=tk.speaker;}else oI+=x;}});
-    sxRender(oI,tI);
-    if(m.finished)sxFinalize();};
-  ws.onerror=()=>{if(running)setInterim('⚠ 연결 재시도 중…');};
-  ws.onclose=()=>{sx.ws=null;};
+  setChips('live');
+  if(!resume){$('sum').classList.add('hide');callLog=[];feedClear();resetTimer();}
+  else{const p=$('feed').querySelector('.paused-note');if(p)p.remove();}
+  startTimer();
+  connect();            // warm up while the countdown runs
+  await countdown();
+}
+
+function connect(){
+  fetch('/api/soniox-token',{method:'POST'})
+    .then(r=>r.json().then(d=>{if(!r.ok)throw new Error(d.error||'token');return d.api_key;}))
+    .then(async tok=>{
+      if(!running)return;
+      try{sx.stream=await navigator.mediaDevices.getUserMedia({audio:true});}
+      catch(e){failCall('마이크 권한이 필요합니다 / Cần quyền micro');return;}
+      if(!running){sx.stream.getTracks().forEach(t=>t.stop());return;}
+      const ws=new WebSocket(SONIOX_WS);sx.ws=ws;
+      ws.onopen=()=>{
+        ws.send(JSON.stringify({api_key:tok,model:'stt-rt-v4',audio_format:'auto',
+          language_hints:['ko','vi','en','ja','zh','th','es','fr'],enable_speaker_diarization:true,enable_endpoint_detection:true,
+          translation:{type:'one_way',target_language:$('target').value}}));
+        let rec;const mime=pickMime();try{rec=mime?new MediaRecorder(sx.stream,{mimeType:mime}):new MediaRecorder(sx.stream);}catch(e){try{rec=new MediaRecorder(sx.stream);}catch(e2){failCall(e2.message);return;}}
+        sx.rec=rec;rec.ondataavailable=async e=>{if(e.data.size&&ws.readyState===1)ws.send(await e.data.arrayBuffer());};rec.start(240);
+        lastVoice=Date.now();startSilenceWatch();};
+      ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data);}catch(e){return;}
+        if(m.error_code){setInterim('⚠ '+(m.error_message||m.error_code));return;}
+        let oI='',tI='';
+        (m.tokens||[]).forEach(tk=>{const x=tk.text;if(x==null)return;lastVoice=Date.now();
+          if(x==='<end>'){sxFinalize();return;}
+          if(tk.translation_status==='translation'){if(tk.is_final)sx.segTrans+=x;else tI+=x;}
+          else{if(tk.is_final){sx.segOrig+=x;if(tk.speaker!=null)sx.segSpk=tk.speaker;}else oI+=x;}});
+        sxRender(oI,tI);
+        if(m.finished)sxFinalize();};
+      ws.onerror=()=>{if(running&&!paused)setInterim('⚠ 연결 재시도 중…');};
+      ws.onclose=()=>{sx.ws=null;};
+    }).catch(e=>failCall('토큰 오류: '+e.message));
+}
+
+function startSilenceWatch(){clearInterval(silenceInt);
+  silenceInt=setInterval(()=>{if(running&&!paused&&Date.now()-lastVoice>SILENCE_MS)autoPause();},3000);}
+
+// No speech for 2 minutes → pause and wait for the user to resume.
+function autoPause(){
+  paused=true;running=false;clearInterval(silenceInt);
+  stopSoniox();pauseTimer();
+  $('rStatus').innerHTML='⏸ PAUSED';$('sessTitle').textContent='일시정지 (무음 2분) · Paused';
+  $('btnResume').style.display='';$('btnStart').disabled=true;
+  const note=document.createElement('div');note.className='paused-note';
+  note.textContent='⏸ 2분간 음성이 없어 일시정지되었습니다. 계속하려면 [재개]를 누르세요. / Tạm dừng do im lặng 2 phút — bấm Resume để tiếp tục.';
+  $('feed').appendChild(note);feedBottom(true);
 }
 function failCall(msg){toast(msg);endCall();}
 
@@ -308,9 +356,10 @@ function sxFinalize(){const o=sx.segOrig.trim(),tr=sx.segTrans.trim(),spk=sx.seg
     sx.curRow.querySelector('.orig').textContent=o;sx.curRow.querySelector('.tr').textContent=tr;centerRow(sx.curRow);}}
   if(o||tr)callLog.push({spk,o,tr});
   sx.segOrig='';sx.segTrans='';sx.segSpk=null;sx.curRow=null;setInterim('');}
-function centerRow(r){if(r&&r.scrollIntoView)r.scrollIntoView({behavior:'smooth',block:'center'});}
-function keepInView(r){const fd=$('feed'),fr=fd.getBoundingClientRect(),rr=r.getBoundingClientRect();
-  if(rr.bottom>fr.bottom-10||rr.top<fr.top+10)r.scrollIntoView({block:'center'});}
+// Keep the newest line in view; don't yank if the user scrolled up to read history.
+function feedBottom(force){const fd=$('feed');if(force||fd.scrollHeight-fd.scrollTop-fd.clientHeight<150)fd.scrollTop=fd.scrollHeight;}
+function centerRow(){feedBottom(true);}
+function keepInView(){feedBottom(false);}
 
 function stopSoniox(){
   if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
@@ -319,9 +368,11 @@ function stopSoniox(){
   sxFinalize();}
 
 async function endCall(){
-  if(!running&&!sx.ws){return;}
-  running=false;stopTimer();stopSoniox();setInterim('');
-  $('btnStart').disabled=false;$('btnEnd').disabled=true;
+  if(!running&&!sx.ws&&!paused&&!callLog.length)return;
+  running=false;paused=false;clearInterval(silenceInt);
+  pauseTimer();stopSoniox();setInterim('');
+  $('btnStart').disabled=false;$('btnResume').style.display='none';$('btnEnd').disabled=true;
+  const p=$('feed').querySelector('.paused-note');if(p)p.remove();
   $('sessTitle').textContent='상담 종료 · Session ended';$('rStatus').innerHTML='✓ DONE';
   setChips('done');
   if(callLog.length)await summarize();
@@ -366,18 +417,24 @@ function selOpt(id,val){const sel=$(id);for(const o of sel.options){if(o.text.in
 
 // ── reset ──
 function resetAll(){
-  endCall();callLog=[];
-  $('feed').innerHTML='<div class="fhint" id="fhint">통화를 시작하면 실시간 번역이 여기에 표시됩니다.<br>Bắt đầu cuộc gọi để xem bản dịch trực tiếp.</div>';
-  $('feed').classList.add('empty');$('sum').classList.add('hide');$('interim').innerHTML='';
-  $('timer').textContent='00:00';$('sessTitle').textContent='상담 대기 중 · Idle';$('rStatus').innerHTML='<span class="d"></span>READY';
+  running=false;paused=false;clearInterval(silenceInt);stopSoniox();resetTimer();
+  [...$('feed').querySelectorAll('.msg,.paused-note,.fhint')].forEach(e=>e.remove());
+  const h=document.createElement('div');h.className='fhint';
+  h.innerHTML='통화를 시작하면 실시간 번역이 여기에 표시됩니다.<br>Bắt đầu cuộc gọi để xem bản dịch trực tiếp.';
+  $('feed').appendChild(h);$('feed').classList.add('empty');
+  $('sum').classList.add('hide');$('interim').innerHTML='';callLog=[];
+  $('sessTitle').textContent='상담 대기 중 · Idle';$('rStatus').innerHTML='<span class="d"></span>READY';
+  $('btnStart').disabled=false;$('btnResume').style.display='none';$('btnEnd').disabled=true;
   setChips('');$('f_inquiry').value='';$('f_extra').value='';$('f_memo').value='';
   ['f_t1','f_t2','f_t3'].forEach(id=>$(id).selectedIndex=0);
 }
 
-$('btnStart').onclick=startCall;
+$('btnStart').onclick=()=>startCall(false);
+$('btnResume').onclick=()=>startCall(true);
 $('btnEnd').onclick=endCall;
 $('btnReset').onclick=resetAll;
-$('target').onchange=()=>{if(running){endCall();setTimeout(startCall,300);}};
+// Change target language mid-call: reconnect without summarizing.
+$('target').onchange=()=>{if(running){stopSoniox();clearInterval(silenceInt);toast('번역 언어: '+(ISO_NAME[$('target').value]||''));connect();}};
 </script>
 </body>
 </html>
