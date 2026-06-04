@@ -213,7 +213,31 @@ body.recing .rec-hint{margin-bottom:10px}
 audio{width:100%;margin-top:16px;height:42px}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--ink);color:#fff;padding:13px 24px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;border-radius:30px;transition:.22s;z-index:90}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media(max-width:620px){.hero-h{font-size:34px}.hero-feats{grid-template-columns:1fr}.app-card{padding:24px 18px}h1{font-size:26px}.timer{font-size:52px}.stage{padding:28px 18px}}
+@media(max-width:620px){
+  .top{padding:13px 16px}.stage{padding:22px 14px}
+  .hero-h{font-size:32px}.hero-sub{font-size:15px}.hero-feats{grid-template-columns:1fr;margin-top:32px}
+  .app-card{padding:22px 16px}h1{font-size:25px}.timer{font-size:52px}
+  .live-bar{gap:8px;padding:7px 11px}
+  .btn{font-size:15px;padding:15px}.btn.big{padding:18px;font-size:16px}
+  .out{padding:18px;max-height:52vh}.lv-trans{font-size:16px}
+  .res-head{flex-wrap:wrap;gap:10px}
+}
+/* On phones, recording takes over the whole screen so subtitles are readable */
+@media(max-width:620px){
+  body.recing{overflow:hidden}
+  body.recing .top,body.recing .foot{display:none}
+  body.recing .stage{padding:0;align-items:stretch}
+  body.recing #sc-cap{max-width:100%;width:100%}
+  body.recing .app-card{position:fixed;inset:0;height:100dvh;width:100vw;border:none;border-radius:0;
+    box-shadow:none;padding:14px 14px calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;z-index:50}
+  body.recing .viz{margin-bottom:8px}
+  body.recing .timer{font-size:30px}
+  body.recing .live-bar{margin-bottom:12px}
+  body.recing .live-feed{flex:1 1 auto;max-height:none;min-height:0;margin-bottom:10px}
+  body.recing .live-interim{margin-bottom:10px}
+  body.recing #capRec{margin-top:auto}
+  body.recing #capRec .dual{margin-top:0!important}
+}
 </style>
 </head>
 <body>
@@ -529,6 +553,9 @@ const SX_ISO={Vietnamese:'vi',English:'en',Korean:'ko',Japanese:'ja',Chinese:'zh
 let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:'',segSpk:null};
 // Source language is always auto-detected by Soniox; hint the common ones.
 function sxHints(){return['en','vi','ko','ja','zh'];}
+// Pick an audio container the browser actually supports (iOS lacks webm).
+function pickMime(){const c=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/aac','audio/mpeg'];
+  if(window.MediaRecorder&&MediaRecorder.isTypeSupported)for(const m of c)if(MediaRecorder.isTypeSupported(m))return m;return'';}
 async function startLive(){
   if(sx.ws)return;lvWantOn=true;
   $('lvFeed').style.display='flex';$('lvInterim').style.display='flex';setInterim('');
@@ -543,7 +570,7 @@ async function startLive(){
     ws.send(JSON.stringify({api_key:tok,model:'stt-rt-v4',audio_format:'auto',
       language_hints:sxHints(),enable_speaker_diarization:true,enable_endpoint_detection:true,
       translation:{type:'one_way',target_language:SX_ISO[$('lvTo').value]||'vi'}}));
-    let rec;try{rec=new MediaRecorder(sx.stream,{mimeType:'audio/webm;codecs=opus'});}catch(e){try{rec=new MediaRecorder(sx.stream);}catch(e2){lvInfo('⚠ '+e2.message);return;}}
+    let rec;const mime=pickMime();try{rec=mime?new MediaRecorder(sx.stream,{mimeType:mime}):new MediaRecorder(sx.stream);}catch(e){try{rec=new MediaRecorder(sx.stream);}catch(e2){lvInfo('⚠ '+e2.message);return;}}
     sx.rec=rec;rec.ondataavailable=async e=>{if(e.data.size&&ws.readyState===1)ws.send(await e.data.arrayBuffer());};
     rec.start(240);};
   ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data);}catch(e){return;}
