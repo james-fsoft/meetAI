@@ -558,7 +558,10 @@ function sxHints(){return['en','vi','ko','ja','zh'];}
 function pickMime(){const c=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/aac','audio/mpeg'];
   if(window.MediaRecorder&&MediaRecorder.isTypeSupported)for(const m of c)if(MediaRecorder.isTypeSupported(m))return m;return'';}
 // ── Login + trial gate: must sign in; trial = 50 min total, max 10 min/day ──
-const SIGNED=new URLSearchParams(location.search).get('signed')==='1';
+const _Q=new URLSearchParams(location.search);
+const SIGNED=_Q.get('signed')==='1';
+const PLAN=_Q.get('plan')||'free';
+const UNLIMITED=SIGNED&&PLAN!=='free'&&PLAN!==''; // paid plans skip trial limits
 const TRIAL_TOTAL=3000; // 50 minutes (seconds)
 const TRIAL_DAILY=600;  // 10 minutes per day (seconds)
 const today=()=>new Date().toISOString().slice(0,10);
@@ -570,11 +573,12 @@ function goTop(url){try{window.top.location.href=url;}catch(e){window.parent.loc
 // Allowed to begin a billable action? Otherwise show the right prompt.
 function gateStart(){
   if(!SIGNED){showGate('login');return false;}
+  if(UNLIMITED)return true;
   if(trialDay()>=TRIAL_DAILY){showGate('daily');return false;}
   if(trialTotal()>=TRIAL_TOTAL){showGate('total');return false;}
   return true;}
 let trialInt=null;
-function trialStart(){if(trialInt)return;trialInt=setInterval(()=>{trialAdd(1);
+function trialStart(){if(UNLIMITED||trialInt)return;trialInt=setInterval(()=>{trialAdd(1);
   if(trialDay()>=TRIAL_DAILY){trialStop();stopLive();showGate('daily');}
   else if(trialTotal()>=TRIAL_TOTAL){trialStop();stopLive();showGate('total');}},1000);}
 function trialStop(){if(trialInt){clearInterval(trialInt);trialInt=null;}}
