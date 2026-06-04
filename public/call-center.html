@@ -183,7 +183,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
       <div class="frow top"><label>추가의견</label><textarea class="fta" id="f_extra" placeholder="-- 자동 입력 대기 --"></textarea></div>
 
       <div class="sec-t sec2">지식검색 (Knowledge Base · top 5 of 67)</div>
-      <div class="kb-note">※ 예시 데이터입니다 — 실제 지식검색 연동은 추후 업데이트됩니다. (Đây chỉ là dữ liệu ví dụ, sẽ cập nhật sau.)</div>
+      <div class="kb-note">※ 예시 데이터입니다 — 실제 지식검색 연동은 추후 업데이트될 예정입니다.</div>
       <ul class="kb">
         <li><span class="rk">#1</span><span>고용 &gt; 근로계약 &gt; <span class="pt">취업규칙 포함사항</span></span></li>
         <li><span class="rk">#2</span><span>고용 &gt; 임금(급여) &gt; <span class="pt">최저임금에 포함되지 않는 임금</span></span></li>
@@ -232,7 +232,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
 
       <div class="feed empty" id="feed">
         <div class="count" id="count"></div>
-        <div class="fhint" id="fhint">통화를 시작하면 실시간 번역이 여기에 표시됩니다.<br>Bắt đầu cuộc gọi để xem bản dịch trực tiếp.</div>
+        <div class="fhint" id="fhint">통화를 시작하면 실시간 번역이 여기에 표시됩니다.</div>
       </div>
       <div class="interim" id="interim"></div>
 
@@ -280,7 +280,7 @@ function setInterim(t){$('interim').innerHTML=t?('<span class="eq"><i></i><i></i
 function countdown(){return new Promise(res=>{const el=$('count');el.classList.add('on');let n=3;
   el.innerHTML='<div class="n">'+n+'</div><div class="t">잠시 후 시작합니다…</div>';
   const iv=setInterval(()=>{n--;if(n>=1){el.querySelector('.n').textContent=n;}
-    else{clearInterval(iv);el.innerHTML='<div class="n">●</div><div class="t">지금 말씀하세요 / Hãy nói</div>';
+    else{clearInterval(iv);el.innerHTML='<div class="n">●</div><div class="t">지금 말씀하세요</div>';
       setTimeout(()=>{el.classList.remove('on');res();},600);}},900);});}
 
 async function startCall(resume){
@@ -301,7 +301,7 @@ function connect(){
     .then(async tok=>{
       if(!running)return;
       try{sx.stream=await navigator.mediaDevices.getUserMedia({audio:true});}
-      catch(e){failCall('마이크 권한이 필요합니다 / Cần quyền micro');return;}
+      catch(e){failCall('마이크 권한이 필요합니다');return;}
       if(!running){sx.stream.getTracks().forEach(t=>t.stop());return;}
       const ws=new WebSocket(SONIOX_WS);sx.ws=ws;
       ws.onopen=()=>{
@@ -335,7 +335,7 @@ function autoPause(){
   $('rStatus').innerHTML='⏸ PAUSED';$('sessTitle').textContent='일시정지 (무음 2분) · Paused';
   $('btnResume').style.display='';$('btnStart').disabled=true;
   const note=document.createElement('div');note.className='paused-note';
-  note.textContent='⏸ 2분간 음성이 없어 일시정지되었습니다. 계속하려면 [재개]를 누르세요. / Tạm dừng do im lặng 2 phút — bấm Resume để tiếp tục.';
+  note.textContent='⏸ 2분간 음성이 없어 일시정지되었습니다. 계속하려면 [재개]를 누르세요.';
   $('feed').appendChild(note);feedBottom(true);
 }
 function failCall(msg){toast(msg);endCall();}
@@ -381,7 +381,7 @@ async function endCall(){
 // ── auto summary via /api/summarize (structured Korean output) ──
 async function summarize(){
   $('sum').classList.remove('hide');
-  $('sumBody').innerHTML='<div class="sum-load"><span class="spin"></span>요약 생성 중… / Đang tạo tóm tắt…</div>';
+  $('sumBody').innerHTML='<div class="sum-load"><span class="spin"></span>요약 생성 중…</div>';
   const transcript=callLog.map(p=>{const who=p.spk!=null?('화자 '+p.spk):'화자';return `${who}: ${p.o}${p.tr?'  (번역: '+p.tr+')':''}`;}).join('\n');
   const sys=`당신은 콜센터 상담 요약 AI입니다. 아래 통역된 상담 대화를 읽고, 반드시 한국어로, 아래 정확한 형식으로만 출력하세요. 다른 설명이나 머리말은 절대 쓰지 마세요.\nTYPE: 대분류 > 중분류 > 소분류\nCONFIDENCE: 0-100 사이 숫자\nINQUIRY: 핵심 문의내용을 2~3문장으로\nACTIONS:\n- 액션 아이템\n- 액션 아이템\n대화에 없는 내용은 지어내지 마세요.`;
   let text='';
@@ -420,7 +420,7 @@ function resetAll(){
   running=false;paused=false;clearInterval(silenceInt);stopSoniox();resetTimer();
   [...$('feed').querySelectorAll('.msg,.paused-note,.fhint')].forEach(e=>e.remove());
   const h=document.createElement('div');h.className='fhint';
-  h.innerHTML='통화를 시작하면 실시간 번역이 여기에 표시됩니다.<br>Bắt đầu cuộc gọi để xem bản dịch trực tiếp.';
+  h.innerHTML='통화를 시작하면 실시간 번역이 여기에 표시됩니다.';
   $('feed').appendChild(h);$('feed').classList.add('empty');
   $('sum').classList.add('hide');$('interim').innerHTML='';callLog=[];
   $('sessTitle').textContent='상담 대기 중 · Idle';$('rStatus').innerHTML='<span class="d"></span>READY';
