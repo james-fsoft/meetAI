@@ -75,8 +75,13 @@ h1{font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1;margin-bo
   background:color-mix(in srgb,var(--acc) 12%,transparent)}
 .feat h3{font-size:15.5px;font-weight:800;margin-bottom:6px}
 .feat p{font-size:13px;color:var(--grey);line-height:1.5}
-.app-card{background:var(--paper);border:1px solid var(--hair);border-radius:24px;padding:34px 30px 30px;
+.app-card{background:var(--paper);border:1px solid var(--hair);border-radius:24px;padding:18px 30px 26px;
   box-shadow:0 30px 60px -34px rgba(10,17,36,.45)}
+/* Record / Pause / Stop controls pinned to the top of the card */
+.cap-top{position:sticky;top:0;z-index:12;background:var(--paper);padding:14px 0 14px;margin-bottom:6px;border-bottom:1px solid var(--hair)}
+.cap-meta{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.cap-top .btn{margin-top:10px}
+.cap-top #capRec .dual{margin-top:0}
 .btn{cursor:pointer;border:2px solid var(--acc);font-family:inherit;font-size:16px;font-weight:800;
   letter-spacing:-.01em;padding:17px 26px;width:100%;border-radius:13px;transition:.12s;
   display:inline-flex;align-items:center;justify-content:center;gap:10px;margin-top:18px}
@@ -233,10 +238,8 @@ audio{width:100%;margin-top:16px;height:42px}
     padding:12px 12px calc(12px + env(safe-area-inset-bottom))}
   body.recing .viz{margin-bottom:8px}
   body.recing .live-feed{min-height:60vh}
-  /* keep Pause/Stop reachable without a nested scroll */
-  body.recing #capRec{position:sticky;bottom:0;background:var(--paper);
-    padding:10px 0 calc(4px + env(safe-area-inset-bottom));margin-top:8px;z-index:5}
-  body.recing #capRec .dual{margin-top:0!important}
+  /* on phones the controls stay pinned at the top via .cap-top */
+  body.recing .cap-top{padding-top:calc(8px + env(safe-area-inset-top))}
 }
 </style>
 </head>
@@ -280,48 +283,46 @@ audio{width:100%;margin-top:16px;height:42px}
 
   <div class="screen" id="sc-cap">
    <div class="app-card" style="display:flex;flex-direction:column">
-    <div class="hero-mark">
-      <svg viewBox="0 0 100 100" aria-label="Meeting AI">
-        <path d="M22 8 H78 a16 16 0 0 1 16 16 V60 a16 16 0 0 1 -16 16 H50 l-20 18 v-18 H22 a16 16 0 0 1 -16 -16 V24 A16 16 0 0 1 22 8 Z" fill="currentColor"/>
-        <g fill="#fff"><rect x="26" y="38" width="7.5" height="12" rx="3.75"/><rect x="39" y="29" width="7.5" height="30" rx="3.75"/><rect x="52" y="22" width="7.5" height="44" rx="3.75"/><rect x="65" y="32" width="7.5" height="24" rx="3.75"/></g>
-      </svg>
+    <div class="cap-top">
+      <div class="cap-meta">
+        <div class="timer" id="timer">00:00</div>
+        <div class="viz" id="viz"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="live-bar">
+          <label class="lvtog on" id="lvToggle">
+            <span class="live-ic"><span class="live-dot"></span><span class="live-txt">LIVE</span></span>
+            <span class="sw"></span><input type="checkbox" id="lvOn" checked>
+            <span data-t="c_translate">Live translate</span></label>
+          <select id="lvMode" class="lvto-sel" title="Live mode" style="display:none">
+            <option value="fast" data-t="lv_fast">⚡ Fast</option>
+            <option value="multi" data-t="lv_multi">🌐 Multi</option>
+          </select>
+          <select id="lvFrom" class="lvto-sel" style="display:none">
+            <option value="auto" data-t="lv_auto">Auto</option>
+          </select>
+          <span style="font-weight:800;color:var(--faint)">→</span>
+          <select id="lvTo" class="lvto-sel">
+            <option value="Vietnamese">Tiếng Việt</option><option value="English">English</option>
+            <option value="Korean">한국어</option><option value="Japanese">日本語</option><option value="Chinese">中文</option>
+          </select>
+        </div>
+      </div>
+      <div id="capIdle">
+        <button class="btn big" id="btnRec" data-t="c_record">● Record</button>
+        <a class="link" id="btnUpload" data-t="c_upload">or upload an audio file</a>
+        <input type="file" id="fileIn" accept="audio/*" style="display:none">
+      </div>
+      <div id="capRec" style="display:none">
+        <div class="dual"><button class="btn out" id="btnPause" data-t="c_pause">Pause</button><button class="btn" id="btnStop" data-t="c_stop">Stop</button></div>
+      </div>
+      <div id="capReady" style="display:none">
+        <button class="btn big" id="btnSummarize" data-t="c_summarize">Summarize →</button>
+        <a class="link" id="btnRedo" data-t="c_redo">Start over</a>
+        <audio id="player" controls></audio>
+      </div>
     </div>
-    <div class="viz" id="viz"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <div class="timer" id="timer">00:00</div>
     <div class="rec-hint" id="recHint" data-t="c_hint">Press record to start</div>
-    <div class="live-bar">
-      <label class="lvtog on" id="lvToggle">
-        <span class="live-ic"><span class="live-dot"></span><span class="live-txt">LIVE</span></span>
-        <span class="sw"></span><input type="checkbox" id="lvOn" checked>
-        <span data-t="c_translate">Live translate</span></label>
-      <select id="lvMode" class="lvto-sel" title="Live mode" style="display:none">
-        <option value="fast" data-t="lv_fast">⚡ Fast</option>
-        <option value="multi" data-t="lv_multi">🌐 Multi</option>
-      </select>
-      <select id="lvFrom" class="lvto-sel" style="display:none">
-        <option value="auto" data-t="lv_auto">Auto</option>
-      </select>
-      <span style="font-weight:800;color:var(--faint)">→</span>
-      <select id="lvTo" class="lvto-sel">
-        <option value="Vietnamese">Tiếng Việt</option><option value="English">English</option>
-        <option value="Korean">한국어</option><option value="Japanese">日本語</option><option value="Chinese">中文</option>
-      </select>
-    </div>
     <div class="live-feed" id="lvFeed" style="display:none"></div>
     <div class="live-interim" id="lvInterim" style="display:none"></div>
-    <div id="capIdle">
-      <button class="btn big" id="btnRec" data-t="c_record">● Record</button>
-      <a class="link" id="btnUpload" data-t="c_upload">or upload an audio file</a>
-      <input type="file" id="fileIn" accept="audio/*" style="display:none">
-    </div>
-    <div id="capRec" style="display:none">
-      <div class="dual" style="margin-top:4px"><button class="btn out" id="btnPause" data-t="c_pause">Pause</button><button class="btn" id="btnStop" data-t="c_stop">Stop</button></div>
-    </div>
-    <div id="capReady" style="display:none">
-      <button class="btn big" id="btnSummarize" data-t="c_summarize">Summarize →</button>
-      <a class="link" id="btnRedo" data-t="c_redo">Start over</a>
-      <audio id="player" controls></audio>
-    </div>
     <p class="note" id="diarNote" data-t="c_diar">👥 Voices are separated automatically (Speaker 1, 2, 3…).</p>
    </div>
   </div>
