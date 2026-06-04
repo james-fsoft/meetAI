@@ -15,7 +15,7 @@ html,body{min-height:100%}
 body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;letter-spacing:-.01em;background:var(--soft)}
 ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--hair);border-radius:8px}
 /* ── top nav ── */
-.nav{display:flex;align-items:center;gap:26px;background:var(--navy);color:#fff;padding:14px 26px;position:sticky;top:0;z-index:50}
+.nav{display:flex;align-items:center;gap:26px;background:var(--navy);color:#fff;padding:14px 26px;position:relative;z-index:50}
 .nav .brand{font-size:18px;font-weight:900;letter-spacing:-.03em}
 .nav .brand .dot{color:#34d399}
 .nav .tag{font-size:12px;color:#8fa1c2;font-weight:600}
@@ -24,8 +24,9 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
 .nav .tabs a:hover{color:#fff;background:rgba(255,255,255,.06)}
 .nav .tabs a.on{background:#1f6bff;color:#fff}
 /* ── demo control bar ── */
-.democ{margin:18px 22px 0;background:linear-gradient(120deg,var(--teal),var(--teal2));color:#fff;border-radius:16px;
-  padding:18px 22px;display:flex;align-items:center;gap:18px;box-shadow:0 18px 40px -24px rgba(15,61,58,.8)}
+.democ{position:sticky;top:0;z-index:45;margin:0;background:linear-gradient(120deg,var(--teal),var(--teal2));color:#fff;border-radius:0;
+  padding:14px 22px;display:flex;align-items:center;gap:18px;box-shadow:0 10px 30px -16px rgba(15,61,58,.7)}
+.democ h2{font-size:16px}
 .democ h2{font-size:17px;font-weight:900;display:flex;align-items:center;gap:9px}
 .democ p{font-size:12.5px;color:#bfe6e0;margin-top:3px;max-width:560px}
 .democ .ctrls{margin-left:auto;display:flex;gap:10px}
@@ -34,10 +35,15 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
 .cbtn.start{background:#16a34a}.cbtn.start:hover{background:#15903f}
 .cbtn.end{background:#dc2626}.cbtn.end:hover{background:#c01d1d}
 .cbtn.reset{background:rgba(255,255,255,.14)}.cbtn.reset:hover{background:rgba(255,255,255,.24)}
-.cbtn.resume{background:#f59e0b}.cbtn.resume:hover{background:#d98806}
+.cbtn.resume{background:#16a34a}.cbtn.resume:hover{background:#15903f}
+.cbtn.pause{background:#f59e0b}.cbtn.pause:hover{background:#d98806}
 .cbtn:disabled{opacity:.45;cursor:not-allowed}
 /* ── layout ── */
-.wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:18px 22px 40px;align-items:start}
+.wrap{display:grid;grid-template-columns:1fr;gap:18px;padding:22px;max-width:980px;margin:0 auto}
+.extra{background:var(--paper);border:1px solid var(--hair);border-radius:16px;overflow:hidden;box-shadow:0 20px 50px -36px rgba(12,19,34,.5)}
+.extra>summary{cursor:pointer;list-style:none;padding:14px 18px;font-size:13px;font-weight:800;color:var(--ink);background:var(--soft)}
+.extra>summary::-webkit-details-marker{display:none}
+.extra[open]>summary{border-bottom:1px solid var(--hair)}
 .panel{background:var(--paper);border:1px solid var(--hair);border-radius:16px;overflow:hidden;box-shadow:0 20px 50px -36px rgba(12,19,34,.5)}
 .ph{display:flex;align-items:center;gap:8px;padding:13px 18px;color:#fff;font-size:12.5px;font-weight:800;letter-spacing:.03em}
 .ph.left{background:var(--navy)}
@@ -87,7 +93,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
 .chip.on .ic{background:#dcfce7;color:var(--green)}.chip.on .stt{color:var(--green)}
 .chip.live .ic{background:#fee2e2;color:#dc2626}.chip.live .stt{color:#dc2626}
 /* ── live feed ── */
-.feed{position:relative;border:1px solid var(--hair);border-radius:14px;background:var(--soft);padding:14px 14px 8px;height:340px;overflow:auto;
+.feed{position:relative;border:1px solid var(--hair);border-radius:14px;background:var(--soft);padding:14px 14px 8px;height:46vh;min-height:320px;overflow:auto;
   display:flex;flex-direction:column;scroll-behavior:smooth}
 .count{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;
   background:rgba(245,247,252,.94);z-index:6;border-radius:14px}
@@ -150,51 +156,20 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
 <div class="democ">
   <div>
     <h2>🎧 라이브 PoC 데모</h2>
-    <p><b>걸기 (Start Call)</b>를 누르면 모의 상담 통화가 시작됩니다. 시스템이 언어를 자동으로 인식하고 다국어를 실시간으로 번역합니다.</p>
+    <p>다국어 실시간 번역 · 자동 요약</p>
   </div>
   <div class="ctrls">
-    <button class="cbtn start" id="btnStart">▶ 걸기 (Start Call)</button>
+    <button class="cbtn start" id="btnStart">▶ 걸기 (Start)</button>
+    <button class="cbtn pause" id="btnPause" style="display:none">⏸ 일시정지 (Pause)</button>
     <button class="cbtn resume" id="btnResume" style="display:none">▶ 재개 (Resume)</button>
-    <button class="cbtn end" id="btnEnd" disabled>■ 끝기 (End Call)</button>
+    <button class="cbtn end" id="btnEnd" disabled>■ 끝기 (Stop)</button>
     <button class="cbtn reset" id="btnReset">↻ Reset</button>
   </div>
 </div>
 
 <div class="wrap">
 
-  <!-- LEFT: form fields -->
-  <div class="panel">
-    <div class="ph left">CALLMAIN.DO — FORM FIELDS <span class="st"><span class="d"></span>CONNECTED</span></div>
-    <div class="pb">
-      <div class="sec-t">고객정보 · Customer</div>
-      <div class="frow"><label>고객명</label><input class="fin" id="f_name" value="Nguyen Van A"></div>
-      <div class="frow"><label>국적/비자</label><input class="fin" id="f_visa" value="베트남 / E-9"></div>
-      <div class="frow"><label>메모</label><input class="fin" id="f_memo" placeholder="-- 자동 입력 대기 --"></div>
-
-      <div class="sec-t sec2">고객접수 · Reception</div>
-      <div class="frow"><label>상담유형</label>
-        <div class="types">
-          <select class="fsel" id="f_t1"><option>--대분류--</option><option>고용</option><option>임금</option><option>출입국</option></select>
-          <select class="fsel" id="f_t2"><option>--중분류--</option><option>임금(급여)</option><option>근로계약</option></select>
-          <select class="fsel" id="f_t3"><option>--소분류--</option><option>최저임금</option><option>체불임금</option></select>
-        </div>
-      </div>
-      <div class="frow top"><label>문의내용</label><textarea class="fta" id="f_inquiry" placeholder="-- 자동 입력 대기 --"></textarea></div>
-      <div class="frow top"><label>추가의견</label><textarea class="fta" id="f_extra" placeholder="-- 자동 입력 대기 --"></textarea></div>
-
-      <div class="sec-t sec2">지식검색 (Knowledge Base · top 5 of 67)</div>
-      <div class="kb-note">※ 예시 데이터입니다 — 실제 지식검색 연동은 추후 업데이트될 예정입니다.</div>
-      <ul class="kb">
-        <li><span class="rk">#1</span><span>고용 &gt; 근로계약 &gt; <span class="pt">취업규칙 포함사항</span></span></li>
-        <li><span class="rk">#2</span><span>고용 &gt; 임금(급여) &gt; <span class="pt">최저임금에 포함되지 않는 임금</span></span></li>
-        <li><span class="rk">#7</span><span>근로 및 노동 &gt; 권리구제 &gt; <span class="pt">지방고용노동관서</span></span></li>
-        <li><span class="rk">#25</span><span>고용 &gt; 임금(급여) &gt; <span class="pt">최저임금 정의 및 효력</span></span></li>
-        <li><span class="rk">#9</span><span>출입국 &gt; 자격변경 &gt; <span class="pt">근무처 변경·추가허가</span></span></li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- RIGHT: AI assist -->
+  <!-- AI assist: conversation (middle) + summary (end) -->
   <div class="panel">
     <div class="ph right">🤖 AI ASSIST · LIVE TRANSLATION <span class="st" id="rStatus"><span class="d"></span>READY</span></div>
     <div class="pb">
@@ -243,6 +218,38 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
     </div>
   </div>
 
+  <!-- supporting reference: CRM form + knowledge base -->
+  <details class="extra">
+    <summary>📋 상담 폼 · 지식검색 (CALLMAIN.DO · 참고용)</summary>
+    <div class="pb">
+      <div class="sec-t">고객정보 · Customer</div>
+      <div class="frow"><label>고객명</label><input class="fin" id="f_name" value="Nguyen Van A"></div>
+      <div class="frow"><label>국적/비자</label><input class="fin" id="f_visa" value="베트남 / E-9"></div>
+      <div class="frow"><label>메모</label><input class="fin" id="f_memo" placeholder="-- 자동 입력 대기 --"></div>
+
+      <div class="sec-t sec2">고객접수 · Reception</div>
+      <div class="frow"><label>상담유형</label>
+        <div class="types">
+          <select class="fsel" id="f_t1"><option>--대분류--</option><option>고용</option><option>임금</option><option>출입국</option></select>
+          <select class="fsel" id="f_t2"><option>--중분류--</option><option>임금(급여)</option><option>근로계약</option></select>
+          <select class="fsel" id="f_t3"><option>--소분류--</option><option>최저임금</option><option>체불임금</option></select>
+        </div>
+      </div>
+      <div class="frow top"><label>문의내용</label><textarea class="fta" id="f_inquiry" placeholder="-- 자동 입력 대기 --"></textarea></div>
+      <div class="frow top"><label>추가의견</label><textarea class="fta" id="f_extra" placeholder="-- 자동 입력 대기 --"></textarea></div>
+
+      <div class="sec-t sec2">지식검색 (Knowledge Base · top 5 of 67)</div>
+      <div class="kb-note">※ 예시 데이터입니다 — 실제 지식검색 연동은 추후 업데이트될 예정입니다.</div>
+      <ul class="kb">
+        <li><span class="rk">#1</span><span>고용 &gt; 근로계약 &gt; <span class="pt">취업규칙 포함사항</span></span></li>
+        <li><span class="rk">#2</span><span>고용 &gt; 임금(급여) &gt; <span class="pt">최저임금에 포함되지 않는 임금</span></span></li>
+        <li><span class="rk">#7</span><span>근로 및 노동 &gt; 권리구제 &gt; <span class="pt">지방고용노동관서</span></span></li>
+        <li><span class="rk">#25</span><span>고용 &gt; 임금(급여) &gt; <span class="pt">최저임금 정의 및 효력</span></span></li>
+        <li><span class="rk">#9</span><span>출입국 &gt; 자격변경 &gt; <span class="pt">근무처 변경·추가허가</span></span></li>
+      </ul>
+    </div>
+  </details>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -266,6 +273,13 @@ function setChips(state){const c=$('chips').children;['stt','tr','kb','sum'].for
   else if(state==='done'){[...c].forEach(x=>x.classList.add('on'));}
 }
 
+// ── control buttons (Start / Pause / Resume / Stop) ──
+function setControls(s){const sh=(id,on)=>{$(id).style.display=on?'':'none';};
+  if(s==='live'){$('btnStart').disabled=true;sh('btnPause',true);sh('btnResume',false);$('btnEnd').disabled=false;}
+  else if(s==='paused'){$('btnStart').disabled=true;sh('btnPause',false);sh('btnResume',true);$('btnEnd').disabled=false;}
+  else{$('btnStart').disabled=false;sh('btnPause',false);sh('btnResume',false);$('btnEnd').disabled=true;} // idle / ended
+}
+
 // ── Soniox live engine (auto-detect source → selected target) ──
 const SONIOX_WS='wss://stt-rt.soniox.com/transcribe-websocket';
 let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:'',segSpk:null,curRow:null};
@@ -285,7 +299,7 @@ function countdown(){return new Promise(res=>{const el=$('count');el.classList.a
 
 async function startCall(resume){
   if(running)return;running=true;paused=false;
-  $('btnStart').disabled=true;$('btnResume').style.display='none';$('btnEnd').disabled=false;
+  setControls('live');
   $('sessTitle').textContent='상담 진행 중 · Live';$('rStatus').innerHTML='<span class="d"></span>LIVE';
   setChips('live');
   if(!resume){$('sum').classList.add('hide');callLog=[];feedClear();resetTimer();}
@@ -328,16 +342,16 @@ function connect(){
 function startSilenceWatch(){clearInterval(silenceInt);
   silenceInt=setInterval(()=>{if(running&&!paused&&Date.now()-lastVoice>SILENCE_MS)autoPause();},3000);}
 
-// No speech for 2 minutes → pause and wait for the user to resume.
-function autoPause(){
+// Shared pause routine (manual button or 2-minute silence).
+function doPause(noteText){
   paused=true;running=false;clearInterval(silenceInt);
-  stopSoniox();pauseTimer();
-  $('rStatus').innerHTML='⏸ PAUSED';$('sessTitle').textContent='일시정지 (무음 2분) · Paused';
-  $('btnResume').style.display='';$('btnStart').disabled=true;
-  const note=document.createElement('div');note.className='paused-note';
-  note.textContent='⏸ 2분간 음성이 없어 일시정지되었습니다. 계속하려면 [재개]를 누르세요.';
-  $('feed').appendChild(note);feedBottom(true);
+  stopSoniox();pauseTimer();setControls('paused');
+  $('rStatus').innerHTML='⏸ PAUSED';$('sessTitle').textContent='일시정지 · Paused';
+  if(noteText){const note=document.createElement('div');note.className='paused-note';
+    note.textContent=noteText;$('feed').appendChild(note);feedBottom(true);}
 }
+function manualPause(){if(running)doPause('');}
+function autoPause(){doPause('⏸ 2분간 음성이 없어 일시정지되었습니다. 계속하려면 [재개]를 누르세요.');}
 function failCall(msg){toast(msg);endCall();}
 
 function sxRender(oI,tI){const o=(sx.segOrig+(oI||'')).trim(),tr=(sx.segTrans+(tI||'')).trim();
@@ -371,7 +385,7 @@ async function endCall(){
   if(!running&&!sx.ws&&!paused&&!callLog.length)return;
   running=false;paused=false;clearInterval(silenceInt);
   pauseTimer();stopSoniox();setInterim('');
-  $('btnStart').disabled=false;$('btnResume').style.display='none';$('btnEnd').disabled=true;
+  setControls('ended');
   const p=$('feed').querySelector('.paused-note');if(p)p.remove();
   $('sessTitle').textContent='상담 종료 · Session ended';$('rStatus').innerHTML='✓ DONE';
   setChips('done');
@@ -424,12 +438,13 @@ function resetAll(){
   $('feed').appendChild(h);$('feed').classList.add('empty');
   $('sum').classList.add('hide');$('interim').innerHTML='';callLog=[];
   $('sessTitle').textContent='상담 대기 중 · Idle';$('rStatus').innerHTML='<span class="d"></span>READY';
-  $('btnStart').disabled=false;$('btnResume').style.display='none';$('btnEnd').disabled=true;
+  setControls('idle');
   setChips('');$('f_inquiry').value='';$('f_extra').value='';$('f_memo').value='';
   ['f_t1','f_t2','f_t3'].forEach(id=>$(id).selectedIndex=0);
 }
 
 $('btnStart').onclick=()=>startCall(false);
+$('btnPause').onclick=manualPause;
 $('btnResume').onclick=()=>startCall(true);
 $('btnEnd').onclick=endCall;
 $('btnReset').onclick=resetAll;
