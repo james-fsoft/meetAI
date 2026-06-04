@@ -10,8 +10,8 @@
 <style>
 :root{--ink:#0a1124;--paper:#ffffff;--grey:#5b6b8c;--faint:#9aa6bd;--hair:#e3e8f2;--soft:#f5f7fc;--acc:#1f6bff}
 body.mono{--ink:#0a0a0a;--grey:#6b6b6b;--faint:#a8a8a8;--hair:#e6e6e6;--soft:#f4f4f4;--acc:#0a0a0a}
-.btn{background:var(--acc);border-color:var(--acc);color:#fff}
-.btn:hover{box-shadow:5px 5px 0 rgba(31,107,255,.28)}
+.btn{background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 84%,#fff),var(--acc));border-color:transparent;color:#fff;box-shadow:0 10px 24px -12px color-mix(in srgb,var(--acc) 65%,transparent)}
+.btn:hover{box-shadow:0 16px 34px -12px color-mix(in srgb,var(--acc) 78%,transparent)}
 .btn.out{background:var(--paper);color:var(--ink);border-color:var(--ink)}
 .btn.out:hover{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:none}
 .btn:disabled{background:var(--soft);color:var(--faint);border-color:var(--hair)}
@@ -82,7 +82,8 @@ h1{font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1;margin-bo
 .btn:hover{transform:translate(-1px,-1px)}
 .btn:active{transform:translate(1px,1px)}
 .btn:disabled{cursor:not-allowed;transform:none;box-shadow:none}
-.btn.big{font-size:18px;padding:22px}
+.btn.big{font-size:18px;padding:22px;animation:recGlow 2.8s ease-in-out infinite}
+@keyframes recGlow{0%,100%{box-shadow:0 10px 24px -12px color-mix(in srgb,var(--acc) 55%,transparent)}50%{box-shadow:0 16px 38px -10px color-mix(in srgb,var(--acc) 82%,transparent)}}
 .link{display:inline-block;margin-top:20px;background:none;border:none;cursor:pointer;font-family:inherit;
   font-size:13px;font-weight:600;color:var(--grey);text-decoration:underline;text-underline-offset:3px}
 .link:hover{color:var(--ink)}
@@ -173,7 +174,7 @@ body.recing .rec-hint{margin-bottom:10px}
 .set-body input{width:100%;border:1.5px solid var(--hair);background:var(--paper);color:var(--ink);padding:12px 14px;font-size:14px;font-family:'Space Mono',monospace;outline:none;border-radius:10px}
 .set-link{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:var(--acc);text-decoration:underline;text-underline-offset:3px}
 .set-note{font-size:12px;color:var(--faint);margin-top:18px;line-height:1.6}
-.live-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;justify-content:center;flex-wrap:wrap}
+.live-bar{display:flex;align-items:center;gap:11px;margin:0 auto 16px;justify-content:center;flex-wrap:wrap;background:var(--soft);border:1px solid var(--hair);padding:8px 14px;border-radius:16px;width:fit-content;max-width:100%}
 .lvtog{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;font-weight:700;color:var(--grey);user-select:none}
 .lvtog .live-ic{display:inline-flex;align-items:center;gap:5px}
 .lvtog .live-dot{width:9px;height:9px;border-radius:50%;background:var(--faint);transition:.2s}
@@ -181,11 +182,12 @@ body.recing .rec-hint{margin-bottom:10px}
 @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(229,72,77,.55)}70%{box-shadow:0 0 0 7px rgba(229,72,77,0)}100%{box-shadow:0 0 0 0 rgba(229,72,77,0)}}
 .lvtog .live-txt{font-weight:800;letter-spacing:.05em;font-size:11px;text-transform:uppercase;color:var(--faint)}
 .lvtog.on .live-txt{color:#e5484d}
-.lvtog .sw{width:34px;height:20px;border:2px solid var(--ink);background:var(--paper);position:relative;transition:.18s;flex-shrink:0;border-radius:20px}
-.lvtog .sw::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;background:var(--ink);transition:.18s;border-radius:50%}
-.lvtog.on .sw::after{transform:translateX(14px);background:#fff}
+.lvtog .sw{width:40px;height:23px;border:none;background:var(--hair);position:relative;transition:.2s;flex-shrink:0;border-radius:20px}
+.lvtog .sw::after{content:"";position:absolute;top:2.5px;left:2.5px;width:18px;height:18px;background:#fff;transition:.2s cubic-bezier(.4,.2,.2,1);border-radius:50%;box-shadow:0 1px 3px rgba(10,17,36,.28)}
+.lvtog.on .sw::after{transform:translateX(17px)}
 .lvtog input{display:none}
-.lvto-sel{border:1.5px solid var(--hair);background:var(--paper);color:var(--ink);padding:7px 10px;font-size:13px;font-family:inherit;font-weight:700;outline:none;cursor:pointer;appearance:none;border-radius:8px}
+.lvto-sel{border:1px solid var(--hair);background:var(--soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa6bd' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center;color:var(--ink);padding:8px 28px 8px 12px;font-size:13px;font-family:inherit;font-weight:700;outline:none;cursor:pointer;appearance:none;border-radius:10px;transition:.15s}
+.lvto-sel:hover{border-color:color-mix(in srgb,var(--acc) 45%,var(--hair))}
 .live-feed{position:relative;border:1px solid var(--hair);border-radius:18px;min-height:140px;max-height:34vh;width:100%;overflow:auto;padding:18px 20px 14px;text-align:left;display:flex;flex-direction:column;gap:0;margin-bottom:12px;background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 7%,transparent),transparent 130px),var(--soft);box-shadow:0 14px 34px -24px var(--acc)}
 .live-feed::-webkit-scrollbar{width:6px}
 .live-feed::-webkit-scrollbar-thumb{background:var(--hair);border-radius:10px}
@@ -271,10 +273,8 @@ audio{width:100%;margin-top:16px;height:42px}
         <option value="fast" data-t="lv_fast">⚡ Fast</option>
         <option value="multi" data-t="lv_multi">🌐 Multi</option>
       </select>
-      <select id="lvFrom" class="lvto-sel">
+      <select id="lvFrom" class="lvto-sel" style="display:none">
         <option value="auto" data-t="lv_auto">Auto</option>
-        <option value="en-US">EN</option><option value="vi-VN">VI</option><option value="ko-KR">KO</option>
-        <option value="ja-JP">JA</option><option value="zh-CN">ZH</option>
       </select>
       <span style="font-weight:800;color:var(--faint)">→</span>
       <select id="lvTo" class="lvto-sel">
@@ -526,7 +526,8 @@ function setInterim(txt){$('lvInterim').innerHTML=EQ+'<span>'+(txt?esc(txt):t('l
 // ── Live translation via Soniox real-time WebSocket (STT + translation) ──
 const SX_ISO={Vietnamese:'vi',English:'en',Korean:'ko',Japanese:'ja',Chinese:'zh'};
 let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:''};
-function sxHints(){const f=$('lvFrom').value;return(!f||f==='auto')?['en','vi','ko','ja','zh']:[f.split('-')[0]];}
+// Source language is always auto-detected by Soniox; hint the common ones.
+function sxHints(){return['en','vi','ko','ja','zh'];}
 async function startLive(){
   if(sx.ws)return;lvWantOn=true;
   $('lvFeed').style.display='flex';$('lvInterim').style.display='flex';setInterim('');
