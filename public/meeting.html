@@ -267,7 +267,7 @@ audio{width:100%;margin-top:16px;height:42px}
         <span class="live-ic"><span class="live-dot"></span><span class="live-txt">LIVE</span></span>
         <span class="sw"></span><input type="checkbox" id="lvOn" checked>
         <span data-t="c_translate">Live translate</span></label>
-      <select id="lvMode" class="lvto-sel" title="Live mode">
+      <select id="lvMode" class="lvto-sel" title="Live mode" style="display:none">
         <option value="fast" data-t="lv_fast">⚡ Fast</option>
         <option value="multi" data-t="lv_multi">🌐 Multi</option>
       </select>
@@ -517,46 +517,57 @@ $('setClose').onclick=()=>$('setOverlay').classList.remove('on');
 $('setOverlay').onclick=e=>{if(e.target===$('setOverlay'))$('setOverlay').classList.remove('on');};
 $('setSave').onclick=()=>{const oa=$('setOpenai').value.trim(),aai=$('setAai').value.trim();localStorage.setItem('mr_openai',oa);localStorage.setItem('mr_aai',aai);CONFIG.OPENAI_KEY=oa;CONFIG.ASSEMBLYAI_KEY=aai;$('setOverlay').classList.remove('on');toast(t('set_saved'));};
 $('lvToggle').onclick=e=>{if(e.target.tagName!=='INPUT')$('lvOn').checked=!$('lvOn').checked;$('lvToggle').classList.toggle('on',$('lvOn').checked);localStorage.setItem('mr_lvon',$('lvOn').checked?'1':'0');};
-$('lvTo').onchange=()=>localStorage.setItem('mr_lvto',$('lvTo').value);
-$('lvFrom').onchange=()=>localStorage.setItem('mr_lvfrom',$('lvFrom').value);
-$('lvMode').onchange=()=>{localStorage.setItem('mr_lvmode',$('lvMode').value);$('lvFrom').style.display=$('lvMode').value==='multi'?'none':'';
-  if(lvWantOn||(capState==='recording'&&$('lvOn').checked)){stopLive();if($('lvOn').checked&&capState==='recording')startLive();}};
+function restartLive(){if(capState==='recording'&&$('lvOn').checked){stopLive();startLive();}}
+$('lvTo').onchange=()=>{localStorage.setItem('mr_lvto',$('lvTo').value);restartLive();};
+$('lvFrom').onchange=()=>{localStorage.setItem('mr_lvfrom',$('lvFrom').value);restartLive();};
 function lvInfo(msg){$('lvFeed').style.display='flex';$('lvInterim').style.display='flex';$('lvInterim').textContent=msg;}
 const EQ='<span class="eq"><i></i><i></i><i></i><i></i></span>';
 function setInterim(txt){$('lvInterim').innerHTML=EQ+'<span>'+(txt?esc(txt):t('lv_listening'))+'</span>';}
-async function startLiveML(){if(!CONFIG.OPENAI_KEY){lvInfo('⚠ '+t('nokey'));return;}
-  $('lvFeed').style.display='flex';$('lvInterim').style.display='flex';$('lvInterim').innerHTML=EQ+'<span>'+t('lv_listening')+'</span>';lvWantOn=true;
-  try{mlStream=await navigator.mediaDevices.getUserMedia({audio:true});}catch(e){lvInfo('⚠ '+t('lv_mic'));lvWantOn=false;return;}
-  const loop=()=>{if(!lvWantOn||!mlStream)return;let seg=[];try{mlRec=new MediaRecorder(mlStream);}catch(e){lvInfo('⚠ '+e.message);return;}
-    mlRec.ondataavailable=e=>{if(e.data.size)seg.push(e.data);};
-    mlRec.onstop=()=>{const blob=new Blob(seg,{type:seg[0]?.type||'audio/webm'});if(lvWantOn)loop();if(blob.size>2000)transcribeChunk(blob);};
-    mlRec.start();mlTimer=setTimeout(()=>{if(mlRec&&mlRec.state!=='inactive')mlRec.stop();},ML_SEGMENT_MS);};
-  loop();}
-async function transcribeChunk(blob){try{const fd=new FormData();fd.append('file',blob,'seg.webm');fd.append('model','gpt-4o-transcribe');
-    const r=await fetch('/api/transcribe-openai',{method:'POST',body:fd});
-    const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);const txt=(d.text||'').trim();
-    if(txt&&!/^[\s.,!?…]*$/.test(txt)&&txt.length>1)addPair(txt);}catch(e){}}
-function startLive(){if($('lvMode').value==='multi'){startLiveML();return;}
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){lvInfo('⚠ '+t('lv_nosupport'));return;}if(!CONFIG.OPENAI_KEY){lvInfo('⚠ '+t('nokey'));return;}if(location.protocol==='file:'){lvInfo('⚠ '+t('lv_file'));return;}
+// ── Live translation via Soniox real-time WebSocket (STT + translation) ──
+const SX_ISO={Vietnamese:'vi',English:'en',Korean:'ko',Japanese:'ja',Chinese:'zh'};
+let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:''};
+function sxHints(){const f=$('lvFrom').value;return(!f||f==='auto')?['en','vi','ko','ja','zh']:[f.split('-')[0]];}
+async function startLive(){
+  if(sx.ws)return;lvWantOn=true;
   $('lvFeed').style.display='flex';$('lvInterim').style.display='flex';setInterim('');
-  recog=new SR();const fl=$('lvFrom').value;recog.lang=(fl&&fl!=='auto')?fl:(navigator.language||'en-US');
-  recog.continuous=true;recog.interimResults=true;recog.onstart=()=>setInterim('');
-  recog.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal){addPair(r[0].transcript.trim());}else interim+=r[0].transcript;}setInterim(interim);};
-  recog.onerror=ev=>{if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){lvInfo('⚠ '+t('lv_mic'));lvWantOn=false;}else if(ev.error==='no-speech'||ev.error==='aborted'){}else if(ev.error==='network'){setInterim('');}};
-  recog.onend=()=>{lvRunning=false;if(lvWantOn){setTimeout(()=>{if(lvWantOn){try{recog.start();lvRunning=true;}catch(e){}}},400);}};
-  lvWantOn=true;try{recog.start();lvRunning=true;}catch(e){lvInfo('⚠ '+e.message);}}
-function stopML(){if(mlTimer)clearTimeout(mlTimer);if(mlRec&&mlRec.state!=='inactive'){try{mlRec.stop();}catch(e){}}mlRec=null;if(mlStream){mlStream.getTracks().forEach(t=>t.stop());mlStream=null;}}
-function pauseLive(){lvWantOn=false;if(recog){try{recog.stop();}catch(e){}}stopML();}
-function stopLive(){lvWantOn=false;$('lvInterim').textContent='';if(recog){try{recog.stop();}catch(e){}recog=null;}stopML();}
-async function addPair(src){if(!src)return;const row=document.createElement('div');row.className='lv-pair';
-  row.innerHTML=`<div class="lv-src">${esc(src)}</div><div class="lv-tgt pending"></div>`;
+  if(location.protocol==='file:'){lvInfo('⚠ '+t('lv_file'));lvWantOn=false;return;}
+  let tok;
+  try{const r=await fetch('/api/soniox-token',{method:'POST'});const d=await r.json();if(!r.ok)throw new Error(d.error||'token error');tok=d.api_key;}
+  catch(e){lvInfo('⚠ '+e.message);lvWantOn=false;return;}
+  if(!lvWantOn)return;
+  try{sx.stream=await navigator.mediaDevices.getUserMedia({audio:true});}catch(e){lvInfo('⚠ '+t('lv_mic'));lvWantOn=false;return;}
+  const ws=new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket');sx.ws=ws;
+  ws.onopen=()=>{
+    ws.send(JSON.stringify({api_key:tok,model:'stt-rt-v4',audio_format:'auto',
+      language_hints:sxHints(),enable_speaker_diarization:true,enable_endpoint_detection:true,
+      translation:{type:'one_way',target_language:SX_ISO[$('lvTo').value]||'vi'}}));
+    let rec;try{rec=new MediaRecorder(sx.stream,{mimeType:'audio/webm;codecs=opus'});}catch(e){try{rec=new MediaRecorder(sx.stream);}catch(e2){lvInfo('⚠ '+e2.message);return;}}
+    sx.rec=rec;rec.ondataavailable=async e=>{if(e.data.size&&ws.readyState===1)ws.send(await e.data.arrayBuffer());};
+    rec.start(240);};
+  ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data);}catch(e){return;}
+    if(m.error_code){lvInfo('⚠ '+(m.error_message||m.error_code));return;}
+    let interim='';
+    (m.tokens||[]).forEach(tk=>{const x=tk.text;if(x==null)return;
+      if(x==='<end>'){sxFlush();return;}
+      if(tk.translation_status==='translation'){if(tk.is_final)sx.segTrans+=x;}
+      else{if(tk.is_final)sx.segOrig+=x;else interim+=x;}});
+    if(sx.segOrig||interim)setInterim((sx.segOrig+interim).trim());
+    if(m.finished)sxFlush();};
+  ws.onerror=()=>{if(lvWantOn)lvInfo('⚠ '+t('lv_net'));};
+  ws.onclose=()=>{sx.ws=null;};
+}
+function sxFlush(){const o=sx.segOrig.trim(),tr=sx.segTrans.trim();sx.segOrig='';sx.segTrans='';if(!o&&!tr)return;
+  const row=document.createElement('div');row.className='lv-pair';
+  row.innerHTML=`<div class="lv-src">${esc(o)}</div><div class="lv-tgt">${esc(tr||'…')}</div>`;
   $('lvFeed').appendChild(row);$('lvFeed').scrollTop=$('lvFeed').scrollHeight;
-  try{const to=$('lvTo').value;const ctx=lvHistory.slice(-3).map(p=>`${p.src} => ${p.tgt}`).join('\n');
-    const r=await fetch('/api/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,src,context:ctx})});
-    const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);const tgt=(d.translation||'').trim();
-    const el=row.querySelector('.lv-tgt');el.classList.remove('pending');el.textContent=tgt;lvHistory.push({src,tgt});if(lvHistory.length>8)lvHistory.shift();lvAll.push({src,tgt});$('lvFeed').scrollTop=$('lvFeed').scrollHeight;
-  }catch(e){const el=row.querySelector('.lv-tgt');el.classList.remove('pending');el.textContent='⚠ '+e.message;}}
+  if(o)curTr+=(curTr?'\n':'')+o;lvAll.push({src:o,tgt:tr});setInterim('');}
+function sxStop(){
+  if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
+  if(sx.ws){try{if(sx.ws.readyState===1)sx.ws.send('');sx.ws.close();}catch(e){}}sx.ws=null;
+  if(sx.stream){sx.stream.getTracks().forEach(t=>t.stop());sx.stream=null;}
+  sxFlush();}
+function pauseLive(){lvWantOn=false;sxStop();}
+function stopLive(){lvWantOn=false;$('lvInterim').textContent='';sxStop();}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function md(x){if(!x)return'';return esc(x).replace(/^### (.*)$/gm,'<h3>$1</h3>').replace(/^#{1,2} (.*)$/gm,'<h2>$1</h2>').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/^- \[x\] (.*)$/gmi,'<span class="ck">☑</span> $1').replace(/^- \[ \] (.*)$/gm,'☐ $1').replace(/^[-*] (.*)$/gm,'• $1').replace(/\n/g,'<br>');}
 $('theme').onclick=e=>{const b=e.target.closest('button');if(!b)return;setTheme(b.dataset.th);localStorage.setItem('mr_theme',b.dataset.th);};
