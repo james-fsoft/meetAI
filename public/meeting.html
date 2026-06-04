@@ -590,10 +590,11 @@ function sxFlush(){const o=sx.segOrig.trim(),tr=sx.segTrans.trim(),spk=sx.segSpk
   row.innerHTML=`<div class="lv-av" data-s="${hue}">${esc(ini)}</div>`+
     `<div class="lv-msg-b">${label?`<div class="lv-name">${esc(label)}</div>`:''}`+
     `<div class="lv-bubble"><div class="lv-orig">${esc(o)}</div>`+(tr?`<div class="lv-trans">${esc(tr)}</div>`:'')+`</div></div>`;
-  $('lvFeed').appendChild(row);feedScroll();
+  $('lvFeed').appendChild(row);feedScroll(row);
   if(o)curTr+=(curTr?'\n':'')+(label?label+': ':'')+o;lvAll.push({src:o,tgt:tr});setInterim('');}
-// Follow the newest line, but don't yank the page if the user scrolled up to read.
-function feedScroll(){const d=document.documentElement;if(d.scrollHeight-d.scrollTop-d.clientHeight<170)window.scrollTo(0,d.scrollHeight);}
+// Teleprompter-style: keep the newest line centered on screen so it's always readable.
+function feedScroll(row){if(row&&row.scrollIntoView)row.scrollIntoView({behavior:'smooth',block:'center'});
+  else window.scrollTo(0,document.documentElement.scrollHeight);}
 function sxStop(){
   if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
   if(sx.ws){try{if(sx.ws.readyState===1)sx.ws.send('');sx.ws.close();}catch(e){}}sx.ws=null;
