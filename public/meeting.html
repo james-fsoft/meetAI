@@ -464,6 +464,7 @@ function stopViz(){if(raf)cancelAnimationFrame(raf);[...$('viz').children].forEa
 async function buildStream(){const mic=await navigator.mediaDevices.getUserMedia({audio:true});extra=[mic];return mic;}
 function setCap(s){capState=s;$('capIdle').style.display=s==='idle'?'':'none';$('capRec').style.display=(s==='recording'||s==='paused')?'':'none';$('capReady').style.display=s==='ready'?'':'none';document.body.classList.toggle('recing',s==='recording');refreshDyn();}
 $('btnRec').onclick=async()=>{
+  if(!gateStart())return;
   try{audioStream=await buildStream();chunks=[];
     $('lvFeed').innerHTML='';$('lvFeed').style.display='none';$('lvInterim').textContent='';$('lvInterim').style.display='none';
     curTr="";curSum="";lvHistory=[];lvAll=[];
@@ -483,7 +484,7 @@ $('btnUpload').onclick=()=>$('fileIn').click();
 $('fileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;audioBlob=f;$('player').src=URL.createObjectURL(f);$('timer').textContent='00:00';setCap('ready');toast(f.name);};
 $('btnRedo').onclick=()=>{audioBlob=null;$('timer').textContent='00:00';setCap('idle');$('lvFeed').style.display='none';$('lvInterim').style.display='none';$('lvFeed').innerHTML='';};
 function setProc(msg,sub){$('procMsg').textContent=msg;$('procSub').textContent=sub||'';}
-$('btnSummarize').onclick=async()=>{if(!CONFIG.OPENAI_KEY&&!CONFIG.ASSEMBLYAI_KEY){alert(t('nokey'));return;}
+$('btnSummarize').onclick=async()=>{if(!gateStart())return;
   show('sc-res');$('resProc').style.display='';$('resBody').style.display='none';
   const ok=await transcribe();if(!ok)return;setProc(t('p_sum'),t('p_wait'));await summarize();};
 async function transcribe(){try{
@@ -556,33 +557,46 @@ function sxHints(){return['en','vi','ko','ja','zh'];}
 // Pick an audio container the browser actually supports (iOS lacks webm).
 function pickMime(){const c=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/aac','audio/mpeg'];
   if(window.MediaRecorder&&MediaRecorder.isTypeSupported)for(const m of c)if(MediaRecorder.isTypeSupported(m))return m;return'';}
-// ── Free trial: anonymous visitors get 10 minutes of live translation ──
-const TRIAL=new URLSearchParams(location.search).get('trial')==='1';
-const TRIAL_LIMIT=600; // seconds
-let trialUsed=parseInt(localStorage.getItem('mr_trial_used')||'0',10)||0;
-let trialInt=null;
-function trialStart(){if(!TRIAL||trialInt)return;trialInt=setInterval(()=>{
-  trialUsed++;localStorage.setItem('mr_trial_used',trialUsed);
-  if(trialUsed>=TRIAL_LIMIT){trialStop();stopLive();showTrial();}},1000);}
-function trialStop(){if(trialInt){clearInterval(trialInt);trialInt=null;}}
-function trialOk(){if(TRIAL&&trialUsed>=TRIAL_LIMIT){showTrial();return false;}return true;}
+// ── Login + trial gate: must sign in; trial = 50 min total, max 10 min/day ──
+const SIGNED=new URLSearchParams(location.search).get('signed')==='1';
+const TRIAL_TOTAL=3000; // 50 minutes (seconds)
+const TRIAL_DAILY=600;  // 10 minutes per day (seconds)
+const today=()=>new Date().toISOString().slice(0,10);
+function trialTotal(){return parseInt(localStorage.getItem('mr_trial_total')||'0',10)||0;}
+function trialDay(){let o={};try{o=JSON.parse(localStorage.getItem('mr_trial_day')||'{}');}catch(e){}return o.d===today()?(o.s||0):0;}
+function trialAdd(sec){localStorage.setItem('mr_trial_total',trialTotal()+sec);
+  localStorage.setItem('mr_trial_day',JSON.stringify({d:today(),s:trialDay()+sec}));}
 function goTop(url){try{window.top.location.href=url;}catch(e){window.parent.location.href=url;}}
-function showTrial(){if(document.getElementById('trialOv'))return;
-  const ov=document.createElement('div');ov.id='trialOv';
+// Allowed to begin a billable action? Otherwise show the right prompt.
+function gateStart(){
+  if(!SIGNED){showGate('login');return false;}
+  if(trialDay()>=TRIAL_DAILY){showGate('daily');return false;}
+  if(trialTotal()>=TRIAL_TOTAL){showGate('total');return false;}
+  return true;}
+let trialInt=null;
+function trialStart(){if(trialInt)return;trialInt=setInterval(()=>{trialAdd(1);
+  if(trialDay()>=TRIAL_DAILY){trialStop();stopLive();showGate('daily');}
+  else if(trialTotal()>=TRIAL_TOTAL){trialStop();stopLive();showGate('total');}},1000);}
+function trialStop(){if(trialInt){clearInterval(trialInt);trialInt=null;}}
+function showGate(kind){if(document.getElementById('gateOv'))return;
+  const D={login:{i:'🔑',h:'Đăng nhập để dùng thử',p:'Đăng nhập miễn phí để dùng thử 50 phút dịch trực tiếp (tối đa 10 phút mỗi ngày).',b:'Đăng nhập',u:'/login'},
+    daily:{i:'⏱️',h:'Đã hết 10 phút hôm nay',p:'Bạn đã dùng hết hạn mức dùng thử trong ngày. Quay lại ngày mai hoặc nâng cấp gói để dùng nhiều hơn.',b:'Xem các gói',u:'/pricing'},
+    total:{i:'🎁',h:'Đã hết 50 phút dùng thử',p:'Bạn đã dùng hết thời gian dùng thử. Nâng cấp gói để tiếp tục sử dụng.',b:'Xem các gói',u:'/pricing'}}[kind];
+  const ov=document.createElement('div');ov.id='gateOv';
   ov.style.cssText='position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(10,17,36,.55);backdrop-filter:blur(4px)';
   ov.innerHTML='<div style="background:#fff;border-radius:20px;max-width:380px;width:100%;padding:30px 26px;text-align:center;box-shadow:0 30px 60px -30px rgba(10,17,36,.5);font-family:inherit">'+
-    '<div style="font-size:38px;margin-bottom:8px">⏱️</div>'+
-    '<h2 style="font-size:20px;font-weight:900;color:#0a1124;margin-bottom:10px">Đã hết 10 phút dùng thử</h2>'+
-    '<p style="font-size:14px;color:#5b6b8c;line-height:1.55;margin-bottom:22px">Đăng nhập để tiếp tục dùng dịch trực tiếp không giới hạn theo gói của bạn.</p>'+
-    '<button id="trialLogin" style="width:100%;border:none;background:#1f6bff;color:#fff;font-weight:800;font-size:15px;padding:13px;border-radius:12px;cursor:pointer;font-family:inherit">Đăng nhập</button>'+
-    '<a href="#" id="trialPlans" style="display:inline-block;margin-top:14px;font-size:13px;color:#5b6b8c;text-decoration:none">Xem các gói →</a>'+
+    '<div style="font-size:38px;margin-bottom:8px">'+D.i+'</div>'+
+    '<h2 style="font-size:20px;font-weight:900;color:#0a1124;margin-bottom:10px">'+D.h+'</h2>'+
+    '<p style="font-size:14px;color:#5b6b8c;line-height:1.55;margin-bottom:22px">'+D.p+'</p>'+
+    '<button id="gateBtn" style="width:100%;border:none;background:#1f6bff;color:#fff;font-weight:800;font-size:15px;padding:13px;border-radius:12px;cursor:pointer;font-family:inherit">'+D.b+'</button>'+
+    '<a href="#" id="gateClose" style="display:inline-block;margin-top:14px;font-size:13px;color:#5b6b8c;text-decoration:none">Đóng</a>'+
     '</div>';
   document.body.appendChild(ov);
-  document.getElementById('trialLogin').onclick=()=>goTop('/login');
-  document.getElementById('trialPlans').onclick=e=>{e.preventDefault();goTop('/pricing');};}
+  document.getElementById('gateBtn').onclick=()=>goTop(D.u);
+  document.getElementById('gateClose').onclick=e=>{e.preventDefault();ov.remove();};}
 async function startLive(){
   if(sx.ws)return;
-  if(!trialOk())return;
+  if(!gateStart())return;
   lvWantOn=true;
   $('lvFeed').style.display='flex';$('lvInterim').style.display='flex';setInterim('');
   if(location.protocol==='file:'){lvInfo('⚠ '+t('lv_file'));lvWantOn=false;return;}

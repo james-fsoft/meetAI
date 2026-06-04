@@ -25,12 +25,12 @@ export default function MeetingApp({ email, plan = "free" }: { email?: string; p
     router.refresh();
   }
 
-  const iframeSrc = signedIn ? "/meeting.html?v=25" : "/meeting.html?v=25&trial=1";
+  const iframeSrc = signedIn ? "/meeting.html?v=26&signed=1" : "/meeting.html?v=26";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <div style={bar}>
-        <span style={brand}>🎙️ Meeting AI</span>
+        <a href="/" style={brand}>🎙️ Meeting AI</a>
         <span style={{ flex: 1 }} />
         {signedIn ? (
           <>
@@ -40,7 +40,7 @@ export default function MeetingApp({ email, plan = "free" }: { email?: string; p
           </>
         ) : (
           <>
-            <span style={trialBadge}>Dùng thử · 10 phút</span>
+            <span style={trialBadge}>Dùng thử miễn phí 50 phút</span>
             <a href="/pricing" style={linkBtn}>Các gói</a>
             <a href="/login" style={primaryBtn}>Đăng nhập</a>
           </>
@@ -61,7 +61,7 @@ const bar: React.CSSProperties = {
   fontFamily: "'Inter',system-ui,sans-serif", fontSize: 13, color: "#5b6b8c",
   borderBottom: "1px solid #e3e8f2", background: "#fff",
 };
-const brand: React.CSSProperties = { fontWeight: 900, color: "#0a1124", letterSpacing: "-.03em" };
+const brand: React.CSSProperties = { fontWeight: 900, color: "#0a1124", letterSpacing: "-.03em", textDecoration: "none" };
 const mail: React.CSSProperties = { fontSize: 12.5 };
 const out: React.CSSProperties = {
   border: "1.5px solid #e3e8f2", background: "#fff", color: "#0a1124", cursor: "pointer",
