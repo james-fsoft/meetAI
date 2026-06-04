@@ -46,7 +46,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
 .theme-seg button.on{box-shadow:0 0 0 2px var(--paper),0 0 0 4px currentColor}
 .theme-seg button.sw-sota.on{color:#1f6bff}
 .theme-seg button.sw-mono.on{color:#0a0a0a}
-.stage{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 26px}
+.stage{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:40px 26px}
 .screen{display:none;width:100%;max-width:520px;text-align:center;animation:in .35s ease}
 .screen.on{display:block}
 .screen#sc-res{max-width:600px}.screen#sc-hero{max-width:760px}
@@ -87,10 +87,10 @@ h1{font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1;margin-bo
 .link{display:inline-block;margin-top:20px;background:none;border:none;cursor:pointer;font-family:inherit;
   font-size:13px;font-weight:600;color:var(--grey);text-decoration:underline;text-underline-offset:3px}
 .link:hover{color:var(--ink)}
-.timer{font-family:'Space Mono',monospace;font-size:64px;font-weight:700;letter-spacing:2px;line-height:1;
-  margin-bottom:6px;font-variant-numeric:tabular-nums;transition:font-size .25s}
-/* shrink timer + hero mark while recording to give subtitles more room */
-body.recing .timer{font-size:38px;margin-bottom:2px}
+.timer{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;letter-spacing:1px;line-height:1;
+  margin-bottom:8px;font-variant-numeric:tabular-nums;color:var(--faint)}
+/* timer stays small & unobtrusive — the conversation text is what matters */
+body.recing .timer{font-size:18px;margin-bottom:6px}
 body.recing .hero-mark{width:0;height:0;margin:0;overflow:hidden}
 body.recing .viz{height:30px;margin-bottom:10px}
 body.recing #diarNote{display:none}
@@ -111,7 +111,7 @@ body.recing .rec-hint{margin-bottom:10px}
 .res-tabs button.on{background:var(--ink);color:var(--paper)}
 .wc{font-family:'Space Mono',monospace;font-size:11px;color:var(--faint);font-weight:700}
 .out{border:1.5px solid var(--hair);border-radius:14px;padding:22px;font-size:14.5px;line-height:1.7;text-align:left;
-  max-height:46vh;overflow:auto;white-space:pre-wrap;word-break:break-word;background:var(--soft)}
+  white-space:pre-wrap;word-break:break-word;background:var(--soft)}
 .out h2,.out h3{font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;color:var(--acc);
   margin:20px 0 9px;padding-bottom:6px;border-bottom:1.5px solid var(--hair)}
 .out h2:first-child{margin-top:0}
@@ -188,7 +188,7 @@ body.recing .rec-hint{margin-bottom:10px}
 .lvtog input{display:none}
 .lvto-sel{border:1px solid var(--hair);background:var(--soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa6bd' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center;color:var(--ink);padding:8px 28px 8px 12px;font-size:13px;font-family:inherit;font-weight:700;outline:none;cursor:pointer;appearance:none;border-radius:10px;transition:.15s}
 .lvto-sel:hover{border-color:color-mix(in srgb,var(--acc) 45%,var(--hair))}
-.live-feed{position:relative;border:1px solid var(--hair);border-radius:18px;min-height:140px;max-height:34vh;width:100%;overflow:auto;padding:18px 20px 14px;text-align:left;display:flex;flex-direction:column;gap:0;margin-bottom:12px;background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 7%,transparent),transparent 130px),var(--soft);box-shadow:0 14px 34px -24px var(--acc)}
+.live-feed{position:relative;border:1px solid var(--hair);border-radius:18px;min-height:120px;width:100%;overflow:visible;padding:16px 18px 12px;text-align:left;display:flex;flex-direction:column;gap:0;margin-bottom:12px;background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 7%,transparent),transparent 130px),var(--soft);box-shadow:0 14px 34px -24px var(--acc)}
 .live-feed::-webkit-scrollbar{width:6px}
 .live-feed::-webkit-scrollbar-thumb{background:var(--hair);border-radius:10px}
 .lv-msg{display:flex;gap:10px;align-items:flex-start;padding:9px 0;animation:lvIn .35s cubic-bezier(.2,.7,.3,1)}
@@ -216,26 +216,25 @@ audio{width:100%;margin-top:16px;height:42px}
 @media(max-width:620px){
   .top{padding:13px 16px}.stage{padding:22px 14px}
   .hero-h{font-size:32px}.hero-sub{font-size:15px}.hero-feats{grid-template-columns:1fr;margin-top:32px}
-  .app-card{padding:22px 16px}h1{font-size:25px}.timer{font-size:52px}
+  .app-card{padding:22px 16px}h1{font-size:25px}
   .live-bar{gap:8px;padding:7px 11px}
   .btn{font-size:15px;padding:15px}.btn.big{padding:18px;font-size:16px}
-  .out{padding:18px;max-height:52vh}.lv-trans{font-size:16px}
+  .out{padding:18px}.lv-trans{font-size:16px}
   .res-head{flex-wrap:wrap;gap:10px}
 }
-/* On phones, recording takes over the whole screen so subtitles are readable */
+/* On phones, recording takes over the screen edge-to-edge; the page itself
+   scrolls (one scrollbar) and the conversation fills the width. */
 @media(max-width:620px){
-  body.recing{overflow:hidden}
   body.recing .top,body.recing .foot{display:none}
   body.recing .stage{padding:0;align-items:stretch}
   body.recing #sc-cap{max-width:100%;width:100%}
-  body.recing .app-card{position:fixed;inset:0;height:100dvh;width:100vw;border:none;border-radius:0;
-    box-shadow:none;padding:14px 14px calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;z-index:50}
+  body.recing .app-card{min-height:100dvh;border:none;border-radius:0;box-shadow:none;
+    padding:12px 12px calc(12px + env(safe-area-inset-bottom))}
   body.recing .viz{margin-bottom:8px}
-  body.recing .timer{font-size:30px}
-  body.recing .live-bar{margin-bottom:12px}
-  body.recing .live-feed{flex:1 1 auto;max-height:none;min-height:0;margin-bottom:10px}
-  body.recing .live-interim{margin-bottom:10px}
-  body.recing #capRec{margin-top:auto}
+  body.recing .live-feed{min-height:60vh}
+  /* keep Pause/Stop reachable without a nested scroll */
+  body.recing #capRec{position:sticky;bottom:0;background:var(--paper);
+    padding:10px 0 calc(4px + env(safe-area-inset-bottom));margin-top:8px;z-index:5}
   body.recing #capRec .dual{margin-top:0!important}
 }
 </style>
@@ -591,8 +590,10 @@ function sxFlush(){const o=sx.segOrig.trim(),tr=sx.segTrans.trim(),spk=sx.segSpk
   row.innerHTML=`<div class="lv-av" data-s="${hue}">${esc(ini)}</div>`+
     `<div class="lv-msg-b">${label?`<div class="lv-name">${esc(label)}</div>`:''}`+
     `<div class="lv-bubble"><div class="lv-orig">${esc(o)}</div>`+(tr?`<div class="lv-trans">${esc(tr)}</div>`:'')+`</div></div>`;
-  $('lvFeed').appendChild(row);$('lvFeed').scrollTop=$('lvFeed').scrollHeight;
+  $('lvFeed').appendChild(row);feedScroll();
   if(o)curTr+=(curTr?'\n':'')+(label?label+': ':'')+o;lvAll.push({src:o,tgt:tr});setInterim('');}
+// Follow the newest line, but don't yank the page if the user scrolled up to read.
+function feedScroll(){const d=document.documentElement;if(d.scrollHeight-d.scrollTop-d.clientHeight<170)window.scrollTo(0,d.scrollHeight);}
 function sxStop(){
   if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
   if(sx.ws){try{if(sx.ws.readyState===1)sx.ws.send('');sx.ws.close();}catch(e){}}sx.ws=null;
