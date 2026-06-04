@@ -191,15 +191,16 @@ body.recing .rec-hint{margin-bottom:10px}
 .live-feed{position:relative;border:1px solid var(--hair);border-radius:18px;min-height:140px;max-height:34vh;width:100%;overflow:auto;padding:18px 20px 14px;text-align:left;display:flex;flex-direction:column;gap:0;margin-bottom:12px;background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 7%,transparent),transparent 130px),var(--soft);box-shadow:0 14px 34px -24px var(--acc)}
 .live-feed::-webkit-scrollbar{width:6px}
 .live-feed::-webkit-scrollbar-thumb{background:var(--hair);border-radius:10px}
-.lv-pair{position:relative;padding:14px 0 14px 20px;border-bottom:1px solid color-mix(in srgb,var(--hair) 60%,transparent);animation:lvIn .35s cubic-bezier(.2,.7,.3,1)}
-.lv-pair:last-child{border-bottom:none}
-.lv-pair::before{content:"";position:absolute;left:0;top:15px;bottom:15px;width:3px;border-radius:3px;background:linear-gradient(var(--acc),color-mix(in srgb,var(--acc) 30%,transparent))}
+.lv-msg{display:flex;gap:10px;align-items:flex-start;padding:9px 0;animation:lvIn .35s cubic-bezier(.2,.7,.3,1)}
 @keyframes lvIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.lv-src{font-size:13px;color:var(--grey);margin-bottom:5px;line-height:1.45}
-.lv-tgt{font-size:19px;font-weight:700;line-height:1.4;letter-spacing:-.02em;color:var(--ink)}
-.lv-tgt.pending{color:var(--faint);font-weight:500}
-.lv-tgt.pending::after{content:"";display:inline-block;animation:lvDots 1.2s steps(4,end) infinite}
-@keyframes lvDots{0%{content:""}25%{content:"·"}50%{content:"··"}75%{content:"···"}}
+.lv-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;font-family:'Space Mono',monospace;box-shadow:0 3px 8px -3px rgba(10,17,36,.4)}
+.lv-av[data-s="0"]{background:#1f6bff}.lv-av[data-s="1"]{background:#e5484d}.lv-av[data-s="2"]{background:#12a594}
+.lv-av[data-s="3"]{background:#f76808}.lv-av[data-s="4"]{background:#8e4ec6}.lv-av[data-s="5"]{background:#e5b000}
+.lv-msg-b{flex:1;min-width:0}
+.lv-name{font-size:11.5px;font-weight:800;color:var(--grey);margin:1px 0 5px 2px;letter-spacing:.01em}
+.lv-bubble{background:var(--paper);border:1px solid var(--hair);border-radius:5px 16px 16px 16px;padding:11px 14px;box-shadow:0 6px 18px -12px rgba(10,17,36,.45)}
+.lv-orig{font-size:13px;color:var(--grey);line-height:1.46}
+.lv-trans{font-size:15.5px;font-weight:600;color:var(--ink);line-height:1.46;margin-top:7px;padding-top:7px;border-top:1px dashed color-mix(in srgb,var(--hair) 85%,transparent);letter-spacing:-.01em}
 .live-interim{min-height:24px;margin-bottom:12px;font-size:14px;color:var(--acc);text-align:left;font-weight:600;display:flex;align-items:center;gap:9px}
 .live-interim:empty{display:none}
 .live-interim .eq{display:inline-flex;align-items:flex-end;gap:2px;height:14px;flex-shrink:0}
@@ -525,7 +526,7 @@ const EQ='<span class="eq"><i></i><i></i><i></i><i></i></span>';
 function setInterim(txt){$('lvInterim').innerHTML=EQ+'<span>'+(txt?esc(txt):t('lv_listening'))+'</span>';}
 // ── Live translation via Soniox real-time WebSocket (STT + translation) ──
 const SX_ISO={Vietnamese:'vi',English:'en',Korean:'ko',Japanese:'ja',Chinese:'zh'};
-let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:''};
+let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:'',segSpk:null};
 // Source language is always auto-detected by Soniox; hint the common ones.
 function sxHints(){return['en','vi','ko','ja','zh'];}
 async function startLive(){
@@ -551,17 +552,20 @@ async function startLive(){
     (m.tokens||[]).forEach(tk=>{const x=tk.text;if(x==null)return;
       if(x==='<end>'){sxFlush();return;}
       if(tk.translation_status==='translation'){if(tk.is_final)sx.segTrans+=x;}
-      else{if(tk.is_final)sx.segOrig+=x;else interim+=x;}});
+      else{if(tk.is_final){sx.segOrig+=x;if(tk.speaker!=null)sx.segSpk=tk.speaker;}else interim+=x;}});
     if(sx.segOrig||interim)setInterim((sx.segOrig+interim).trim());
     if(m.finished)sxFlush();};
   ws.onerror=()=>{if(lvWantOn)lvInfo('⚠ '+t('lv_net'));};
   ws.onclose=()=>{sx.ws=null;};
 }
-function sxFlush(){const o=sx.segOrig.trim(),tr=sx.segTrans.trim();sx.segOrig='';sx.segTrans='';if(!o&&!tr)return;
-  const row=document.createElement('div');row.className='lv-pair';
-  row.innerHTML=`<div class="lv-src">${esc(o)}</div><div class="lv-tgt">${esc(tr||'…')}</div>`;
+function sxFlush(){const o=sx.segOrig.trim(),tr=sx.segTrans.trim(),spk=sx.segSpk;sx.segOrig='';sx.segTrans='';sx.segSpk=null;if(!o&&!tr)return;
+  const label=spk!=null?'Speaker '+spk:'';const ini=spk!=null?String(spk):'•';const hue=spk!=null?((spk-1)%6+6)%6:0;
+  const row=document.createElement('div');row.className='lv-msg';
+  row.innerHTML=`<div class="lv-av" data-s="${hue}">${esc(ini)}</div>`+
+    `<div class="lv-msg-b">${label?`<div class="lv-name">${esc(label)}</div>`:''}`+
+    `<div class="lv-bubble"><div class="lv-orig">${esc(o)}</div>`+(tr?`<div class="lv-trans">${esc(tr)}</div>`:'')+`</div></div>`;
   $('lvFeed').appendChild(row);$('lvFeed').scrollTop=$('lvFeed').scrollHeight;
-  if(o)curTr+=(curTr?'\n':'')+o;lvAll.push({src:o,tgt:tr});setInterim('');}
+  if(o)curTr+=(curTr?'\n':'')+(label?label+': ':'')+o;lvAll.push({src:o,tgt:tr});setInterim('');}
 function sxStop(){
   if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
   if(sx.ws){try{if(sx.ws.readyState===1)sx.ws.send('');sx.ws.close();}catch(e){}}sx.ws=null;
