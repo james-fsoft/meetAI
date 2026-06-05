@@ -488,14 +488,21 @@ function setProc(msg,sub){$('procMsg').textContent=msg;$('procSub').textContent=
 $('btnSummarize').onclick=async()=>{if(!gateStart())return;
   show('sc-res');$('resProc').style.display='';$('resBody').style.display='none';
   const ok=await transcribe();if(!ok)return;setProc(t('p_sum'),t('p_wait'));await summarize();};
-async function transcribe(){try{
-    if(CONFIG.ASSEMBLYAI_KEY){curTr=await transcribeAAI();}else{curTr=await transcribeWhisper();}
+async function transcribe(){
+  // If live translation already produced a transcript, reuse it (no re-upload).
+  if(curTr&&curTr.trim())return true;
+  if(!audioBlob){curSum='⚠ '+t('err')+'no audio';renderResult();return false;}
+  try{
+    curTr=await transcribeAAI();
     return !!curTr;
   }catch(e){curTr='';curSum='⚠ '+t('err')+e.message;renderResult();toast(t('err')+e.message);return false;}}
 async function transcribeAAI(){setProc(t('p_upload'),t('p_wait'));
   const fd=new FormData();fd.append('file',audioBlob,audioBlob.name||'audio.webm');
   const r=await fetch('/api/transcribe',{method:'POST',body:fd});
-  const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);return d.transcript||'';}
+  if(!r.ok){
+    if(r.status===413)throw new Error('File ghi âm quá lớn (giới hạn máy chủ ~4.5MB). Bật "Live translate" khi ghi để khỏi cần upload, hoặc ghi ngắn hơn.');
+    let msg;try{const d=await r.json();msg=d.error;}catch(_){msg='HTTP '+r.status;}throw new Error(msg||'transcribe failed');}
+  const d=await r.json();return d.transcript||'';}
 async function transcribeWhisper(){setProc(t('p_diar'),t('p_wait'));let ext='webm';const ty=audioBlob.type||'';
   if(ty.includes('mp4')||ty.includes('m4a'))ext='m4a';else if(ty.includes('mpeg')||ty.includes('mp3'))ext='mp3';else if(ty.includes('wav'))ext='wav';else if(audioBlob.name&&audioBlob.name.includes('.'))ext=audioBlob.name.split('.').pop();
   const fd=new FormData();fd.append('file',audioBlob,'m.'+ext);fd.append('model','whisper-1');
