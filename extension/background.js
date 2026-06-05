@@ -51,7 +51,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.from === "offscreen") {
     if (msg.type === "status" && (msg.text === "STOPPED" || msg.text?.startsWith("⚠") || msg.text?.includes("오류")))
       active.running = false;
-    if (active.tabId) chrome.tabs.sendMessage(active.tabId, { from: "bg", ...msg }).catch(() => {});
-    chrome.runtime.sendMessage({ from: "bg", ...msg }).catch(() => {}); // to popup if open
+    if (active.tabId) chrome.tabs.sendMessage(active.tabId, { ...msg, from: "bg" }).catch(() => {});
+    chrome.runtime.sendMessage({ ...msg, from: "bg" }).catch(() => {}); // to popup if open
   }
 });
