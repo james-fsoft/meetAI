@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dual-Language Test · Two-way</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0c1322;--paper:#fff;--grey:#5b6b8c;--faint:#9aa6bd;--hair:#e3e8f2;--soft:#f5f7fc;--acc:#1f6bff;--a:#1f6bff;--b:#16a34a}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--soft);min-height:100vh}
+.top{position:sticky;top:0;z-index:30;background:#101a2e;color:#fff;padding:14px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.top h1{font-size:16px;font-weight:900;letter-spacing:-.02em}
+.top .tag{font-size:11px;color:#8fa1c2;font-weight:700;background:rgba(255,255,255,.08);padding:3px 9px;border-radius:20px}
+.langs{margin-left:auto;display:flex;align-items:center;gap:8px}
+.sel{border:none;background:rgba(255,255,255,.14);color:#fff;font-family:inherit;font-size:13px;font-weight:700;
+  padding:7px 26px 7px 11px;border-radius:9px;outline:none;cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center}
+.sel option{color:#0c1322}
+.swap{background:rgba(255,255,255,.12);border:none;color:#fff;cursor:pointer;width:30px;height:30px;border-radius:8px;font-size:15px}
+.swap:hover{background:rgba(255,255,255,.22)}
+.btn{border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:800;padding:9px 18px;border-radius:9px;color:#fff;transition:.15s}
+.btn.start{background:#16a34a}.btn.start:hover{background:#15903f}
+.btn.stop{background:#dc2626}.btn.stop:hover{background:#c01d1d}
+.timer{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#bcd}
+.status{font-size:12px;font-weight:700;color:#7ee0a6}
+.wrap{max-width:780px;margin:0 auto;padding:20px 18px 60px}
+.legend{display:flex;gap:14px;font-size:12px;font-weight:700;color:var(--grey);margin-bottom:12px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.feed{position:relative;border:1px solid var(--hair);border-radius:16px;background:var(--paper);padding:16px;min-height:60vh;
+  box-shadow:0 20px 50px -36px rgba(12,19,34,.5)}
+.count{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(255,255,255,.94);z-index:6;border-radius:16px}
+.count.on{display:flex}
+.count .n{font-family:'Space Mono',monospace;font-size:64px;font-weight:700;color:var(--acc);animation:cp .9s ease}
+@keyframes cp{0%{transform:scale(.6);opacity:.3}40%{transform:scale(1.1)}100%{transform:scale(1)}}
+.count .t{font-size:13px;color:var(--grey);margin-top:8px;font-weight:700}
+.hint{color:var(--faint);font-size:13.5px;text-align:center;padding:50px 20px;line-height:1.6}
+.msg{padding:10px 0;border-bottom:1px solid #f0f3fa;animation:in .3s ease}
+.msg:last-child{border-bottom:none}
+@keyframes in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.msg .orig{font-size:13px;color:var(--grey);line-height:1.45}
+.msg .tr{font-size:18px;font-weight:700;line-height:1.45;margin-top:5px;padding-left:11px;border-left:3px solid var(--acc)}
+.msg.toA .tr{border-left-color:var(--a);color:var(--a)}
+.msg.toB .tr{border-left-color:var(--b);color:var(--b)}
+.msg .lbl{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.03em;border-radius:5px;padding:1px 7px;margin-bottom:4px;text-transform:uppercase}
+.msg.toA .lbl{background:#eef4ff;color:var(--a)}
+.msg.toB .lbl{background:#f0fdf4;color:var(--b)}
+.interim{min-height:22px;margin-top:12px;font-size:13px;color:var(--acc);font-weight:600;display:flex;align-items:center;gap:8px}
+.interim:empty{display:none}
+.eq{display:inline-flex;align-items:flex-end;gap:2px;height:13px}.eq i{width:3px;background:var(--acc);border-radius:2px;height:4px;animation:eq 1s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:.2s}.eq i:nth-child(3){animation-delay:.4s}
+@keyframes eq{0%,100%{height:4px}50%{height:13px}}
+.note{font-size:12px;color:var(--faint);margin-top:14px;line-height:1.5;text-align:center}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>🔀 Dual-Language</h1><span class="tag">Two-way · TEST</span>
+  <div class="langs">
+    <select class="sel" id="langA"></select>
+    <button class="swap" id="swap" title="Đổi chỗ">⇄</button>
+    <select class="sel" id="langB"></select>
+    <button class="btn start" id="btn">▶ Bắt đầu</button>
+    <span class="timer" id="timer">00:00</span>
+    <span class="status" id="status"></span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="legend">
+    <span><i style="background:var(--a)"></i><span id="legA">A</span></span>
+    <span><i style="background:var(--b)"></i><span id="legB">B</span></span>
+    <span style="color:var(--faint);font-weight:600">Nói ngôn ngữ nào → ra ngôn ngữ kia</span>
+  </div>
+  <div class="feed" id="feed">
+    <div class="count" id="count"></div>
+    <div class="hint" id="hint">Chọn 2 ngôn ngữ rồi bấm <b>Bắt đầu</b>.<br>Nói tiếng A → ra tiếng B; nói tiếng B → ra tiếng A.</div>
+  </div>
+  <div class="interim" id="interim"></div>
+  <div class="note">Trang thử nghiệm — dùng Soniox <b>two-way translation</b>. Chưa đưa vào app chính.</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const LANGS=[['ko','🇰🇷 한국어'],['vi','🇻🇳 Tiếng Việt'],['en','🇺🇸 English'],['ja','🇯🇵 日本語'],['zh','🇨🇳 中文'],['th','🇹🇭 ไทย'],['es','🇪🇸 Español'],['fr','🇫🇷 Français'],['de','🇩🇪 Deutsch'],['ru','🇷🇺 Русский']];
+const NAME=Object.fromEntries(LANGS.map(([c,n])=>[c,n]));
+function fill(sel,def){sel.innerHTML=LANGS.map(([c,n])=>`<option value="${c}">${n}</option>`).join('');sel.value=def;}
+fill($('langA'),'ko');fill($('langB'),'vi');
+function syncLegend(){$('legA').textContent=NAME[$('langA').value];$('legB').textContent=NAME[$('langB').value];}
+syncLegend();
+$('langA').onchange=()=>{syncLegend();if(running)restart();};
+$('langB').onchange=()=>{syncLegend();if(running)restart();};
+$('swap').onclick=()=>{const a=$('langA').value;$('langA').value=$('langB').value;$('langB').value=a;syncLegend();if(running)restart();};
+
+// timer
+let tEl=0,tMark=0,tInt=null;
+function showTime(){const s=Math.round((tEl+(tInt?Date.now()-tMark:0))/1000);$('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function startTimer(){tMark=Date.now();tInt=setInterval(showTime,500);}
+function resetTimer(){if(tInt)clearInterval(tInt);tInt=null;tEl=0;$('timer').textContent='00:00';}
+
+const SONIOX_WS='wss://stt-rt.soniox.com/transcribe-websocket';
+let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:'',segLang:null,curRow:null};
+let running=false;
+function pickMime(){const c=['audio/webm;codecs=opus','audio/webm','audio/mp4'];for(const m of c)if(MediaRecorder.isTypeSupported(m))return m;return'';}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function setInterim(t){$('interim').innerHTML=t?('<span class="eq"><i></i><i></i><i></i><i></i></span><span>'+esc(t)+'</span>'):'';}
+function feedClear(){[...$('feed').querySelectorAll('.msg,.hint')].forEach(e=>e.remove());}
+
+function countdown(){return new Promise(res=>{const el=$('count');el.classList.add('on');let n=3;
+  el.innerHTML='<div class="n">'+n+'</div><div class="t">chuẩn bị…</div>';
+  const iv=setInterval(()=>{n--;if(n>=1){el.querySelector('.n').textContent=n;}
+    else{clearInterval(iv);el.innerHTML='<div class="n">●</div><div class="t">Hãy nói</div>';setTimeout(()=>{el.classList.remove('on');res();},500);}},900);});}
+
+async function start(){
+  if(running)return;running=true;
+  $('btn').textContent='■ Dừng';$('btn').className='btn stop';$('langA').disabled=$('langB').disabled=true;
+  $('status').textContent='';feedClear();resetTimer();startTimer();
+  connect();
+  await countdown();
+}
+function connect(){
+  fetch('/api/soniox-token',{method:'POST'}).then(r=>r.json().then(d=>{if(!r.ok)throw new Error(d.error||'token');return d.api_key;}))
+  .then(async tok=>{
+    if(!running)return;
+    try{sx.stream=await navigator.mediaDevices.getUserMedia({audio:true});}catch(e){fail('Cần quyền micro');return;}
+    if(!running){sx.stream.getTracks().forEach(t=>t.stop());return;}
+    const ws=new WebSocket(SONIOX_WS);sx.ws=ws;
+    ws.onopen=()=>{
+      ws.send(JSON.stringify({api_key:tok,model:'stt-rt-v4',audio_format:'auto',
+        language_hints:[$('langA').value,$('langB').value],enable_endpoint_detection:true,
+        translation:{type:'two_way',language_a:$('langA').value,language_b:$('langB').value}}));
+      const mime=pickMime();let rec;try{rec=mime?new MediaRecorder(sx.stream,{mimeType:mime}):new MediaRecorder(sx.stream);}catch(e){fail(e.message);return;}
+      sx.rec=rec;rec.ondataavailable=async e=>{if(e.data.size&&ws.readyState===1)ws.send(await e.data.arrayBuffer());};rec.start(240);
+      $('status').textContent='● đang dịch';};
+    ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data);}catch(e){return;}
+      if(m.error_code){$('status').textContent='⚠ '+(m.error_message||m.error_code);return;}
+      let oI='',tI='';
+      (m.tokens||[]).forEach(tk=>{const x=tk.text;if(x==null)return;
+        if(x==='<end>'){finalize();return;}
+        if(tk.translation_status==='translation'){if(tk.is_final){sx.segTrans+=x;if(tk.language)sx.segLang=tk.language;}else tI+=x;}
+        else{if(tk.is_final)sx.segOrig+=x;else oI+=x;}});
+      render(oI,tI);
+      if(m.finished)finalize();};
+    ws.onerror=()=>{if(running)$('status').textContent='⚠ lỗi kết nối';};
+    ws.onclose=()=>{sx.ws=null;};
+  }).catch(e=>fail('Token: '+e.message));
+}
+function rowClass(){return sx.segLang===$('langB').value?'toB':(sx.segLang===$('langA').value?'toA':'');}
+function render(oI,tI){const o=(sx.segOrig+(oI||'')).trim(),tr=(sx.segTrans+(tI||'')).trim();
+  if(!o&&!tr)return;
+  if(!sx.curRow){const r=document.createElement('div');r.className='msg';
+    r.innerHTML='<div class="lbl"></div><div class="orig"></div><div class="tr"></div>';
+    $('feed').appendChild(r);sx.curRow=r;}
+  const r=sx.curRow,cls=rowClass();r.className='msg'+(cls?' '+cls:'');
+  const lbl=r.querySelector('.lbl');if(sx.segLang){lbl.textContent='→ '+(NAME[sx.segLang]||sx.segLang).replace(/^\S+\s/,'');lbl.style.display='';}else lbl.style.display='none';
+  r.querySelector('.orig').textContent=o;r.querySelector('.tr').textContent=tr;
+  window.scrollTo(0,document.body.scrollHeight);setInterim('');}
+function finalize(){const o=sx.segOrig.trim(),tr=sx.segTrans.trim();
+  if(sx.curRow&&!o&&!tr)sx.curRow.remove();
+  else if(sx.curRow){const cls=rowClass();sx.curRow.className='msg'+(cls?' '+cls:'');
+    sx.curRow.querySelector('.orig').textContent=o;sx.curRow.querySelector('.tr').textContent=tr;}
+  sx.segOrig='';sx.segTrans='';sx.segLang=null;sx.curRow=null;setInterim('');
+  window.scrollTo(0,document.body.scrollHeight);}
+function stopSx(){
+  if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
+  if(sx.ws){try{if(sx.ws.readyState===1)sx.ws.send('');sx.ws.close();}catch(e){}}sx.ws=null;
+  if(sx.stream){sx.stream.getTracks().forEach(t=>t.stop());sx.stream=null;}finalize();}
+function stop(){running=false;resetTimer();stopSx();$('status').textContent='';
+  $('btn').textContent='▶ Bắt đầu';$('btn').className='btn start';$('langA').disabled=$('langB').disabled=false;}
+function fail(msg){$('status').textContent='⚠ '+msg;stop();}
+function restart(){stopSx();connect();}
+$('btn').onclick=()=>{running?stop():start();};
+</script>
+</body>
+</html>
