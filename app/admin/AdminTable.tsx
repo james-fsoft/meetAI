@@ -1,0 +1,121 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+
+type Profile = { id: string; email: string | null; plan: string; created_at: string };
+const PLANS = ["free", "pro", "business", "enterprise"];
+
+export default function AdminTable({ profiles, me }: { profiles: Profile[]; me: string }) {
+  const router = useRouter();
+  const [q, setQ] = useState("");
+  const [busy, setBusy] = useState("");
+
+  const counts = useMemo(() => {
+    const c: Record<string, number> = { free: 0, pro: 0, business: 0, enterprise: 0 };
+    profiles.forEach((p) => { c[p.plan] = (c[p.plan] || 0) + 1; });
+    return c;
+  }, [profiles]);
+
+  const rows = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    return s ? profiles.filter((p) => (p.email || "").toLowerCase().includes(s)) : profiles;
+  }, [profiles, q]);
+
+  async function setPlan(userId: string, plan: string) {
+    setBusy(userId);
+    try {
+      const r = await fetch("/api/admin/set-plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, plan }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || "failed");
+      router.refresh();
+    } catch (e: any) {
+      alert("Lỗi: " + e.message);
+    } finally {
+      setBusy("");
+    }
+  }
+
+  const fmt = (s: string) => { try { return new Date(s).toLocaleString("vi-VN"); } catch { return s; } };
+
+  return (
+    <main style={S.wrap}>
+      <header style={S.head}>
+        <div>
+          <a href="/" style={S.back}>← App</a>
+          <h1 style={S.h1}>Quản trị người dùng</h1>
+        </div>
+        <div style={S.stats}>
+          <span style={S.stat}><b>{profiles.length}</b> users</span>
+          {PLANS.map((p) => <span key={p} style={{ ...S.stat, ...badge(p) }}>{p}: <b>{counts[p] || 0}</b></span>)}
+        </div>
+      </header>
+
+      <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Tìm theo email…" style={S.search} />
+
+      <div style={S.tableWrap}>
+        <table style={S.table}>
+          <thead>
+            <tr>
+              <th style={S.th}>Email</th>
+              <th style={S.th}>Gói</th>
+              <th style={S.th}>Tạo lúc</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((p) => (
+              <tr key={p.id} style={S.tr}>
+                <td style={S.td}>
+                  {p.email || <i style={{ color: "#9aa6bd" }}>—</i>}
+                  {p.email === me && <span style={S.you}>bạn</span>}
+                </td>
+                <td style={S.td}>
+                  <select
+                    value={p.plan}
+                    disabled={busy === p.id}
+                    onChange={(e) => setPlan(p.id, e.target.value)}
+                    style={{ ...S.sel, ...badge(p.plan) }}
+                  >
+                    {PLANS.map((pl) => <option key={pl} value={pl}>{pl}</option>)}
+                  </select>
+                </td>
+                <td style={{ ...S.td, color: "#9aa6bd", fontSize: 12 }}>{fmt(p.created_at)}</td>
+              </tr>
+            ))}
+            {rows.length === 0 && (
+              <tr><td style={{ ...S.td, textAlign: "center", color: "#9aa6bd" }} colSpan={3}>Không có người dùng</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  );
+}
+
+function badge(plan: string): React.CSSProperties {
+  if (plan === "free") return { color: "#5b6b8c" };
+  if (plan === "pro") return { color: "#1f6bff" };
+  if (plan === "business") return { color: "#16a34a" };
+  return { color: "#8e4ec6" }; // enterprise
+}
+
+const S: Record<string, React.CSSProperties> = {
+  wrap: { minHeight: "100vh", padding: "32px 22px 60px", fontFamily: "'Inter',system-ui,sans-serif", background: "#f5f7fc", color: "#0a1124" },
+  head: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, flexWrap: "wrap", maxWidth: 900, margin: "0 auto 18px" },
+  back: { fontSize: 13, fontWeight: 700, color: "#5b6b8c", textDecoration: "none" },
+  h1: { fontSize: 26, fontWeight: 900, letterSpacing: "-.03em", marginTop: 4 },
+  stats: { display: "flex", gap: 8, flexWrap: "wrap" },
+  stat: { fontSize: 12, fontWeight: 700, background: "#fff", border: "1px solid #e3e8f2", borderRadius: 20, padding: "5px 12px" },
+  search: { display: "block", width: "100%", maxWidth: 900, margin: "0 auto 14px", border: "1px solid #e3e8f2", borderRadius: 10, padding: "11px 14px", fontSize: 14, fontFamily: "inherit", outline: "none" },
+  tableWrap: { maxWidth: 900, margin: "0 auto", background: "#fff", border: "1px solid #e3e8f2", borderRadius: 14, overflow: "hidden" },
+  table: { width: "100%", borderCollapse: "collapse" },
+  th: { textAlign: "left", fontSize: 11, fontWeight: 800, color: "#9aa6bd", textTransform: "uppercase", letterSpacing: ".04em", padding: "12px 16px", borderBottom: "1px solid #e3e8f2" },
+  tr: { borderBottom: "1px solid #f0f3fa" },
+  td: { padding: "12px 16px", fontSize: 14, verticalAlign: "middle" },
+  you: { marginLeft: 8, fontSize: 10, fontWeight: 800, color: "#1f6bff", background: "#eef4ff", borderRadius: 20, padding: "2px 7px" },
+  sel: { fontFamily: "inherit", fontSize: 13, fontWeight: 800, border: "1px solid #e3e8f2", borderRadius: 8, padding: "6px 10px", cursor: "pointer", background: "#fff", outline: "none" },
+};

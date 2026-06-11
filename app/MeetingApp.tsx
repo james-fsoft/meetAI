@@ -13,7 +13,7 @@ const PLAN_LABEL: Record<string, string> = {
  * Anonymous visitors get a 10-minute live-translation trial (?trial=1);
  * signed-in users run without the trial limit.
  */
-export default function MeetingApp({ email, plan = "free" }: { email?: string; plan?: string }) {
+export default function MeetingApp({ email, plan = "free", admin = false }: { email?: string; plan?: string; admin?: boolean }) {
   const router = useRouter();
   const signedIn = !!email;
 
@@ -36,6 +36,7 @@ export default function MeetingApp({ email, plan = "free" }: { email?: string; p
         <span style={{ flex: 1 }} />
         {signedIn ? (
           <>
+            {admin && <a href="/admin" style={adminLink}>⚙ Admin</a>}
             <a href="/pricing" style={planBadge(plan)} title="Quản lý gói">{PLAN_LABEL[plan] || "Free"}</a>
             <span style={mail}>👤 {email}</span>
             <button onClick={signOut} style={out}>Đăng xuất</button>
@@ -71,6 +72,10 @@ const out: React.CSSProperties = {
 };
 const linkBtn: React.CSSProperties = {
   fontSize: 12, fontWeight: 700, color: "#5b6b8c", textDecoration: "none", padding: "6px 10px",
+};
+const adminLink: React.CSSProperties = {
+  fontSize: 12, fontWeight: 800, color: "#8e4ec6", textDecoration: "none",
+  background: "#f6f0fc", border: "1px solid #e7d8f7", padding: "5px 11px", borderRadius: 8,
 };
 const primaryBtn: React.CSSProperties = {
   fontSize: 12, fontWeight: 800, color: "#fff", background: "#1f6bff", textDecoration: "none",
