@@ -299,10 +299,21 @@ audio{width:100%;margin-top:16px;height:42px}
           <select id="lvFrom" class="lvto-sel" style="display:none">
             <option value="auto" data-t="lv_auto">Auto</option>
           </select>
-          <span style="font-weight:800;color:var(--faint)">→</span>
+          <select id="lvWay" class="lvto-sel" title="Chế độ dịch">
+            <option value="one">→ 1 ngôn ngữ</option>
+            <option value="two">⇄ Song ngữ</option>
+          </select>
+          <span id="lvArrow" style="font-weight:800;color:var(--faint)">→</span>
           <select id="lvTo" class="lvto-sel">
             <option value="Vietnamese">Tiếng Việt</option><option value="English">English</option>
             <option value="Korean">한국어</option><option value="Japanese">日本語</option><option value="Chinese">中文</option>
+          </select>
+          <select id="lvA" class="lvto-sel" style="display:none">
+            <option value="ko">🇰🇷 한국어</option><option value="vi">🇻🇳 Tiếng Việt</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="zh">🇨🇳 中文</option><option value="th">🇹🇭 ไทย</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="ru">🇷🇺 Русский</option>
+          </select>
+          <span id="lvSwap" style="font-weight:800;color:var(--faint);display:none">⇄</span>
+          <select id="lvB" class="lvto-sel" style="display:none">
+            <option value="vi">🇻🇳 Tiếng Việt</option><option value="ko">🇰🇷 한국어</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="zh">🇨🇳 中文</option><option value="th">🇹🇭 ไทย</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="ru">🇷🇺 Русский</option>
           </select>
         </div>
       </div>
@@ -552,8 +563,20 @@ $('setOverlay').onclick=e=>{if(e.target===$('setOverlay'))$('setOverlay').classL
 $('setSave').onclick=()=>{const oa=$('setOpenai').value.trim(),aai=$('setAai').value.trim();localStorage.setItem('mr_openai',oa);localStorage.setItem('mr_aai',aai);CONFIG.OPENAI_KEY=oa;CONFIG.ASSEMBLYAI_KEY=aai;$('setOverlay').classList.remove('on');toast(t('set_saved'));};
 $('lvToggle').onclick=e=>{if(e.target.tagName!=='INPUT')$('lvOn').checked=!$('lvOn').checked;$('lvToggle').classList.toggle('on',$('lvOn').checked);localStorage.setItem('mr_lvon',$('lvOn').checked?'1':'0');};
 function restartLive(){if(capState==='recording'&&$('lvOn').checked){stopLive();startLive();}}
+function applyWay(){const two=$('lvWay').value==='two';
+  $('lvArrow').style.display=two?'none':'';$('lvTo').style.display=two?'none':'';
+  $('lvA').style.display=two?'':'none';$('lvSwap').style.display=two?'':'none';$('lvB').style.display=two?'':'none';}
 $('lvTo').onchange=()=>{localStorage.setItem('mr_lvto',$('lvTo').value);restartLive();};
 $('lvFrom').onchange=()=>{localStorage.setItem('mr_lvfrom',$('lvFrom').value);restartLive();};
+$('lvWay').onchange=()=>{localStorage.setItem('mr_lvway',$('lvWay').value);applyWay();restartLive();};
+$('lvA').onchange=()=>{localStorage.setItem('mr_lva',$('lvA').value);restartLive();};
+$('lvB').onchange=()=>{localStorage.setItem('mr_lvb',$('lvB').value);restartLive();};
+$('lvSwap').onclick=()=>{const a=$('lvA').value;$('lvA').value=$('lvB').value;$('lvB').value=a;
+  localStorage.setItem('mr_lva',$('lvA').value);localStorage.setItem('mr_lvb',$('lvB').value);restartLive();};
+if(localStorage.getItem('mr_lvway'))$('lvWay').value=localStorage.getItem('mr_lvway');
+if(localStorage.getItem('mr_lva'))$('lvA').value=localStorage.getItem('mr_lva');
+if(localStorage.getItem('mr_lvb'))$('lvB').value=localStorage.getItem('mr_lvb');
+applyWay();
 function lvInfo(msg){$('lvFeed').style.display='flex';$('lvInterim').style.display='flex';$('lvInterim').textContent=msg;}
 const EQ='<span class="eq"><i></i><i></i><i></i><i></i></span>';
 function setInterim(txt){$('lvInterim').innerHTML=EQ+'<span>'+(txt?esc(txt):t('lv_listening'))+'</span>';}
@@ -619,9 +642,14 @@ async function startLive(){
   try{sx.stream=await navigator.mediaDevices.getUserMedia({audio:true});}catch(e){lvInfo('⚠ '+t('lv_mic'));lvWantOn=false;return;}
   const ws=new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket');sx.ws=ws;
   ws.onopen=()=>{
+    const two=$('lvWay').value==='two';
+    const translation=two
+      ?{type:'two_way',language_a:$('lvA').value,language_b:$('lvB').value}
+      :{type:'one_way',target_language:SX_ISO[$('lvTo').value]||'vi'};
+    const hints=two?[$('lvA').value,$('lvB').value]:sxHints();
     ws.send(JSON.stringify({api_key:tok,model:'stt-rt-v4',audio_format:'auto',
-      language_hints:sxHints(),enable_speaker_diarization:true,enable_endpoint_detection:true,
-      translation:{type:'one_way',target_language:SX_ISO[$('lvTo').value]||'vi'}}));
+      language_hints:hints,enable_speaker_diarization:true,enable_endpoint_detection:true,
+      translation}));
     let rec;const mime=pickMime();try{rec=mime?new MediaRecorder(sx.stream,{mimeType:mime}):new MediaRecorder(sx.stream);}catch(e){try{rec=new MediaRecorder(sx.stream);}catch(e2){lvInfo('⚠ '+e2.message);return;}}
     sx.rec=rec;rec.ondataavailable=async e=>{if(e.data.size&&ws.readyState===1)ws.send(await e.data.arrayBuffer());};
     rec.start(240);trialStart();};
