@@ -52,7 +52,7 @@ export default function Privacy() {
 
         <h2 style={S.h2}>5. Quyền của bạn</h2>
         <p style={S.p}>Bạn có quyền truy cập, chỉnh sửa hoặc yêu cầu xóa dữ liệu cá nhân, và rút lại sự đồng ý.
-          Để xóa toàn bộ tài khoản và dữ liệu, liên hệ <b>privacy@transflash.app</b>.</p>
+          Để xóa toàn bộ tài khoản và dữ liệu, liên hệ <b>support@transflash.app</b>.</p>
 
         <h2 style={S.h2}>6. Bảo mật</h2>
         <p style={S.p}>Dữ liệu được truyền qua kết nối mã hóa (HTTPS/WSS). Khóa API của nhà cung cấp được giữ phía máy chủ,
@@ -68,7 +68,7 @@ export default function Privacy() {
         <p style={S.p}>Chúng tôi có thể cập nhật chính sách này. Bản mới sẽ đăng tại trang này kèm ngày cập nhật.</p>
 
         <h2 style={S.h2}>10. Liên hệ</h2>
-        <p style={S.p}>Mọi câu hỏi về bảo mật: <b>privacy@transflash.app</b></p>
+        <p style={S.p}>Mọi câu hỏi về bảo mật: <b>support@transflash.app</b></p>
 
         <p style={S.foot}><a href="/terms" style={S.link}>Điều khoản dịch vụ →</a></p>
       </div>
