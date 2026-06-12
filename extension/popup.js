@@ -14,7 +14,7 @@ chrome.runtime.sendMessage({ cmd: "getState" }, (s) => { running = !!(s && s.run
 
 btn.onclick = () => {
   if (running) {
-    chrome.runtime.sendMessage({ cmd: "stop" }, () => { running = false; render(); status.textContent = ""; });
+    chrome.runtime.sendMessage({ cmd: "end", summarize: false }, () => { running = false; render(); status.textContent = ""; });
   } else {
     chrome.storage.local.set({ lang: lang.value });
     status.textContent = "준비 중…";

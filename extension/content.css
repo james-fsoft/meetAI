@@ -15,7 +15,16 @@
 #tt-overlay .tt-st{margin-left:auto;font-size:10.5px;font-weight:700;color:#9fb3d6;letter-spacing:0}
 #tt-overlay .tt-st.ok{color:#7ee0a6}
 #tt-overlay .tt-st.err{color:#ffb4b4;font-weight:600}
-#tt-overlay .tt-x{margin-left:12px;cursor:pointer;color:#9fb3d6;font-size:15px;line-height:1}
+#tt-overlay .tt-act{margin-left:8px;cursor:pointer;border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.1);color:#dfe8f7;font-family:inherit;font-size:11px;font-weight:800;
+  padding:5px 11px;border-radius:8px;letter-spacing:.02em;white-space:nowrap;transition:.15s}
+#tt-overlay .tt-act:hover{background:rgba(255,255,255,.2);color:#fff}
+#tt-overlay .tt-act.pause{background:rgba(245,158,11,.22);color:#ffe2b0;border-color:rgba(245,158,11,.35)}
+#tt-overlay .tt-act.pause:hover{background:rgba(245,158,11,.42);color:#fff}
+#tt-overlay .tt-act.resume{background:rgba(34,197,94,.22);color:#bff3d0;border-color:rgba(34,197,94,.35)}
+#tt-overlay .tt-act.resume:hover{background:rgba(34,197,94,.42);color:#fff}
+#tt-overlay .tt-act.sum{background:rgba(59,130,246,.24);color:#cfe0ff;border-color:rgba(59,130,246,.4)}
+#tt-overlay .tt-act.sum:hover{background:rgba(59,130,246,.45);color:#fff}
 #tt-lines{padding:10px 14px 12px; overflow:auto; max-height:calc(34vh - 36px); scroll-behavior:smooth}
 #tt-lines .tt-line{padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)}
 #tt-lines .tt-line:last-child{border-bottom:none}

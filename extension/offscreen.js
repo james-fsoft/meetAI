@@ -13,15 +13,17 @@ let fullText = []; // whole-session transcript (with speaker labels) for the sum
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.target !== "offscreen") return;
-  if (msg.type === "start") { target = msg.lang || "ko"; startCap(msg.streamId); }
-  else if (msg.type === "stop") { stopCap(); }
+  if (msg.type === "start") { target = msg.lang || target; startCap(msg.streamId, msg.resume); }
+  else if (msg.type === "pause") { pauseCap(); }
+  else if (msg.type === "end") { endCap(!!msg.summarize); }
 });
 
 function send(p) { chrome.runtime.sendMessage({ from: "offscreen", ...p }).catch(() => {}); }
 function pickMime() { const c = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"]; for (const m of c) if (MediaRecorder.isTypeSupported(m)) return m; return ""; }
 
-async function startCap(streamId) {
-  running = true; stopping = false; fails = 0; fullText = [];
+async function startCap(streamId, resume) {
+  running = true; stopping = false; fails = 0;
+  if (!resume) fullText = [];
   try {
     stream = await navigator.mediaDevices.getUserMedia({
       audio: { mandatory: { chromeMediaSource: "tab", chromeMediaSourceId: streamId } }, video: false,
@@ -93,15 +95,26 @@ function flush() {
   if (o || t) send({ type: "final", orig: o, trans: t, spk });
 }
 
-function stopCap() {
-  running = false; stopping = true;
+function teardown() {
   if (rec && rec.state !== "inactive") { try { rec.stop(); } catch {} } rec = null;
   if (ws) { try { if (ws.readyState === 1) ws.send(""); ws.close(); } catch {} } ws = null;
   if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
   if (audioCtx) { audioCtx.close().catch(() => {}); audioCtx = null; }
-  seg = { orig: "", trans: "", spk: null };
+}
+
+// Pause: stop streaming but keep the transcript so the session can resume.
+function pauseCap() {
+  running = false; stopping = true;
+  teardown(); flush();
+  send({ type: "status", text: "PAUSED" });
+}
+
+// End: stop for good; optionally summarize the whole session.
+function endCap(summarize) {
+  running = false; stopping = true;
+  teardown(); flush();
   send({ type: "status", text: "STOPPED" });
-  if (fullText.length) summarizeNow();
+  if (summarize && fullText.length) summarizeNow(); else fullText = [];
 }
 
 // After stopping, summarize the whole session via the backend.
