@@ -12,7 +12,10 @@
 }
 #tt-overlay .tt-dot{width:8px;height:8px;border-radius:50%;background:#e5484d;animation:ttbl 1.3s steps(2) infinite}
 @keyframes ttbl{50%{opacity:0}}
-#tt-overlay .tt-x{margin-left:auto;cursor:pointer;color:#9fb3d6;font-size:15px;line-height:1}
+#tt-overlay .tt-st{margin-left:auto;font-size:10.5px;font-weight:700;color:#9fb3d6;letter-spacing:0}
+#tt-overlay .tt-st.ok{color:#7ee0a6}
+#tt-overlay .tt-st.err{color:#ffb4b4;font-weight:600}
+#tt-overlay .tt-x{margin-left:12px;cursor:pointer;color:#9fb3d6;font-size:15px;line-height:1}
 #tt-lines{padding:10px 14px 12px; overflow:auto; max-height:calc(34vh - 36px); scroll-behavior:smooth}
 #tt-lines .tt-line{padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)}
 #tt-lines .tt-line:last-child{border-bottom:none}

@@ -20,17 +20,16 @@ async function startCapture(lang) {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab) throw new Error("No active tab");
 
-  // Must be called after a user gesture (the popup click) on the target tab.
-  const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
   await ensureOffscreen();
-  active = { tabId: tab.id, running: true };
-
   // Inject the subtitle overlay into the meeting page.
   try { await chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ["content.css"] }); } catch {}
   try { await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] }); } catch {}
-
-  chrome.runtime.sendMessage({ target: "offscreen", type: "start", streamId, lang });
+  active = { tabId: tab.id, running: true };
   chrome.tabs.sendMessage(tab.id, { from: "bg", type: "show" }).catch(() => {});
+
+  // Get the stream id LAST so it's consumed immediately (ids are short-lived).
+  const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
+  chrome.runtime.sendMessage({ target: "offscreen", type: "start", streamId, lang });
 }
 
 function stopCapture() {

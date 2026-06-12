@@ -7,13 +7,21 @@
   const box = document.createElement("div");
   box.id = "tt-overlay";
   box.innerHTML =
-    '<div class="tt-head"><span class="tt-dot"></span><span>LIVE TRANSLATE</span><span class="tt-x" title="Hide">×</span></div>' +
+    '<div class="tt-head"><span class="tt-dot"></span><span>LIVE TRANSLATE</span>' +
+    '<span class="tt-st" id="tt-st">준비 중…</span><span class="tt-x" title="Hide">×</span></div>' +
     '<div id="tt-lines"></div>';
   document.documentElement.appendChild(box);
 
   const lines = box.querySelector("#tt-lines");
   const head = box.querySelector(".tt-head");
+  const stEl = box.querySelector("#tt-st");
   box.querySelector(".tt-x").onclick = () => { box.style.display = "none"; };
+
+  function setStatus(text) {
+    if (text === "LIVE") { stEl.textContent = "● đang dịch"; stEl.className = "tt-st ok"; }
+    else if (text === "STOPPED") { stEl.textContent = "đã dừng"; stEl.className = "tt-st"; }
+    else { stEl.textContent = text; stEl.className = "tt-st err"; }
+  }
 
   let cur = null;
   const esc = (s) => (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -36,6 +44,7 @@
     if (msg.from !== "bg") return;
     if (msg.type === "show") box.style.display = "block";
     else if (msg.type === "hide") box.style.display = "none";
+    else if (msg.type === "status") setStatus(msg.text);
     else if (msg.type === "partial") partial(msg.orig, msg.trans, msg.spk);
     else if (msg.type === "final") final(msg.orig, msg.trans, msg.spk);
   });
