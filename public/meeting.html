@@ -180,7 +180,15 @@ body.recing .rec-hint{margin-bottom:10px}
 .set-body input{width:100%;border:1.5px solid var(--hair);background:var(--paper);color:var(--ink);padding:12px 14px;font-size:14px;font-family:'Space Mono',monospace;outline:none;border-radius:10px}
 .set-link{display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:var(--acc);text-decoration:underline;text-underline-offset:3px}
 .set-note{font-size:12px;color:var(--faint);margin-top:18px;line-height:1.6}
-.live-bar{display:flex;align-items:center;gap:11px;margin:0 auto 16px;justify-content:center;flex-wrap:wrap;background:var(--soft);border:1px solid var(--hair);padding:8px 14px;border-radius:16px;width:fit-content;max-width:100%}
+.live-bar{display:flex;flex-direction:column;align-items:center;gap:10px;margin:0 auto 14px;background:var(--soft);border:1px solid var(--hair);padding:12px 16px;border-radius:16px;width:fit-content;max-width:100%}
+.lv-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.lv-seg{display:inline-flex;background:var(--paper);border:1px solid var(--hair);border-radius:11px;padding:3px;gap:2px}
+.lv-seg button{border:none;background:none;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:800;color:var(--grey);padding:7px 14px;border-radius:8px;transition:.15s;white-space:nowrap}
+.lv-seg button.on{background:var(--acc);color:#fff;box-shadow:0 4px 12px -4px color-mix(in srgb,var(--acc) 60%,transparent)}
+.lv-langs{display:flex;align-items:center;gap:9px}
+.lv-to-label{font-size:12.5px;font-weight:700;color:var(--grey)}
+.lv-swap{cursor:pointer;font-weight:800;color:var(--acc);font-size:17px;user-select:none;transition:.2s}
+.lv-swap:hover{transform:rotate(180deg)}
 .lvtog{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;font-weight:700;color:var(--grey);user-select:none}
 .lvtog .live-ic{display:inline-flex;align-items:center;gap:5px}
 .lvtog .live-dot{width:9px;height:9px;border-radius:50%;background:var(--faint);transition:.2s}
@@ -288,33 +296,34 @@ audio{width:100%;margin-top:16px;height:42px}
         <div class="timer" id="timer">00:00</div>
         <div class="viz" id="viz"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
         <div class="live-bar">
-          <label class="lvtog on" id="lvToggle">
-            <span class="live-ic"><span class="live-dot"></span><span class="live-txt">LIVE</span></span>
-            <span class="sw"></span><input type="checkbox" id="lvOn" checked>
-            <span data-t="c_translate">Live translate</span></label>
-          <select id="lvMode" class="lvto-sel" title="Live mode" style="display:none">
-            <option value="fast" data-t="lv_fast">⚡ Fast</option>
-            <option value="multi" data-t="lv_multi">🌐 Multi</option>
-          </select>
-          <select id="lvFrom" class="lvto-sel" style="display:none">
-            <option value="auto" data-t="lv_auto">Auto</option>
-          </select>
-          <select id="lvWay" class="lvto-sel" title="Chế độ dịch">
-            <option value="one">→ 1 ngôn ngữ</option>
-            <option value="two">⇄ Song ngữ</option>
-          </select>
-          <span id="lvArrow" style="font-weight:800;color:var(--faint)">→</span>
-          <select id="lvTo" class="lvto-sel">
-            <option value="Vietnamese">Tiếng Việt</option><option value="English">English</option>
-            <option value="Korean">한국어</option><option value="Japanese">日本語</option><option value="Chinese">中文</option>
-          </select>
-          <select id="lvA" class="lvto-sel" style="display:none">
-            <option value="ko">🇰🇷 한국어</option><option value="vi">🇻🇳 Tiếng Việt</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="zh">🇨🇳 中文</option><option value="th">🇹🇭 ไทย</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="ru">🇷🇺 Русский</option>
-          </select>
-          <span id="lvSwap" style="font-weight:800;color:var(--faint);display:none">⇄</span>
-          <select id="lvB" class="lvto-sel" style="display:none">
-            <option value="vi">🇻🇳 Tiếng Việt</option><option value="ko">🇰🇷 한국어</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="zh">🇨🇳 中文</option><option value="th">🇹🇭 ไทย</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="ru">🇷🇺 Русский</option>
-          </select>
+          <div class="lv-row">
+            <label class="lvtog on" id="lvToggle">
+              <span class="live-ic"><span class="live-dot"></span><span class="live-txt">LIVE</span></span>
+              <span class="sw"></span><input type="checkbox" id="lvOn" checked>
+              <span data-t="c_translate">Live translate</span></label>
+            <div class="lv-seg" id="lvWaySeg">
+              <button type="button" data-w="one" class="on">→ 1 chiều</button>
+              <button type="button" data-w="two">⇄ Song ngữ</button>
+            </div>
+          </div>
+          <div class="lv-row">
+            <div class="lv-langs" id="lvOneLangs">
+              <span class="lv-to-label">Dịch sang</span>
+              <select id="lvTo" class="lvto-sel">
+                <option value="Vietnamese">🇻🇳 Tiếng Việt</option><option value="English">🇺🇸 English</option>
+                <option value="Korean">🇰🇷 한국어</option><option value="Japanese">🇯🇵 日本語</option><option value="Chinese">🇨🇳 中文</option>
+              </select>
+            </div>
+            <div class="lv-langs" id="lvTwoLangs" style="display:none">
+              <select id="lvA" class="lvto-sel">
+                <option value="ko">🇰🇷 한국어</option><option value="vi">🇻🇳 Tiếng Việt</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="zh">🇨🇳 中文</option><option value="th">🇹🇭 ไทย</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="ru">🇷🇺 Русский</option>
+              </select>
+              <span class="lv-swap" id="lvSwap" title="Đổi chỗ">⇄</span>
+              <select id="lvB" class="lvto-sel">
+                <option value="vi">🇻🇳 Tiếng Việt</option><option value="ko">🇰🇷 한국어</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="zh">🇨🇳 中文</option><option value="th">🇹🇭 ไทย</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="ru">🇷🇺 Русский</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
       <div id="capIdle">
@@ -563,20 +572,21 @@ $('setOverlay').onclick=e=>{if(e.target===$('setOverlay'))$('setOverlay').classL
 $('setSave').onclick=()=>{const oa=$('setOpenai').value.trim(),aai=$('setAai').value.trim();localStorage.setItem('mr_openai',oa);localStorage.setItem('mr_aai',aai);CONFIG.OPENAI_KEY=oa;CONFIG.ASSEMBLYAI_KEY=aai;$('setOverlay').classList.remove('on');toast(t('set_saved'));};
 $('lvToggle').onclick=e=>{if(e.target.tagName!=='INPUT')$('lvOn').checked=!$('lvOn').checked;$('lvToggle').classList.toggle('on',$('lvOn').checked);localStorage.setItem('mr_lvon',$('lvOn').checked?'1':'0');};
 function restartLive(){if(capState==='recording'&&$('lvOn').checked){stopLive();startLive();}}
-function applyWay(){const two=$('lvWay').value==='two';
-  $('lvArrow').style.display=two?'none':'';$('lvTo').style.display=two?'none':'';
-  $('lvA').style.display=two?'':'none';$('lvSwap').style.display=two?'':'none';$('lvB').style.display=two?'':'none';}
+function getWay(){const b=$('lvWaySeg').querySelector('button.on');return b?b.dataset.w:'one';}
+function applyWay(){const two=getWay()==='two';
+  $('lvOneLangs').style.display=two?'none':'';$('lvTwoLangs').style.display=two?'':'none';}
 $('lvTo').onchange=()=>{localStorage.setItem('mr_lvto',$('lvTo').value);restartLive();};
-$('lvFrom').onchange=()=>{localStorage.setItem('mr_lvfrom',$('lvFrom').value);restartLive();};
-$('lvWay').onchange=()=>{localStorage.setItem('mr_lvway',$('lvWay').value);applyWay();restartLive();};
+$('lvWaySeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  $('lvWaySeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  localStorage.setItem('mr_lvway',b.dataset.w);applyWay();restartLive();});
 $('lvA').onchange=()=>{localStorage.setItem('mr_lva',$('lvA').value);restartLive();};
 $('lvB').onchange=()=>{localStorage.setItem('mr_lvb',$('lvB').value);restartLive();};
 $('lvSwap').onclick=()=>{const a=$('lvA').value;$('lvA').value=$('lvB').value;$('lvB').value=a;
   localStorage.setItem('mr_lva',$('lvA').value);localStorage.setItem('mr_lvb',$('lvB').value);restartLive();};
-if(localStorage.getItem('mr_lvway'))$('lvWay').value=localStorage.getItem('mr_lvway');
 if(localStorage.getItem('mr_lva'))$('lvA').value=localStorage.getItem('mr_lva');
 if(localStorage.getItem('mr_lvb'))$('lvB').value=localStorage.getItem('mr_lvb');
-applyWay();
+(function(){const w=localStorage.getItem('mr_lvway')||'one';
+  $('lvWaySeg').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.w===w));applyWay();})();
 function lvInfo(msg){$('lvFeed').style.display='flex';$('lvInterim').style.display='flex';$('lvInterim').textContent=msg;}
 const EQ='<span class="eq"><i></i><i></i><i></i><i></i></span>';
 function setInterim(txt){$('lvInterim').innerHTML=EQ+'<span>'+(txt?esc(txt):t('lv_listening'))+'</span>';}
@@ -642,7 +652,7 @@ async function startLive(){
   try{sx.stream=await navigator.mediaDevices.getUserMedia({audio:true});}catch(e){lvInfo('⚠ '+t('lv_mic'));lvWantOn=false;return;}
   const ws=new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket');sx.ws=ws;
   ws.onopen=()=>{
-    const two=$('lvWay').value==='two';
+    const two=getWay()==='two';
     const translation=two
       ?{type:'two_way',language_a:$('lvA').value,language_b:$('lvB').value}
       :{type:'one_way',target_language:SX_ISO[$('lvTo').value]||'vi'};
@@ -710,9 +720,6 @@ setTheme(localStorage.getItem('mr_theme')||'sota');
 $('yr').textContent=new Date().getFullYear();
 const _lvon=localStorage.getItem('mr_lvon')!=='0';$('lvOn').checked=_lvon;$('lvToggle').classList.toggle('on',_lvon);
 if(localStorage.getItem('mr_lvto'))$('lvTo').value=localStorage.getItem('mr_lvto');
-if(localStorage.getItem('mr_lvfrom'))$('lvFrom').value=localStorage.getItem('mr_lvfrom');
-if(localStorage.getItem('mr_lvmode'))$('lvMode').value=localStorage.getItem('mr_lvmode');
-$('lvFrom').style.display=$('lvMode').value==='multi'?'none':'';
 applyLang();
 </script>
 </body>
