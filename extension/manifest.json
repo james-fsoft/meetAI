@@ -1,10 +1,15 @@
 {
   "manifest_version": 3,
   "name": "TransFlash Live Translate",
-  "version": "0.7.0",
+  "version": "0.9.0",
   "description": "Real-time translation subtitles for browser meetings (Google Meet, Zoom, Teams). Captures tab audio and translates live.",
-  "permissions": ["tabCapture", "offscreen", "scripting", "activeTab", "storage"],
+  "permissions": ["tabCapture", "offscreen", "scripting", "activeTab", "storage", "identity"],
   "host_permissions": ["https://meet.transflash.app/*"],
   "background": { "service_worker": "background.js" },
-  "action": { "default_popup": "popup.html", "default_title": "Live Translate" }
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Live Translate",
+    "default_icon": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+  },
+  "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
 }

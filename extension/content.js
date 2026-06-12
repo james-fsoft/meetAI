@@ -11,7 +11,7 @@
     '<span class="tt-st" id="tt-st">준비 중…</span>' +
     '<button class="tt-act pause" id="tt-pause">⏸ Dừng</button>' +
     '<button class="tt-act resume" id="tt-resume" style="display:none">▶ Tiếp tục</button>' +
-    '<button class="tt-act sum" id="tt-sumbtn">📝 Tóm tắt</button>' +
+    '<button class="tt-act sum" id="tt-sumbtn">⏹ Stop &amp; tóm tắt</button>' +
     '<button class="tt-act" id="tt-close" style="display:none">× Đóng</button></div>' +
     '<div id="tt-lines"></div><div id="tt-sum" style="display:none"></div>';
   document.documentElement.appendChild(box);
@@ -31,7 +31,7 @@
     btnResume.style.display = m === "paused" ? "" : "none";
     btnSum.style.display = m === "stopped" ? "none" : "";
     btnClose.style.display = m === "stopped" || m === "paused" ? "" : "none";
-    if (m !== "stopped") btnSum.textContent = "📝 Tóm tắt";
+    if (m !== "stopped") btnSum.textContent = "⏹ Stop & tóm tắt";
   }
   btnPause.onclick = () => { chrome.runtime.sendMessage({ cmd: "pause" }); setMode("paused"); setStatus("PAUSED"); };
   btnResume.onclick = () => { chrome.runtime.sendMessage({ cmd: "resume" }); setMode("live"); };
