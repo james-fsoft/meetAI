@@ -293,37 +293,31 @@ audio{width:100%;margin-top:16px;height:42px}
    <div class="app-card" style="display:flex;flex-direction:column">
     <div class="cap-top">
       <div class="cap-meta">
-        <div class="timer" id="timer">00:00</div>
         <div class="viz" id="viz"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-        <div class="live-bar">
-          <div class="lv-row">
-            <label class="lvtog on" id="lvToggle">
-              <span class="live-ic"><span class="live-dot"></span><span class="live-txt">LIVE</span></span>
-              <span class="sw"></span><input type="checkbox" id="lvOn" checked>
-              <span data-t="c_translate">Live translate</span></label>
-            <div class="lv-seg" id="lvWaySeg">
-              <button type="button" data-w="one" class="on">→ 1 chiều</button>
-              <button type="button" data-w="two">⇄ Song ngữ</button>
-            </div>
-          </div>
-          <div class="lv-row">
-            <div class="lv-langs" id="lvOneLangs">
-              <span class="lv-to-label">Dịch sang</span>
-              <select id="lvTo" class="lvto-sel">
-                <option value="Vietnamese">🇻🇳 Tiếng Việt</option><option value="English">🇺🇸 English</option>
-                <option value="Korean">🇰🇷 한국어</option><option value="Japanese">🇯🇵 日本語</option><option value="Chinese">🇨🇳 中文</option>
-              </select>
-            </div>
-            <div class="lv-langs" id="lvTwoLangs" style="display:none">
-              <select id="lvA" class="lvto-sel">
-                <option value="ko">🇰🇷 한국어</option><option value="vi">🇻🇳 Tiếng Việt</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="zh">🇨🇳 中文</option><option value="th">🇹🇭 ไทย</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="ru">🇷🇺 Русский</option>
-              </select>
-              <span class="lv-swap" id="lvSwap" title="Đổi chỗ">⇄</span>
-              <select id="lvB" class="lvto-sel">
-                <option value="vi">🇻🇳 Tiếng Việt</option><option value="ko">🇰🇷 한국어</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="zh">🇨🇳 中文</option><option value="th">🇹🇭 ไทย</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="ru">🇷🇺 Русский</option>
-              </select>
-            </div>
-          </div>
+        <div class="timer" id="timer">00:00</div>
+        <label class="lvtog on" id="lvToggle">
+          <span class="live-ic"><span class="live-dot"></span><span class="live-txt">LIVE</span></span>
+          <span class="sw"></span><input type="checkbox" id="lvOn" checked>
+          <span data-t="c_translate">Live translate</span></label>
+        <div class="lv-seg" id="lvWaySeg">
+          <button type="button" data-w="one" class="on">→ 1 chiều</button>
+          <button type="button" data-w="two">⇄ Song ngữ</button>
+        </div>
+        <div class="lv-langs" id="lvOneLangs">
+          <span class="lv-to-label">Dịch sang</span>
+          <select id="lvTo" class="lvto-sel">
+            <option value="Vietnamese">🇻🇳 Tiếng Việt</option><option value="English">🇺🇸 English</option>
+            <option value="Korean">🇰🇷 한국어</option><option value="Japanese">🇯🇵 日本語</option><option value="Chinese">🇨🇳 中文</option>
+          </select>
+        </div>
+        <div class="lv-langs" id="lvTwoLangs" style="display:none">
+          <select id="lvA" class="lvto-sel">
+            <option value="ko">🇰🇷 한국어</option><option value="vi">🇻🇳 Tiếng Việt</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="zh">🇨🇳 中文</option><option value="th">🇹🇭 ไทย</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="ru">🇷🇺 Русский</option>
+          </select>
+          <span class="lv-swap" id="lvSwap" title="Đổi chỗ">⇄</span>
+          <select id="lvB" class="lvto-sel">
+            <option value="vi">🇻🇳 Tiếng Việt</option><option value="ko">🇰🇷 한국어</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="zh">🇨🇳 中文</option><option value="th">🇹🇭 ไทย</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="ru">🇷🇺 Русский</option>
+          </select>
         </div>
       </div>
       <div id="capIdle">
