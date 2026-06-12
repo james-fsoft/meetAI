@@ -17,24 +17,27 @@
 
   let cur = null;
   const esc = (s) => (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  function html(o, t) { return '<div class="tt-o">' + esc(o) + '</div><div class="tt-t">' + esc(t) + "</div>"; }
-  function trim() { while (lines.children.length > 6) lines.removeChild(lines.firstChild); }
-
-  function partial(o, t) {
-    if (!cur) { cur = document.createElement("div"); cur.className = "tt-line cur"; lines.appendChild(cur); }
-    cur.innerHTML = html(o, t); trim(); lines.scrollTop = lines.scrollHeight;
+  function html(o, t, spk) {
+    const name = spk != null ? '<div class="tt-spk" data-s="' + (((spk - 1) % 6 + 6) % 6) + '">Speaker ' + esc(String(spk)) + "</div>" : "";
+    return name + '<div class="tt-o">' + esc(o) + '</div><div class="tt-t">' + esc(t) + "</div>";
   }
-  function final(o, t) {
+  function trim() { while (lines.children.length > 7) lines.removeChild(lines.firstChild); }
+
+  function partial(o, t, spk) {
+    if (!cur) { cur = document.createElement("div"); cur.className = "tt-line cur"; lines.appendChild(cur); }
+    cur.innerHTML = html(o, t, spk); trim(); lines.scrollTop = lines.scrollHeight;
+  }
+  function final(o, t, spk) {
     if (!cur) { cur = document.createElement("div"); cur.className = "tt-line"; lines.appendChild(cur); }
-    cur.className = "tt-line"; cur.innerHTML = html(o, t); cur = null; trim(); lines.scrollTop = lines.scrollHeight;
+    cur.className = "tt-line"; cur.innerHTML = html(o, t, spk); cur = null; trim(); lines.scrollTop = lines.scrollHeight;
   }
 
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg.from !== "bg") return;
     if (msg.type === "show") box.style.display = "block";
     else if (msg.type === "hide") box.style.display = "none";
-    else if (msg.type === "partial") partial(msg.orig, msg.trans);
-    else if (msg.type === "final") final(msg.orig, msg.trans);
+    else if (msg.type === "partial") partial(msg.orig, msg.trans, msg.spk);
+    else if (msg.type === "final") final(msg.orig, msg.trans, msg.spk);
   });
 
   // drag to reposition
