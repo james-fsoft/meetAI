@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logo · TransFlash Meeting AI</title>
+<style>
+  body{font-family:'Inter',system-ui,Arial,sans-serif;background:#f5f7fc;color:#0a1124;margin:0;
+    min-height:100vh;display:grid;place-items:center;padding:30px}
+  .card{background:#fff;border:1px solid #e3e8f2;border-radius:20px;padding:34px;max-width:460px;text-align:center;
+    box-shadow:0 24px 60px -34px rgba(10,17,36,.5)}
+  h1{font-size:20px;font-weight:900;margin:0 0 6px}
+  p{font-size:13.5px;color:#5b6b8c;line-height:1.55;margin:0 0 22px}
+  .preview{display:flex;gap:18px;justify-content:center;align-items:center;margin-bottom:24px}
+  .preview img{border-radius:24px;box-shadow:0 14px 34px -18px rgba(31,79,255,.5)}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  button{border:none;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:800;padding:12px 18px;border-radius:11px;
+    background:#1f6bff;color:#fff;transition:.15s}
+  button:hover{background:#1857d6}
+  button.alt{background:#fff;color:#0a1124;border:1.5px solid #e3e8f2}
+  small{display:block;margin-top:16px;color:#9aa6bd;font-size:12px;line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Logo · Meeting AI</h1>
+    <p>Tải logo PNG để dùng cho Google OAuth (cần 120×120) hoặc các nơi khác.</p>
+    <div class="preview">
+      <img id="big" src="/logo.svg" width="120" height="120" alt="logo">
+      <img src="/logo.svg" width="56" height="56" alt="logo nhỏ">
+    </div>
+    <div class="btns">
+      <button onclick="dl(120)">⬇ PNG 120×120 (Google)</button>
+      <button class="alt" onclick="dl(512)">⬇ PNG 512×512</button>
+      <button class="alt" onclick="dl(1024)">⬇ PNG 1024×1024</button>
+    </div>
+    <small>Mẹo: nút 120×120 dùng cho “App logo” trong Google OAuth consent screen.</small>
+  </div>
+
+<script>
+async function dl(size){
+  const res=await fetch('/logo.svg');let svg=await res.text();
+  // ensure explicit size on root for crisp raster
+  svg=svg.replace(/width="\d+"/,'width="'+size+'"').replace(/height="\d+"/,'height="'+size+'"');
+  const blob=new Blob([svg],{type:'image/svg+xml'});
+  const url=URL.createObjectURL(blob);
+  const img=new Image();
+  img.onload=()=>{
+    const c=document.createElement('canvas');c.width=size;c.height=size;
+    const ctx=c.getContext('2d');ctx.drawImage(img,0,0,size,size);
+    URL.revokeObjectURL(url);
+    c.toBlob(b=>{
+      const a=document.createElement('a');a.href=URL.createObjectURL(b);
+      a.download='meeting-ai-logo-'+size+'.png';a.click();
+    },'image/png');
+  };
+  img.src=url;
+}
+</script>
+</body>
+</html>

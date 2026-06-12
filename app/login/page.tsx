@@ -43,6 +43,12 @@ export default function Login() {
         {err && <p style={S.err}>{err}</p>}
 
         <a href="/pricing" style={S.link}>Xem các gói dịch vụ →</a>
+
+        <div style={S.legal}>
+          <a href="/privacy" style={S.legalLink}>Chính sách bảo mật</a>
+          <span style={{ color: "#cdd5e4" }}>·</span>
+          <a href="/terms" style={S.legalLink}>Điều khoản dịch vụ</a>
+        </div>
       </div>
     </main>
   );
@@ -62,4 +68,7 @@ const S: Record<string, React.CSSProperties> = {
     fontFamily: "inherit", fontSize: 15, fontWeight: 700, padding: "14px 18px", borderRadius: 12, transition: ".15s" },
   err: { color: "#dc2626", fontSize: 13, marginTop: 14, fontWeight: 600 },
   link: { display: "inline-block", marginTop: 22, fontSize: 13, fontWeight: 600, color: "#1f6bff", textDecoration: "none" },
+  legal: { marginTop: 20, display: "flex", gap: 10, justifyContent: "center", alignItems: "center" },
+  legalLink: { fontSize: 12, color: "#9aa6bd", textDecoration: "none", fontWeight: 600 },
 };
+
