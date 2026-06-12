@@ -639,19 +639,29 @@ function showGate(kind){if(document.getElementById('gateOv'))return;
   document.body.appendChild(ov);
   document.getElementById('gateBtn').onclick=()=>goTop(D.u);
   document.getElementById('gateClose').onclick=e=>{e.preventDefault();ov.remove();};}
+let sxStopping=false,sxOpenAt=0,sxFails=0;
 async function startLive(){
   if(sx.ws)return;
   if(!gateStart())return;
-  lvWantOn=true;
+  lvWantOn=true;sxStopping=false;sxFails=0;
   $('lvFeed').style.display='flex';$('lvInterim').style.display='flex';setInterim('');
   if(location.protocol==='file:'){lvInfo('⚠ '+t('lv_file'));lvWantOn=false;return;}
+  if(!sx.stream){
+    try{sx.stream=await navigator.mediaDevices.getUserMedia({audio:true});}
+    catch(e){lvInfo('⚠ '+t('lv_mic'));lvWantOn=false;return;}
+  }
+  if(!lvWantOn)return;
+  openWs();
+}
+// Opens (or re-opens) the Soniox socket, reusing the existing mic stream.
+async function openWs(){
   let tok;
   try{const r=await fetch('/api/soniox-token',{method:'POST'});const d=await r.json();if(!r.ok)throw new Error(d.error||'token error');tok=d.api_key;}
-  catch(e){lvInfo('⚠ '+e.message);lvWantOn=false;return;}
-  if(!lvWantOn)return;
-  try{sx.stream=await navigator.mediaDevices.getUserMedia({audio:true});}catch(e){lvInfo('⚠ '+t('lv_mic'));lvWantOn=false;return;}
+  catch(e){lvInfo('⚠ '+e.message);return;}
+  if(!lvWantOn||!sx.stream)return;
   const ws=new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket');sx.ws=ws;
   ws.onopen=()=>{
+    sxOpenAt=Date.now();
     const two=getWay()==='two';
     const translation=two
       ?{type:'two_way',language_a:$('lvA').value,language_b:$('lvB').value}
@@ -672,8 +682,19 @@ async function startLive(){
       else{if(tk.is_final){sx.segOrig+=x;if(tk.speaker!=null)sx.segSpk=tk.speaker;}else oI+=x;}});
     sxRender(oI,tI);
     if(m.finished)sxFinalize();};
-  ws.onerror=()=>{if(lvWantOn)lvInfo('⚠ '+t('lv_net'));};
-  ws.onclose=()=>{sx.ws=null;};
+  ws.onerror=()=>{if(lvWantOn&&!sxStopping)lvInfo('⚠ '+t('lv_net'));};
+  ws.onclose=()=>{
+    sx.ws=null;
+    if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
+    sxFinalize();
+    const lasted=sxOpenAt?Date.now()-sxOpenAt:0;sxOpenAt=0;
+    if(lasted>5000)sxFails=0;else sxFails++;
+    // Soniox closes the socket when the temp key expires — reconnect transparently.
+    if(lvWantOn&&!sxStopping){
+      if(sxFails>=4){lvInfo('⚠ '+t('lv_net'));return;}
+      setTimeout(()=>{if(lvWantOn&&!sxStopping)openWs();},700);
+    }
+  };
 }
 // Update the live bubble token-by-token so text streams in smoothly (no jumps).
 function sxRender(oI,tI){const o=(sx.segOrig+(oI||'')).trim(),tr=(sx.segTrans+(tI||'')).trim();
@@ -705,7 +726,7 @@ function feedScroll(row){if(row&&row.scrollIntoView)row.scrollIntoView({behavior
 function keepInView(el){const r=el.getBoundingClientRect(),vh=window.innerHeight||document.documentElement.clientHeight;
   if(r.bottom>vh-80||r.top<64)el.scrollIntoView({block:'center'});}
 function sxStop(){
-  trialStop();
+  sxStopping=true;trialStop();
   if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
   if(sx.ws){try{if(sx.ws.readyState===1)sx.ws.send('');sx.ws.close();}catch(e){}}sx.ws=null;
   if(sx.stream){sx.stream.getTracks().forEach(t=>t.stop());sx.stream=null;}
