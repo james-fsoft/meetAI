@@ -9,6 +9,7 @@ let ws = null, stream = null, rec = null, audioCtx = null;
 let seg = { orig: "", trans: "", spk: null };
 let target = "ko";
 let running = false, stopping = false, openAt = 0, fails = 0;
+let fullText = []; // whole-session transcript (with speaker labels) for the summary
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.target !== "offscreen") return;
@@ -20,7 +21,7 @@ function send(p) { chrome.runtime.sendMessage({ from: "offscreen", ...p }).catch
 function pickMime() { const c = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"]; for (const m of c) if (MediaRecorder.isTypeSupported(m)) return m; return ""; }
 
 async function startCap(streamId) {
-  running = true; stopping = false; fails = 0;
+  running = true; stopping = false; fails = 0; fullText = [];
   try {
     stream = await navigator.mediaDevices.getUserMedia({
       audio: { mandatory: { chromeMediaSource: "tab", chromeMediaSourceId: streamId } }, video: false,
@@ -88,6 +89,7 @@ function openWs() {
 function flush() {
   const o = seg.orig.trim(), t = seg.trans.trim(), spk = seg.spk;
   seg = { orig: "", trans: "", spk: null };
+  if (o) fullText.push((spk != null ? "Speaker " + spk + ": " : "") + o);
   if (o || t) send({ type: "final", orig: o, trans: t, spk });
 }
 
@@ -99,4 +101,20 @@ function stopCap() {
   if (audioCtx) { audioCtx.close().catch(() => {}); audioCtx = null; }
   seg = { orig: "", trans: "", spk: null };
   send({ type: "status", text: "STOPPED" });
+  if (fullText.length) summarizeNow();
+}
+
+// After stopping, summarize the whole session via the backend.
+async function summarizeNow() {
+  const transcript = fullText.join("\n"); fullText = [];
+  send({ type: "summarizing" });
+  try {
+    const r = await fetch(API_BASE + "/api/summarize", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ transcript }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || "summary");
+    send({ type: "summary", text: (d.summary || "").trim() });
+  } catch (e) { send({ type: "summary", text: "⚠ Tóm tắt lỗi: " + e.message }); }
 }
