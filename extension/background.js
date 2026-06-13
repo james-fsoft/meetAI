@@ -77,6 +77,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.cmd === "end") { endCapture(msg.summarize); sendResponse({ ok: true }); return; }
   if (msg.cmd === "getState") { sendResponse(active); return; }
   if (msg.cmd === "setLang") { active.lang = msg.lang; chrome.runtime.sendMessage({ target: "offscreen", type: "setLang", lang: msg.lang }); sendResponse({ ok: true }); return; }
+  if (msg.cmd === "openMicPerm") { chrome.tabs.create({ url: chrome.runtime.getURL("mic-permission.html") }); sendResponse({ ok: true }); return; }
   if (msg.cmd === "authToken") { getAuthToken().then((t) => sendResponse(t)).catch(() => sendResponse(null)); return true; }
 
   // Relay results coming up from the offscreen document to the page overlay + popup.

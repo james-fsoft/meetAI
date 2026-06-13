@@ -19,15 +19,12 @@ function render() {
 chrome.storage.local.get(["lang", "mic"], (d) => { if (d.lang) lang.value = d.lang; if (d.mic) mic.checked = true; });
 chrome.runtime.sendMessage({ cmd: "getState" }, (s) => { running = !!(s && s.running); render(); });
 loadMe();
-mic.onchange = async () => {
+mic.onchange = () => {
   chrome.storage.local.set({ mic: mic.checked });
   if (!mic.checked) { status.textContent = ""; return; }
-  let state = "prompt";
-  try { const p = await navigator.permissions.query({ name: "microphone" }); state = p.state; } catch {}
-  if (state === "granted") { status.textContent = "🎤 Mic đã sẵn sàng"; return; }
   // Popups can't prompt for the mic reliably → grant it via a dedicated page.
   chrome.tabs.create({ url: chrome.runtime.getURL("mic-permission.html") });
-  status.textContent = "👉 Cho phép micro ở tab vừa mở, rồi quay lại bấm Bắt đầu";
+  status.textContent = "👉 Bấm “Cho phép” ở tab vừa mở, rồi quay lại bấm Bắt đầu";
 };
 
 btn.onclick = async () => {

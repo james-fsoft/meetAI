@@ -41,7 +41,12 @@
   const micWarnEl = box.querySelector("#tt-micwarn");
   [btnPause, btnResume, btnSum, btnClose, langSel].forEach((b) => b.addEventListener("mousedown", (e) => e.stopPropagation()));
   langSel.onchange = () => chrome.runtime.sendMessage({ cmd: "setLang", lang: langSel.value });
-  function setMicWarn(text) { if (text) { micWarnEl.textContent = text; micWarnEl.style.display = "block"; } else { micWarnEl.style.display = "none"; } }
+  micWarnEl.style.cursor = "pointer";
+  micWarnEl.onclick = () => chrome.runtime.sendMessage({ cmd: "openMicPerm" });
+  function setMicWarn(text) {
+    if (text) { micWarnEl.textContent = text + "   👉 Bấm vào đây để cấp quyền micro"; micWarnEl.style.display = "block"; }
+    else micWarnEl.style.display = "none";
+  }
   // m = "live" | "paused" | "stopped"
   function setMode(m) {
     btnPause.style.display = m === "live" ? "" : "none";
