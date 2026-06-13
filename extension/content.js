@@ -48,11 +48,11 @@
       .replace(/\n/g, "<br>");
   }
   function showSummarizing() {
-    box.style.display = "block"; lines.style.display = "none"; sumEl.style.display = "block";
+    box.style.display = "flex"; lines.style.display = "none"; sumEl.style.display = "block";
     sumEl.innerHTML = '<div class="tt-sum-h">📝 Đang tóm tắt…</div><div class="tt-sum-b" style="color:#9fb3d6">Vui lòng đợi vài giây.</div>';
   }
   function showSummary(text) {
-    box.style.display = "block"; lines.style.display = "none"; sumEl.style.display = "block";
+    box.style.display = "flex"; lines.style.display = "none"; sumEl.style.display = "block";
     sumEl.innerHTML =
       '<div class="tt-sum-h">📝 Tóm tắt<span class="tt-sum-act">' +
       '<button id="tt-copy">Copy</button><button id="tt-dl">Tải .txt</button></span></div>' +
@@ -91,7 +91,7 @@
 
   function onBg(msg) {
     if (msg.from !== "bg") return;
-    if (msg.type === "show") { box.style.display = "block"; sumEl.style.display = "none"; lines.style.display = "block"; if (!msg.resume) { lines.innerHTML = ""; cur = null; } setMode("live"); }
+    if (msg.type === "show") { box.style.display = "flex"; sumEl.style.display = "none"; lines.style.display = "block"; if (!msg.resume) { lines.innerHTML = ""; cur = null; } setMode("live"); }
     else if (msg.type === "hide") box.style.display = "none";
     else if (msg.type === "status") { setStatus(msg.text); if (msg.text === "PAUSED") setMode("paused"); else if (msg.text === "STOPPED") setMode("stopped"); }
     else if (msg.type === "summarizing") { setMode("stopped"); showSummarizing(); }
