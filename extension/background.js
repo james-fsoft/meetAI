@@ -24,7 +24,7 @@ async function startCapture(lang, resume, mic) {
   try { await chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ["content.css"] }); } catch {}
   try { await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] }); } catch {}
   active = { tabId: tab.id, running: true, lang: lang || active.lang || "ko", mic: resume ? active.mic : !!mic };
-  chrome.tabs.sendMessage(tab.id, { from: "bg", type: "show", resume: !!resume }).catch(() => {});
+  chrome.tabs.sendMessage(tab.id, { from: "bg", type: "show", resume: !!resume, lang: active.lang }).catch(() => {});
 
   // Get the stream id LAST so it's consumed immediately (ids are short-lived).
   const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
@@ -76,6 +76,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.cmd === "pause") { pauseCapture(); sendResponse({ ok: true }); return; }
   if (msg.cmd === "end") { endCapture(msg.summarize); sendResponse({ ok: true }); return; }
   if (msg.cmd === "getState") { sendResponse(active); return; }
+  if (msg.cmd === "setLang") { active.lang = msg.lang; chrome.runtime.sendMessage({ target: "offscreen", type: "setLang", lang: msg.lang }); sendResponse({ ok: true }); return; }
   if (msg.cmd === "authToken") { getAuthToken().then((t) => sendResponse(t)).catch(() => sendResponse(null)); return true; }
 
   // Relay results coming up from the offscreen document to the page overlay + popup.

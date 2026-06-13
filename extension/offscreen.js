@@ -17,6 +17,7 @@ chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === "start") { target = msg.lang || target; startCap(msg.streamId, msg.resume, msg.mic); }
   else if (msg.type === "pause") { pauseCap(); }
   else if (msg.type === "end") { endCap(!!msg.summarize); }
+  else if (msg.type === "setLang") { target = msg.lang; if (ws) { try { ws.close(); } catch {} } } // reconnect with new target
 });
 
 function send(p) { chrome.runtime.sendMessage({ from: "offscreen", ...p }).catch(() => {}); }
@@ -43,7 +44,7 @@ async function startCap(streamId, resume, mic) {
       mixCtx.createMediaStreamSource(micStream).connect(dest);
       recStream = dest.stream;
     } catch (e) {
-      send({ type: "status", text: "마이크 사용 불가 — 탭만 번역" });
+      send({ type: "status", text: "Mic chưa cấp quyền — chỉ dịch tab" });
       micStream = null; recStream = stream;
     }
   }

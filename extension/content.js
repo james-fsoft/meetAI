@@ -6,10 +6,15 @@
   const old = document.getElementById("tt-overlay");
   if (old) old.remove();
 
+  const LANGS = [["ko", "🇰🇷 KO"], ["vi", "🇻🇳 VI"], ["en", "🇺🇸 EN"], ["ja", "🇯🇵 JA"], ["zh", "🇨🇳 ZH"], ["th", "🇹🇭 TH"], ["es", "🇪🇸 ES"], ["fr", "🇫🇷 FR"]];
+  const LANG_OPTS = LANGS.map(([v, l]) => '<option value="' + v + '">' + l + "</option>").join("");
+  const LOGO = chrome.runtime.getURL("icons/icon16.png");
+
   const box = document.createElement("div");
   box.id = "tt-overlay";
   box.innerHTML =
-    '<div class="tt-head"><span class="tt-dot"></span><span class="tt-title">LIVE</span>' +
+    '<div class="tt-head"><img class="tt-logo" src="' + LOGO + '" alt="">' +
+    '<select class="tt-lang" id="tt-lang" title="Dịch sang">' + LANG_OPTS + "</select>" +
     '<span class="tt-st" id="tt-st">준비 중…</span>' +
     '<span class="tt-acts">' +
     '<button class="tt-act pause" id="tt-pause">⏸ Dừng</button>' +
@@ -30,7 +35,9 @@
   const btnResume = box.querySelector("#tt-resume");
   const btnSum = box.querySelector("#tt-sumbtn");
   const btnClose = box.querySelector("#tt-close");
-  [btnPause, btnResume, btnSum, btnClose].forEach((b) => b.addEventListener("mousedown", (e) => e.stopPropagation()));
+  const langSel = box.querySelector("#tt-lang");
+  [btnPause, btnResume, btnSum, btnClose, langSel].forEach((b) => b.addEventListener("mousedown", (e) => e.stopPropagation()));
+  langSel.onchange = () => chrome.runtime.sendMessage({ cmd: "setLang", lang: langSel.value });
   // m = "live" | "paused" | "stopped"
   function setMode(m) {
     btnPause.style.display = m === "live" ? "" : "none";
@@ -101,7 +108,7 @@
 
   function onBg(msg) {
     if (msg.from !== "bg") return;
-    if (msg.type === "show") { box.style.display = "flex"; sumEl.style.display = "none"; lines.style.display = "block"; if (!msg.resume) { lines.innerHTML = ""; cur = null; } setMode("live"); }
+    if (msg.type === "show") { box.style.display = "flex"; sumEl.style.display = "none"; lines.style.display = "block"; if (msg.lang) langSel.value = msg.lang; if (!msg.resume) { lines.innerHTML = ""; cur = null; } setMode("live"); }
     else if (msg.type === "hide") box.style.display = "none";
     else if (msg.type === "status") { setStatus(msg.text); if (msg.text === "PAUSED") setMode("paused"); else if (msg.text === "STOPPED") setMode("stopped"); }
     else if (msg.type === "summarizing") { setMode("stopped"); showSummarizing(); }
