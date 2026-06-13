@@ -14,6 +14,7 @@
   box.id = "tt-overlay";
   box.innerHTML =
     '<div class="tt-head"><img class="tt-logo" src="' + LOGO + '" alt="">' +
+    '<span class="tt-brand">TransFlash<span class="tt-sub"> · Live Translate</span></span>' +
     '<select class="tt-lang" id="tt-lang" title="Dịch sang">' + LANG_OPTS + "</select>" +
     '<span class="tt-st" id="tt-st">준비 중…</span>' +
     '<span class="tt-acts">' +
@@ -21,6 +22,7 @@
     '<button class="tt-act resume" id="tt-resume" style="display:none">▶ Tiếp tục</button>' +
     '<button class="tt-act sum" id="tt-sumbtn">⏹ Tóm tắt</button>' +
     '<button class="tt-act" id="tt-close" style="display:none">× Đóng</button></span></div>' +
+    '<div id="tt-micwarn" style="display:none"></div>' +
     '<div id="tt-lines"></div><div id="tt-sum" style="display:none"></div>' +
     '<div class="tt-grip" id="tt-grip" title="Kéo để chỉnh kích thước">' +
     '<svg width="14" height="14" viewBox="0 0 14 14"><g stroke="#cfe0ff" stroke-width="1.6" stroke-linecap="round">' +
@@ -36,8 +38,10 @@
   const btnSum = box.querySelector("#tt-sumbtn");
   const btnClose = box.querySelector("#tt-close");
   const langSel = box.querySelector("#tt-lang");
+  const micWarnEl = box.querySelector("#tt-micwarn");
   [btnPause, btnResume, btnSum, btnClose, langSel].forEach((b) => b.addEventListener("mousedown", (e) => e.stopPropagation()));
   langSel.onchange = () => chrome.runtime.sendMessage({ cmd: "setLang", lang: langSel.value });
+  function setMicWarn(text) { if (text) { micWarnEl.textContent = text; micWarnEl.style.display = "block"; } else { micWarnEl.style.display = "none"; } }
   // m = "live" | "paused" | "stopped"
   function setMode(m) {
     btnPause.style.display = m === "live" ? "" : "none";
@@ -108,9 +112,10 @@
 
   function onBg(msg) {
     if (msg.from !== "bg") return;
-    if (msg.type === "show") { box.style.display = "flex"; sumEl.style.display = "none"; lines.style.display = "block"; if (msg.lang) langSel.value = msg.lang; if (!msg.resume) { lines.innerHTML = ""; cur = null; } setMode("live"); }
+    if (msg.type === "show") { box.style.display = "flex"; sumEl.style.display = "none"; lines.style.display = "block"; setMicWarn(""); if (msg.lang) langSel.value = msg.lang; if (!msg.resume) { lines.innerHTML = ""; cur = null; } setMode("live"); }
     else if (msg.type === "hide") box.style.display = "none";
     else if (msg.type === "status") { setStatus(msg.text); if (msg.text === "PAUSED") setMode("paused"); else if (msg.text === "STOPPED") setMode("stopped"); }
+    else if (msg.type === "micWarn") setMicWarn(msg.text);
     else if (msg.type === "summarizing") { setMode("stopped"); showSummarizing(); }
     else if (msg.type === "summary") { setMode("stopped"); showSummary(msg.text, msg.transcript); }
     else if (msg.type === "partial") partial(msg.orig, msg.trans, msg.spk);

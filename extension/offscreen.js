@@ -32,11 +32,14 @@ async function startCap(streamId, resume, mic) {
     });
   } catch (e) { send({ type: "status", text: "탭 오디오 오류: " + e.message }); running = false; return; }
   // optional microphone
-  micStream = null;
+  micStream = null; let micErr = "";
   if (useMic) {
     try { micStream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
-    catch (e) { send({ type: "status", text: "Mic lỗi (" + (e.name || e.message) + ") — chỉ dịch tab" }); micStream = null; }
+    catch (e) { micErr = e.name || e.message || "lỗi"; micStream = null; }
   }
+  // persistent banner so the mic problem is obvious (status line gets overwritten by LIVE)
+  if (useMic && !micStream) send({ type: "micWarn", text: "⚠ Mic KHÔNG hoạt động (" + micErr + ") — chỉ dịch tiếng trong tab. Hãy cấp quyền micro, hoặc đóng app đang chiếm mic (Zoom/Meet)." });
+  else send({ type: "micWarn", text: "" });
   // single audio graph: tab → speakers + recording; mic → recording only (no echo)
   recStream = stream;
   try {
