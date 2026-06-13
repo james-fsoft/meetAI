@@ -16,11 +16,22 @@ async function ensureOffscreen() {
   });
 }
 
+// Recreate a fresh offscreen document so it picks up the current mic permission
+// (an offscreen created before the grant stays denied = NotAllowedError).
+async function recreateOffscreen() {
+  try { if (await hasOffscreen()) await chrome.offscreen.closeDocument(); } catch {}
+  await chrome.offscreen.createDocument({
+    url: "offscreen.html",
+    reasons: ["USER_MEDIA"],
+    justification: "Capture tab audio and stream it for real-time translation.",
+  });
+}
+
 async function startCapture(lang, resume, mic) {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab) throw new Error("No active tab");
 
-  await ensureOffscreen();
+  if (resume) await ensureOffscreen(); else await recreateOffscreen();
   try { await chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ["content.css"] }); } catch {}
   try { await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] }); } catch {}
   active = { tabId: tab.id, running: true, lang: lang || active.lang || "ko", mic: resume ? active.mic : !!mic };
