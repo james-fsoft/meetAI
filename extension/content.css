@@ -22,6 +22,7 @@
 #tt-overlay .tt-lang{flex-shrink:0;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;
   font-family:inherit;font-size:11px;font-weight:700;padding:4px 6px;border-radius:7px;outline:none;cursor:pointer;max-width:88px}
 #tt-overlay .tt-lang option{color:#0c1322}
+#tt-overlay .tt-langswap{color:#9fb3d6;font-weight:800;font-size:13px;flex-shrink:0}
 #tt-overlay .tt-st{flex:1;min-width:0;font-size:10.5px;font-weight:700;color:#9fb3d6;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #tt-overlay .tt-st.ok{color:#7ee0a6}
 #tt-overlay .tt-st.err{color:#ffb4b4;font-weight:600}

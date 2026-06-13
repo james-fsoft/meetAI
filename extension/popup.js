@@ -1,10 +1,27 @@
 const API_BASE = "https://meet.transflash.app";
 const btn = document.getElementById("toggle");
 const lang = document.getElementById("lang");
+const langB = document.getElementById("langB");
+const swapIc = document.getElementById("swapIc");
+const langLbl = document.getElementById("langLbl");
+const modeseg = document.getElementById("modeseg");
 const mic = document.getElementById("mic");
 const status = document.getElementById("status");
 const authBox = document.getElementById("auth");
 let running = false;
+
+function getWay() { const b = modeseg.querySelector("button.on"); return b ? b.dataset.w : "one"; }
+function applyMode() {
+  const two = getWay() === "two";
+  langB.style.display = two ? "" : "none";
+  swapIc.style.display = two ? "" : "none";
+  langLbl.textContent = two ? "Cặp ngôn ngữ (nói tiếng nào ra tiếng kia)" : "Dịch sang / Translate to";
+}
+modeseg.querySelectorAll("button").forEach((b) => b.onclick = () => {
+  modeseg.querySelectorAll("button").forEach((x) => x.classList.remove("on"));
+  b.classList.add("on"); chrome.storage.local.set({ way: b.dataset.w }); applyMode();
+});
+langB.onchange = () => chrome.storage.local.set({ langB: langB.value });
 
 // show the redirect URL (for Supabase config)
 document.getElementById("redir").textContent = chrome.identity.getRedirectURL();
@@ -16,7 +33,13 @@ function render() {
   mic.disabled = running;
 }
 
-chrome.storage.local.get(["lang", "mic"], (d) => { if (d.lang) lang.value = d.lang; if (d.mic) mic.checked = true; });
+chrome.storage.local.get(["lang", "langB", "way", "mic"], (d) => {
+  if (d.lang) lang.value = d.lang;
+  if (d.langB) langB.value = d.langB;
+  if (d.way) { modeseg.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.w === d.way)); }
+  if (d.mic) mic.checked = true;
+  applyMode();
+});
 chrome.runtime.sendMessage({ cmd: "getState" }, (s) => { running = !!(s && s.running); render(); });
 loadMe();
 mic.onchange = () => {
@@ -32,9 +55,9 @@ btn.onclick = async () => {
     chrome.runtime.sendMessage({ cmd: "end", summarize: false }, () => { running = false; render(); status.textContent = ""; });
     return;
   }
-  chrome.storage.local.set({ lang: lang.value, mic: mic.checked });
+  chrome.storage.local.set({ lang: lang.value, langB: langB.value, way: getWay(), mic: mic.checked });
   status.textContent = "준비 중…";
-  chrome.runtime.sendMessage({ cmd: "start", lang: lang.value, mic: mic.checked }, (r) => {
+  chrome.runtime.sendMessage({ cmd: "start", lang: lang.value, langB: langB.value, way: getWay(), mic: mic.checked }, (r) => {
     if (r && r.ok) { running = true; render(); }
     else { status.textContent = "⚠ " + ((r && r.error) || "Không bắt được tab"); }
   });

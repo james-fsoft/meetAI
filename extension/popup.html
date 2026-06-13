@@ -17,7 +17,13 @@
   .prof .lo{font-size:10px;color:#9fb3d6;cursor:pointer;background:none;border:none;font-weight:700;text-decoration:underline}
   label{font-size:11px;font-weight:700;color:#9fb3d6;display:block;margin-bottom:6px}
   select{width:100%;padding:9px 10px;border-radius:9px;border:1px solid #2a3852;background:#16223a;color:#fff;
-    font-family:inherit;font-size:13px;font-weight:700;outline:none;margin-bottom:14px}
+    font-family:inherit;font-size:13px;font-weight:700;outline:none}
+  .modeseg{display:flex;gap:4px;background:#101a2e;border:1px solid #2a3852;border-radius:9px;padding:3px;margin-bottom:12px}
+  .modeseg button{flex:1;border:none;background:none;color:#9fb3d6;font-family:inherit;font-size:12px;font-weight:800;
+    padding:7px;border-radius:7px;cursor:pointer}
+  .modeseg button.on{background:#1f6bff;color:#fff}
+  .langrow{display:flex;align-items:center;gap:7px;margin-bottom:14px}
+  .swapic{color:#9fb3d6;font-weight:800;font-size:15px}
   button.act{width:100%;border:none;border-radius:10px;padding:12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;color:#fff;transition:.15s}
   .start{background:#16a34a}.start:hover{background:#15903f}
   .stop{background:#dc2626}.stop:hover{background:#c01d1d}
@@ -36,17 +42,36 @@
 
   <div class="auth" id="auth"></div>
 
-  <label>Dịch sang / Translate to</label>
-  <select id="lang">
-    <option value="ko">🇰🇷 한국어</option>
-    <option value="vi">🇻🇳 Tiếng Việt</option>
-    <option value="en">🇺🇸 English</option>
-    <option value="ja">🇯🇵 日本語</option>
-    <option value="zh">🇨🇳 中文</option>
-    <option value="th">🇹🇭 ไทย</option>
-    <option value="es">🇪🇸 Español</option>
-    <option value="fr">🇫🇷 Français</option>
-  </select>
+  <label>Chế độ dịch</label>
+  <div class="modeseg" id="modeseg">
+    <button type="button" data-w="one" class="on">→ 1 chiều</button>
+    <button type="button" data-w="two">⇄ Song ngữ</button>
+  </div>
+
+  <label id="langLbl">Dịch sang / Translate to</label>
+  <div class="langrow">
+    <select id="lang">
+      <option value="ko">🇰🇷 한국어</option>
+      <option value="vi">🇻🇳 Tiếng Việt</option>
+      <option value="en">🇺🇸 English</option>
+      <option value="ja">🇯🇵 日本語</option>
+      <option value="zh">🇨🇳 中文</option>
+      <option value="th">🇹🇭 ไทย</option>
+      <option value="es">🇪🇸 Español</option>
+      <option value="fr">🇫🇷 Français</option>
+    </select>
+    <span id="swapIc" class="swapic" style="display:none">⇄</span>
+    <select id="langB" style="display:none">
+      <option value="vi">🇻🇳 Tiếng Việt</option>
+      <option value="ko">🇰🇷 한국어</option>
+      <option value="en">🇺🇸 English</option>
+      <option value="ja">🇯🇵 日本語</option>
+      <option value="zh">🇨🇳 中文</option>
+      <option value="th">🇹🇭 ไทย</option>
+      <option value="es">🇪🇸 Español</option>
+      <option value="fr">🇫🇷 Français</option>
+    </select>
+  </div>
 
   <label class="microw"><input type="checkbox" id="mic"> 🎤 Bao gồm mic của tôi
     <span class="mhint">dịch cả 2 phía</span></label>

@@ -8,16 +8,16 @@ const SONIOX_WS = "wss://stt-rt.soniox.com/transcribe-websocket";
 let ws = null, stream = null, rec = null, audioCtx = null;
 let micStream = null, recStream = null, useMic = false;
 let seg = { orig: "", trans: "", spk: null };
-let target = "ko";
+let target = "ko", way = "one", langB = "vi";
 let running = false, stopping = false, openAt = 0, fails = 0;
 let fullLines = []; // whole-session segments {spk, o (original), t (translation)}
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.target !== "offscreen") return;
-  if (msg.type === "start") { target = msg.lang || target; startCap(msg.streamId, msg.resume, msg.mic); }
+  if (msg.type === "start") { target = msg.lang || target; way = msg.way || "one"; if (msg.langB) langB = msg.langB; startCap(msg.streamId, msg.resume, msg.mic); }
   else if (msg.type === "pause") { pauseCap(); }
   else if (msg.type === "end") { endCap(!!msg.summarize); }
-  else if (msg.type === "setLang") { target = msg.lang; if (ws) { try { ws.close(); } catch {} } } // reconnect with new target
+  else if (msg.type === "setLang") { if (msg.lang) target = msg.lang; if (msg.way) way = msg.way; if (msg.langB) langB = msg.langB; if (ws) { try { ws.close(); } catch {} } } // reconnect with new config
 });
 
 function send(p) { chrome.runtime.sendMessage({ from: "offscreen", ...p }).catch(() => {}); }
@@ -67,11 +67,14 @@ async function openWs() {
       const w = new WebSocket(SONIOX_WS); ws = w;
       w.onopen = () => {
         openAt = Date.now();
+        const two = way === "two";
         w.send(JSON.stringify({
           api_key: tok, model: "stt-rt-v4", audio_format: "auto",
-          language_hints: ["ko", "vi", "en", "ja", "zh", "th", "es", "fr"],
+          language_hints: two ? [target, langB] : ["ko", "vi", "en", "ja", "zh", "th", "es", "fr"],
           enable_speaker_diarization: true, enable_endpoint_detection: true,
-          translation: { type: "one_way", target_language: target },
+          translation: two
+            ? { type: "two_way", language_a: target, language_b: langB }
+            : { type: "one_way", target_language: target },
         }));
         const mime = pickMime();
         try { rec = mime ? new MediaRecorder(recStream, { mimeType: mime }) : new MediaRecorder(recStream); }

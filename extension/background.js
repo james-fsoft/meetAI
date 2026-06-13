@@ -1,6 +1,6 @@
 // Service worker: orchestrates tab-audio capture → offscreen Soniox stream → content overlay.
 
-let active = { tabId: null, running: false, lang: "ko", mic: false };
+let active = { tabId: null, running: false, lang: "ko", langB: "vi", way: "one", mic: false };
 
 async function hasOffscreen() {
   const ctxs = await chrome.runtime.getContexts({ contextTypes: ["OFFSCREEN_DOCUMENT"] });
@@ -27,19 +27,25 @@ async function recreateOffscreen() {
   });
 }
 
-async function startCapture(lang, resume, mic) {
+async function startCapture(lang, resume, mic, wayv, langBv) {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab) throw new Error("No active tab");
 
   if (resume) await ensureOffscreen(); else await recreateOffscreen();
   try { await chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ["content.css"] }); } catch {}
   try { await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] }); } catch {}
-  active = { tabId: tab.id, running: true, lang: lang || active.lang || "ko", mic: resume ? active.mic : !!mic };
-  chrome.tabs.sendMessage(tab.id, { from: "bg", type: "show", resume: !!resume, lang: active.lang }).catch(() => {});
+  active = {
+    tabId: tab.id, running: true,
+    lang: lang || active.lang || "ko",
+    langB: (resume ? active.langB : langBv) || active.langB || "vi",
+    way: (resume ? active.way : wayv) || "one",
+    mic: resume ? active.mic : !!mic,
+  };
+  chrome.tabs.sendMessage(tab.id, { from: "bg", type: "show", resume: !!resume, lang: active.lang, langB: active.langB, way: active.way }).catch(() => {});
 
   // Get the stream id LAST so it's consumed immediately (ids are short-lived).
   const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
-  chrome.runtime.sendMessage({ target: "offscreen", type: "start", streamId, lang: active.lang, resume: !!resume, mic: active.mic });
+  chrome.runtime.sendMessage({ target: "offscreen", type: "start", streamId, lang: active.lang, langB: active.langB, way: active.way, resume: !!resume, mic: active.mic });
 }
 
 function pauseCapture() {
@@ -77,7 +83,7 @@ async function getAuthToken() {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.cmd === "start") {
-    startCapture(msg.lang, false, msg.mic).then(() => sendResponse({ ok: true })).catch((e) => sendResponse({ ok: false, error: e.message }));
+    startCapture(msg.lang, false, msg.mic, msg.way, msg.langB).then(() => sendResponse({ ok: true })).catch((e) => sendResponse({ ok: false, error: e.message }));
     return true;
   }
   if (msg.cmd === "resume") {
@@ -87,7 +93,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.cmd === "pause") { pauseCapture(); sendResponse({ ok: true }); return; }
   if (msg.cmd === "end") { endCapture(msg.summarize); sendResponse({ ok: true }); return; }
   if (msg.cmd === "getState") { sendResponse(active); return; }
-  if (msg.cmd === "setLang") { active.lang = msg.lang; chrome.runtime.sendMessage({ target: "offscreen", type: "setLang", lang: msg.lang }); sendResponse({ ok: true }); return; }
+  if (msg.cmd === "setLang") { if (msg.lang) active.lang = msg.lang; if (msg.way) active.way = msg.way; if (msg.langB) active.langB = msg.langB; chrome.runtime.sendMessage({ target: "offscreen", type: "setLang", lang: active.lang, way: active.way, langB: active.langB }); sendResponse({ ok: true }); return; }
   if (msg.cmd === "openMicPerm") { chrome.tabs.create({ url: chrome.runtime.getURL("mic-permission.html") }); sendResponse({ ok: true }); return; }
   if (msg.cmd === "authToken") { getAuthToken().then((t) => sendResponse(t)).catch(() => sendResponse(null)); return true; }
 
