@@ -1,6 +1,6 @@
 // Service worker: orchestrates tab-audio capture → offscreen Soniox stream → content overlay.
 
-let active = { tabId: null, running: false, lang: "ko" };
+let active = { tabId: null, running: false, lang: "ko", mic: false };
 
 async function hasOffscreen() {
   const ctxs = await chrome.runtime.getContexts({ contextTypes: ["OFFSCREEN_DOCUMENT"] });
@@ -16,19 +16,19 @@ async function ensureOffscreen() {
   });
 }
 
-async function startCapture(lang, resume) {
+async function startCapture(lang, resume, mic) {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab) throw new Error("No active tab");
 
   await ensureOffscreen();
   try { await chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ["content.css"] }); } catch {}
   try { await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] }); } catch {}
-  active = { tabId: tab.id, running: true, lang: lang || active.lang || "ko" };
+  active = { tabId: tab.id, running: true, lang: lang || active.lang || "ko", mic: resume ? active.mic : !!mic };
   chrome.tabs.sendMessage(tab.id, { from: "bg", type: "show", resume: !!resume }).catch(() => {});
 
   // Get the stream id LAST so it's consumed immediately (ids are short-lived).
   const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
-  chrome.runtime.sendMessage({ target: "offscreen", type: "start", streamId, lang: active.lang, resume: !!resume });
+  chrome.runtime.sendMessage({ target: "offscreen", type: "start", streamId, lang: active.lang, resume: !!resume, mic: active.mic });
 }
 
 function pauseCapture() {
@@ -66,7 +66,7 @@ async function getAuthToken() {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.cmd === "start") {
-    startCapture(msg.lang, false).then(() => sendResponse({ ok: true })).catch((e) => sendResponse({ ok: false, error: e.message }));
+    startCapture(msg.lang, false, msg.mic).then(() => sendResponse({ ok: true })).catch((e) => sendResponse({ ok: false, error: e.message }));
     return true;
   }
   if (msg.cmd === "resume") {

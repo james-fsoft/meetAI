@@ -6,6 +6,7 @@ const API_BASE = "https://meet.transflash.app";
 const SONIOX_WS = "wss://stt-rt.soniox.com/transcribe-websocket";
 
 let ws = null, stream = null, rec = null, audioCtx = null;
+let micStream = null, mixCtx = null, recStream = null, useMic = false;
 let seg = { orig: "", trans: "", spk: null };
 let target = "ko";
 let running = false, stopping = false, openAt = 0, fails = 0;
@@ -13,7 +14,7 @@ let fullLines = []; // whole-session segments {spk, o (original), t (translation
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.target !== "offscreen") return;
-  if (msg.type === "start") { target = msg.lang || target; startCap(msg.streamId, msg.resume); }
+  if (msg.type === "start") { target = msg.lang || target; startCap(msg.streamId, msg.resume, msg.mic); }
   else if (msg.type === "pause") { pauseCap(); }
   else if (msg.type === "end") { endCap(!!msg.summarize); }
 });
@@ -21,16 +22,31 @@ chrome.runtime.onMessage.addListener((msg) => {
 function send(p) { chrome.runtime.sendMessage({ from: "offscreen", ...p }).catch(() => {}); }
 function pickMime() { const c = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"]; for (const m of c) if (MediaRecorder.isTypeSupported(m)) return m; return ""; }
 
-async function startCap(streamId, resume) {
-  running = true; stopping = false; fails = 0;
+async function startCap(streamId, resume, mic) {
+  running = true; stopping = false; fails = 0; useMic = !!mic;
   if (!resume) fullLines = [];
   try {
     stream = await navigator.mediaDevices.getUserMedia({
       audio: { mandatory: { chromeMediaSource: "tab", chromeMediaSourceId: streamId } }, video: false,
     });
   } catch (e) { send({ type: "status", text: "탭 오디오 오류: " + e.message }); running = false; return; }
-  // keep the meeting audible to the user
+  // play back the tab so the user still hears the call (mic is NOT played back → no echo)
   try { audioCtx = new AudioContext(); audioCtx.createMediaStreamSource(stream).connect(audioCtx.destination); if (audioCtx.state === "suspended") audioCtx.resume(); } catch {}
+  // optionally mix in the user's microphone so both sides get translated
+  recStream = stream;
+  if (useMic) {
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mixCtx = new AudioContext();
+      const dest = mixCtx.createMediaStreamDestination();
+      mixCtx.createMediaStreamSource(stream).connect(dest);
+      mixCtx.createMediaStreamSource(micStream).connect(dest);
+      recStream = dest.stream;
+    } catch (e) {
+      send({ type: "status", text: "마이크 사용 불가 — 탭만 번역" });
+      micStream = null; recStream = stream;
+    }
+  }
   openWs();
 }
 
@@ -53,7 +69,7 @@ async function openWs() {
           translation: { type: "one_way", target_language: target },
         }));
         const mime = pickMime();
-        try { rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream); }
+        try { rec = mime ? new MediaRecorder(recStream, { mimeType: mime }) : new MediaRecorder(recStream); }
         catch (e) { send({ type: "status", text: "녹음 오류: " + e.message }); return; }
         rec.ondataavailable = async (e) => { if (e.data.size && ws && ws.readyState === 1) ws.send(await e.data.arrayBuffer()); };
         rec.start(240);
@@ -112,7 +128,10 @@ function teardown() {
   if (rec && rec.state !== "inactive") { try { rec.stop(); } catch {} } rec = null;
   if (ws) { try { if (ws.readyState === 1) ws.send(""); ws.close(); } catch {} } ws = null;
   if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
+  if (micStream) { micStream.getTracks().forEach((t) => t.stop()); micStream = null; }
   if (audioCtx) { audioCtx.close().catch(() => {}); audioCtx = null; }
+  if (mixCtx) { mixCtx.close().catch(() => {}); mixCtx = null; }
+  recStream = null;
 }
 
 // Pause: stop streaming but keep the transcript so the session can resume.

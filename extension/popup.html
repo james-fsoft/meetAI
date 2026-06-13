@@ -22,6 +22,9 @@
   .start{background:#16a34a}.start:hover{background:#15903f}
   .stop{background:#dc2626}.stop:hover{background:#c01d1d}
   .status{margin-top:12px;font-size:11.5px;font-weight:700;text-align:center;color:#7ee0a6;min-height:16px}
+  .microw{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#cdd9f2;cursor:pointer;margin-bottom:14px}
+  .microw input{width:15px;height:15px;cursor:pointer}
+  .microw .mhint{font-size:9.5px;color:#7e8da8;font-weight:500}
   .hint{margin-top:12px;font-size:10.5px;color:#5b6b8c;line-height:1.5}
   details{margin-top:12px;font-size:10px;color:#5b6b8c}
   details code{display:block;margin-top:6px;background:#16223a;border:1px solid #243352;border-radius:7px;padding:6px;
@@ -44,6 +47,9 @@
     <option value="es">🇪🇸 Español</option>
     <option value="fr">🇫🇷 Français</option>
   </select>
+
+  <label class="microw"><input type="checkbox" id="mic"> 🎤 Bao gồm mic của tôi
+    <span class="mhint">dịch cả 2 phía</span></label>
 
   <button id="toggle" class="act start">▶ Bắt đầu</button>
   <div class="status" id="status"></div>

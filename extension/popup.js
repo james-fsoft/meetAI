@@ -1,6 +1,7 @@
 const API_BASE = "https://meet.transflash.app";
 const btn = document.getElementById("toggle");
 const lang = document.getElementById("lang");
+const mic = document.getElementById("mic");
 const status = document.getElementById("status");
 const authBox = document.getElementById("auth");
 let running = false;
@@ -12,23 +13,36 @@ function render() {
   btn.textContent = running ? "■ Dừng" : "▶ Bắt đầu";
   btn.className = running ? "act stop" : "act start";
   lang.disabled = running;
+  mic.disabled = running;
 }
 
-chrome.storage.local.get("lang", (d) => { if (d.lang) lang.value = d.lang; });
+chrome.storage.local.get(["lang", "mic"], (d) => { if (d.lang) lang.value = d.lang; if (d.mic) mic.checked = true; });
 chrome.runtime.sendMessage({ cmd: "getState" }, (s) => { running = !!(s && s.running); render(); });
 loadMe();
+mic.onchange = async () => {
+  chrome.storage.local.set({ mic: mic.checked });
+  if (mic.checked) {
+    try { const s = await navigator.mediaDevices.getUserMedia({ audio: true }); s.getTracks().forEach((t) => t.stop()); status.textContent = "🎤 Mic đã sẵn sàng"; }
+    catch (e) { status.textContent = "⚠ Cần cho phép micro"; mic.checked = false; chrome.storage.local.set({ mic: false }); }
+  } else { status.textContent = ""; }
+};
 
-btn.onclick = () => {
+btn.onclick = async () => {
   if (running) {
     chrome.runtime.sendMessage({ cmd: "end", summarize: false }, () => { running = false; render(); status.textContent = ""; });
-  } else {
-    chrome.storage.local.set({ lang: lang.value });
-    status.textContent = "준비 중…";
-    chrome.runtime.sendMessage({ cmd: "start", lang: lang.value }, (r) => {
-      if (r && r.ok) { running = true; render(); }
-      else { status.textContent = "⚠ " + ((r && r.error) || "Không bắt được tab"); }
-    });
+    return;
   }
+  chrome.storage.local.set({ lang: lang.value, mic: mic.checked });
+  if (mic.checked) {
+    status.textContent = "🎤 Cho phép micro…";
+    try { const s = await navigator.mediaDevices.getUserMedia({ audio: true }); s.getTracks().forEach((t) => t.stop()); }
+    catch (e) { status.textContent = "⚠ Cần cho phép micro để bật tính năng này"; return; }
+  }
+  status.textContent = "준비 중…";
+  chrome.runtime.sendMessage({ cmd: "start", lang: lang.value, mic: mic.checked }, (r) => {
+    if (r && r.ok) { running = true; render(); }
+    else { status.textContent = "⚠ " + ((r && r.error) || "Không bắt được tab"); }
+  });
 };
 
 chrome.runtime.onMessage.addListener((msg) => {
