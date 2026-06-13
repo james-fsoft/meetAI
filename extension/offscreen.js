@@ -34,30 +34,10 @@ async function startCap(streamId, resume) {
   openWs();
 }
 
-// Returns a valid Supabase access token (refreshing if needed), or null.
-async function getAuth() {
-  const s = await chrome.storage.local.get(["access_token", "refresh_token", "expires_at", "sb_url", "sb_key"]);
-  if (!s.access_token) return null;
-  const now = Math.floor(Date.now() / 1000);
-  if (!s.expires_at || s.expires_at > now + 60) return s.access_token;
-  if (s.refresh_token && s.sb_url && s.sb_key) {
-    try {
-      const r = await fetch(s.sb_url + "/auth/v1/token?grant_type=refresh_token", {
-        method: "POST", headers: { "Content-Type": "application/json", apikey: s.sb_key },
-        body: JSON.stringify({ refresh_token: s.refresh_token }),
-      });
-      const d = await r.json();
-      if (r.ok && d.access_token) {
-        await chrome.storage.local.set({ access_token: d.access_token, refresh_token: d.refresh_token, expires_at: now + (d.expires_in || 3600) });
-        return d.access_token;
-      }
-    } catch {}
-  }
-  return s.access_token;
-}
-
 async function openWs() {
-  const authTok = await getAuth();
+  // The offscreen document can't access chrome.storage — ask the worker for a token.
+  let authTok = null;
+  try { authTok = await chrome.runtime.sendMessage({ cmd: "authToken" }); } catch {}
   const headers = authTok ? { Authorization: "Bearer " + authTok } : {};
   fetch(API_BASE + "/api/soniox-token", { method: "POST", headers })
     .then((r) => r.json().then((d) => { if (!r.ok) throw new Error(d.error || "token"); return d.api_key; }))
