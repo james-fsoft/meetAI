@@ -1,8 +1,10 @@
 // Injected into the meeting page: shows a draggable subtitle overlay and renders
 // translation messages relayed from the background service worker.
 (function () {
-  if (window.__ttInjected) return;
-  window.__ttInjected = true;
+  // Replace any previous (possibly orphaned after an extension reload) instance.
+  if (window.__ttCleanup) { try { window.__ttCleanup(); } catch (e) {} }
+  const old = document.getElementById("tt-overlay");
+  if (old) old.remove();
 
   const box = document.createElement("div");
   box.id = "tt-overlay";
@@ -87,7 +89,7 @@
     cur.className = "tt-line"; cur.innerHTML = html(o, t, spk); cur = null; trim(); lines.scrollTop = lines.scrollHeight;
   }
 
-  chrome.runtime.onMessage.addListener((msg) => {
+  function onBg(msg) {
     if (msg.from !== "bg") return;
     if (msg.type === "show") { box.style.display = "block"; sumEl.style.display = "none"; lines.style.display = "block"; if (!msg.resume) { lines.innerHTML = ""; cur = null; } setMode("live"); }
     else if (msg.type === "hide") box.style.display = "none";
@@ -96,19 +98,27 @@
     else if (msg.type === "summary") { setMode("stopped"); showSummary(msg.text); }
     else if (msg.type === "partial") partial(msg.orig, msg.trans, msg.spk);
     else if (msg.type === "final") final(msg.orig, msg.trans, msg.spk);
-  });
+  }
+  chrome.runtime.onMessage.addListener(onBg);
 
   // drag to reposition
   let dx = 0, dy = 0, dragging = false;
-  head.addEventListener("mousedown", (e) => {
+  function onHeadDown(e) {
     dragging = true; const r = box.getBoundingClientRect();
     dx = e.clientX - r.left; dy = e.clientY - r.top;
     box.style.transform = "none"; box.style.left = r.left + "px"; box.style.top = r.top + "px"; box.style.bottom = "auto";
     e.preventDefault();
-  });
-  window.addEventListener("mousemove", (e) => {
-    if (!dragging) return;
-    box.style.left = (e.clientX - dx) + "px"; box.style.top = (e.clientY - dy) + "px";
-  });
-  window.addEventListener("mouseup", () => { dragging = false; });
+  }
+  function onMove(e) { if (!dragging) return; box.style.left = (e.clientX - dx) + "px"; box.style.top = (e.clientY - dy) + "px"; }
+  function onUp() { dragging = false; }
+  head.addEventListener("mousedown", onHeadDown);
+  window.addEventListener("mousemove", onMove);
+  window.addEventListener("mouseup", onUp);
+
+  window.__ttCleanup = function () {
+    try { box.remove(); } catch (e) {}
+    try { chrome.runtime.onMessage.removeListener(onBg); } catch (e) {}
+    try { window.removeEventListener("mousemove", onMove); } catch (e) {}
+    try { window.removeEventListener("mouseup", onUp); } catch (e) {}
+  };
 })();
