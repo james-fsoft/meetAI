@@ -6,7 +6,7 @@ const API_BASE = "https://meet.transflash.app";
 const SONIOX_WS = "wss://stt-rt.soniox.com/transcribe-websocket";
 
 let ws = null, stream = null, rec = null, audioCtx = null;
-let micStream = null, mixCtx = null, recStream = null, useMic = false;
+let micStream = null, recStream = null, useMic = false;
 let seg = { orig: "", trans: "", spk: null };
 let target = "ko";
 let running = false, stopping = false, openAt = 0, fails = 0;
@@ -31,23 +31,24 @@ async function startCap(streamId, resume, mic) {
       audio: { mandatory: { chromeMediaSource: "tab", chromeMediaSourceId: streamId } }, video: false,
     });
   } catch (e) { send({ type: "status", text: "탭 오디오 오류: " + e.message }); running = false; return; }
-  // play back the tab so the user still hears the call (mic is NOT played back → no echo)
-  try { audioCtx = new AudioContext(); audioCtx.createMediaStreamSource(stream).connect(audioCtx.destination); if (audioCtx.state === "suspended") audioCtx.resume(); } catch {}
-  // optionally mix in the user's microphone so both sides get translated
-  recStream = stream;
+  // optional microphone
+  micStream = null;
   if (useMic) {
-    try {
-      micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mixCtx = new AudioContext();
-      const dest = mixCtx.createMediaStreamDestination();
-      mixCtx.createMediaStreamSource(stream).connect(dest);
-      mixCtx.createMediaStreamSource(micStream).connect(dest);
-      recStream = dest.stream;
-    } catch (e) {
-      send({ type: "status", text: "Mic chưa cấp quyền — chỉ dịch tab" });
-      micStream = null; recStream = stream;
-    }
+    try { micStream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+    catch (e) { send({ type: "status", text: "Mic lỗi (" + (e.name || e.message) + ") — chỉ dịch tab" }); micStream = null; }
   }
+  // single audio graph: tab → speakers + recording; mic → recording only (no echo)
+  recStream = stream;
+  try {
+    audioCtx = new AudioContext();
+    const dest = audioCtx.createMediaStreamDestination();
+    const tabSrc = audioCtx.createMediaStreamSource(stream);
+    tabSrc.connect(audioCtx.destination); // user still hears the call
+    tabSrc.connect(dest);                 // tab audio → Soniox
+    if (micStream) audioCtx.createMediaStreamSource(micStream).connect(dest); // mic → Soniox only
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    recStream = dest.stream;
+  } catch (e) { recStream = stream; }
   openWs();
 }
 
@@ -131,7 +132,6 @@ function teardown() {
   if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
   if (micStream) { micStream.getTracks().forEach((t) => t.stop()); micStream = null; }
   if (audioCtx) { audioCtx.close().catch(() => {}); audioCtx = null; }
-  if (mixCtx) { mixCtx.close().catch(() => {}); mixCtx = null; }
   recStream = null;
 }
 
