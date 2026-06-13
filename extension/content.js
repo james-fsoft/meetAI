@@ -15,7 +15,10 @@
     '<button class="tt-act resume" id="tt-resume" style="display:none">▶ Tiếp tục</button>' +
     '<button class="tt-act sum" id="tt-sumbtn">⏹ Stop &amp; tóm tắt</button>' +
     '<button class="tt-act" id="tt-close" style="display:none">× Đóng</button></div>' +
-    '<div id="tt-lines"></div><div id="tt-sum" style="display:none"></div>';
+    '<div id="tt-lines"></div><div id="tt-sum" style="display:none"></div>' +
+    '<div class="tt-grip" id="tt-grip" title="Kéo để chỉnh kích thước">' +
+    '<svg width="14" height="14" viewBox="0 0 14 14"><g stroke="#cfe0ff" stroke-width="1.6" stroke-linecap="round">' +
+    '<line x1="13" y1="2" x2="2" y2="13"/><line x1="13" y1="6.5" x2="6.5" y2="13"/><line x1="13" y1="11" x2="11" y2="13"/></g></svg></div>';
   document.documentElement.appendChild(box);
 
   const lines = box.querySelector("#tt-lines");
@@ -101,17 +104,29 @@
   }
   chrome.runtime.onMessage.addListener(onBg);
 
-  // drag to reposition
+  // drag (header) + resize (corner grip)
+  const grip = box.querySelector("#tt-grip");
   let dx = 0, dy = 0, dragging = false;
-  function onHeadDown(e) {
-    dragging = true; const r = box.getBoundingClientRect();
-    dx = e.clientX - r.left; dy = e.clientY - r.top;
+  let rz = false, rx = 0, ry = 0, rw = 0, rh = 0;
+  function detach() {
+    const r = box.getBoundingClientRect();
     box.style.transform = "none"; box.style.left = r.left + "px"; box.style.top = r.top + "px"; box.style.bottom = "auto";
-    e.preventDefault();
+    return r;
   }
-  function onMove(e) { if (!dragging) return; box.style.left = (e.clientX - dx) + "px"; box.style.top = (e.clientY - dy) + "px"; }
-  function onUp() { dragging = false; }
+  function onHeadDown(e) { dragging = true; const r = detach(); dx = e.clientX - r.left; dy = e.clientY - r.top; e.preventDefault(); }
+  function onGripDown(e) { rz = true; const r = detach(); rx = e.clientX; ry = e.clientY; rw = r.width; rh = r.height; e.preventDefault(); e.stopPropagation(); }
+  function onMove(e) {
+    if (rz) {
+      const w = Math.min(Math.max(rw + (e.clientX - rx), 300), window.innerWidth * 0.96);
+      const h = Math.min(Math.max(rh + (e.clientY - ry), 130), window.innerHeight * 0.88);
+      box.style.width = w + "px"; box.style.height = h + "px";
+    } else if (dragging) {
+      box.style.left = (e.clientX - dx) + "px"; box.style.top = (e.clientY - dy) + "px";
+    }
+  }
+  function onUp() { dragging = false; rz = false; }
   head.addEventListener("mousedown", onHeadDown);
+  grip.addEventListener("mousedown", onGripDown);
   window.addEventListener("mousemove", onMove);
   window.addEventListener("mouseup", onUp);
 
