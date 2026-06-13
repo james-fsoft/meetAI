@@ -21,10 +21,13 @@ chrome.runtime.sendMessage({ cmd: "getState" }, (s) => { running = !!(s && s.run
 loadMe();
 mic.onchange = async () => {
   chrome.storage.local.set({ mic: mic.checked });
-  if (mic.checked) {
-    try { const s = await navigator.mediaDevices.getUserMedia({ audio: true }); s.getTracks().forEach((t) => t.stop()); status.textContent = "🎤 Mic đã sẵn sàng"; }
-    catch (e) { status.textContent = "⚠ Cần cho phép micro"; mic.checked = false; chrome.storage.local.set({ mic: false }); }
-  } else { status.textContent = ""; }
+  if (!mic.checked) { status.textContent = ""; return; }
+  let state = "prompt";
+  try { const p = await navigator.permissions.query({ name: "microphone" }); state = p.state; } catch {}
+  if (state === "granted") { status.textContent = "🎤 Mic đã sẵn sàng"; return; }
+  // Popups can't prompt for the mic reliably → grant it via a dedicated page.
+  chrome.tabs.create({ url: chrome.runtime.getURL("mic-permission.html") });
+  status.textContent = "👉 Cho phép micro ở tab vừa mở, rồi quay lại bấm Bắt đầu";
 };
 
 btn.onclick = async () => {
@@ -33,11 +36,6 @@ btn.onclick = async () => {
     return;
   }
   chrome.storage.local.set({ lang: lang.value, mic: mic.checked });
-  if (mic.checked) {
-    status.textContent = "🎤 Cho phép micro…";
-    try { const s = await navigator.mediaDevices.getUserMedia({ audio: true }); s.getTracks().forEach((t) => t.stop()); }
-    catch (e) { status.textContent = "⚠ Cần cho phép micro để bật tính năng này"; return; }
-  }
   status.textContent = "준비 중…";
   chrome.runtime.sendMessage({ cmd: "start", lang: lang.value, mic: mic.checked }, (r) => {
     if (r && r.ok) { running = true; render(); }

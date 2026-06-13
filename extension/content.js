@@ -9,12 +9,13 @@
   const box = document.createElement("div");
   box.id = "tt-overlay";
   box.innerHTML =
-    '<div class="tt-head"><span class="tt-dot"></span><span>LIVE TRANSLATE</span>' +
+    '<div class="tt-head"><span class="tt-dot"></span><span class="tt-title">LIVE</span>' +
     '<span class="tt-st" id="tt-st">준비 중…</span>' +
+    '<span class="tt-acts">' +
     '<button class="tt-act pause" id="tt-pause">⏸ Dừng</button>' +
     '<button class="tt-act resume" id="tt-resume" style="display:none">▶ Tiếp tục</button>' +
-    '<button class="tt-act sum" id="tt-sumbtn">⏹ Stop &amp; tóm tắt</button>' +
-    '<button class="tt-act" id="tt-close" style="display:none">× Đóng</button></div>' +
+    '<button class="tt-act sum" id="tt-sumbtn">⏹ Tóm tắt</button>' +
+    '<button class="tt-act" id="tt-close" style="display:none">× Đóng</button></span></div>' +
     '<div id="tt-lines"></div><div id="tt-sum" style="display:none"></div>' +
     '<div class="tt-grip" id="tt-grip" title="Kéo để chỉnh kích thước">' +
     '<svg width="14" height="14" viewBox="0 0 14 14"><g stroke="#cfe0ff" stroke-width="1.6" stroke-linecap="round">' +
@@ -36,7 +37,7 @@
     btnResume.style.display = m === "paused" ? "" : "none";
     btnSum.style.display = m === "stopped" ? "none" : "";
     btnClose.style.display = m === "stopped" || m === "paused" ? "" : "none";
-    if (m !== "stopped") btnSum.textContent = "⏹ Stop & tóm tắt";
+    if (m !== "stopped") btnSum.textContent = "⏹ Tóm tắt";
   }
   btnPause.onclick = () => { chrome.runtime.sendMessage({ cmd: "pause" }); setMode("paused"); setStatus("PAUSED"); };
   btnResume.onclick = () => { chrome.runtime.sendMessage({ cmd: "resume" }); setMode("live"); };
