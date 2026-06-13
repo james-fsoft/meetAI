@@ -9,7 +9,7 @@ let ws = null, stream = null, rec = null, audioCtx = null;
 let seg = { orig: "", trans: "", spk: null };
 let target = "ko";
 let running = false, stopping = false, openAt = 0, fails = 0;
-let fullText = []; // whole-session transcript (with speaker labels) for the summary
+let fullLines = []; // whole-session segments {spk, o (original), t (translation)}
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.target !== "offscreen") return;
@@ -23,7 +23,7 @@ function pickMime() { const c = ["audio/webm;codecs=opus", "audio/webm", "audio/
 
 async function startCap(streamId, resume) {
   running = true; stopping = false; fails = 0;
-  if (!resume) fullText = [];
+  if (!resume) fullLines = [];
   try {
     stream = await navigator.mediaDevices.getUserMedia({
       audio: { mandatory: { chromeMediaSource: "tab", chromeMediaSourceId: streamId } }, video: false,
@@ -95,8 +95,17 @@ async function openWs() {
 function flush() {
   const o = seg.orig.trim(), t = seg.trans.trim(), spk = seg.spk;
   seg = { orig: "", trans: "", spk: null };
-  if (o) fullText.push((spk != null ? "Speaker " + spk + ": " : "") + o);
-  if (o || t) send({ type: "final", orig: o, trans: t, spk });
+  if (o || t) { fullLines.push({ spk, o, t }); send({ type: "final", orig: o, trans: t, spk }); }
+}
+
+// Build a readable transcript file: original (script) + translation per turn.
+function buildTranscript() {
+  return fullLines.map((l) => {
+    const who = l.spk != null ? "Speaker " + l.spk : "";
+    let s = (who ? who + "\n" : "") + (l.o || "");
+    if (l.t) s += "\n→ " + l.t;
+    return s;
+  }).join("\n\n");
 }
 
 function teardown() {
@@ -118,20 +127,23 @@ function endCap(summarize) {
   running = false; stopping = true;
   teardown(); flush();
   send({ type: "status", text: "STOPPED" });
-  if (summarize && fullText.length) summarizeNow(); else fullText = [];
+  if (summarize && fullLines.length) summarizeNow();
+  else fullLines = [];
 }
 
 // After stopping, summarize the whole session via the backend.
 async function summarizeNow() {
-  const transcript = fullText.join("\n"); fullText = [];
+  const transcript = buildTranscript();
+  const sumInput = fullLines.map((l) => (l.spk != null ? "Speaker " + l.spk + ": " : "") + (l.o || "")).join("\n");
+  fullLines = [];
   send({ type: "summarizing" });
   try {
     const r = await fetch(API_BASE + "/api/summarize", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ transcript }),
+      body: JSON.stringify({ transcript: sumInput }),
     });
     const d = await r.json();
     if (!r.ok) throw new Error(d.error || "summary");
-    send({ type: "summary", text: (d.summary || "").trim() });
-  } catch (e) { send({ type: "summary", text: "⚠ Tóm tắt lỗi: " + e.message }); }
+    send({ type: "summary", text: (d.summary || "").trim(), transcript });
+  } catch (e) { send({ type: "summary", text: "⚠ Tóm tắt lỗi: " + e.message, transcript }); }
 }

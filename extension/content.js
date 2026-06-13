@@ -54,18 +54,24 @@
     box.style.display = "flex"; lines.style.display = "none"; sumEl.style.display = "block";
     sumEl.innerHTML = '<div class="tt-sum-h">📝 Đang tóm tắt…</div><div class="tt-sum-b" style="color:#9fb3d6">Vui lòng đợi vài giây.</div>';
   }
-  function showSummary(text) {
+  function dlFile(content, name) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([content || ""], { type: "text/plain;charset=utf-8" }));
+    a.download = name; a.click();
+  }
+  function showSummary(text, transcript) {
     box.style.display = "flex"; lines.style.display = "none"; sumEl.style.display = "block";
     sumEl.innerHTML =
       '<div class="tt-sum-h">📝 Tóm tắt<span class="tt-sum-act">' +
-      '<button id="tt-copy">Copy</button><button id="tt-dl">Tải .txt</button></span></div>' +
+      '<button id="tt-copy">Copy</button>' +
+      '<button id="tt-dl">Tải tóm tắt</button>' +
+      (transcript ? '<button id="tt-dltr">Tải transcript</button>' : "") +
+      '</span></div>' +
       '<div class="tt-sum-b">' + md(text) + "</div>";
     sumEl.querySelector("#tt-copy").onclick = () => navigator.clipboard.writeText(text);
-    sumEl.querySelector("#tt-dl").onclick = () => {
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
-      a.download = "summary.txt"; a.click();
-    };
+    sumEl.querySelector("#tt-dl").onclick = () => dlFile(text, "summary.txt");
+    const tr = sumEl.querySelector("#tt-dltr");
+    if (tr) tr.onclick = () => dlFile(transcript, "transcript.txt");
   }
 
   function setStatus(text) {
@@ -98,7 +104,7 @@
     else if (msg.type === "hide") box.style.display = "none";
     else if (msg.type === "status") { setStatus(msg.text); if (msg.text === "PAUSED") setMode("paused"); else if (msg.text === "STOPPED") setMode("stopped"); }
     else if (msg.type === "summarizing") { setMode("stopped"); showSummarizing(); }
-    else if (msg.type === "summary") { setMode("stopped"); showSummary(msg.text); }
+    else if (msg.type === "summary") { setMode("stopped"); showSummary(msg.text, msg.transcript); }
     else if (msg.type === "partial") partial(msg.orig, msg.trans, msg.spk);
     else if (msg.type === "final") final(msg.orig, msg.trans, msg.spk);
   }
