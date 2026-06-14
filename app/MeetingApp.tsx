@@ -70,14 +70,15 @@ export default function MeetingApp({ email, plan = "free", admin = false, usage 
   }
 
   const iframeSrc = signedIn
-    ? `/meeting.html?v=38&signed=1&plan=${encodeURIComponent(plan)}`
-    : "/meeting.html?v=38";
+    ? `/meeting.html?v=39&signed=1&plan=${encodeURIComponent(plan)}`
+    : "/meeting.html?v=39";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      <div style={bar}>
-        <a href="/" style={brand}>
-          <svg viewBox="0 0 100 100" width="22" height="22" style={{ display: "block" }} aria-hidden="true">
+      <style>{BAR_CSS}</style>
+      <div className="fm-bar">
+        <a href="/" className="fm-brand">
+          <svg viewBox="0 0 100 100" width="24" height="24" style={{ display: "block", flexShrink: 0 }} aria-hidden="true">
             <path d="M22 8 H78 a16 16 0 0 1 16 16 V60 a16 16 0 0 1 -16 16 H50 l-20 18 v-18 H22 a16 16 0 0 1 -16 -16 V24 A16 16 0 0 1 22 8 Z" fill="#1f6bff"/>
             <g fill="#fff"><rect x="26" y="38" width="7.5" height="12" rx="3.75"/><rect x="39" y="29" width="7.5" height="30" rx="3.75"/><rect x="52" y="22" width="7.5" height="44" rx="3.75"/><rect x="65" y="32" width="7.5" height="24" rx="3.75"/></g>
           </svg>
@@ -85,7 +86,7 @@ export default function MeetingApp({ email, plan = "free", admin = false, usage 
         </a>
         <span style={{ flex: 1 }} />
         {signedIn ? (
-          <>
+          <div className="fm-right">
             {usage && (
               <a href="/pricing" style={usageBadgeStyle} title={t.usageTitle}>
                 {usage.unlimited ? t.unlimited : t.left(usage.day?.remain ?? null, usage.month?.remain ?? null)}
@@ -93,15 +94,15 @@ export default function MeetingApp({ email, plan = "free", admin = false, usage 
             )}
             {admin && <a href="/admin" style={adminLink}>⚙ Admin</a>}
             <a href="/pricing" style={planBadge(plan)} title={t.planTitle}>{PLAN_LABEL[plan] || "Free"}</a>
-            <span style={mail}>👤 {email}</span>
+            <span className="fm-mail">👤 {email}</span>
             <button onClick={signOut} style={out}>{t.signout}</button>
-          </>
+          </div>
         ) : (
-          <>
-            <span style={trialBadge}>{t.trial}</span>
+          <div className="fm-right">
+            <span className="fm-trial">{t.trial}</span>
             <a href="/pricing" style={linkBtn}>{t.pricing}</a>
             <a href="/login" style={primaryBtn}>{t.signin}</a>
-          </>
+          </div>
         )}
       </div>
       <iframe
@@ -114,13 +115,23 @@ export default function MeetingApp({ email, plan = "free", admin = false, usage 
   );
 }
 
-const bar: React.CSSProperties = {
-  display: "flex", alignItems: "center", gap: 12, padding: "8px 16px",
-  fontFamily: "'Inter',system-ui,sans-serif", fontSize: 13, color: "#5b6b8c",
-  borderBottom: "1px solid #e3e8f2", background: "#fff",
-};
-const brand: React.CSSProperties = { display: "inline-flex", alignItems: "center", gap: 8, fontWeight: 900, fontSize: 15, color: "#0a1124", letterSpacing: "-.03em", textDecoration: "none" };
-const mail: React.CSSProperties = { fontSize: 12.5 };
+// Responsive top bar — classes so media queries actually apply (inline styles can't).
+const BAR_CSS = `
+.fm-bar{display:flex;align-items:center;gap:10px;padding:8px 16px;background:#fff;border-bottom:1px solid #e3e8f2;font-family:'Inter',system-ui,sans-serif;font-size:13px;color:#5b6b8c}
+.fm-brand{display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:15.5px;color:#0a1124;letter-spacing:-.03em;text-decoration:none;white-space:nowrap;flex-shrink:0}
+.fm-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.fm-mail{font-size:12.5px;white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+.fm-trial{font-size:11px;font-weight:800;letter-spacing:.03em;color:#b45309;background:#fffbeb;border:1px solid #fde68a;padding:4px 11px;border-radius:20px;white-space:nowrap}
+@media(max-width:600px){
+  .fm-bar{gap:8px;padding:8px 13px}
+  .fm-brand{font-size:14.5px}
+  .fm-mail{display:none}
+  .fm-right{gap:7px}
+}
+@media(max-width:420px){
+  .fm-trial{display:none}
+}
+`;
 const out: React.CSSProperties = {
   border: "1.5px solid #e3e8f2", background: "#fff", color: "#0a1124", cursor: "pointer",
   fontFamily: "inherit", fontSize: 12, fontWeight: 700, padding: "6px 14px", borderRadius: 8,
@@ -134,11 +145,7 @@ const adminLink: React.CSSProperties = {
 };
 const primaryBtn: React.CSSProperties = {
   fontSize: 12, fontWeight: 800, color: "#fff", background: "#1f6bff", textDecoration: "none",
-  padding: "7px 16px", borderRadius: 8,
-};
-const trialBadge: React.CSSProperties = {
-  fontSize: 11, fontWeight: 800, letterSpacing: ".03em", color: "#b45309",
-  background: "#fffbeb", border: "1px solid #fde68a", padding: "4px 10px", borderRadius: 20, whiteSpace: "nowrap",
+  padding: "7px 16px", borderRadius: 8, whiteSpace: "nowrap",
 };
 const usageBadgeStyle: React.CSSProperties = {
   fontSize: 11.5, fontWeight: 800, color: "#1f6bff", background: "#eef4ff", border: "1px solid #d3e0fb",
