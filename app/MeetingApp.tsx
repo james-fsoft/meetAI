@@ -35,7 +35,7 @@ const T: Record<Lang, {
 };
 
 /**
- * Meeting AI — main shell: a slim top bar above the meeting UI
+ * Flash Meet — main shell: a slim top bar above the meeting UI
  * (served from public/meeting.html inside an iframe).
  * The bar's language mirrors the in-app EN/VI/KO switcher via the shared
  * localStorage "mr_lang" key (same origin → the iframe's change fires a

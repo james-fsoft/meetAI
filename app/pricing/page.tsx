@@ -116,7 +116,7 @@ export default function Pricing() {
 
   async function choose(p: PlanBase) {
     if (p.id === "free") { location.href = "/"; return; }
-    if (p.id === "enterprise") { location.href = "mailto:support@transflash.app?subject=Meeting AI Enterprise"; return; }
+    if (p.id === "enterprise") { location.href = "mailto:support@transflash.app?subject=Flash Meet Enterprise"; return; }
     setBusy(p.id);
     try {
       const r = await fetch(`/api/checkout?plan=${p.id}&billing=${billing}`, { method: "POST" });

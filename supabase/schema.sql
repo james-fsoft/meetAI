@@ -1,5 +1,5 @@
 -- ============================================================
---  Meeting AI — Supabase schema
+--  Flash Meet — Supabase schema
 --  Run this in Supabase → SQL Editor (once).
 -- ============================================================
 

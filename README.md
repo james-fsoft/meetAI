@@ -1,6 +1,6 @@
-# Meeting AI — Production app (Next.js)
+# Flash Meet — Production app (Next.js)
 
-A SaaS version of Meeting AI: record meetings, separate speakers, live-translate,
+A SaaS version of Flash Meet: record meetings, separate speakers, live-translate,
 and get AI summaries — with user accounts and monthly subscriptions.
 
 This is built in **phases**. You can run it after Phase 1 and add the rest incrementally.

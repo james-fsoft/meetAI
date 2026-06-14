@@ -8,8 +8,8 @@ const UPDATED = "13/06/2026";
 const C: Record<Lang, LegalContent> = {
   en: {
     back: "← Back to app", title: "Privacy Policy", footHref: "/terms", footText: "Terms of Service →",
-    meta: `Last updated: ${UPDATED} · Applies to **meet.transflash.app** (“Meeting AI”, “we”).`,
-    intro: ["Meeting AI is a service for recording, transcribing, live-translating and summarizing meetings with AI. This policy describes the data we collect, how we use it, and your rights."],
+    meta: `Last updated: ${UPDATED} · Applies to **meet.transflash.app** (“Flash Meet”, “we”).`,
+    intro: ["Flash Meet is a service for recording, transcribing, live-translating and summarizing meetings with AI. This policy describes the data we collect, how we use it, and your rights."],
     sections: [
       { h: "1. Data we collect", blocks: [{ ul: [
         "**Account:** your email address and display name when you sign in with Google.",
@@ -51,8 +51,8 @@ const C: Record<Lang, LegalContent> = {
   },
   vi: {
     back: "← Về app", title: "Chính sách bảo mật", footHref: "/terms", footText: "Điều khoản dịch vụ →",
-    meta: `Cập nhật lần cuối: ${UPDATED} · Áp dụng cho **meet.transflash.app** (“Meeting AI”, “chúng tôi”).`,
-    intro: ["Meeting AI là dịch vụ ghi âm, phiên âm, dịch trực tiếp và tóm tắt cuộc họp bằng AI. Chính sách này mô tả dữ liệu chúng tôi thu thập, cách sử dụng và quyền của bạn."],
+    meta: `Cập nhật lần cuối: ${UPDATED} · Áp dụng cho **meet.transflash.app** (“Flash Meet”, “chúng tôi”).`,
+    intro: ["Flash Meet là dịch vụ ghi âm, phiên âm, dịch trực tiếp và tóm tắt cuộc họp bằng AI. Chính sách này mô tả dữ liệu chúng tôi thu thập, cách sử dụng và quyền của bạn."],
     sections: [
       { h: "1. Dữ liệu chúng tôi thu thập", blocks: [{ ul: [
         "**Tài khoản:** địa chỉ email và tên hiển thị khi bạn đăng nhập bằng Google.",
@@ -94,8 +94,8 @@ const C: Record<Lang, LegalContent> = {
   },
   ko: {
     back: "← 앱으로", title: "개인정보처리방침", footHref: "/terms", footText: "이용약관 →",
-    meta: `최종 업데이트: ${UPDATED} · 적용 대상 **meet.transflash.app** (“Meeting AI”, “당사”).`,
-    intro: ["Meeting AI는 AI로 회의를 녹음·전사·실시간 번역·요약하는 서비스입니다. 본 방침은 당사가 수집하는 데이터, 이용 방법, 사용자의 권리를 설명합니다."],
+    meta: `최종 업데이트: ${UPDATED} · 적용 대상 **meet.transflash.app** (“Flash Meet”, “당사”).`,
+    intro: ["Flash Meet는 AI로 회의를 녹음·전사·실시간 번역·요약하는 서비스입니다. 본 방침은 당사가 수집하는 데이터, 이용 방법, 사용자의 권리를 설명합니다."],
     sections: [
       { h: "1. 수집하는 데이터", blocks: [{ ul: [
         "**계정:** Google 로그인 시 이메일 주소와 표시 이름.",
