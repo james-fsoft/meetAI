@@ -34,9 +34,17 @@ export default async function Admin() {
 
   if (error) return <Denied msg={"Lỗi đọc dữ liệu: " + error.message} />;
 
+  // Fetch pending payments server-side too, so the panel renders instantly
+  // (no client-side fetch waterfall).
+  const { data: payments } = await admin
+    .from("payments")
+    .select("id,email,plan,billing,amount,content,status,created_at,user_email_sent,admin_email_sent,last_email_at")
+    .in("status", ["pending", "awaiting"])
+    .order("created_at", { ascending: false });
+
   return (
     <div style={{ background: "#f5f7fc", paddingTop: 28, fontFamily: "'Inter',system-ui,sans-serif" }}>
-      <AdminPayments />
+      <AdminPayments initial={payments || []} />
       <AdminTable profiles={profiles || []} me={user.email || ""} />
     </div>
   );
