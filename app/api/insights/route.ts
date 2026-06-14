@@ -11,11 +11,15 @@ export async function POST(req: NextRequest) {
   const key = process.env.OPENAI_API_KEY;
   if (!key) return NextResponse.json({ summary: [], actionItems: [], decisions: [], risks: [] });
 
-  const { transcript } = await req.json().catch(() => ({}));
-  const tx = (transcript || "").trim();
+  const body = await req.json().catch(() => ({}));
+  const tx = (body.transcript || "").trim();
+  const summaryOnly = !!body.summaryOnly; // free plan → cheaper, summary only
   if (tx.length < 60) return NextResponse.json({ summary: [], actionItems: [], decisions: [], risks: [] });
 
-  const sys = `You are an AI meeting assistant analysing a LIVE, possibly multilingual transcript labelled by speaker (Speaker 1, 2, …).
+  const sys = summaryOnly
+    ? `You are an AI meeting assistant analysing a LIVE, possibly multilingual transcript labelled by speaker (Speaker 1, 2, …).
+Reply ONLY as compact JSON: {"summary": string[]} — 2-4 very short bullet points of what is being discussed. Write in the transcript's main language. Never invent anything. If nothing yet, use an empty array.`
+    : `You are an AI meeting assistant analysing a LIVE, possibly multilingual transcript labelled by speaker (Speaker 1, 2, …).
 Extract meeting intelligence so far. Reply ONLY as compact JSON with this exact shape:
 {"summary": string[], "actionItems": [{"who": string, "task": string}], "decisions": string[], "risks": string[]}
 Rules: summary = 2-4 very short bullet points of what is being discussed. actionItems = tasks someone must do (who = speaker label or name, task = short). decisions = concrete decisions made. risks = open issues / blockers / things to follow up.

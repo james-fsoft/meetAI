@@ -18,19 +18,19 @@ const T: Record<Lang, any> = {
   en: {
     back: "← Back to app", title: "My account", plan: "Plan", manage: "Manage plan", invite: "🎁 Invite & earn hours",
     month: "This month", today: "Today", used: "Used", remaining: "Remaining", renews: "Renews on", unlimited: "Unlimited",
-    min: "min", bonusNote: (b: number) => `Includes +${b} bonus min from referrals`,
+    min: "min", bonusNote: (b: number) => `Referral pool: +${b} min — used after your monthly quota, never expires`,
     history: "Meeting history", empty: "No saved meetings on this device yet.", download: "Download", del: "Delete", deviceNote: "History is stored on this device.",
   },
   vi: {
     back: "← Quay lại app", title: "Tài khoản của tôi", plan: "Gói", manage: "Quản lý gói", invite: "🎁 Mời bạn & nhận giờ",
     month: "Tháng này", today: "Hôm nay", used: "Đã dùng", remaining: "Còn lại", renews: "Làm mới vào", unlimited: "Không giới hạn",
-    min: "phút", bonusNote: (b: number) => `Đã gồm +${b} phút thưởng giới thiệu`,
+    min: "phút", bonusNote: (b: number) => `Ví thưởng giới thiệu: +${b} phút — dùng sau khi hết quota tháng, không hết hạn`,
     history: "Lịch sử cuộc họp", empty: "Chưa có cuộc họp nào lưu trên thiết bị này.", download: "Tải về", del: "Xoá", deviceNote: "Lịch sử được lưu trên thiết bị này.",
   },
   ko: {
     back: "← 앱으로", title: "내 계정", plan: "요금제", manage: "요금제 관리", invite: "🎁 초대하고 시간 받기",
     month: "이번 달", today: "오늘", used: "사용", remaining: "남음", renews: "갱신일", unlimited: "무제한",
-    min: "분", bonusNote: (b: number) => `추천 보너스 +${b}분 포함`,
+    min: "분", bonusNote: (b: number) => `추천 적립: +${b}분 — 월 한도 소진 후 사용, 무기한`,
     history: "회의 기록", empty: "이 기기에 저장된 회의가 없습니다.", download: "다운로드", del: "삭제", deviceNote: "기록은 이 기기에 저장됩니다.",
   },
 };

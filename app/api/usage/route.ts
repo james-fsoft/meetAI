@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createServer, supabaseConfigured } from "@/lib/supabase-server";
 import { createAdminClient } from "@/lib/supabase-admin";
 import { userFromBearer } from "@/lib/auth-token";
-import { usagePayload } from "@/lib/usage";
+import { usagePayload, planLimits } from "@/lib/usage";
 
 export const dynamic = "force-dynamic";
 
@@ -27,19 +27,30 @@ async function handle(req: NextRequest, seconds: number) {
     .select("plan, seconds_today, day_key, seconds_month, month_key, bonus_minutes").eq("id", userId).single();
   if (!prof) return NextResponse.json({ error: "no profile" }, { status: 404 });
 
+  const plan = prof.plan || "free";
+  const lim = planLimits(plan);
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const mkey = today.slice(0, 7);                       // YYYY-MM
-  let secToday = prof.day_key === today ? (prof.seconds_today || 0) : 0;
-  let secMonth = prof.month_key === mkey ? (prof.seconds_month || 0) : 0;
+  const prevToday = prof.day_key === today ? (prof.seconds_today || 0) : 0;
+  const prevMonth = prof.month_key === mkey ? (prof.seconds_month || 0) : 0;
+  let secToday = prevToday, secMonth = prevMonth, bonus = Math.max(0, prof.bonus_minutes || 0);
 
   if (seconds > 0 || prof.day_key !== today || prof.month_key !== mkey) {
-    secToday += seconds; secMonth += seconds;
+    secToday = prevToday + seconds;
+    secMonth = prevMonth + seconds;
+    // Minutes used beyond the monthly plan quota are drawn from the one-time bonus pool.
+    if (seconds > 0 && lim.month != null && bonus > 0) {
+      const planSec = lim.month * 60;
+      const roomLeft = Math.max(0, planSec - prevMonth);
+      const overSec = Math.max(0, seconds - roomLeft);
+      if (overSec > 0) bonus = Math.max(0, bonus - Math.ceil(overSec / 60));
+    }
     await admin.from("profiles").update({
-      seconds_today: secToday, day_key: today, seconds_month: secMonth, month_key: mkey,
+      seconds_today: secToday, day_key: today, seconds_month: secMonth, month_key: mkey, bonus_minutes: bonus,
     }).eq("id", userId);
   }
 
-  return NextResponse.json(usagePayload(prof.plan || "free", secToday, secMonth, prof.bonus_minutes || 0));
+  return NextResponse.json(usagePayload(plan, secToday, secMonth, bonus));
 }
 
 export async function GET(req: NextRequest) { return handle(req, 0); }
