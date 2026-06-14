@@ -105,7 +105,13 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
         {signedIn ? (
           <div className="fm-right">
             {admin && <a href="/admin" style={adminLink}>⚙ Admin</a>}
-            <a href="/account" style={accountLink}>📊 {t.account}</a>
+            <a href="/account" style={accountLink}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }} aria-hidden="true">
+                <circle cx="12" cy="8" r="3.4" />
+                <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
+              </svg>
+              {t.account}
+            </a>
             <a href="/pricing" style={planBadge(plan)} title={t.planTitle}>{PLAN_LABEL[plan] || "Free"}</a>
             <a href="/account" className="fm-mail" style={{ textDecoration: "none", color: "#5b6b8c" }}>👤 {email}</a>
             <button onClick={signOut} style={out}>{t.signout}</button>
@@ -176,6 +182,7 @@ const refBannerBtn: React.CSSProperties = {
   padding: "8px 16px", borderRadius: 9, whiteSpace: "nowrap",
 };
 const accountLink: React.CSSProperties = {
+  display: "inline-flex", alignItems: "center", gap: 6,
   fontSize: 12, fontWeight: 800, color: "#1f6bff", background: "#eef4ff", border: "1px solid #d3e0fb",
   borderRadius: 8, padding: "5px 11px", textDecoration: "none", whiteSpace: "nowrap",
 };
