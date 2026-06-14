@@ -22,10 +22,34 @@ type Dict = {
   back: string; eyebrow: string; h1: string; sub: string;
   monthly: string; annual: string; period: string; contact: string;
   billedYear: (x: string) => string; busy: string; promo: string;
+  usageTitle: string; reassure: string;
   trust: string[];
   refTitle: string; refSub: string; refCta: string;
   plans: Record<string, PlanText>;
   faq: { q: string; a: string }[];
+};
+
+// "Comfortably covers ~X" — turns abstract minutes into relatable scenarios so
+// users feel the quota is generous (and nudges heavier users up a tier).
+const USAGE: Record<Lang, Record<string, string[]>> = {
+  en: {
+    free: ["≈ 1 × 30-min meeting", "or 30 min of video"],
+    pro: ["≈ 20 × 30-min meetings / mo", "or ≈ 10 hrs of video & calls"],
+    business: ["≈ 80 × 30-min meetings / mo", "or ≈ 2 hrs every workday"],
+    enterprise: ["Scales to your needs — no real limit"],
+  },
+  vi: {
+    free: ["≈ 1 buổi họp 30 phút", "hoặc 30 phút video"],
+    pro: ["≈ 20 buổi họp 30 phút / tháng", "hoặc ≈ 10 giờ video & cuộc gọi"],
+    business: ["≈ 80 buổi họp 30 phút / tháng", "hoặc ≈ 2 giờ mỗi ngày làm việc"],
+    enterprise: ["Theo nhu cầu — gần như không giới hạn"],
+  },
+  ko: {
+    free: ["≈ 30분 회의 1회", "또는 영상 30분"],
+    pro: ["≈ 월 30분 회의 20회", "또는 ≈ 영상·통화 10시간"],
+    business: ["≈ 월 30분 회의 80회", "또는 ≈ 매 근무일 2시간"],
+    enterprise: ["필요에 맞게 — 사실상 무제한"],
+  },
 };
 
 const T: Record<Lang, Dict> = {
@@ -34,6 +58,7 @@ const T: Record<Lang, Dict> = {
     sub: "Every plan includes real-time translation minutes and AI summaries. Cancel anytime.",
     monthly: "Monthly", annual: "Annual", period: "/ mo", contact: "Contact",
     billedYear: (x) => `Billed ${x} / year`, busy: "Opening…", promo: "🎉 Launch offer — save 33%, limited time",
+    usageTitle: "Comfortably covers", reassure: "💡 Quota resets every month · most users use only ~40% — you'll have plenty of room.",
     trust: ["✓ Cancel anytime", "✓ No hidden fees", "✓ Private — we don't sell data"],
     refTitle: "Invite friends — you both get 60 minutes",
     refSub: "Share your referral link. When a friend signs up, you both get 60 free translation minutes. No limit on invites.",
@@ -54,6 +79,7 @@ const T: Record<Lang, Dict> = {
       { q: "What is a “translation minute”?", a: "Minutes of audio translated live or summarized. A 30-min meeting = 30 translation minutes. The quota resets every month." },
       { q: "Multi-language vs two-way?", a: "Multi-language: auto-detects any speech and translates into 1 language. Two-way: pick 2 languages — speak either and it shows the other." },
       { q: "How much does annual save?", a: "Annual billing is 20% cheaper than monthly — like getting 2+ months free." },
+      { q: "What if I run out of minutes?", a: "Your quota resets at the start of each month — it's not a one-time pool. In practice most users only use ~40% of theirs. Need more? Upgrade anytime, effective instantly." },
       { q: "Can I change or cancel?", a: "Yes. Upgrade, downgrade or cancel anytime; you keep access until the paid period ends." },
     ],
   },
@@ -62,6 +88,7 @@ const T: Record<Lang, Dict> = {
     sub: "Mọi gói đã gồm phút dịch real-time và tóm tắt AI. Huỷ bất cứ lúc nào.",
     monthly: "Theo tháng", annual: "Theo năm", period: "/ tháng", contact: "Liên hệ",
     billedYear: (x) => `Thanh toán ${x} / năm`, busy: "Đang mở…", promo: "🎉 Ưu đãi ra mắt — giảm 33%, có hạn",
+    usageTitle: "Đủ dùng thoải mái cho", reassure: "💡 Hạn mức làm mới mỗi tháng · đa số người dùng chỉ dùng ~40% — bạn sẽ rất thoải mái.",
     trust: ["✓ Huỷ bất cứ lúc nào", "✓ Không phí ẩn", "✓ Bảo mật — không bán dữ liệu"],
     refTitle: "Mời bạn bè — cả hai cùng được tặng 60 phút",
     refSub: "Chia sẻ link giới thiệu của bạn. Khi bạn bè đăng ký, cả hai nhận thêm 60 phút dịch miễn phí. Không giới hạn số lượt mời.",
@@ -82,6 +109,7 @@ const T: Record<Lang, Dict> = {
       { q: "“Phút dịch” là gì?", a: "Số phút âm thanh được dịch trực tiếp hoặc tạo biên bản. Họp 30 phút = 30 phút dịch. Hạn mức làm mới mỗi tháng." },
       { q: "Đa ngôn ngữ và song ngữ khác gì?", a: "Đa ngôn ngữ: tự nhận diện rồi dịch sang 1 ngôn ngữ. Song ngữ: chọn 2 ngôn ngữ, nói tiếng nào ra tiếng còn lại." },
       { q: "Trả theo năm tiết kiệm bao nhiêu?", a: "Trả theo năm được giảm 20% so với trả tháng — tương đương được tặng hơn 2 tháng dùng miễn phí." },
+      { q: "Lỡ dùng hết phút thì sao?", a: "Hạn mức tự làm mới vào đầu mỗi tháng — không phải gói dùng 1 lần. Thực tế đa số người dùng chỉ dùng ~40% hạn mức. Cần thêm? Nâng cấp bất cứ lúc nào, hiệu lực ngay." },
       { q: "Đổi hoặc huỷ gói được không?", a: "Được. Nâng/hạ/huỷ bất cứ lúc nào, dùng đến hết chu kỳ đã thanh toán." },
     ],
   },
@@ -90,6 +118,7 @@ const T: Record<Lang, Dict> = {
     sub: "모든 요금제에 실시간 번역 시간과 AI 요약이 포함됩니다. 언제든 해지 가능합니다.",
     monthly: "월간", annual: "연간", period: "/ 월", contact: "문의",
     billedYear: (x) => `연 ${x} 청구`, busy: "여는 중…", promo: "🎉 출시 기념 — 33% 할인, 기간 한정",
+    usageTitle: "여유롭게 사용 가능", reassure: "💡 한도는 매월 초기화 · 대부분 ~40%만 사용 — 충분히 여유롭습니다.",
     trust: ["✓ 언제든 해지", "✓ 숨은 비용 없음", "✓ 데이터 미판매"],
     refTitle: "친구 초대 — 둘 다 60분 추가",
     refSub: "추천 링크를 공유하세요. 친구가 가입하면 둘 다 60분 무료 번역을 받습니다. 초대 횟수 제한 없음.",
@@ -110,6 +139,7 @@ const T: Record<Lang, Dict> = {
       { q: "“번역 분”이란?", a: "실시간으로 번역되거나 요약된 오디오의 분 수. 30분 회의 = 번역 30분. 매월 초기화됩니다." },
       { q: "다국어와 양방향의 차이?", a: "다국어: 모든 음성을 감지해 1개 언어로 번역. 양방향: 두 언어를 선택하면 어느 쪽을 말해도 반대 언어로 표시." },
       { q: "연간 결제는 얼마나 절약되나요?", a: "연간 결제는 월간보다 20% 저렴 — 2개월 이상 무료와 같습니다." },
+      { q: "분을 다 쓰면 어떻게 되나요?", a: "한도는 매월 초에 초기화됩니다 — 일회성이 아닙니다. 실제로 대부분의 사용자는 한도의 ~40%만 사용합니다. 더 필요하면 언제든 업그레이드, 즉시 적용됩니다." },
       { q: "변경하거나 해지할 수 있나요?", a: "네. 언제든 업/다운그레이드 또는 해지할 수 있으며, 결제 기간 종료까지 이용됩니다." },
     ],
   },
@@ -230,10 +260,20 @@ export default function Pricing() {
                   <li key={f} style={S.feat}><span style={S.check}>✓</span><span>{f}</span></li>
                 ))}
               </ul>
+              {USAGE[lang][p.id] && (
+                <div style={{ ...S.usageBox, ...(p.highlight ? S.usageBoxHi : {}) }}>
+                  <div style={S.usageHd}>⏱ {t.usageTitle}</div>
+                  {USAGE[lang][p.id].map((u) => (
+                    <div key={u} style={S.usageRow}>{u}</div>
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}
       </section>
+
+      <div style={S.reassure}>{t.reassure}</div>
 
       <div style={S.trust}>
         {t.trust.map((x, i) => (
@@ -360,6 +400,12 @@ const S: Record<string, React.CSSProperties> = {
   feats: { listStyle: "none", display: "flex", flexDirection: "column", gap: 11 },
   feat: { fontSize: 13.5, color: "#2a3550", display: "flex", alignItems: "flex-start", gap: 9, lineHeight: 1.5, fontWeight: 500 },
   check: { color: "#16a34a", fontWeight: 900, flexShrink: 0, fontSize: 13 },
+  usageBox: { marginTop: 16, padding: "12px 14px", background: "#f7faff", border: "1px solid #e6eef9", borderRadius: 12 },
+  usageBoxHi: { background: "#eef4ff", border: "1px solid #d6e4ff" },
+  usageHd: { fontSize: 11, fontWeight: 800, color: "#1f6bff", textTransform: "uppercase", letterSpacing: ".04em", marginBottom: 7 },
+  usageRow: { fontSize: 13, color: "#33405c", fontWeight: 600, lineHeight: 1.65 },
+  reassure: { maxWidth: 680, margin: "26px auto 0", textAlign: "center", fontSize: 13.5, fontWeight: 600,
+    color: "#5b6b8c", background: "#fff", border: "1px solid #e7ebf3", borderRadius: 12, padding: "12px 18px", lineHeight: 1.55 },
   trust: { display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginTop: 30,
     fontSize: 13, color: "#5b6b8c", fontWeight: 600 },
   dot: { color: "#cdd5e4" },
