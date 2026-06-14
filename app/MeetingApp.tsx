@@ -12,24 +12,30 @@ type Lang = "en" | "vi" | "ko";
 
 // Shell strings in the 3 languages the app supports. The language is shared with
 // the in-app switcher (localStorage key "mr_lang"), so the top bar follows it.
+const STORE_URL = "https://chromewebstore.google.com/detail/fnaffendjnopgpfehgoocdegbffakofl";
+
 const T: Record<Lang, {
   trial: string; pricing: string; signin: string; signout: string;
   planTitle: string; account: string; refBanner: string; refClaim: string; ext: string;
+  extPromo: string; extAdd: string; extMore: string;
 }> = {
   en: {
     trial: "🎁 Free trial · 3 min", pricing: "Pricing", signin: "Sign in", signout: "Sign out",
     planTitle: "Manage plan", account: "My Page", ext: "Extension",
     refBanner: "🎁 A friend invited you to Flash Meet — sign in to claim 120 free minutes (2 hours)!", refClaim: "Sign in & claim →",
+    extPromo: "Translate Google Meet, Zoom & YouTube live — get the free Chrome extension.", extAdd: "Add to Chrome", extMore: "Learn more",
   },
   vi: {
     trial: "🎁 Dùng thử · 3 phút", pricing: "Các gói", signin: "Đăng nhập", signout: "Đăng xuất",
     planTitle: "Quản lý gói", account: "Tài khoản", ext: "Tiện ích",
     refBanner: "🎁 Bạn được mời dùng Flash Meet — đăng nhập để nhận 120 phút (2 giờ) miễn phí!", refClaim: "Đăng nhập & nhận →",
+    extPromo: "Dịch trực tiếp Google Meet, Zoom & YouTube — cài tiện ích Chrome miễn phí.", extAdd: "Thêm vào Chrome", extMore: "Tìm hiểu",
   },
   ko: {
     trial: "🎁 무료 체험 · 3분", pricing: "요금제", signin: "로그인", signout: "로그아웃",
     planTitle: "요금제 관리", account: "마이페이지", ext: "확장 프로그램",
     refBanner: "🎁 친구가 Flash Meet에 초대했어요 — 로그인하고 120분(2시간) 무료 받으세요!", refClaim: "로그인하고 받기 →",
+    extPromo: "Google Meet·Zoom·YouTube 실시간 번역 — 무료 Chrome 확장 프로그램을 받으세요.", extAdd: "Chrome에 추가", extMore: "자세히",
   },
 };
 
@@ -45,6 +51,14 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
   const signedIn = !!email;
   const [lang, setLang] = useState<Lang>("en");
   const [refPending, setRefPending] = useState(false);
+  const [showExt, setShowExt] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem("fm_ext_dismiss") && window.innerWidth > 760) setShowExt(true);
+    } catch {}
+  }, []);
+  function dismissExt() { try { localStorage.setItem("fm_ext_dismiss", "1"); } catch {} setShowExt(false); }
 
   useEffect(() => {
     const read = () => {
@@ -132,6 +146,17 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
           <a href="/login" style={refBannerBtn}>{t.refClaim}</a>
         </div>
       )}
+      {showExt && (
+        <div style={extBar}>
+          <span style={extIcon} aria-hidden>
+            <svg width="20" height="20" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#fff" /><path fill="#EA4335" d="M24 9.5c3.5 0 6.7 1.2 9.2 3.6l6.8-6.8C35.9 2.4 30.5 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.2C12.4 13.7 17.7 9.5 24 9.5z" /><path fill="#4285F4" d="M47 24.5c0-1.6-.2-3.1-.4-4.5H24v9h12.9c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 7.2-10.4 7.2-17.7z" /><path fill="#FBBC05" d="M10.5 28.6A14.5 14.5 0 0 1 9.8 24c0-1.6.3-3.1.8-4.6l-8-6.2A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.2z" /><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.2-13.5-9.9l-8 6.2C6.5 42.6 14.6 48 24 48z" /></svg>
+          </span>
+          <span style={extText}>{t.extPromo}</span>
+          <a href={STORE_URL} target="_blank" rel="noopener noreferrer" style={extAddBtn}>{t.extAdd}</a>
+          <a href="/extension" style={extMoreLink}>{t.extMore}</a>
+          <button onClick={dismissExt} style={extX} aria-label="Dismiss">✕</button>
+        </div>
+      )}
       <iframe
         src={iframeSrc}
         title="Flash Meet"
@@ -182,6 +207,25 @@ const refBanner: React.CSSProperties = {
 const refBannerBtn: React.CSSProperties = {
   fontSize: 12.5, fontWeight: 800, color: "#fff", background: "#1f6bff", textDecoration: "none",
   padding: "8px 16px", borderRadius: 9, whiteSpace: "nowrap",
+};
+const extBar: React.CSSProperties = {
+  display: "flex", alignItems: "center", gap: 12, padding: "10px 16px",
+  background: "#fff", borderBottom: "1px solid #e3e8f2",
+  fontFamily: "'Inter',system-ui,sans-serif", fontSize: 13.5,
+};
+const extIcon: React.CSSProperties = { display: "inline-flex", flexShrink: 0 };
+const extText: React.CSSProperties = { flex: 1, color: "#33405c", fontWeight: 600, minWidth: 0 };
+const extAddBtn: React.CSSProperties = {
+  fontSize: 13, fontWeight: 800, color: "#fff", background: "linear-gradient(135deg,#2563eb,#3b82f6)",
+  textDecoration: "none", padding: "8px 16px", borderRadius: 10, whiteSpace: "nowrap",
+  boxShadow: "0 4px 12px rgba(37,99,235,.28)",
+};
+const extMoreLink: React.CSSProperties = {
+  fontSize: 12.5, fontWeight: 700, color: "#5b6b8c", textDecoration: "none", whiteSpace: "nowrap",
+};
+const extX: React.CSSProperties = {
+  border: "none", background: "none", cursor: "pointer", color: "#9aa6bd", fontSize: 14, fontWeight: 700,
+  padding: "4px 6px", lineHeight: 1, flexShrink: 0,
 };
 const accountLink: React.CSSProperties = {
   display: "inline-flex", alignItems: "center", gap: 6,
