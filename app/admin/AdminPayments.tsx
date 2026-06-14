@@ -34,8 +34,11 @@ export default function AdminPayments() {
       const d = await r.json();
       if (!r.ok) throw new Error(d.error || "failed");
       if (action === "resend") {
-        const ok = d.emailed?.user && d.emailed?.admin;
-        alert(ok ? "Đã gửi lại email ✓" : `Kết quả gửi: khách ${d.emailed?.user ? "✓" : "✗"} · admin ${d.emailed?.admin ? "✓" : "✗"}\n(Nếu ✗ → kiểm tra RESEND_API_KEY / EMAIL_FROM trên Vercel)`);
+        const e = d.emailed || {};
+        const ok = e.user && e.admin;
+        alert(ok
+          ? "Đã gửi lại email ✓ (khách + admin)"
+          : `Kết quả gửi:\n• Khách: ${e.user ? "✓" : "✗ " + (e.userError || "")}\n• Admin: ${e.admin ? "✓" : "✗ " + (e.adminError || "")}`);
         await load();
       } else {
         setRows((x) => x.filter((p) => p.id !== id));

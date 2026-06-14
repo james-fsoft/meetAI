@@ -3,9 +3,11 @@
 //   RESEND_API_KEY    Resend API key
 //   EMAIL_FROM        verified sender, e.g. "Flash Meet <noreply@transflash.app>"
 
-export async function sendEmail(to: string, subject: string, html: string): Promise<boolean> {
+// Returns the real outcome incl. the Resend error so failures can be surfaced.
+export async function sendEmailDetailed(to: string, subject: string, html: string): Promise<{ ok: boolean; error?: string }> {
   const key = process.env.RESEND_API_KEY;
-  if (!key || !to) return false;
+  if (!key) return { ok: false, error: "RESEND_API_KEY chưa cấu hình" };
+  if (!to) return { ok: false, error: "thiếu địa chỉ nhận" };
   const from = process.env.EMAIL_FROM || "Flash Meet <noreply@transflash.app>";
   try {
     const r = await fetch("https://api.resend.com/emails", {
@@ -13,10 +15,17 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({ from, to, subject, html }),
     });
-    return r.ok;
-  } catch {
-    return false;
+    if (r.ok) return { ok: true };
+    let detail = "";
+    try { const d = await r.json(); detail = d.message || d.error || JSON.stringify(d); } catch {}
+    return { ok: false, error: `Resend ${r.status}: ${detail}` };
+  } catch (e: any) {
+    return { ok: false, error: e?.message || "network error" };
   }
+}
+
+export async function sendEmail(to: string, subject: string, html: string): Promise<boolean> {
+  return (await sendEmailDetailed(to, subject, html)).ok;
 }
 
 // Simple branded wrapper so emails look consistent.
@@ -42,7 +51,7 @@ export async function sendOrderEmails(admin: any, pay: Pay, fallbackEmail?: stri
   const billLabel = pay.billing === "annual" ? "theo năm" : "theo tháng";
   const to = pay.email || fallbackEmail || "";
 
-  const userOk = to ? await sendEmail(
+  const userRes = to ? await sendEmailDetailed(
     to, "Đã nhận yêu cầu thanh toán — Flash Meet",
     emailLayout("Cảm ơn bạn! 🎉", `
       <p style="font-size:14px;line-height:1.6;color:#33405c">Chúng tôi đã nhận được yêu cầu thanh toán gói <b>${pay.plan.toUpperCase()}</b> (${billLabel}).</p>
@@ -50,10 +59,10 @@ export async function sendOrderEmails(admin: any, pay: Pay, fallbackEmail?: stri
       <p style="font-size:14px;line-height:1.6;color:#33405c">Admin sẽ kiểm tra và kích hoạt gói cho bạn <b>trong vòng ${CONFIRM_HOURS} giờ</b>. Bạn sẽ nhận email khi gói được kích hoạt.</p>
       <p style="font-size:13px;color:#9aa6bd">Nếu đã chuyển khoản nhưng quá thời gian trên chưa được kích hoạt, vui lòng liên hệ support@transflash.app.</p>
     `)
-  ) : false;
+  ) : { ok: false, error: "không có email khách" };
 
   const adminTo = process.env.ADMIN_NOTIFY_EMAIL || "support@transflash.app";
-  const adminOk = await sendEmail(
+  const adminRes = await sendEmailDetailed(
     adminTo, `💰 Đơn chờ xác nhận: ${pay.plan.toUpperCase()} · ${amountStr}`,
     emailLayout("Có đơn thanh toán mới cần xác nhận", `
       <p style="font-size:14px;line-height:1.6;color:#33405c">
@@ -68,9 +77,9 @@ export async function sendOrderEmails(admin: any, pay: Pay, fallbackEmail?: stri
 
   try {
     await admin.from("payments").update({
-      user_email_sent: userOk, admin_email_sent: adminOk, last_email_at: new Date().toISOString(),
+      user_email_sent: userRes.ok, admin_email_sent: adminRes.ok, last_email_at: new Date().toISOString(),
     }).eq("id", pay.id);
   } catch {}
 
-  return { user: userOk, admin: adminOk };
+  return { user: userRes.ok, admin: adminRes.ok, userError: userRes.error, adminError: adminRes.error };
 }
