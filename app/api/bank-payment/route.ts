@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createServer, supabaseConfigured } from "@/lib/supabase-server";
 import { createAdminClient } from "@/lib/supabase-admin";
 import { userFromBearer } from "@/lib/auth-token";
-import { planAmount, transferContent, vietQrUrl, bankConfigured, BANK, CONFIRM_HOURS, fmtVnd } from "@/lib/billing";
-import { sendEmail, emailLayout } from "@/lib/email";
+import { planAmount, transferContent, vietQrUrl, bankConfigured, BANK, CONFIRM_HOURS } from "@/lib/billing";
+import { sendOrderEmails } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -63,37 +63,8 @@ export async function POST(req: NextRequest) {
       await admin.from("payments").update({ status: "awaiting" }).eq("id", id);
     }
 
-    const amountStr = fmtVnd(pay.amount);
-    // confirmation email to the user
-    if (user.email) {
-      await sendEmail(
-        user.email,
-        "Đã nhận yêu cầu thanh toán — Flash Meet",
-        emailLayout("Cảm ơn bạn! 🎉", `
-          <p style="font-size:14px;line-height:1.6;color:#33405c">Chúng tôi đã nhận được yêu cầu thanh toán gói <b>${pay.plan.toUpperCase()}</b> (${pay.billing === "annual" ? "theo năm" : "theo tháng"}).</p>
-          <p style="font-size:14px;line-height:1.6;color:#33405c">Số tiền: <b>${amountStr}</b><br>Nội dung CK: <b>${pay.content}</b></p>
-          <p style="font-size:14px;line-height:1.6;color:#33405c">Admin sẽ kiểm tra và kích hoạt gói cho bạn <b>trong vòng ${CONFIRM_HOURS} giờ</b>. Bạn sẽ nhận email khi gói được kích hoạt.</p>
-          <p style="font-size:13px;color:#9aa6bd">Nếu đã chuyển khoản nhưng quá thời gian trên chưa được kích hoạt, vui lòng liên hệ support@transflash.app.</p>
-        `)
-      );
-    }
-    // notification to admin
-    const adminTo = process.env.ADMIN_NOTIFY_EMAIL || "support@transflash.app";
-    await sendEmail(
-      adminTo,
-      `💰 Đơn chờ xác nhận: ${pay.plan.toUpperCase()} · ${amountStr}`,
-      emailLayout("Có đơn thanh toán mới cần xác nhận", `
-        <p style="font-size:14px;line-height:1.6;color:#33405c">
-          Người dùng: <b>${pay.email || user.id}</b><br>
-          Gói: <b>${pay.plan.toUpperCase()}</b> (${pay.billing})<br>
-          Số tiền: <b>${amountStr}</b><br>
-          Nội dung CK: <b>${pay.content}</b>
-        </p>
-        <p style="font-size:14px;color:#33405c">Vào trang Admin → Thanh toán để xác nhận.</p>
-      `)
-    );
-
-    return NextResponse.json({ ok: true, confirmHours: CONFIRM_HOURS });
+    const emailed = await sendOrderEmails(admin, pay, user.email);
+    return NextResponse.json({ ok: true, confirmHours: CONFIRM_HOURS, emailed });
   }
 
   return NextResponse.json({ error: "Hành động không hợp lệ." }, { status: 400 });

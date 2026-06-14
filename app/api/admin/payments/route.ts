@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { createAdminClient, isAdmin } from "@/lib/supabase-admin";
-import { sendEmail, emailLayout } from "@/lib/email";
-import { fmtVnd, CONFIRM_HOURS } from "@/lib/billing";
+import { sendEmail, emailLayout, sendOrderEmails } from "@/lib/email";
+import { fmtVnd } from "@/lib/billing";
 
 export const dynamic = "force-dynamic";
 
@@ -29,13 +29,18 @@ export async function POST(req: NextRequest) {
   if (!me) return NextResponse.json({ error: "Không có quyền" }, { status: 403 });
 
   const { id, action } = await req.json().catch(() => ({}));
-  if (!id || !["confirm", "reject"].includes(action)) {
+  if (!id || !["confirm", "reject", "resend"].includes(action)) {
     return NextResponse.json({ error: "Tham số không hợp lệ" }, { status: 400 });
   }
 
   const admin = createAdminClient();
   const { data: pay } = await admin.from("payments").select("*").eq("id", id).single();
   if (!pay) return NextResponse.json({ error: "Không tìm thấy đơn" }, { status: 404 });
+
+  if (action === "resend") {
+    const emailed = await sendOrderEmails(admin, pay, pay.email);
+    return NextResponse.json({ ok: true, emailed });
+  }
 
   if (action === "confirm") {
     if (pay.user_id) {

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 type Payment = {
   id: string; email: string | null; plan: string; billing: string;
   amount: number; content: string; status: string; created_at: string;
+  user_email_sent?: boolean; admin_email_sent?: boolean; last_email_at?: string | null;
 };
 
 export default function AdminPayments() {
@@ -22,7 +23,7 @@ export default function AdminPayments() {
   }
   useEffect(() => { load(); }, []);
 
-  async function act(id: string, action: "confirm" | "reject") {
+  async function act(id: string, action: "confirm" | "reject" | "resend") {
     if (action === "reject" && !confirm("Từ chối đơn này?")) return;
     setBusy(id);
     try {
@@ -32,7 +33,13 @@ export default function AdminPayments() {
       });
       const d = await r.json();
       if (!r.ok) throw new Error(d.error || "failed");
-      setRows((x) => x.filter((p) => p.id !== id));
+      if (action === "resend") {
+        const ok = d.emailed?.user && d.emailed?.admin;
+        alert(ok ? "Đã gửi lại email ✓" : `Kết quả gửi: khách ${d.emailed?.user ? "✓" : "✗"} · admin ${d.emailed?.admin ? "✓" : "✗"}\n(Nếu ✗ → kiểm tra RESEND_API_KEY / EMAIL_FROM trên Vercel)`);
+        await load();
+      } else {
+        setRows((x) => x.filter((p) => p.id !== id));
+      }
     } catch (e: any) { alert("Lỗi: " + e.message); }
     finally { setBusy(""); }
   }
@@ -54,7 +61,7 @@ export default function AdminPayments() {
             <thead>
               <tr>
                 <th style={S.th}>Email</th><th style={S.th}>Gói</th><th style={S.th}>Số tiền</th>
-                <th style={S.th}>Nội dung CK</th><th style={S.th}>Trạng thái</th><th style={S.th}>Lúc</th><th style={S.th}></th>
+                <th style={S.th}>Nội dung CK</th><th style={S.th}>Trạng thái</th><th style={S.th}>Email</th><th style={S.th}>Lúc</th><th style={S.th}></th>
               </tr>
             </thead>
             <tbody>
@@ -65,9 +72,14 @@ export default function AdminPayments() {
                   <td style={{ ...S.td, fontWeight: 800 }}>{vnd(p.amount)}</td>
                   <td style={{ ...S.td, fontFamily: "'Space Mono',monospace", fontSize: 12.5, color: "#1f4fff" }}>{p.content}</td>
                   <td style={S.td}><span style={p.status === "awaiting" ? S.badgeAwait : S.badgePend}>{p.status === "awaiting" ? "Báo đã CK" : "Chờ"}</span></td>
+                  <td style={{ ...S.td, fontSize: 12 }} title={p.last_email_at ? "Gửi lúc " + fmt(p.last_email_at) : "Chưa gửi"}>
+                    <span style={p.user_email_sent ? S.eyes : S.eno}>Khách {p.user_email_sent ? "✓" : "✗"}</span>{" "}
+                    <span style={p.admin_email_sent ? S.eyes : S.eno}>Admin {p.admin_email_sent ? "✓" : "✗"}</span>
+                  </td>
                   <td style={{ ...S.td, color: "#9aa6bd", fontSize: 12 }}>{fmt(p.created_at)}</td>
                   <td style={{ ...S.td, whiteSpace: "nowrap" }}>
                     <button style={S.confirm} disabled={busy === p.id} onClick={() => act(p.id, "confirm")}>✓ Kích hoạt</button>
+                    <button style={S.resend} disabled={busy === p.id} onClick={() => act(p.id, "resend")}>✉ Gửi lại</button>
                     <button style={S.reject} disabled={busy === p.id} onClick={() => act(p.id, "reject")}>Từ chối</button>
                   </td>
                 </tr>
@@ -97,6 +109,10 @@ const S: Record<string, React.CSSProperties> = {
   badgeAwait: { fontSize: 11, fontWeight: 800, color: "#b45309", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 20, padding: "3px 9px" },
   confirm: { border: "none", background: "#16a34a", color: "#fff", cursor: "pointer", fontFamily: "inherit",
     fontSize: 12.5, fontWeight: 800, padding: "7px 12px", borderRadius: 9, marginRight: 7 },
+  resend: { border: "1px solid #d3e0fb", background: "#f4f8ff", color: "#1f4fff", cursor: "pointer", fontFamily: "inherit",
+    fontSize: 12.5, fontWeight: 700, padding: "7px 12px", borderRadius: 9, marginRight: 7 },
   reject: { border: "1px solid #e3e8f2", background: "#fff", color: "#dc2626", cursor: "pointer", fontFamily: "inherit",
     fontSize: 12.5, fontWeight: 700, padding: "7px 12px", borderRadius: 9 },
+  eyes: { color: "#16a34a", fontWeight: 700 },
+  eno: { color: "#dc2626", fontWeight: 700 },
 };
