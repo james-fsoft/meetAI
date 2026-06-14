@@ -141,6 +141,7 @@ body.recing .rec-hint{margin-bottom:10px}
 .tr-turn .sp{font-family:'Space Mono',monospace;font-weight:700;font-size:12px;text-transform:uppercase;
   letter-spacing:.03em;display:block;margin-bottom:1px;color:var(--acc)}
 .tr-turn .tx{display:block}
+.tr-turn .tr-tl{margin-top:3px;color:var(--acc);font-weight:600}
 .proc{padding:48px 0;text-align:center}
 .proc p{font-size:16px;font-weight:700;color:var(--ink);margin-top:6px}
 .proc small{display:block;margin-top:8px;color:var(--faint);font-size:12.5px}
@@ -469,7 +470,7 @@ $('goApp').onclick=()=>show('sc-cap');
 
 let mediaRecorder,chunks=[],audioBlob=null,audioStream=null,extra=[];
 let startTime=0,elapsed=0,timerInt=null,paused=false;
-let curTr="",curSum="",view="summary",capState="idle",curId=null;
+let curTr="",curSum="",view="summary",capState="idle",curId=null,spkNames={};
 let actx=null,analyser=null,raf=null;
 let recog=null,lvRunning=false,lvWantOn=false,lvHistory=[],lvAll=[];
 let mlRec=null,mlTimer=null,mlStream=null;const ML_SEGMENT_MS=7000;
@@ -491,7 +492,7 @@ $('btnRec').onclick=async()=>{
   if(!gateStart())return;
   try{audioStream=await buildStream();chunks=[];
     $('lvFeed').innerHTML='';$('lvFeed').style.display='none';$('lvInterim').textContent='';$('lvInterim').style.display='none';
-    curTr="";curSum="";lvHistory=[];lvAll=[];
+    curTr="";curSum="";lvHistory=[];lvAll=[];spkNames={};
     mediaRecorder=new MediaRecorder(audioStream);
     mediaRecorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
     mediaRecorder.onstop=()=>{audioBlob=new Blob(chunks,{type:chunks[0]?.type||'audio/webm'});$('player').src=URL.createObjectURL(audioBlob);stopViz();setCap('ready');};
@@ -536,9 +537,20 @@ async function summarize(){
     const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);curSum=(d.summary||'').trim();renderResult();save();
   }catch(e){curSum='⚠ '+t('err')+e.message;renderResult();toast(t('err')+e.message);}}
 function renderResult(){$('resProc').style.display='none';$('resBody').style.display='';
-  $('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=fmtTr(curTr);
+  $('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=lvAll.length?fmtTrLive():fmtTr(curTr);
   $('wc').textContent=curTr.split(/\s+/).filter(Boolean).length+' '+t('words');
   $('btnDlLive').style.display=lvAll.length?'':'none';buildSpeakers();setView(curSum?'summary':'transcript');}
+function spkLabel(spk){return spk!=null?(spkNames['Speaker '+spk]||'Speaker '+spk):'';}
+// Transcript with BOTH the original and the translation per turn (from the live data).
+function fmtTrLive(){return lvAll.map(p=>{
+    const lb=spkLabel(p.spk),sp=lb?`<span class="sp">${esc(lb)}</span>`:'';
+    const o=p.src?`<span class="tx">${esc(p.src)}</span>`:'';
+    const tl=p.tgt?`<span class="tx tr-tl">${esc(p.tgt)}</span>`:'';
+    return `<div class="tr-turn">${sp}${o}${tl}</div>`;}).join('');}
+// Plain-text transcript (original + translation) for Copy / Download.
+function trText(){return lvAll.length
+  ? lvAll.map(p=>{const lb=spkLabel(p.spk);return (lb?lb+'\n':'')+(p.src||'')+(p.tgt?'\n→ '+p.tgt:'');}).join('\n\n')
+  : curTr;}
 function fmtTr(text){if(!text)return'';return text.split('\n').filter(Boolean).map(line=>{
     const m=line.match(/^(.{1,40}?):\s*(.*)$/);
     if(m)return `<div class="tr-turn"><span class="sp">${esc(m[1])}</span><span class="tx">${esc(m[2])}</span></div>`;
@@ -548,23 +560,24 @@ function buildSpeakers(){const labels=[...new Set((curTr.match(/Speaker \d+/g)||
   rows.innerHTML=labels.map(l=>`<div class="sprow"><span class="lab">${l}</span><input data-label="${l}" placeholder="${t('sp_ph')}"></div>`).join('');}
 $('spApply').onclick=()=>{let changed=false;
   $('spRows').querySelectorAll('input').forEach(inp=>{const name=inp.value.trim();if(!name)return;
+    spkNames[inp.dataset.label]=name;
     const re=new RegExp(inp.dataset.label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g');curSum=curSum.replace(re,name);curTr=curTr.replace(re,name);changed=true;});
-  if(!changed)return;$('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=fmtTr(curTr);buildSpeakers();save(true);toast(t('sp_done'));};
+  if(!changed)return;$('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=lvAll.length?fmtTrLive():fmtTr(curTr);buildSpeakers();save(true);toast(t('sp_done'));};
 function setView(v){view=v;$('tabSum').classList.toggle('on',v==='summary');$('tabTr').classList.toggle('on',v==='transcript');$('summary').style.display=v==='summary'?'':'none';$('transcript').style.display=v==='transcript'?'':'none';}
 $('tabSum').onclick=()=>setView('summary');$('tabTr').onclick=()=>setView('transcript');
-$('btnCopy').onclick=()=>{const x=view==='summary'?curSum:curTr;navigator.clipboard.writeText(x||'').then(()=>toast(t('copied')));};
-$('btnDl').onclick=()=>{const x=view==='summary'?curSum:curTr;if(!x)return;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([x],{type:'text/plain;charset=utf-8'}));a.download=view==='summary'?'summary.md':'transcript.txt';a.click();};
+$('btnCopy').onclick=()=>{const x=view==='summary'?curSum:trText();navigator.clipboard.writeText(x||'').then(()=>toast(t('copied')));};
+$('btnDl').onclick=()=>{const x=view==='summary'?curSum:trText();if(!x)return;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([x],{type:'text/plain;charset=utf-8'}));a.download=view==='summary'?'summary.md':'transcript.txt';a.click();};
 $('btnDlLive').onclick=()=>{if(!lvAll.length)return;const txt=lvAll.map(p=>p.src+'\n'+p.tgt).join('\n\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));a.download='live-translation.txt';a.click();};
-$('btnNew').onclick=()=>{curTr="";curSum="";curId=null;audioBlob=null;lvHistory=[];lvAll=[];$('timer').textContent='00:00';setCap('idle');show('sc-cap');};
+$('btnNew').onclick=()=>{curTr="";curSum="";curId=null;audioBlob=null;lvHistory=[];lvAll=[];spkNames={};$('timer').textContent='00:00';setCap('idle');show('sc-cap');};
 function save(update){let list=JSON.parse(localStorage.getItem('mr_m')||'[]');
   const tt=(curSum.match(/##.*\n+(.+)/)||[])[1]||(curTr.split('\n')[0])||t('deflt');
   const title=tt.replace(/[*_#•-]/g,'').replace(/^Speaker \d+:\s*/,'').trim().slice(0,52)||t('deflt');
-  if(update&&curId){list=list.map(m=>m.id===curId?{...m,title,transcript:curTr,summary:curSum}:m);}
-  else{curId=Date.now();list.unshift({id:curId,date:new Date().toLocaleString(),title,transcript:curTr,summary:curSum});}
+  if(update&&curId){list=list.map(m=>m.id===curId?{...m,title,transcript:curTr,summary:curSum,live:lvAll}:m);}
+  else{curId=Date.now();list.unshift({id:curId,date:new Date().toLocaleString(),title,transcript:curTr,summary:curSum,live:lvAll});}
   localStorage.setItem('mr_m',JSON.stringify(list.slice(0,40)));renderHist();}
 function renderHist(){const list=JSON.parse(localStorage.getItem('mr_m')||'[]');
   $('mlist').innerHTML=list.length?list.map(m=>`<li><div class="mt"><b>${esc(m.title)}</b><span>${m.date}</span></div><button class="mini" onclick="openM(${m.id})">${t('open')}</button><button class="mini" onclick="delM(${m.id})">🗑</button></li>`).join(''):`<li class="mempty">${t('empty')}</li>`;}
-function openM(id){const m=JSON.parse(localStorage.getItem('mr_m')||'[]').find(x=>x.id===id);if(!m)return;curTr=m.transcript;curSum=m.summary;curId=id;$('overlay').classList.remove('on');show('sc-res');$('resProc').style.display='none';$('resBody').style.display='';renderResult();}
+function openM(id){const m=JSON.parse(localStorage.getItem('mr_m')||'[]').find(x=>x.id===id);if(!m)return;curTr=m.transcript;curSum=m.summary;lvAll=m.live||[];spkNames={};curId=id;$('overlay').classList.remove('on');show('sc-res');$('resProc').style.display='none';$('resBody').style.display='';renderResult();}
 function delM(id){if(!confirm(t('delq')))return;localStorage.setItem('mr_m',JSON.stringify(JSON.parse(localStorage.getItem('mr_m')||'[]').filter(x=>x.id!==id)));renderHist();}
 $('histBtn').onclick=()=>$('overlay').classList.add('on');
 $('histClose').onclick=()=>$('overlay').classList.remove('on');
@@ -737,7 +750,7 @@ function sxFinalize(){const o=sx.segOrig.trim(),tr=sx.segTrans.trim(),spk=sx.seg
     const tEl=sx.curRow.querySelector('.lv-trans');tEl.textContent=tr;tEl.style.display=tr?'':'none';
     feedScroll(sx.curRow);}}
   if(o)curTr+=(curTr?'\n':'')+(spk!=null?'Speaker '+spk+': ':'')+o;
-  if(o||tr)lvAll.push({src:o,tgt:tr});
+  if(o||tr)lvAll.push({src:o,tgt:tr,spk});
   sx.segOrig='';sx.segTrans='';sx.segSpk=null;sx.curRow=null;setInterim('');}
 // Smoothly center a finished/new line (teleprompter feel).
 function feedScroll(row){if(row&&row.scrollIntoView)row.scrollIntoView({behavior:'smooth',block:'center'});}
