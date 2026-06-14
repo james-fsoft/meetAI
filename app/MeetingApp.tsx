@@ -14,21 +14,21 @@ type Lang = "en" | "vi" | "ko";
 // the in-app switcher (localStorage key "mr_lang"), so the top bar follows it.
 const T: Record<Lang, {
   trial: string; pricing: string; signin: string; signout: string;
-  planTitle: string; account: string; refBanner: string; refClaim: string;
+  planTitle: string; account: string; refBanner: string; refClaim: string; ext: string;
 }> = {
   en: {
     trial: "🎁 Free trial · 3 min", pricing: "Pricing", signin: "Sign in", signout: "Sign out",
-    planTitle: "Manage plan", account: "My Page",
+    planTitle: "Manage plan", account: "My Page", ext: "Extension",
     refBanner: "🎁 A friend invited you to Flash Meet — sign in to claim 120 free minutes (2 hours)!", refClaim: "Sign in & claim →",
   },
   vi: {
     trial: "🎁 Dùng thử · 3 phút", pricing: "Các gói", signin: "Đăng nhập", signout: "Đăng xuất",
-    planTitle: "Quản lý gói", account: "Tài khoản",
+    planTitle: "Quản lý gói", account: "Tài khoản", ext: "Tiện ích",
     refBanner: "🎁 Bạn được mời dùng Flash Meet — đăng nhập để nhận 120 phút (2 giờ) miễn phí!", refClaim: "Đăng nhập & nhận →",
   },
   ko: {
     trial: "🎁 무료 체험 · 3분", pricing: "요금제", signin: "로그인", signout: "로그아웃",
-    planTitle: "요금제 관리", account: "마이페이지",
+    planTitle: "요금제 관리", account: "마이페이지", ext: "확장 프로그램",
     refBanner: "🎁 친구가 Flash Meet에 초대했어요 — 로그인하고 120분(2시간) 무료 받으세요!", refClaim: "로그인하고 받기 →",
   },
 };
@@ -104,6 +104,7 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
         <span style={{ flex: 1 }} />
         {signedIn ? (
           <div className="fm-right">
+            <a href="/extension" className="fm-mail" style={{ textDecoration: "none", color: "#5b6b8c", fontWeight: 700 }}>🧩 {t.ext}</a>
             {admin && <a href="/admin" style={adminLink}>⚙ Admin</a>}
             <a href="/account" style={accountLink}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }} aria-hidden="true">
@@ -119,6 +120,7 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
         ) : (
           <div className="fm-right">
             <span className="fm-trial">{t.trial}</span>
+            <a href="/extension" className="fm-mail" style={{ ...linkBtn }}>🧩 {t.ext}</a>
             <a href="/pricing" style={linkBtn}>{t.pricing}</a>
             <a href="/login" style={primaryBtn}>{t.signin}</a>
           </div>

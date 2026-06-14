@@ -33,6 +33,7 @@ type Dict = {
   refUnlimited: string; refPerf: string; refInvited: string; refEarned: string; refUnitMin: string;
   hiwTitle: string; hiwSub: string; steps: { t: string; d: string }[];
   perfTitle: string; perfSuccess: string; perfEarned: string; perfRank: string; rankNew: string; refEmpty: string;
+  faqTitle: string;
   plans: Record<string, PlanText>;
   faq: { q: string; a: string }[];
 };
@@ -92,6 +93,7 @@ const T: Record<Lang, Dict> = {
     ],
     perfTitle: "Your referral performance", perfSuccess: "Successful referrals", perfEarned: "Minutes earned",
     perfRank: "Referral rank", rankNew: "New", refEmpty: "You haven't invited anyone yet.",
+    faqTitle: "Frequently asked questions",
     plans: {
       free: { name: "Free", tagline: "Free to try", cta: "Get started", priceMonthly: "$0",
         features: ["30 translation min / month", "1 target language", "Basic summary", "7-day history"] },
@@ -143,6 +145,7 @@ const T: Record<Lang, Dict> = {
     ],
     perfTitle: "Hiệu quả giới thiệu của bạn", perfSuccess: "Giới thiệu thành công", perfEarned: "Phút đã nhận",
     perfRank: "Hạng giới thiệu", rankNew: "Mới", refEmpty: "Bạn chưa mời ai cả.",
+    faqTitle: "Câu hỏi thường gặp",
     plans: {
       free: { name: "Free", tagline: "Dùng thử miễn phí", cta: "Bắt đầu", priceMonthly: "0đ",
         features: ["30 phút dịch / tháng", "1 ngôn ngữ đích", "Tóm tắt cơ bản", "Lịch sử 7 ngày"] },
@@ -194,6 +197,7 @@ const T: Record<Lang, Dict> = {
     ],
     perfTitle: "내 추천 실적", perfSuccess: "성공 추천", perfEarned: "획득 분",
     perfRank: "추천 등급", rankNew: "신규", refEmpty: "아직 초대한 사람이 없습니다.",
+    faqTitle: "자주 묻는 질문",
     plans: {
       free: { name: "Free", tagline: "무료 체험", cta: "시작하기", priceMonthly: "₩0",
         features: ["월 30분 번역", "대상 언어 1개", "기본 요약", "7일 기록"] },
@@ -316,6 +320,17 @@ const REFBANNER_CSS = `
 .perf-empty p{font-size:14px;color:#64748b;margin:0 0 12px}
 .perf-cta{height:48px;padding:0 28px;display:inline-block}
 @media(max-width:760px){.perf-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* Compact FAQ accordion */
+.faq2{max-width:760px;margin:52px auto 0;font-family:'Inter',system-ui,sans-serif}
+.faq2-title{font-size:20px;font-weight:800;letter-spacing:-.02em;color:#0f172a;text-align:center;margin-bottom:18px}
+.faq2 details{background:#fff;border:1px solid #e7ebf3;border-radius:12px;margin-bottom:8px;overflow:hidden}
+.faq2 details[open]{border-color:#d6e0f0;box-shadow:0 10px 26px -22px rgba(15,23,42,.3)}
+.faq2 summary{list-style:none;cursor:pointer;padding:15px 18px;font-size:14px;font-weight:700;color:#0f172a;display:flex;justify-content:space-between;align-items:center;gap:14px}
+.faq2 summary::-webkit-details-marker{display:none}
+.faq2 summary::after{content:"+";color:#94a3b8;font-size:19px;font-weight:500;line-height:1}
+.faq2 details[open] summary::after{content:"\\2013"}
+.faq2 .a{padding:0 18px 16px;font-size:13.5px;line-height:1.65;color:#64748b}
 `;
 
 export default function Pricing() {
@@ -555,6 +570,16 @@ export default function Pricing() {
           </section>
         );
       })()}
+
+      <section className="faq2">
+        <div className="faq2-title">{t.faqTitle}</div>
+        {t.faq.map((f) => (
+          <details key={f.q}>
+            <summary>{f.q}</summary>
+            <div className="a">{f.a}</div>
+          </details>
+        ))}
+      </section>
 
       {invite && (
         <>
