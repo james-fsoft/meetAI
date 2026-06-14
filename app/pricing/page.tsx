@@ -350,6 +350,13 @@ export default function Pricing() {
 
   useEffect(() => {
     fetch("/api/referral").then((r) => (r.ok ? r.json() : null)).then((d) => { if (d) setRefData(d); }).catch(() => {});
+    // Returning from login via "Invite Your Team"? Re-open the invite popup so the
+    // flow continues seamlessly instead of dumping the user back on the page.
+    if (new URLSearchParams(location.search).get("invite") === "1") {
+      getInvite();
+      window.history.replaceState({}, "", "/pricing");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function payVietQR(planId: string) {
@@ -360,7 +367,7 @@ export default function Pricing() {
         body: JSON.stringify({ action: "create", plan: planId, billing }),
       });
       const d = await r.json();
-      if (r.status === 401) { location.href = "/login"; return; }
+      if (r.status === 401) { location.href = "/login?next=" + encodeURIComponent("/pricing"); return; }
       if (!r.ok) throw new Error(d.error || "Không tạo được đơn");
       setQrDone(false); setQr(d);
     } catch (e: any) {
@@ -383,7 +390,7 @@ export default function Pricing() {
   async function getInvite() {
     try {
       const r = await fetch("/api/referral");
-      if (r.status === 401) { location.href = "/login"; return; }
+      if (r.status === 401) { location.href = "/login?next=" + encodeURIComponent("/pricing?invite=1"); return; }
       const d = await r.json();
       if (d.link) { setCopied(false); setInvite({ link: d.link, bonus: d.bonus || 120 }); }
     } catch { /* ignore */ }
