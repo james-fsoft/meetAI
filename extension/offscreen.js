@@ -11,6 +11,7 @@ let seg = { orig: "", trans: "", spk: null };
 let target = "ko", way = "one", langB = "vi";
 let running = false, stopping = false, openAt = 0, fails = 0;
 let fullLines = []; // whole-session segments {spk, o (original), t (translation)}
+let meterTimer = null, meterLast = 0; // usage metering (only while audio is live)
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.target !== "offscreen") return;
@@ -21,6 +22,33 @@ chrome.runtime.onMessage.addListener((msg) => {
 });
 
 function send(p) { chrome.runtime.sendMessage({ from: "offscreen", ...p }).catch(() => {}); }
+
+// ── usage metering ─────────────────────────────────────────────────────────
+// Reports streamed seconds to the backend so extension usage counts against the
+// same per-user quota as the web app. Only counts wall-clock while a socket is
+// actually open (paused between reconnects), so dead gaps aren't charged.
+async function reportUsage(sec) {
+  if (sec <= 0) return;
+  let authTok = null;
+  try { authTok = await chrome.runtime.sendMessage({ cmd: "authToken" }); } catch {}
+  if (!authTok) return; // not signed in → nothing to meter against
+  try {
+    await fetch(API_BASE + "/api/usage", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + authTok },
+      body: JSON.stringify({ seconds: Math.min(120, sec) }),
+    });
+  } catch {}
+}
+function meterFlush() {
+  if (!meterLast) return;
+  const now = Date.now();
+  const sec = Math.round((now - meterLast) / 1000);
+  if (sec > 0) { meterLast = now; reportUsage(sec); }
+}
+function meterResume() { meterLast = Date.now(); if (!meterTimer) meterTimer = setInterval(meterFlush, 60_000); }
+function meterPauseSeg() { meterFlush(); meterLast = 0; }            // socket closed (reconnect gap)
+function meterStopAll() { meterFlush(); meterLast = 0; if (meterTimer) { clearInterval(meterTimer); meterTimer = null; } }
 function pickMime() { const c = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"]; for (const m of c) if (MediaRecorder.isTypeSupported(m)) return m; return ""; }
 
 async function startCap(streamId, resume, mic) {
@@ -61,7 +89,10 @@ async function openWs() {
   try { authTok = await chrome.runtime.sendMessage({ cmd: "authToken" }); } catch {}
   const headers = authTok ? { Authorization: "Bearer " + authTok } : {};
   fetch(API_BASE + "/api/soniox-token", { method: "POST", headers })
-    .then((r) => r.json().then((d) => { if (!r.ok) throw new Error(d.error || "token"); return d.api_key; }))
+    .then((r) => r.json().then((d) => {
+      if (!r.ok) { const e = new Error(d.error || "token"); e.quota = (r.status === 403 || d.code === "quota_exceeded"); throw e; }
+      return d.api_key;
+    }))
     .then((tok) => {
       if (!running || !stream) return;
       const w = new WebSocket(SONIOX_WS); ws = w;
@@ -81,6 +112,7 @@ async function openWs() {
         catch (e) { send({ type: "status", text: "녹음 오류: " + e.message }); return; }
         rec.ondataavailable = async (e) => { if (e.data.size && ws && ws.readyState === 1) ws.send(await e.data.arrayBuffer()); };
         rec.start(240);
+        meterResume();
         send({ type: "status", text: "LIVE" });
       };
       w.onmessage = (ev) => {
@@ -100,6 +132,7 @@ async function openWs() {
       w.onerror = () => {};
       w.onclose = () => {
         ws = null;
+        meterPauseSeg();
         if (rec && rec.state !== "inactive") { try { rec.stop(); } catch {} } rec = null;
         flush();
         const lasted = openAt ? Date.now() - openAt : 0; openAt = 0;
@@ -111,6 +144,11 @@ async function openWs() {
       };
     })
     .catch((e) => {
+      if (e.quota) { // out of quota → stop cleanly, no retries
+        running = false; stopping = true; meterStopAll();
+        send({ type: "status", text: "⚠ " + e.message });
+        return;
+      }
       send({ type: "status", text: "토큰 오류: " + e.message });
       if (running && !stopping) { fails++; if (fails < 4) setTimeout(() => { if (running && !stopping) openWs(); }, 1500); }
     });
@@ -133,6 +171,7 @@ function buildTranscript() {
 }
 
 function teardown() {
+  meterStopAll();
   if (rec && rec.state !== "inactive") { try { rec.stop(); } catch {} } rec = null;
   if (ws) { try { if (ws.readyState === 1) ws.send(""); ws.close(); } catch {} } ws = null;
   if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }

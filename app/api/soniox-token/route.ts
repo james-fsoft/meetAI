@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { userFromBearer } from "@/lib/auth-token";
+import { createClient as createServer, supabaseConfigured } from "@/lib/supabase-server";
+import { createAdminClient } from "@/lib/supabase-admin";
+import { hasQuota } from "@/lib/usage";
 
 /**
  * POST /api/soniox-token
@@ -9,10 +12,13 @@ import { userFromBearer } from "@/lib/auth-token";
  *
  * Cost guardrails (defense-in-depth — the hard ceiling is your Soniox prepaid
  * balance with autopay OFF):
- *   - per-IP burst limit  (stops one client from spamming sessions)
- *   - global daily cap    (caps total trial sessions opened per day)
+ *   - signed-in users: HARD per-user quota check (day + month) before issuing a
+ *     token. Over quota → 403, no token. Re-checked on every reconnect.
+ *   - anonymous users: per-IP burst limit + global daily cap (trial brakes).
  * Tune via env: TRIAL_MAX_PER_MIN, TRIAL_DAILY_CAP.
  */
+
+export const dynamic = "force-dynamic";
 
 const WINDOW_MS = 60_000;
 const MAX_PER_MIN = Number(process.env.TRIAL_MAX_PER_MIN || 5);
@@ -29,16 +35,47 @@ function clientIp(req: NextRequest): string {
   return (fwd ? fwd.split(",")[0] : "") || req.headers.get("x-real-ip") || "unknown";
 }
 
+// Identify the caller via Bearer token (extension) or session cookie (web app).
+async function getUserId(req: NextRequest): Promise<string | null> {
+  const u = await userFromBearer(req);
+  if (u) return u.id;
+  try {
+    const sb = createServer();
+    const { data: { user } } = await sb.auth.getUser();
+    return user?.id ?? null;
+  } catch { return null; }
+}
+
 export async function POST(req: NextRequest) {
   const key = process.env.SONIOX_API_KEY;
   if (!key) return NextResponse.json({ error: "Server missing SONIOX_API_KEY" }, { status: 500 });
 
-  // Signed-in paid plans skip the anonymous rate limits.
-  const user = await userFromBearer(req);
-  const paid = !!user && user.plan !== "free";
+  const userId = supabaseConfigured() ? await getUserId(req) : null;
 
-  if (!paid) {
-    // global daily cap (resets at UTC midnight)
+  if (userId) {
+    // Signed-in: enforce the per-user quota server-side (hard ceiling).
+    try {
+      const admin = createAdminClient();
+      const { data: prof } = await admin.from("profiles")
+        .select("plan, seconds_today, day_key, seconds_month, month_key").eq("id", userId).single();
+      const plan = prof?.plan || "free";
+      const today = new Date().toISOString().slice(0, 10);
+      const mkey = today.slice(0, 7);
+      const secToday = prof?.day_key === today ? (prof.seconds_today || 0) : 0;
+      const secMonth = prof?.month_key === mkey ? (prof.seconds_month || 0) : 0;
+      if (!hasQuota(plan, secToday, secMonth)) {
+        return NextResponse.json(
+          { error: "Bạn đã dùng hết hạn mức dịch của gói. Nâng cấp gói hoặc đợi kỳ sau.", code: "quota_exceeded" },
+          { status: 403 }
+        );
+      }
+    } catch {
+      // Transient profile-lookup error → don't hard-block; the metering loop and
+      // the next reconnect's check still bound any overage.
+    }
+    // Signed-in users skip the anonymous IP/daily brakes.
+  } else {
+    // Anonymous: trial brakes (the 3-minute trial itself is enforced client-side).
     const today = new Date().toISOString().slice(0, 10);
     if (today !== dayKey) { dayKey = today; dayCount = 0; }
     if (dayCount >= DAILY_CAP) {
@@ -47,7 +84,6 @@ export async function POST(req: NextRequest) {
         { status: 429 }
       );
     }
-    // per-IP burst limit
     const ip = clientIp(req);
     const now = Date.now();
     const recent = (hits.get(ip) || []).filter((t) => now - t < WINDOW_MS);
@@ -67,6 +103,6 @@ export async function POST(req: NextRequest) {
   const d = await r.json();
   if (!r.ok) return NextResponse.json({ error: d.message || d.error || "Soniox error" }, { status: r.status });
 
-  if (!paid) dayCount++;
+  if (!userId) dayCount++;
   return NextResponse.json(d);
 }
