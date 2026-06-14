@@ -1,32 +1,65 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase-browser";
 
 const PLAN_LABEL: Record<string, string> = {
   free: "Free", pro: "Pro", business: "Business", enterprise: "Enterprise",
 };
 
+type Lang = "en" | "vi" | "ko";
+
+// Shell strings in the 3 languages the app supports. The language is shared with
+// the in-app switcher (localStorage key "mr_lang"), so the top bar follows it.
+const T: Record<Lang, {
+  trial: string; pricing: string; signin: string; signout: string;
+  unlimited: string; usageTitle: string; planTitle: string;
+  left: (d: number | null, m: number | null) => string;
+}> = {
+  en: {
+    trial: "🎁 Free trial · 3 min", pricing: "Pricing", signin: "Sign in", signout: "Sign out",
+    unlimited: "⏱ Unlimited", usageTitle: "Minutes left", planTitle: "Manage plan",
+    left: (d, m) => "⏱ " + [d != null ? `${Math.max(0, d)} min today` : "", m != null ? `${Math.max(0, m)} min/mo` : ""].filter(Boolean).join(" · "),
+  },
+  vi: {
+    trial: "🎁 Dùng thử · 3 phút", pricing: "Các gói", signin: "Đăng nhập", signout: "Đăng xuất",
+    unlimited: "⏱ Không giới hạn", usageTitle: "Phút còn lại", planTitle: "Quản lý gói",
+    left: (d, m) => "⏱ " + [d != null ? `Còn ${Math.max(0, d)}p hôm nay` : "", m != null ? `${Math.max(0, m)}p tháng` : ""].filter(Boolean).join(" · "),
+  },
+  ko: {
+    trial: "🎁 무료 체험 · 3분", pricing: "요금제", signin: "로그인", signout: "로그아웃",
+    unlimited: "⏱ 무제한", usageTitle: "남은 시간", planTitle: "요금제 관리",
+    left: (d, m) => "⏱ " + [d != null ? `오늘 ${Math.max(0, d)}분` : "", m != null ? `이번 달 ${Math.max(0, m)}분` : ""].filter(Boolean).join(" · "),
+  },
+};
+
 /**
  * Meeting AI — main shell: a slim top bar above the meeting UI
  * (served from public/meeting.html inside an iframe).
- * Anonymous visitors get a 10-minute live-translation trial (?trial=1);
- * signed-in users run without the trial limit.
+ * The bar's language mirrors the in-app EN/VI/KO switcher via the shared
+ * localStorage "mr_lang" key (same origin → the iframe's change fires a
+ * storage event here).
  */
 type Usage = { unlimited: boolean; day: { remain: number | null }; month: { remain: number | null } } | null;
-
-function usageText(u: NonNullable<Usage>) {
-  if (u.unlimited) return "⏱ Không giới hạn";
-  const d = u.day?.remain, m = u.month?.remain;
-  let s = "⏱ ";
-  if (d != null) s += `Còn ${Math.max(0, d)}p hôm nay`;
-  if (m != null) s += (d != null ? " · " : "") + `${Math.max(0, m)}p tháng`;
-  return s;
-}
 
 export default function MeetingApp({ email, plan = "free", admin = false, usage = null }: { email?: string; plan?: string; admin?: boolean; usage?: Usage }) {
   const router = useRouter();
   const signedIn = !!email;
+  const [lang, setLang] = useState<Lang>("en");
+
+  useEffect(() => {
+    const read = () => {
+      const v = localStorage.getItem("mr_lang");
+      setLang(v === "vi" || v === "ko" ? v : "en");
+    };
+    read();
+    const onStorage = (e: StorageEvent) => { if (e.key === "mr_lang") read(); };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  const t = T[lang];
 
   async function signOut() {
     try {
@@ -47,17 +80,21 @@ export default function MeetingApp({ email, plan = "free", admin = false, usage 
         <span style={{ flex: 1 }} />
         {signedIn ? (
           <>
-            {usage && <a href="/pricing" style={usageBadgeStyle} title="Phút còn lại">{usageText(usage)}</a>}
+            {usage && (
+              <a href="/pricing" style={usageBadgeStyle} title={t.usageTitle}>
+                {usage.unlimited ? t.unlimited : t.left(usage.day?.remain ?? null, usage.month?.remain ?? null)}
+              </a>
+            )}
             {admin && <a href="/admin" style={adminLink}>⚙ Admin</a>}
-            <a href="/pricing" style={planBadge(plan)} title="Quản lý gói">{PLAN_LABEL[plan] || "Free"}</a>
+            <a href="/pricing" style={planBadge(plan)} title={t.planTitle}>{PLAN_LABEL[plan] || "Free"}</a>
             <span style={mail}>👤 {email}</span>
-            <button onClick={signOut} style={out}>Đăng xuất</button>
+            <button onClick={signOut} style={out}>{t.signout}</button>
           </>
         ) : (
           <>
-            <span style={trialBadge}>🎁 Dùng thử · 3 phút</span>
-            <a href="/pricing" style={linkBtn}>Các gói</a>
-            <a href="/login" style={primaryBtn}>Đăng nhập</a>
+            <span style={trialBadge}>{t.trial}</span>
+            <a href="/pricing" style={linkBtn}>{t.pricing}</a>
+            <a href="/login" style={primaryBtn}>{t.signin}</a>
           </>
         )}
       </div>
@@ -95,7 +132,7 @@ const primaryBtn: React.CSSProperties = {
 };
 const trialBadge: React.CSSProperties = {
   fontSize: 11, fontWeight: 800, letterSpacing: ".03em", color: "#b45309",
-  background: "#fffbeb", border: "1px solid #fde68a", padding: "4px 10px", borderRadius: 20,
+  background: "#fffbeb", border: "1px solid #fde68a", padding: "4px 10px", borderRadius: 20, whiteSpace: "nowrap",
 };
 const usageBadgeStyle: React.CSSProperties = {
   fontSize: 11.5, fontWeight: 800, color: "#1f6bff", background: "#eef4ff", border: "1px solid #d3e0fb",
