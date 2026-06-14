@@ -11,6 +11,11 @@ const status = document.getElementById("status");
 const authBox = document.getElementById("auth");
 let running = false;
 
+// Remember the tab the user is on when the popup opens, so opening the
+// mic-permission tab later doesn't change which tab gets the subtitle overlay.
+let targetTabId = null;
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => { if (tabs && tabs[0]) targetTabId = tabs[0].id; });
+
 function getWay() { const b = modeseg.querySelector("button.on"); return b ? b.dataset.w : "one"; }
 function applyMode() {
   const two = getWay() === "two";
@@ -30,13 +35,18 @@ const SRC_HINT = {
   tabmic: "Dịch cả tiếng trong tab và giọng bạn nói — cho cuộc gọi 2 chiều.",
   mic: "Dịch trực tiếp qua micro — họp gặp mặt, không cần mở video/call.",
 };
-function applySource(openPerm) {
+async function applySource(openPerm) {
   const s = getSource();
   srchint.textContent = SRC_HINT[s] || "";
+  status.textContent = "";
   if (openPerm && (s === "mic" || s === "tabmic")) {
-    chrome.tabs.create({ url: chrome.runtime.getURL("mic-permission.html") });
-    status.textContent = "👉 Bấm “Cho phép” ở tab vừa mở, rồi quay lại bấm Bắt đầu";
-  } else status.textContent = "";
+    let state = "prompt";
+    try { state = (await navigator.permissions.query({ name: "microphone" })).state; } catch {}
+    if (state !== "granted") {
+      chrome.tabs.create({ url: chrome.runtime.getURL("mic-permission.html") });
+      status.textContent = "👉 Bấm “Cho phép” ở tab vừa mở, rồi quay lại bấm Bắt đầu";
+    }
+  }
 }
 srcseg.querySelectorAll("button").forEach((b) => b.onclick = () => {
   srcseg.querySelectorAll("button").forEach((x) => x.classList.remove("on"));
@@ -80,7 +90,7 @@ btn.onclick = async () => {
   }
   chrome.storage.local.set({ lang: lang.value, langB: langB.value, way: getWay(), source: getSource() });
   status.textContent = "준비 중…";
-  chrome.runtime.sendMessage({ cmd: "start", lang: lang.value, langB: langB.value, way: getWay(), source: getSource() }, (r) => {
+  chrome.runtime.sendMessage({ cmd: "start", lang: lang.value, langB: langB.value, way: getWay(), source: getSource(), tabId: targetTabId }, (r) => {
     if (r && r.ok) { running = true; render(); }
     else { status.textContent = "⚠ " + ((r && r.error) || "Không bắt được tab"); }
   });

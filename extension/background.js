@@ -28,9 +28,11 @@ async function recreateOffscreen() {
   });
 }
 
-async function startCapture(lang, resume, sourcev, wayv, langBv) {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab) throw new Error("No active tab");
+async function startCapture(lang, resume, sourcev, wayv, langBv, tabIdArg) {
+  // Use the tab the popup captured (so a mic-permission tab can't hijack "active").
+  let tabId = resume ? active.tabId : tabIdArg;
+  if (!tabId) { const [t] = await chrome.tabs.query({ active: true, currentWindow: true }); tabId = t && t.id; }
+  if (!tabId) throw new Error("Không tìm thấy tab");
 
   if (resume) {
     // Resume: the overlay is still alive (paused state) — re-injecting content.js
@@ -38,23 +40,28 @@ async function startCapture(lang, resume, sourcev, wayv, langBv) {
     await ensureOffscreen();
   } else {
     await recreateOffscreen();
-    try { await chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ["content.css"] }); } catch {}
-    try { await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] }); } catch {}
+    let injected = true;
+    try {
+      await chrome.scripting.insertCSS({ target: { tabId }, files: ["content.css"] });
+      await chrome.scripting.executeScript({ target: { tabId }, files: ["content.js"] });
+    } catch { injected = false; }
+    // The subtitle overlay lives inside the page — it can't run on chrome:// or a blank tab.
+    if (!injected) throw new Error("Mở một trang web thường để hiện phụ đề (không dùng được trên chrome:// hay tab trống).");
   }
   active = {
-    tabId: tab.id, running: true,
+    tabId, running: true,
     lang: lang || active.lang || "ko",
     langB: (resume ? active.langB : langBv) || active.langB || "vi",
     way: (resume ? active.way : wayv) || "one",
     source: (resume ? active.source : sourcev) || "tab",
   };
-  chrome.tabs.sendMessage(tab.id, { from: "bg", type: "show", resume: !!resume, lang: active.lang, langB: active.langB, way: active.way }).catch(() => {});
+  chrome.tabs.sendMessage(tabId, { from: "bg", type: "show", resume: !!resume, lang: active.lang, langB: active.langB, way: active.way }).catch(() => {});
 
   // Tab audio only when the source uses it; "mic" (in-person) skips tab capture
   // so it works on any page without a meeting/video.
   let streamId = null;
   if (active.source !== "mic") {
-    streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
+    streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabId });
   }
   chrome.runtime.sendMessage({ target: "offscreen", type: "start", streamId, source: active.source, lang: active.lang, langB: active.langB, way: active.way, resume: !!resume });
 }
@@ -94,7 +101,7 @@ async function getAuthToken() {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.cmd === "start") {
-    startCapture(msg.lang, false, msg.source, msg.way, msg.langB).then(() => sendResponse({ ok: true })).catch((e) => sendResponse({ ok: false, error: e.message }));
+    startCapture(msg.lang, false, msg.source, msg.way, msg.langB, msg.tabId).then(() => sendResponse({ ok: true })).catch((e) => sendResponse({ ok: false, error: e.message }));
     return true;
   }
   if (msg.cmd === "resume") {
