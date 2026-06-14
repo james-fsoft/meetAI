@@ -14,16 +14,23 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const tx = (body.transcript || "").trim();
   const summaryOnly = !!body.summaryOnly; // free plan → cheaper, summary only
+  // Desired output language (e.g. "Vietnamese"). Empty → follow the transcript.
+  const lang = typeof body.lang === "string" ? body.lang.trim() : "";
   if (tx.length < 60) return NextResponse.json({ summary: [], actionItems: [], decisions: [], risks: [] });
+
+  // For bilingual meetings this forces a single, consistent output language.
+  const langRule = lang
+    ? `Write ALL values in ${lang}, even if the meeting is spoken in other or mixed languages. Translate into ${lang} as needed.`
+    : `Write values in the transcript's main language.`;
 
   const sys = summaryOnly
     ? `You are an AI meeting assistant analysing a LIVE, possibly multilingual transcript labelled by speaker (Speaker 1, 2, …).
-Reply ONLY as compact JSON: {"summary": string[]} — 2-4 very short bullet points of what is being discussed. Write in the transcript's main language. Never invent anything. If nothing yet, use an empty array.`
+Reply ONLY as compact JSON: {"summary": string[]} — 2-4 very short bullet points of what is being discussed. ${langRule} Never invent anything. If nothing yet, use an empty array.`
     : `You are an AI meeting assistant analysing a LIVE, possibly multilingual transcript labelled by speaker (Speaker 1, 2, …).
 Extract meeting intelligence so far. Reply ONLY as compact JSON with this exact shape:
 {"summary": string[], "actionItems": [{"who": string, "task": string}], "decisions": string[], "risks": string[]}
 Rules: summary = 2-4 very short bullet points of what is being discussed. actionItems = tasks someone must do (who = speaker label or name, task = short). decisions = concrete decisions made. risks = open issues / blockers / things to follow up.
-Each item is ONE short line. Write values in the transcript's main language. Never invent anything not in the transcript. If a category has nothing yet, use an empty array.`;
+Each item is ONE short line. ${langRule} Never invent anything not in the transcript. If a category has nothing yet, use an empty array.`;
 
   try {
     const r = await fetch("https://api.openai.com/v1/chat/completions", {

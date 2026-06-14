@@ -273,6 +273,9 @@ body.recing.ai-hidden .ai-reopen:hover svg{color:#fff}
 .ai-lock{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#1f4fff;background:#eef4ff;border:1px solid #d3e0fb;border-radius:10px;padding:8px 12px;text-decoration:none}
 .ai-lock:hover{background:#e3edff}
 .ai-listen{font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#16a34a;margin-left:6px}
+.ai-h-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ai-lang{font-family:inherit;font-size:11px;font-weight:800;color:#0f172a;background:#eef2f8;border:1px solid var(--hair);border-radius:8px;padding:4px 6px;cursor:pointer;letter-spacing:.01em;max-width:118px}
+.ai-lang:hover{background:#e6ecf5}
 /* Action items / Decisions tabs reuse the AI item styling inside .out */
 .ai-out{padding:16px 18px}
 .ai-out .ai-item{font-size:14px;color:#334155;padding:7px 0}
@@ -455,7 +458,7 @@ audio{width:100%;margin-top:16px;height:42px}
       <p class="note" id="diarNote" data-t="c_diar">👥 Voices are separated automatically (Speaker 1, 2, 3…).</p>
     </div>
     <aside class="ai-panel" id="aiPanel">
-      <div class="ai-head"><span class="ai-dot"></span><span data-t="ai_title">AI Meeting Intelligence</span><span class="ai-listen" id="aiListen" data-t="ai_listen">AI Listening</span><button class="ai-tog" id="aiTog" title="Toggle" aria-label="Toggle AI panel">▾</button></div>
+      <div class="ai-head"><span class="ai-dot"></span><span class="ai-h-t" data-t="ai_title">AI Meeting Intelligence</span><select class="ai-lang" id="aiLang" title="AI output language"><option value="auto" data-t="ai_lang_auto">🌐 Auto</option><option value="en">English</option><option value="vi">Tiếng Việt</option><option value="ko">한국어</option></select><button class="ai-tog" id="aiTog" title="Toggle" aria-label="Toggle AI panel">▾</button></div>
       <div class="ai-sec"><div class="ai-st" data-t="ai_summary">Summary</div><div class="ai-body" id="aiSummary"><div class="ai-empty" data-t="ai_wait">AI is listening…</div></div></div>
       <div class="ai-sec"><div class="ai-st" data-t="ai_actions">Action items</div><div class="ai-body" id="aiActions"><div class="ai-empty">—</div></div></div>
       <div class="ai-sec"><div class="ai-st" data-t="ai_decisions">Key decisions</div><div class="ai-body" id="aiDecisions"><div class="ai-empty">—</div></div></div>
@@ -542,7 +545,7 @@ const I={
    c_diar:"👥 Voices are separated automatically (Speaker 1, 2, 3…).",
    p_upload:"Uploading audio…",p_diar:"Separating voices…",p_sum:"Writing the summary…",p_wait:"Your AI assistant is hard at work…",
    r_summary:"Summary",r_transcript:"Transcript",r_copy:"Copy",r_download:"Download",r_new:"+ New meeting",r_dl_live:"⬇ Live translation",words:"words",
-   ai_title:"AI Meeting Intelligence",ai_summary:"Summary",ai_actions:"Action items",ai_decisions:"Decisions",ai_risks:"Risks & follow-ups",ai_wait:"AI is listening…",ai_listen:"AI Listening",ai_pro:"Pro — upgrade to unlock",ai_show:"AI panel",u_trial:"🎁 Trial · {n}m left",u_unlim:"⏱ Unlimited",u_today:"Today",u_month:"Month",u_min:"m",
+   ai_title:"AI Meeting Intelligence",ai_summary:"Summary",ai_actions:"Action items",ai_decisions:"Decisions",ai_risks:"Risks & follow-ups",ai_wait:"AI is listening…",ai_listen:"AI Listening",ai_pro:"Pro — upgrade to unlock",ai_show:"AI panel",ai_lang_auto:"🌐 Auto",u_trial:"🎁 Trial · {n}m left",u_unlim:"⏱ Unlimited",u_today:"Today",u_month:"Month",u_min:"m",
    ready_h:"Ready to translate",ready_sub:"Start speaking and Flash Meet will automatically:",ready_1:"✓ Transcribe",ready_2:"✓ Translate",ready_3:"✓ Summarize",ready_4:"✓ Extract action items",
    h_title:"History",open:"Open",empty:"No meetings yet",
    sp_title:"Rename speakers (optional)",sp_apply:"Apply",sp_ph:"Real name",sp_done:"Names applied",
@@ -558,7 +561,7 @@ const I={
    c_diar:"👥 Tự động tách giọng từng người (Speaker 1, 2, 3…).",
    p_upload:"Đang tải audio lên…",p_diar:"Đang tách giọng nói…",p_sum:"Đang viết tóm tắt…",p_wait:"Trợ lý AI đang chăm chỉ làm việc…",
    r_summary:"Tóm tắt",r_transcript:"Bản ghi",r_copy:"Copy",r_download:"Tải xuống",r_new:"+ Cuộc họp mới",r_dl_live:"⬇ Bản dịch trực tiếp",words:"từ",
-   ai_title:"AI Tổng hợp cuộc họp",ai_summary:"Tóm tắt",ai_actions:"Việc cần làm",ai_decisions:"Quyết định",ai_risks:"Rủi ro & theo dõi",ai_wait:"AI đang lắng nghe…",ai_listen:"AI đang nghe",ai_pro:"Pro — nâng cấp để mở",ai_show:"Bảng AI",u_trial:"🎁 Dùng thử · còn {n}p",u_unlim:"⏱ Không giới hạn",u_today:"Hôm nay",u_month:"Tháng",u_min:"p",
+   ai_title:"AI Tổng hợp cuộc họp",ai_summary:"Tóm tắt",ai_actions:"Việc cần làm",ai_decisions:"Quyết định",ai_risks:"Rủi ro & theo dõi",ai_wait:"AI đang lắng nghe…",ai_listen:"AI đang nghe",ai_pro:"Pro — nâng cấp để mở",ai_show:"Bảng AI",ai_lang_auto:"🌐 Tự động",u_trial:"🎁 Dùng thử · còn {n}p",u_unlim:"⏱ Không giới hạn",u_today:"Hôm nay",u_month:"Tháng",u_min:"p",
    ready_h:"Sẵn sàng dịch",ready_sub:"Bắt đầu nói, Flash Meet sẽ tự động:",ready_1:"✓ Ghi lời",ready_2:"✓ Dịch",ready_3:"✓ Tóm tắt",ready_4:"✓ Trích việc cần làm",
    h_title:"Lịch sử",open:"Mở",empty:"Chưa có cuộc họp",
    sp_title:"Đổi tên người nói (tùy chọn)",sp_apply:"Áp dụng",sp_ph:"Tên thật",sp_done:"Đã áp dụng tên",
@@ -574,7 +577,7 @@ const I={
    c_diar:"👥 화자를 자동으로 분리합니다 (Speaker 1, 2, 3…).",
    p_upload:"오디오 업로드 중…",p_diar:"화자 분리 중…",p_sum:"요약 작성 중…",p_wait:"AI 비서가 열심히 작업 중…",
    r_summary:"요약",r_transcript:"전체 기록",r_copy:"복사",r_download:"다운로드",r_new:"+ 새 회의",r_dl_live:"⬇ 실시간 번역",words:"단어",
-   ai_title:"AI 회의 인텔리전스",ai_summary:"요약",ai_actions:"액션 아이템",ai_decisions:"결정",ai_risks:"리스크 & 후속",ai_wait:"AI가 듣고 있어요…",ai_listen:"AI 청취 중",ai_pro:"Pro — 업그레이드",ai_show:"AI 패널",u_trial:"🎁 체험 · {n}분 남음",u_unlim:"⏱ 무제한",u_today:"오늘",u_month:"월",u_min:"분",
+   ai_title:"AI 회의 인텔리전스",ai_summary:"요약",ai_actions:"액션 아이템",ai_decisions:"결정",ai_risks:"리스크 & 후속",ai_wait:"AI가 듣고 있어요…",ai_listen:"AI 청취 중",ai_pro:"Pro — 업그레이드",ai_show:"AI 패널",ai_lang_auto:"🌐 자동",u_trial:"🎁 체험 · {n}분 남음",u_unlim:"⏱ 무제한",u_today:"오늘",u_month:"월",u_min:"분",
    ready_h:"번역 준비 완료",ready_sub:"말하기 시작하면 Flash Meet이 자동으로:",ready_1:"✓ 전사",ready_2:"✓ 번역",ready_3:"✓ 요약",ready_4:"✓ 액션 아이템 추출",
    h_title:"기록",open:"열기",empty:"회의가 없습니다",
    sp_title:"화자 이름 변경 (선택)",sp_apply:"적용",sp_ph:"실명",sp_done:"이름이 적용됨",
@@ -590,8 +593,10 @@ const t=k=>I[L][k]||k;
 function applyLang(){document.documentElement.lang=L;
   document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));
   document.querySelectorAll('#lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===L));
+  const _al=$('aiLang');if(_al)_al.value=localStorage.getItem('mr_ailang')||L;
   refreshDyn();renderHist();}
-$('lang').onclick=e=>{const b=e.target.closest('button');if(!b)return;L=b.dataset.l;localStorage.setItem('mr_lang',L);applyLang();};
+$('lang').onclick=e=>{const b=e.target.closest('button');if(!b)return;L=b.dataset.l;localStorage.setItem('mr_lang',L);applyLang();
+  if(!localStorage.getItem('mr_ailang')&&typeof refreshInsights==='function')refreshInsights();};
 function show(sc){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(sc).classList.add('on');}
 $('goApp').onclick=()=>show('sc-cap');
 
@@ -704,7 +709,7 @@ async function resInsights(){const tx=curTr||'',ai=$('actionItems'),de=$('decisi
   if(!PAID){ai.innerHTML=proLock();de.innerHTML=proLock();return;}
   if(tx.length<60){ai.innerHTML='<div class="ai-empty">—</div>';de.innerHTML='<div class="ai-empty">—</div>';return;}
   ai.innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';de.innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';
-  try{const r=await fetch('/api/insights',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx})});const d=await r.json();if(!r.ok)return;
+  try{const r=await fetch('/api/insights',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,lang:aiOutLang()})});const d=await r.json();if(!r.ok)return;
     ai.innerHTML=(d.actionItems&&d.actionItems.length)?d.actionItems.map(a=>'<div class="ai-item"><span class="ai-check"></span><span>'+(a.who?'<span class="who">'+esc(a.who)+'</span> — ':'')+esc(a.task)+'</span></div>').join(''):'<div class="ai-empty">—</div>';
     de.innerHTML=(d.decisions&&d.decisions.length)?d.decisions.map(s=>'<div class="ai-item"><span class="b">✓</span><span>'+esc(s)+'</span></div>').join(''):'<div class="ai-empty">—</div>';
   }catch(e){}}
@@ -918,10 +923,17 @@ function hm(){const d=new Date();return ('0'+d.getHours()).slice(-2)+':'+('0'+d.
 function resetInsights(){insLastLen=0;
   if($('aiSummary')){$('aiSummary').innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';
     ['aiActions','aiDecisions','aiRisks'].forEach(id=>$(id).innerHTML=PAID?'<div class="ai-empty">—</div>':proLock());}}
+// AI output language. Defaults to the system language the user picked; 'auto'
+// lets the AI follow the spoken language. Works for bilingual meetings too: the
+// AI normalises everything into the one chosen language.
+const AI_LANG_NAME={en:'English',vi:'Vietnamese',ko:'Korean'};
+function aiLangCode(){return localStorage.getItem('mr_ailang')||L;}
+function aiOutLang(){const c=aiLangCode();return c==='auto'?'':(AI_LANG_NAME[c]||'');}
+function refreshInsights(){insLastLen=0;if($('sc-res')&&$('sc-res').classList.contains('on'))resInsights();else if(capState==='recording')runInsights();}
 function startInsights(){if(insTimer)return;insTimer=setInterval(runInsights,40000);setTimeout(runInsights,16000);}
 function stopInsights(){if(insTimer){clearInterval(insTimer);insTimer=null;}}
 async function runInsights(){const tx=curTr||'';if(insBusy||tx.length<60||tx.length===insLastLen)return;insBusy=true;insLastLen=tx.length;
-  try{const r=await fetch('/api/insights',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,summaryOnly:!PAID})});
+  try{const r=await fetch('/api/insights',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,summaryOnly:!PAID,lang:aiOutLang()})});
     const d=await r.json();if(r.ok)renderInsights(d);}catch(e){}finally{insBusy=false;}}
 function aiList(id,items,fmt,empty){const el=$(id);if(!el)return;const html=(items&&items.length)?items.map(fmt).join(''):'<div class="ai-empty">'+(empty||'—')+'</div>';
   if(el.innerHTML!==html){el.innerHTML=html;const sec=el.closest('.ai-sec');if(sec){sec.classList.remove('ai-up');void sec.offsetWidth;sec.classList.add('ai-up');}}}
@@ -941,6 +953,8 @@ $('yr').textContent=new Date().getFullYear();
 if($('aiTog'))$('aiTog').onclick=()=>document.body.classList.add('ai-hidden');
 if($('aiReopen'))$('aiReopen').onclick=()=>document.body.classList.remove('ai-hidden');
 if(window.innerWidth<980)document.body.classList.add('ai-hidden');
+if($('aiLang')){$('aiLang').value=localStorage.getItem('mr_ailang')||L;
+  $('aiLang').onchange=()=>{localStorage.setItem('mr_ailang',$('aiLang').value);refreshInsights();};}
 const _lvon=localStorage.getItem('mr_lvon')!=='0';$('lvOn').checked=_lvon;$('lvToggle').classList.toggle('on',_lvon);
 if(localStorage.getItem('mr_lvto'))$('lvTo').value=localStorage.getItem('mr_lvto');
 applyLang();
