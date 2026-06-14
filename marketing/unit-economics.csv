@@ -1,0 +1,14 @@
+TransFlash — Mô hình chi phí & lợi nhuận
+,,
+GIẢ ĐỊNH,Giá trị,Ghi chú
+Tỷ giá VND/USD,25400,thay theo thực tế
+Soniox $/giờ (real-time + dịch),0.2,thận trọng; thực tế ~0.12-0.15
+OpenAI $/bản tóm tắt,0.002,gần như miễn phí
+Phí cổng thanh toán %,0.07,Lemon Squeezy ~5% + phí thẻ
+Tỷ lệ dùng quota thực tế %,0.45,breakage — đa số dùng 30-50%
+,,
+Gói,Giá/tháng (đ),Quota phút,Số user,Doanh thu (đ),COGS (đ),Phí TT (đ),Lợi nhuận (đ),Biên %
+Free,0,30,100,=B11*D11,=(C11*$B$8/60)*$B$5*$B$4*D11,=E11*$B$7,=E11-F11-G11,"=IFERROR(H11/E11,0)"
+Pro,199000,600,20,=B12*D12,=(C12*$B$8/60)*$B$5*$B$4*D12,=E12*$B$7,=E12-F12-G12,"=IFERROR(H12/E12,0)"
+Business,599000,2400,5,=B13*D13,=(C13*$B$8/60)*$B$5*$B$4*D13,=E13*$B$7,=E13-F13-G13,"=IFERROR(H13/E13,0)"
+Tổng,,,=SUM(D11:D13),=SUM(E11:E13),=SUM(F11:F13),=SUM(G11:G13),=SUM(H11:H13),"=IFERROR(H14/E14,0)"

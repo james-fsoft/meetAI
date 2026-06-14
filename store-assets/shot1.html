@@ -1,0 +1,62 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1280px;height:800px;overflow:hidden;font-family:'Segoe UI','Malgun Gothic',system-ui,sans-serif}
+.stage{width:1280px;height:800px;background:linear-gradient(135deg,#1f6bff 0%,#0a3bbf 100%);position:relative;display:flex;flex-direction:column;align-items:center;padding-top:54px}
+.head{color:#fff;text-align:center;margin-bottom:30px}
+.head h1{font-size:40px;font-weight:900;letter-spacing:-.02em}
+.head p{font-size:19px;font-weight:600;color:#cfe0ff;margin-top:10px}
+.browser{width:1080px;height:560px;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 40px 80px -20px rgba(0,0,0,.5);overflow:hidden;position:relative}
+.bbar{height:46px;background:#e9edf5;display:flex;align-items:center;gap:8px;padding:0 16px}
+.dot{width:12px;height:12px;border-radius:50%}.r{background:#ff5f57}.y{background:#febc2e}.g{background:#28c840}
+.url{flex:1;margin-left:14px;height:26px;background:#fff;border-radius:13px;display:flex;align-items:center;padding:0 14px;font-size:13px;color:#6b7794}
+.vid{position:absolute;top:46px;left:0;right:0;bottom:0;background:linear-gradient(160deg,#11161f,#1c2433);display:flex;align-items:center;justify-content:center}
+.vid .ytlabel{color:rgba(255,255,255,.12);font-size:120px;font-weight:900}
+/* overlay */
+.ov{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);width:760px;background:#0c1322;border:1px solid #243352;border-radius:16px;box-shadow:0 24px 60px -12px rgba(0,0,0,.7);overflow:hidden}
+.ovh{display:flex;align-items:center;gap:10px;padding:11px 15px;border-bottom:1px solid #1b2740;background:#0e1730}
+.logo{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#3b82f6,#1f6bff);display:flex;align-items:center;justify-content:center;gap:2.5px}
+.logo i{width:3px;background:#fff;border-radius:2px;display:block}
+.logo i:nth-child(1){height:8px}.logo i:nth-child(2){height:15px}.logo i:nth-child(3){height:11px}.logo i:nth-child(4){height:6px}
+.brand{font-size:14px;font-weight:800;color:#fff}.brand span{color:#7e90b3;font-weight:600}
+.pill{margin-left:6px;font-size:11px;font-weight:700;color:#cdd9f2;background:#16223a;border:1px solid #2a3852;border-radius:7px;padding:4px 9px}
+.st{margin-left:auto;font-size:12px;font-weight:800;color:#7ee0a6;display:flex;align-items:center;gap:6px}
+.st b{width:8px;height:8px;border-radius:50%;background:#22c55e;display:block}
+.acts{display:flex;gap:6px;margin-left:10px}
+.acts button{border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:#dfe8f7;font-size:12px;font-weight:700;padding:6px 11px;border-radius:8px;font-family:inherit}
+.acts .sum{background:rgba(59,130,246,.24);color:#cfe0ff;border-color:rgba(59,130,246,.4)}
+.lines{padding:14px 18px 18px}
+.line{margin-bottom:14px}
+.spk{font-size:11px;font-weight:800;color:#7aa2ff;margin-bottom:5px;display:flex;align-items:center;gap:7px}
+.spk em{width:20px;height:20px;border-radius:50%;background:#1f6bff;color:#fff;font-style:normal;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.spk2 em{background:#16a34a}.spk2{color:#5fd29a}
+.o{font-size:15px;color:#9fb3d6;margin-bottom:3px}
+.t{font-size:18px;color:#fff;font-weight:700}
+</style></head><body>
+<div class="stage">
+  <div class="head"><h1>Phụ đề dịch trực tiếp cho mọi cuộc họp &amp; video</h1>
+    <p>Google Meet · Zoom · Teams · YouTube — dịch ngay khi đang nói</p></div>
+  <div class="browser">
+    <div class="bbar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <div class="url">🔒 meet.google.com/abc-defg-hij</div></div>
+    <div class="vid"><div class="ytlabel">▶</div>
+      <div class="ov">
+        <div class="ovh">
+          <div class="logo"><i></i><i></i><i></i><i></i></div>
+          <div class="brand">TransFlash<span> · Live Translate</span></div>
+          <div class="pill">KO ⇄ VI</div>
+          <div class="st"><b></b>đang dịch</div>
+          <div class="acts"><button>⏸ Dừng</button><button class="sum">⏹ Tóm tắt</button></div>
+        </div>
+        <div class="lines">
+          <div class="line"><div class="spk"><em>1</em>Speaker 1</div>
+            <div class="o">다들 회의 자료 받으셨나요?</div>
+            <div class="t">Mọi người đã nhận tài liệu họp chưa?</div></div>
+          <div class="line spk2"><div class="spk spk2"><em>2</em>Speaker 2</div>
+            <div class="o">네, 방금 확인했습니다. 바로 시작할까요?</div>
+            <div class="t">Vâng, tôi vừa xem xong. Bắt đầu luôn nhé?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

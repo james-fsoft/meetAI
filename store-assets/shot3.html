@@ -1,0 +1,48 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1280px;height:800px;overflow:hidden;font-family:'Segoe UI','Malgun Gothic',system-ui,sans-serif}
+.stage{width:1280px;height:800px;background:linear-gradient(135deg,#1f6bff 0%,#0a3bbf 100%);position:relative;display:flex;align-items:center;justify-content:center;gap:70px;padding:0 90px}
+.left{color:#fff;max-width:520px}
+.left h1{font-size:46px;font-weight:900;letter-spacing:-.02em;line-height:1.1}
+.left p{font-size:20px;font-weight:600;color:#cfe0ff;margin-top:18px;line-height:1.5}
+.feat{margin-top:26px;display:flex;flex-direction:column;gap:13px}
+.feat div{font-size:17px;font-weight:600;color:#eaf2ff;display:flex;align-items:center;gap:11px}
+.feat span{font-size:20px}
+/* popup */
+.popup{width:300px;background:#0c1322;border-radius:16px;box-shadow:0 40px 90px -20px rgba(0,0,0,.6);padding:18px;color:#fff;flex-shrink:0}
+.popup h2{font-size:16px;font-weight:900;margin-bottom:14px}
+.lbl{font-size:11px;font-weight:700;color:#9fb3d6;margin-bottom:7px}
+.seg{display:flex;gap:5px;background:#101a2e;border:1px solid #2a3852;border-radius:9px;padding:3px;margin-bottom:14px}
+.seg b{flex:1;text-align:center;font-size:12px;font-weight:800;color:#9fb3d6;padding:8px;border-radius:7px}
+.seg b.on{background:#1f6bff;color:#fff}
+.lrow{display:flex;align-items:center;gap:8px;margin-bottom:15px}
+.sel{flex:1;background:#16223a;border:1px solid #2a3852;border-radius:9px;padding:10px;font-size:13px;font-weight:700;color:#fff}
+.swp{color:#9fb3d6;font-weight:800}
+.mic{display:flex;align-items:center;gap:9px;font-size:13px;color:#cdd9f2;margin-bottom:16px;font-weight:600}
+.mic i{width:16px;height:16px;border:2px solid #1f6bff;background:#1f6bff;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-size:11px}
+.start{background:#16a34a;border-radius:10px;padding:13px;text-align:center;font-size:14px;font-weight:800;color:#fff}
+.gbtn{margin-top:13px;background:#16223a;border:1px solid #2a3852;border-radius:9px;padding:11px;text-align:center;font-size:12.5px;font-weight:700;color:#cdd9f2}
+</style></head><body>
+<div class="stage">
+  <div class="left">
+    <h1>Bật phụ đề chỉ với một cú nhấp</h1>
+    <p>Chọn chế độ, chọn ngôn ngữ, bấm Bắt đầu — phụ đề hiện ngay trên trang.</p>
+    <div class="feat">
+      <div><span>🔁</span> 1 chiều hoặc song ngữ (KO ⇄ VI, EN…)</div>
+      <div><span>🎤</span> Tùy chọn thêm micro để dịch cả 2 phía</div>
+      <div><span>👥</span> Tự tách người nói (Speaker 1, 2, 3…)</div>
+      <div><span>🔒</span> Chỉ thu khi bạn bấm Bắt đầu</div>
+    </div>
+  </div>
+  <div class="popup">
+    <h2>🎧 Live Translate</h2>
+    <div class="lbl">Chế độ dịch</div>
+    <div class="seg"><b>→ 1 chiều</b><b class="on">⇄ Song ngữ</b></div>
+    <div class="lbl">Cặp ngôn ngữ</div>
+    <div class="lrow"><div class="sel">🇰🇷 한국어</div><span class="swp">⇄</span><div class="sel">🇻🇳 Tiếng Việt</div></div>
+    <div class="mic"><i>✓</i> 🎤 Bao gồm mic của tôi</div>
+    <div class="start">▶ Bắt đầu</div>
+    <div class="gbtn">Đăng nhập với Google</div>
+  </div>
+</div>
+</body></html>
