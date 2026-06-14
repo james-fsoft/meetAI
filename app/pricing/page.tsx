@@ -26,6 +26,9 @@ type Dict = {
   trust: string[];
   refTitle: string; refSub: string; refCta: string; refCopied: string;
   refReward: string; refShareText: string; refCopyBtn: string; refShareMore: string; refYourLink: string;
+  refBadge: string; refH1: string; refH2: string; refSubhead: string;
+  refYouEarn: string; refFriendEarns: string; refMinutes: string;
+  refShareTitle: string; refBottom: string; refStart: string; refLater: string;
   plans: Record<string, PlanText>;
   faq: { q: string; a: string }[];
 };
@@ -65,7 +68,13 @@ const T: Record<Lang, Dict> = {
     refSub: "Share your link. Every friend who signs up gives you both 120 free minutes (2 hours). No limit — invite 10 friends = 20 free hours.",
     refCta: "🎁 Invite & earn free hours", refCopied: "Copied!",
     refReward: "You both get 120 minutes (2 hours) free", refShareText: "I'm using Flash Meet for live meeting & video translation — grab 2 free hours here:",
-    refCopyBtn: "Copy", refShareMore: "More…", refYourLink: "Your invite link",
+    refCopyBtn: "Copy Link", refShareMore: "More…", refYourLink: "Your referral link",
+    refBadge: "🎁 Referral Program", refH1: "Invite Friends.", refH2: "Earn More AI Minutes.",
+    refSubhead: "Share Flash Meet with your network. Both of you receive 120 free AI minutes.",
+    refYouEarn: "You Earn", refFriendEarns: "Friend Earns", refMinutes: "+120 Minutes",
+    refShareTitle: "Share Instantly",
+    refBottom: "Every successful signup gives both users +120 free AI minutes. Unlimited referrals — the more you share, the more you earn.",
+    refStart: "Start Sharing", refLater: "Maybe Later",
     plans: {
       free: { name: "Free", tagline: "Free to try", cta: "Get started", priceMonthly: "$0",
         features: ["30 translation min / month", "1 target language", "Basic summary", "7-day history"] },
@@ -97,7 +106,13 @@ const T: Record<Lang, Dict> = {
     refSub: "Chia sẻ link của bạn. Mỗi người bạn đăng ký → cả hai +120 phút (2 giờ) miễn phí. Không giới hạn — mời 10 bạn = 20 giờ miễn phí.",
     refCta: "🎁 Mời bạn & nhận giờ miễn phí", refCopied: "Đã sao chép!",
     refReward: "Cả hai cùng nhận 120 phút (2 giờ) miễn phí", refShareText: "Mình đang dùng Flash Meet để dịch họp & video trực tiếp — vào link nhận 2 giờ miễn phí nhé:",
-    refCopyBtn: "Sao chép", refShareMore: "Khác…", refYourLink: "Link mời của bạn",
+    refCopyBtn: "Sao chép link", refShareMore: "Khác…", refYourLink: "Link giới thiệu của bạn",
+    refBadge: "🎁 Chương trình giới thiệu", refH1: "Mời bạn bè.", refH2: "Nhận thêm phút AI.",
+    refSubhead: "Chia sẻ Flash Meet với bạn bè & đồng nghiệp. Cả hai cùng nhận 120 phút AI miễn phí.",
+    refYouEarn: "Bạn nhận", refFriendEarns: "Bạn bè nhận", refMinutes: "+120 phút",
+    refShareTitle: "Chia sẻ ngay",
+    refBottom: "Mỗi lượt đăng ký thành công đều cộng +120 phút AI miễn phí cho cả hai. Không giới hạn — chia sẻ càng nhiều, nhận càng nhiều.",
+    refStart: "Bắt đầu chia sẻ", refLater: "Để sau",
     plans: {
       free: { name: "Free", tagline: "Dùng thử miễn phí", cta: "Bắt đầu", priceMonthly: "0đ",
         features: ["30 phút dịch / tháng", "1 ngôn ngữ đích", "Tóm tắt cơ bản", "Lịch sử 7 ngày"] },
@@ -129,7 +144,13 @@ const T: Record<Lang, Dict> = {
     refSub: "링크를 공유하세요. 친구가 가입할 때마다 둘 다 120분(2시간) 무료. 제한 없음 — 10명 초대 = 20시간 무료.",
     refCta: "🎁 초대하고 무료 시간 받기", refCopied: "복사됨!",
     refReward: "둘 다 120분(2시간) 무료 제공", refShareText: "Flash Meet으로 회의·영상을 실시간 번역하고 있어요. 이 링크로 2시간 무료 받으세요:",
-    refCopyBtn: "복사", refShareMore: "더보기…", refYourLink: "내 초대 링크",
+    refCopyBtn: "링크 복사", refShareMore: "더보기…", refYourLink: "내 추천 링크",
+    refBadge: "🎁 추천 프로그램", refH1: "친구를 초대하세요.", refH2: "더 많은 AI 분을 받으세요.",
+    refSubhead: "Flash Meet을 동료와 공유하세요. 둘 다 120분 무료 AI 시간을 받습니다.",
+    refYouEarn: "내 보상", refFriendEarns: "친구 보상", refMinutes: "+120분",
+    refShareTitle: "바로 공유",
+    refBottom: "가입이 완료될 때마다 두 사람 모두 +120분 무료 AI 시간을 받습니다. 제한 없음 — 많이 공유할수록 많이 받습니다.",
+    refStart: "공유 시작", refLater: "나중에",
     plans: {
       free: { name: "Free", tagline: "무료 체험", cta: "시작하기", priceMonthly: "₩0",
         features: ["월 30분 번역", "대상 언어 1개", "기본 요약", "7일 기록"] },
@@ -154,6 +175,47 @@ const T: Record<Lang, Dict> = {
 
 type QrInfo = { id: string; amount: number; content: string; confirmHours: number;
   bank: { name: string; account: string; holder: string }; qrUrl: string };
+
+// Premium referral modal styles (Stripe/Linear-inspired). Class-based so :hover
+// and keyframe entrance work (inline styles can't). CSS animation stands in for
+// Framer Motion: opacity 0→1, scale .95→1, 0.25s.
+const REF_CSS = `
+@keyframes refFade{from{opacity:0}to{opacity:1}}
+@keyframes refIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes refPulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+.ref-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(5px);display:grid;place-items:center;padding:18px;z-index:60;animation:refFade .2s ease}
+.ref-modal{position:relative;width:100%;max-width:560px;background:#fff;border-radius:24px;padding:32px;box-shadow:0 20px 60px rgba(15,23,42,.12);font-family:'Inter',system-ui,-apple-system,sans-serif;max-height:94vh;overflow-y:auto;animation:refIn .25s cubic-bezier(.16,1,.3,1)}
+.ref-x{position:absolute;top:20px;right:20px;width:32px;height:32px;border:none;background:#f1f5f9;border-radius:9px;color:#64748b;cursor:pointer;display:grid;place-items:center;transition:.15s}
+.ref-x:hover{background:#e2e8f0;color:#0f172a}
+.ref-badge{display:inline-block;background:#2563eb;color:#fff;font-size:12px;font-weight:600;letter-spacing:.01em;padding:6px 13px;border-radius:20px}
+.ref-h{font-size:32px;font-weight:700;line-height:1.15;letter-spacing:-.02em;color:#0f172a;margin:18px 0 0}
+.ref-sub{font-size:15px;line-height:1.6;color:#64748b;margin:12px 0 0;font-weight:450}
+.ref-reward{display:flex;align-items:stretch;background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:18px 22px;margin:22px 0 0}
+.ref-rcol{flex:1;text-align:center}
+.ref-rlabel{font-size:12.5px;font-weight:600;color:#64748b;margin-bottom:5px}
+.ref-rval{font-size:21px;font-weight:700;color:#2563eb;letter-spacing:-.01em}
+.ref-rdiv{width:1px;background:#e2e8f0;margin:2px 18px}
+.ref-linklabel{font-size:12.5px;font-weight:600;color:#475569;margin:24px 0 8px}
+.ref-linkrow{display:flex;gap:10px}
+.ref-input{flex:1;min-width:0;height:56px;border:1px solid #cbd5e1;border-radius:14px;background:#f8fafc;padding:0 16px;font-family:inherit;font-size:14px;color:#334155;outline:none;transition:.15s}
+.ref-input:focus{border-color:#93b4f5;background:#fff}
+.ref-copy{height:56px;border:none;border-radius:14px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-family:inherit;font-size:14px;font-weight:700;padding:0 22px;cursor:pointer;white-space:nowrap;transition:.18s;box-shadow:0 4px 14px rgba(37,99,235,.28)}
+.ref-copy:hover{box-shadow:0 8px 24px rgba(37,99,235,.45)}
+.ref-copy.ok{animation:refPulse .3s ease}
+.ref-sharetitle{font-size:12.5px;font-weight:600;color:#475569;margin:24px 0 10px}
+.ref-shares{display:flex;gap:10px}
+.ref-ic{flex:1;height:50px;border:1px solid #e2e8f0;border-radius:12px;background:#fff;color:#475569;cursor:pointer;display:grid;place-items:center;transition:.16s}
+.ref-ic:hover{border-color:#2563eb;color:#2563eb;background:#f8faff;transform:translateY(-1px)}
+.ref-ic svg{width:19px;height:19px;fill:currentColor;display:block}
+.ref-divider{height:1px;background:#eef2f7;margin:26px 0 0}
+.ref-bottom{font-size:13px;line-height:1.6;color:#64748b;margin:18px 0 0;text-align:center}
+.ref-cta{display:flex;align-items:center;gap:12px;margin:22px 0 0}
+.ref-later{border:none;background:none;color:#64748b;font-family:inherit;font-size:14px;font-weight:600;padding:13px 18px;border-radius:12px;cursor:pointer;transition:.15s}
+.ref-later:hover{background:#f1f5f9;color:#0f172a}
+.ref-start{flex:1;border:none;border-radius:14px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-family:inherit;font-size:15px;font-weight:700;padding:15px;cursor:pointer;box-shadow:0 6px 18px rgba(37,99,235,.3);transition:.18s}
+.ref-start:hover{box-shadow:0 12px 30px rgba(37,99,235,.45);transform:translateY(-1px)}
+@media(max-width:560px){.ref-modal{padding:24px}.ref-h{font-size:26px}}
+`;
 
 export default function Pricing() {
   const [busy, setBusy] = useState("");
@@ -214,6 +276,7 @@ export default function Pricing() {
     const e = encodeURIComponent, link = invite.link, text = t.refShareText;
     const urls: Record<string, string> = {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${e(link)}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${e(link)}`,
       x: `https://twitter.com/intent/tweet?text=${e(text)}&url=${e(link)}`,
       telegram: `https://t.me/share/url?url=${e(link)}&text=${e(text)}`,
       whatsapp: `https://wa.me/?text=${e(text + " " + link)}`,
@@ -340,28 +403,48 @@ export default function Pricing() {
       </section>
 
       {invite && (
-        <div style={S.modalWrap} onClick={() => setInvite(null)}>
-          <div style={S.modal} onClick={(e) => e.stopPropagation()}>
-            <button style={S.modalX} onClick={() => setInvite(null)}>×</button>
-            <div style={S.invGift}>🎁</div>
-            <div style={S.modalTitle}>{t.refTitle}</div>
-            <div style={S.invReward}>{t.refReward}</div>
-            <div style={S.invLinkLabel}>{t.refYourLink}</div>
-            <div style={S.invLinkRow}>
-              <input readOnly value={invite.link} style={S.invInput} onFocus={(e) => e.currentTarget.select()} />
-              <button style={{ ...S.invCopy, ...(copied ? S.invCopyOk : {}) }} onClick={copyInvite}>{copied ? t.refCopied : t.refCopyBtn}</button>
+        <>
+          <style>{REF_CSS}</style>
+          <div className="ref-overlay" onClick={() => setInvite(null)}>
+            <div className="ref-modal" onClick={(e) => e.stopPropagation()}>
+              <button className="ref-x" onClick={() => setInvite(null)} aria-label="Close">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+              </button>
+              <span className="ref-badge">{t.refBadge}</span>
+              <h2 className="ref-h">{t.refH1}<br />{t.refH2}</h2>
+              <p className="ref-sub">{t.refSubhead}</p>
+
+              <div className="ref-reward">
+                <div className="ref-rcol"><div className="ref-rlabel">{t.refYouEarn}</div><div className="ref-rval">{t.refMinutes}</div></div>
+                <div className="ref-rdiv" />
+                <div className="ref-rcol"><div className="ref-rlabel">{t.refFriendEarns}</div><div className="ref-rval">{t.refMinutes}</div></div>
+              </div>
+
+              <div className="ref-linklabel">{t.refYourLink}</div>
+              <div className="ref-linkrow">
+                <input className="ref-input" readOnly value={invite.link} onFocus={(e) => e.currentTarget.select()} />
+                <button className={"ref-copy" + (copied ? " ok" : "")} onClick={copyInvite}>{copied ? "✓ " + t.refCopied : t.refCopyBtn}</button>
+              </div>
+
+              <div className="ref-sharetitle">{t.refShareTitle}</div>
+              <div className="ref-shares">
+                <button className="ref-ic" title="Facebook" onClick={() => shareTo("facebook")}><svg viewBox="0 0 24 24"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z" /></svg></button>
+                <button className="ref-ic" title="LinkedIn" onClick={() => shareTo("linkedin")}><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" /></svg></button>
+                <button className="ref-ic" title="X" onClick={() => shareTo("x")}><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg></button>
+                <button className="ref-ic" title="Telegram" onClick={() => shareTo("telegram")}><svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" /></svg></button>
+                <button className="ref-ic" title="WhatsApp" onClick={() => shareTo("whatsapp")}><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" /></svg></button>
+                <button className="ref-ic" title="Email" onClick={() => shareTo("email")}><svg viewBox="0 0 24 24"><path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z" /></svg></button>
+              </div>
+
+              <div className="ref-divider" />
+              <p className="ref-bottom">{t.refBottom}</p>
+              <div className="ref-cta">
+                <button className="ref-later" onClick={() => setInvite(null)}>{t.refLater}</button>
+                <button className="ref-start" onClick={shareNative}>{t.refStart}</button>
+              </div>
             </div>
-            <div style={S.shareGrid}>
-              <button style={{ ...S.shareBtn, background: "#1877f2" }} onClick={() => shareTo("facebook")}>Facebook</button>
-              <button style={{ ...S.shareBtn, background: "#0a0a0a" }} onClick={() => shareTo("x")}>X</button>
-              <button style={{ ...S.shareBtn, background: "#229ed9" }} onClick={() => shareTo("telegram")}>Telegram</button>
-              <button style={{ ...S.shareBtn, background: "#25d366" }} onClick={() => shareTo("whatsapp")}>WhatsApp</button>
-              <button style={{ ...S.shareBtn, background: "#6b7690" }} onClick={() => shareTo("email")}>Email</button>
-              <button style={{ ...S.shareBtn, background: "#1f6bff" }} onClick={shareNative}>{t.refShareMore}</button>
-            </div>
-            <p style={S.invNote}>{t.refSub}</p>
           </div>
-        </div>
+        </>
       )}
 
       {qr && (
