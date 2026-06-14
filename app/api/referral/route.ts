@@ -6,7 +6,7 @@ import { userFromBearer } from "@/lib/auth-token";
 
 export const dynamic = "force-dynamic";
 
-const BONUS = 60; // minutes credited to each side
+const BONUS = 120; // minutes (2 hours) credited to each side per successful referral
 
 async function getUser(req: NextRequest): Promise<{ id: string } | null> {
   const u = await userFromBearer(req);

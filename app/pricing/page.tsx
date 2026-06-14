@@ -25,6 +25,7 @@ type Dict = {
   usageTitle: string; reassure: string;
   trust: string[];
   refTitle: string; refSub: string; refCta: string; refCopied: string;
+  refReward: string; refShareText: string; refCopyBtn: string; refShareMore: string; refYourLink: string;
   plans: Record<string, PlanText>;
   faq: { q: string; a: string }[];
 };
@@ -60,9 +61,11 @@ const T: Record<Lang, Dict> = {
     billedYear: (x) => `Billed ${x} / year`, busy: "Opening…", promo: "🎉 Launch offer — save 33%, limited time",
     usageTitle: "Comfortably covers", reassure: "💡 Quota resets every month · most users use only ~40% — you'll have plenty of room.",
     trust: ["✓ Cancel anytime", "✓ No hidden fees", "✓ Private — we don't sell data"],
-    refTitle: "Invite friends — you both get 60 minutes",
-    refSub: "Share your referral link. When a friend signs up, you both get 60 free translation minutes. No limit on invites.",
-    refCta: "Get invite link →", refCopied: "Invite link copied to clipboard:",
+    refTitle: "Invite friends — you both get 2 hours free",
+    refSub: "Share your link. Every friend who signs up gives you both 120 free minutes (2 hours). No limit — invite 10 friends = 20 free hours.",
+    refCta: "🎁 Invite & earn free hours", refCopied: "Copied!",
+    refReward: "You both get 120 minutes (2 hours) free", refShareText: "I'm using Flash Meet for live meeting & video translation — grab 2 free hours here:",
+    refCopyBtn: "Copy", refShareMore: "More…", refYourLink: "Your invite link",
     plans: {
       free: { name: "Free", tagline: "Free to try", cta: "Get started", priceMonthly: "$0",
         features: ["30 translation min / month", "1 target language", "Basic summary", "7-day history"] },
@@ -90,9 +93,11 @@ const T: Record<Lang, Dict> = {
     billedYear: (x) => `Thanh toán ${x} / năm`, busy: "Đang mở…", promo: "🎉 Ưu đãi ra mắt — giảm 33%, có hạn",
     usageTitle: "Đủ dùng thoải mái cho", reassure: "💡 Hạn mức làm mới mỗi tháng · đa số người dùng chỉ dùng ~40% — bạn sẽ rất thoải mái.",
     trust: ["✓ Huỷ bất cứ lúc nào", "✓ Không phí ẩn", "✓ Bảo mật — không bán dữ liệu"],
-    refTitle: "Mời bạn bè — cả hai cùng được tặng 60 phút",
-    refSub: "Chia sẻ link giới thiệu của bạn. Khi bạn bè đăng ký, cả hai nhận thêm 60 phút dịch miễn phí. Không giới hạn số lượt mời.",
-    refCta: "Lấy link mời →", refCopied: "Đã sao chép link mời:",
+    refTitle: "Mời bạn bè — cả hai cùng được tặng 2 giờ miễn phí",
+    refSub: "Chia sẻ link của bạn. Mỗi người bạn đăng ký → cả hai +120 phút (2 giờ) miễn phí. Không giới hạn — mời 10 bạn = 20 giờ miễn phí.",
+    refCta: "🎁 Mời bạn & nhận giờ miễn phí", refCopied: "Đã sao chép!",
+    refReward: "Cả hai cùng nhận 120 phút (2 giờ) miễn phí", refShareText: "Mình đang dùng Flash Meet để dịch họp & video trực tiếp — vào link nhận 2 giờ miễn phí nhé:",
+    refCopyBtn: "Sao chép", refShareMore: "Khác…", refYourLink: "Link mời của bạn",
     plans: {
       free: { name: "Free", tagline: "Dùng thử miễn phí", cta: "Bắt đầu", priceMonthly: "0đ",
         features: ["30 phút dịch / tháng", "1 ngôn ngữ đích", "Tóm tắt cơ bản", "Lịch sử 7 ngày"] },
@@ -120,9 +125,11 @@ const T: Record<Lang, Dict> = {
     billedYear: (x) => `연 ${x} 청구`, busy: "여는 중…", promo: "🎉 출시 기념 — 33% 할인, 기간 한정",
     usageTitle: "여유롭게 사용 가능", reassure: "💡 한도는 매월 초기화 · 대부분 ~40%만 사용 — 충분히 여유롭습니다.",
     trust: ["✓ 언제든 해지", "✓ 숨은 비용 없음", "✓ 데이터 미판매"],
-    refTitle: "친구 초대 — 둘 다 60분 추가",
-    refSub: "추천 링크를 공유하세요. 친구가 가입하면 둘 다 60분 무료 번역을 받습니다. 초대 횟수 제한 없음.",
-    refCta: "초대 링크 받기 →", refCopied: "초대 링크가 복사되었습니다:",
+    refTitle: "친구 초대 — 둘 다 2시간 무료",
+    refSub: "링크를 공유하세요. 친구가 가입할 때마다 둘 다 120분(2시간) 무료. 제한 없음 — 10명 초대 = 20시간 무료.",
+    refCta: "🎁 초대하고 무료 시간 받기", refCopied: "복사됨!",
+    refReward: "둘 다 120분(2시간) 무료 제공", refShareText: "Flash Meet으로 회의·영상을 실시간 번역하고 있어요. 이 링크로 2시간 무료 받으세요:",
+    refCopyBtn: "복사", refShareMore: "더보기…", refYourLink: "내 초대 링크",
     plans: {
       free: { name: "Free", tagline: "무료 체험", cta: "시작하기", priceMonthly: "₩0",
         features: ["월 30분 번역", "대상 언어 1개", "기본 요약", "7일 기록"] },
@@ -158,6 +165,8 @@ export default function Pricing() {
   const [qr, setQr] = useState<QrInfo | null>(null);
   const [qrBusy, setQrBusy] = useState(false);
   const [qrDone, setQrDone] = useState(false);
+  const [invite, setInvite] = useState<{ link: string; bonus: number } | null>(null);
+  const [copied, setCopied] = useState(false);
   const fmtVnd = (n: number) => n.toLocaleString("vi-VN") + "đ";
 
   async function payVietQR(planId: string) {
@@ -193,11 +202,28 @@ export default function Pricing() {
       const r = await fetch("/api/referral");
       if (r.status === 401) { location.href = "/login"; return; }
       const d = await r.json();
-      if (d.link) {
-        await navigator.clipboard?.writeText(d.link).catch(() => {});
-        alert(`${t.refCopied}\n${d.link}`);
-      }
+      if (d.link) { setCopied(false); setInvite({ link: d.link, bonus: d.bonus || 120 }); }
     } catch { /* ignore */ }
+  }
+  function copyInvite() {
+    if (!invite) return;
+    navigator.clipboard?.writeText(invite.link).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1800); }).catch(() => {});
+  }
+  function shareTo(net: string) {
+    if (!invite) return;
+    const e = encodeURIComponent, link = invite.link, text = t.refShareText;
+    const urls: Record<string, string> = {
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${e(link)}`,
+      x: `https://twitter.com/intent/tweet?text=${e(text)}&url=${e(link)}`,
+      telegram: `https://t.me/share/url?url=${e(link)}&text=${e(text)}`,
+      whatsapp: `https://wa.me/?text=${e(text + " " + link)}`,
+      email: `mailto:?subject=${e("Flash Meet")}&body=${e(text + "\n" + link)}`,
+    };
+    if (urls[net]) window.open(urls[net], "_blank", "noopener,noreferrer");
+  }
+  async function shareNative() {
+    if (!invite) return;
+    try { if ((navigator as any).share) await (navigator as any).share({ title: "Flash Meet", text: t.refShareText, url: invite.link }); else copyInvite(); } catch { /* cancelled */ }
   }
 
   async function choose(p: PlanBase) {
@@ -312,6 +338,31 @@ export default function Pricing() {
           </div>
         ))}
       </section>
+
+      {invite && (
+        <div style={S.modalWrap} onClick={() => setInvite(null)}>
+          <div style={S.modal} onClick={(e) => e.stopPropagation()}>
+            <button style={S.modalX} onClick={() => setInvite(null)}>×</button>
+            <div style={S.invGift}>🎁</div>
+            <div style={S.modalTitle}>{t.refTitle}</div>
+            <div style={S.invReward}>{t.refReward}</div>
+            <div style={S.invLinkLabel}>{t.refYourLink}</div>
+            <div style={S.invLinkRow}>
+              <input readOnly value={invite.link} style={S.invInput} onFocus={(e) => e.currentTarget.select()} />
+              <button style={{ ...S.invCopy, ...(copied ? S.invCopyOk : {}) }} onClick={copyInvite}>{copied ? t.refCopied : t.refCopyBtn}</button>
+            </div>
+            <div style={S.shareGrid}>
+              <button style={{ ...S.shareBtn, background: "#1877f2" }} onClick={() => shareTo("facebook")}>Facebook</button>
+              <button style={{ ...S.shareBtn, background: "#0a0a0a" }} onClick={() => shareTo("x")}>X</button>
+              <button style={{ ...S.shareBtn, background: "#229ed9" }} onClick={() => shareTo("telegram")}>Telegram</button>
+              <button style={{ ...S.shareBtn, background: "#25d366" }} onClick={() => shareTo("whatsapp")}>WhatsApp</button>
+              <button style={{ ...S.shareBtn, background: "#6b7690" }} onClick={() => shareTo("email")}>Email</button>
+              <button style={{ ...S.shareBtn, background: "#1f6bff" }} onClick={shareNative}>{t.refShareMore}</button>
+            </div>
+            <p style={S.invNote}>{t.refSub}</p>
+          </div>
+        </div>
+      )}
 
       {qr && (
         <div style={S.modalWrap} onClick={() => setQr(null)}>
@@ -455,4 +506,19 @@ const S: Record<string, React.CSSProperties> = {
   modalCta: { width: "100%", border: "none", background: "linear-gradient(135deg,#3b82f6,#1f4fff)", color: "#fff",
     cursor: "pointer", fontFamily: FONT, fontSize: 14.5, fontWeight: 800, padding: "13px", borderRadius: 12,
     boxShadow: "0 12px 26px -10px rgba(31,79,255,.6)" },
+  // referral modal
+  invGift: { fontSize: 40, textAlign: "center", marginBottom: 4 },
+  invReward: { textAlign: "center", fontSize: 13.5, fontWeight: 800, color: "#16a34a", background: "#e7f8ee",
+    border: "1px solid #bcebcd", borderRadius: 30, padding: "8px 14px", margin: "10px auto 18px", width: "fit-content" },
+  invLinkLabel: { fontSize: 12, fontWeight: 700, color: "#7b88a3", marginBottom: 7 },
+  invLinkRow: { display: "flex", gap: 8, marginBottom: 16 },
+  invInput: { flex: 1, minWidth: 0, border: "1px solid #e3e8f2", borderRadius: 10, padding: "11px 12px",
+    fontFamily: FONT, fontSize: 13, color: "#33405c", background: "#f7faff", outline: "none" },
+  invCopy: { border: "none", background: "#1f6bff", color: "#fff", cursor: "pointer", fontFamily: FONT,
+    fontSize: 13, fontWeight: 800, padding: "0 16px", borderRadius: 10, whiteSpace: "nowrap" },
+  invCopyOk: { background: "#16a34a" },
+  shareGrid: { display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 },
+  shareBtn: { border: "none", color: "#fff", cursor: "pointer", fontFamily: FONT, fontSize: 12.5, fontWeight: 800,
+    padding: "10px 6px", borderRadius: 10 },
+  invNote: { fontSize: 12, color: "#7b88a3", lineHeight: 1.55, marginTop: 16, textAlign: "center" },
 };
