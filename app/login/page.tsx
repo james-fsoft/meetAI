@@ -52,7 +52,12 @@ export default function Login() {
     <main style={S.wrap}>
       <div style={S.top}><LangSwitch lang={lang} onChange={setLang} /></div>
       <div style={S.card}>
-        <div style={S.logo}>🎙️</div>
+        <div style={S.logo}>
+          <svg width="54" height="54" viewBox="0 0 100 100" aria-hidden="true" style={{ display: "block" }}>
+            <path d="M22 8 H78 a16 16 0 0 1 16 16 V60 a16 16 0 0 1 -16 16 H50 l-20 18 v-18 H22 a16 16 0 0 1 -16 -16 V24 A16 16 0 0 1 22 8 Z" fill="#1f6bff"/>
+            <g fill="#fff"><rect x="26" y="38" width="7.5" height="12" rx="3.75"/><rect x="39" y="29" width="7.5" height="30" rx="3.75"/><rect x="52" y="22" width="7.5" height="44" rx="3.75"/><rect x="65" y="32" width="7.5" height="24" rx="3.75"/></g>
+          </svg>
+        </div>
         <h1 style={S.h1}>Flash Meet</h1>
         <p style={S.sub}>{t.sub}</p>
 
@@ -87,7 +92,7 @@ const S: Record<string, React.CSSProperties> = {
   top: { position: "absolute", top: 18, right: 18 },
   card: { width: "100%", maxWidth: 400, background: "#fff", border: "1px solid #e3e8f2", borderRadius: 22,
     padding: "40px 32px", textAlign: "center", boxShadow: "0 30px 60px -34px rgba(10,17,36,.45)" },
-  logo: { fontSize: 40, marginBottom: 10 },
+  logo: { display: "flex", justifyContent: "center", marginBottom: 14 },
   h1: { fontSize: 26, fontWeight: 900, letterSpacing: "-.04em", color: "#0a1124", marginBottom: 8 },
   sub: { fontSize: 14, color: "#5b6b8c", lineHeight: 1.55, marginBottom: 28 },
   gbtn: { width: "100%", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 11,
