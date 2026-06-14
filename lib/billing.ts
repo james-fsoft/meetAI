@@ -1,8 +1,8 @@
 // VND prices + Vietnamese bank-transfer (VietQR) configuration.
 
 export const VND_PRICES: Record<string, { monthly: number; annual: number }> = {
-  pro: { monthly: 199_000, annual: 1_910_000 },
-  business: { monthly: 599_000, annual: 5_750_000 },
+  pro: { monthly: 249_000, annual: 2_390_000 },
+  business: { monthly: 749_000, annual: 7_190_000 },
 };
 
 export function planAmount(plan: string, billing: string): number | null {

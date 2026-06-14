@@ -15,12 +15,13 @@ const PLANS: PlanBase[] = [
 
 type PlanText = {
   name: string; tagline: string; cta: string; tag?: string; features: string[];
-  priceMonthly?: string; priceAnnual?: string; annualTotal?: string;
+  priceMonthly?: string; origMonthly?: string;
+  priceAnnual?: string; origAnnual?: string; annualTotal?: string;
 };
 type Dict = {
   back: string; eyebrow: string; h1: string; sub: string;
   monthly: string; annual: string; period: string; contact: string;
-  billedYear: (x: string) => string; busy: string;
+  billedYear: (x: string) => string; busy: string; promo: string;
   trust: string[];
   refTitle: string; refSub: string; refCta: string;
   plans: Record<string, PlanText>;
@@ -32,7 +33,7 @@ const T: Record<Lang, Dict> = {
     back: "← Back to app", eyebrow: "PRICING", h1: "Transparent pricing, no hidden fees",
     sub: "Every plan includes real-time translation minutes and AI summaries. Cancel anytime.",
     monthly: "Monthly", annual: "Annual", period: "/ mo", contact: "Contact",
-    billedYear: (x) => `Billed ${x} / year`, busy: "Opening…",
+    billedYear: (x) => `Billed ${x} / year`, busy: "Opening…", promo: "🎉 Launch offer — save 33%, limited time",
     trust: ["✓ Cancel anytime", "✓ No hidden fees", "✓ Private — we don't sell data"],
     refTitle: "Invite friends — you both get 60 minutes",
     refSub: "Share your referral link. When a friend signs up, you both get 60 free translation minutes. No limit on invites.",
@@ -41,10 +42,10 @@ const T: Record<Lang, Dict> = {
       free: { name: "Free", tagline: "Free to try", cta: "Get started", priceMonthly: "$0",
         features: ["30 translation min / month", "1 target language", "Basic summary", "7-day history"] },
       pro: { name: "Pro", tagline: "For professionals", cta: "Upgrade to Pro", tag: "Most popular",
-        priceMonthly: "$7.99", priceAnnual: "$6.39", annualTotal: "$76.99",
+        priceMonthly: "$9.99", origMonthly: "$14.99", priceAnnual: "$7.99", origAnnual: "$11.99", annualTotal: "$95.99",
         features: ["600 translation min / month (~10 hrs)", "60+ languages & two-way mode", "Automatic speaker separation (Speaker 1, 2, 3…)", "Full AI summary + file download", "Unlimited history"] },
       business: { name: "Business", tagline: "For teams & businesses", cta: "Upgrade to Business",
-        priceMonthly: "$23.99", priceAnnual: "$19.19", annualTotal: "$229.99",
+        priceMonthly: "$29.99", origMonthly: "$44.99", priceAnnual: "$23.99", origAnnual: "$35.99", annualTotal: "$287.99",
         features: ["2,400 translation min / month (~40 hrs)", "Everything in Pro", "Call Center mode", "5 user accounts", "Custom glossary + priority support"] },
       enterprise: { name: "Enterprise", tagline: "Custom solution", cta: "Contact us",
         features: ["Custom translation minutes", "Multiple users + SSO", "Custom prompts & glossary", "Dedicated support + SLA"] },
@@ -60,7 +61,7 @@ const T: Record<Lang, Dict> = {
     back: "← Quay lại app", eyebrow: "BẢNG GIÁ", h1: "Giá minh bạch, không phí ẩn",
     sub: "Mọi gói đã gồm phút dịch real-time và tóm tắt AI. Huỷ bất cứ lúc nào.",
     monthly: "Theo tháng", annual: "Theo năm", period: "/ tháng", contact: "Liên hệ",
-    billedYear: (x) => `Thanh toán ${x} / năm`, busy: "Đang mở…",
+    billedYear: (x) => `Thanh toán ${x} / năm`, busy: "Đang mở…", promo: "🎉 Ưu đãi ra mắt — giảm 33%, có hạn",
     trust: ["✓ Huỷ bất cứ lúc nào", "✓ Không phí ẩn", "✓ Bảo mật — không bán dữ liệu"],
     refTitle: "Mời bạn bè — cả hai cùng được tặng 60 phút",
     refSub: "Chia sẻ link giới thiệu của bạn. Khi bạn bè đăng ký, cả hai nhận thêm 60 phút dịch miễn phí. Không giới hạn số lượt mời.",
@@ -69,10 +70,10 @@ const T: Record<Lang, Dict> = {
       free: { name: "Free", tagline: "Dùng thử miễn phí", cta: "Bắt đầu", priceMonthly: "0đ",
         features: ["30 phút dịch / tháng", "1 ngôn ngữ đích", "Tóm tắt cơ bản", "Lịch sử 7 ngày"] },
       pro: { name: "Pro", tagline: "Cho cá nhân chuyên nghiệp", cta: "Nâng cấp Pro", tag: "Phổ biến nhất",
-        priceMonthly: "199.000đ", priceAnnual: "159.000đ", annualTotal: "1.910.000đ",
+        priceMonthly: "249.000đ", origMonthly: "369.000đ", priceAnnual: "199.000đ", origAnnual: "295.000đ", annualTotal: "2.390.000đ",
         features: ["600 phút dịch / tháng (~10 giờ)", "Đa ngôn ngữ 60+ & chế độ song ngữ", "Tách giọng tự động (Speaker 1, 2, 3…)", "Tóm tắt AI đầy đủ + tải file", "Lịch sử không giới hạn"] },
       business: { name: "Business", tagline: "Cho đội nhóm & doanh nghiệp", cta: "Nâng cấp Business",
-        priceMonthly: "599.000đ", priceAnnual: "479.000đ", annualTotal: "5.750.000đ",
+        priceMonthly: "749.000đ", origMonthly: "1.099.000đ", priceAnnual: "599.000đ", origAnnual: "879.000đ", annualTotal: "7.190.000đ",
         features: ["2.400 phút dịch / tháng (~40 giờ)", "Toàn bộ tính năng Pro", "Call Center mode", "5 tài khoản người dùng", "Từ điển riêng + hỗ trợ ưu tiên"] },
       enterprise: { name: "Enterprise", tagline: "Giải pháp theo nhu cầu", cta: "Liên hệ",
         features: ["Phút dịch tuỳ chỉnh", "Nhiều người dùng + SSO", "Tuỳ chỉnh prompt & từ điển", "Dedicated support + SLA"] },
@@ -88,7 +89,7 @@ const T: Record<Lang, Dict> = {
     back: "← 앱으로", eyebrow: "요금제", h1: "투명한 가격, 숨은 비용 없음",
     sub: "모든 요금제에 실시간 번역 시간과 AI 요약이 포함됩니다. 언제든 해지 가능합니다.",
     monthly: "월간", annual: "연간", period: "/ 월", contact: "문의",
-    billedYear: (x) => `연 ${x} 청구`, busy: "여는 중…",
+    billedYear: (x) => `연 ${x} 청구`, busy: "여는 중…", promo: "🎉 출시 기념 — 33% 할인, 기간 한정",
     trust: ["✓ 언제든 해지", "✓ 숨은 비용 없음", "✓ 데이터 미판매"],
     refTitle: "친구 초대 — 둘 다 60분 추가",
     refSub: "추천 링크를 공유하세요. 친구가 가입하면 둘 다 60분 무료 번역을 받습니다. 초대 횟수 제한 없음.",
@@ -97,10 +98,10 @@ const T: Record<Lang, Dict> = {
       free: { name: "Free", tagline: "무료 체험", cta: "시작하기", priceMonthly: "₩0",
         features: ["월 30분 번역", "대상 언어 1개", "기본 요약", "7일 기록"] },
       pro: { name: "Pro", tagline: "전문가용", cta: "Pro 업그레이드", tag: "가장 인기",
-        priceMonthly: "₩9,900", priceAnnual: "₩7,900", annualTotal: "₩94,900",
+        priceMonthly: "₩12,900", origMonthly: "₩18,900", priceAnnual: "₩9,900", origAnnual: "₩15,900", annualTotal: "₩119,000",
         features: ["월 600분 번역 (~10시간)", "60개 이상 언어 & 양방향 모드", "자동 화자 분리 (Speaker 1, 2, 3…)", "전체 AI 요약 + 파일 다운로드", "무제한 기록"] },
       business: { name: "Business", tagline: "팀 & 기업용", cta: "Business 업그레이드",
-        priceMonthly: "₩29,900", priceAnnual: "₩23,900", annualTotal: "₩286,900",
+        priceMonthly: "₩38,900", origMonthly: "₩57,900", priceAnnual: "₩30,900", origAnnual: "₩45,900", annualTotal: "₩373,000",
         features: ["월 2,400분 번역 (~40시간)", "Pro의 모든 기능", "콜센터 모드", "사용자 계정 5개", "맞춤 사전 + 우선 지원"] },
       enterprise: { name: "Enterprise", tagline: "맞춤 솔루션", cta: "문의하기",
         features: ["맞춤 번역 시간", "다중 사용자 + SSO", "맞춤 프롬프트 & 사전", "전담 지원 + SLA"] },
@@ -186,6 +187,8 @@ export default function Pricing() {
         <p style={S.sub}>{t.sub}</p>
       </header>
 
+      <div style={S.promo}>{t.promo}</div>
+
       <div style={S.billRow}>
         <button onClick={() => setBilling("monthly")} style={{ ...S.billBtn, ...(billing === "monthly" ? S.billOn : {}) }}>{t.monthly}</button>
         <button onClick={() => setBilling("annual")} style={{ ...S.billBtn, ...(billing === "annual" ? S.billOn : {}) }}>
@@ -200,11 +203,13 @@ export default function Pricing() {
           const price = p.id === "enterprise"
             ? t.contact
             : (billing === "annual" && tx.priceAnnual ? tx.priceAnnual : tx.priceMonthly);
+          const orig = billing === "annual" ? tx.origAnnual : tx.origMonthly;
           return (
             <div key={p.id} style={{ ...S.card, ...(p.highlight ? S.cardHi : {}) }}>
               {tx.tag && <div style={S.tag}>{tx.tag}</div>}
               <div style={S.name}>{tx.name}</div>
               <div style={S.tagline}>{tx.tagline}</div>
+              {isPaid && orig && <div style={S.origRow}><span style={S.orig}>{orig}</span><span style={S.off}>-33%</span></div>}
               <div style={S.priceRow}>
                 <span style={S.price}>{price}</span>
                 {isPaid && <span style={S.period}>{t.period}</span>}
@@ -338,7 +343,13 @@ const S: Record<string, React.CSSProperties> = {
     letterSpacing: ".02em", padding: "5px 14px", borderRadius: 30, boxShadow: "0 8px 18px -6px rgba(31,79,255,.6)" },
   name: { fontSize: 19, fontWeight: 800, letterSpacing: "-.02em" },
   tagline: { fontSize: 12.5, color: "#7b88a3", marginTop: 4, minHeight: 32, lineHeight: 1.4, fontWeight: 500 },
-  priceRow: { display: "flex", alignItems: "baseline", gap: 5, margin: "8px 0 2px", flexWrap: "wrap" },
+  promo: { display: "block", margin: "0 auto 18px", textAlign: "center", width: "fit-content", maxWidth: "92%",
+    fontSize: 13, fontWeight: 800, color: "#b45309", background: "linear-gradient(135deg,#fff7ed,#fffbeb)",
+    border: "1px solid #fcd9a8", borderRadius: 30, padding: "8px 18px" },
+  origRow: { display: "flex", alignItems: "center", gap: 8, marginTop: 8 },
+  orig: { fontSize: 16, color: "#9aa6bd", fontWeight: 700, textDecoration: "line-through" },
+  off: { fontSize: 11, fontWeight: 800, color: "#16a34a", background: "#e7f8ee", borderRadius: 20, padding: "2px 8px" },
+  priceRow: { display: "flex", alignItems: "baseline", gap: 5, margin: "2px 0 2px", flexWrap: "wrap" },
   price: { fontSize: 32, fontWeight: 900, letterSpacing: "-.04em" },
   period: { fontSize: 13.5, color: "#9aa6bd", fontWeight: 600 },
   annualNote: { fontSize: 11.5, color: "#16a34a", fontWeight: 700, minHeight: 17, marginBottom: 14 },
