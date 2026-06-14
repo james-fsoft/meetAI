@@ -37,8 +37,15 @@ export async function GET(req: NextRequest) {
     }
     if (!code) return NextResponse.json({ error: "could not create code" }, { status: 500 });
   }
+  const { count } = await admin.from("profiles")
+    .select("id", { count: "exact", head: true }).eq("referred_by", user.id);
+  const invited = count || 0;
+
   const origin = new URL(req.url).origin;
-  return NextResponse.json({ code, link: `${origin}/?ref=${code}`, bonus: BONUS });
+  return NextResponse.json({
+    code, link: `${origin}/?ref=${code}`, bonus: BONUS,
+    stats: { invited, earned: invited * BONUS },
+  });
 }
 
 // POST /api/referral { code } → claim a referral (called once after a new user

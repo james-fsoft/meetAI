@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLang, type Lang } from "@/lib/use-lang";
 import LangSwitch from "../LangSwitch";
 
@@ -29,6 +29,8 @@ type Dict = {
   refBadge: string; refH1: string; refH2: string; refSubhead: string;
   refYouEarn: string; refFriendEarns: string; refMinutes: string;
   refShareTitle: string; refBottom: string; refStart: string; refLater: string;
+  refProgram: string; refBannerH: string; refBannerSub: string; refInviteTeam: string;
+  refUnlimited: string; refPerf: string; refInvited: string; refEarned: string; refUnitMin: string;
   plans: Record<string, PlanText>;
   faq: { q: string; a: string }[];
 };
@@ -75,6 +77,10 @@ const T: Record<Lang, Dict> = {
     refShareTitle: "Share Instantly",
     refBottom: "Every successful signup gives both users +120 free translation minutes. Unlimited referrals — the more you share, the more you earn.",
     refStart: "Start Sharing", refLater: "Maybe Later",
+    refProgram: "Referral Program", refBannerH: "Earn more translation minutes",
+    refBannerSub: "Invite colleagues and expand your workspace. For every successful signup, you and they each receive +120 minutes.",
+    refInviteTeam: "Invite Your Team", refUnlimited: "Unlimited referrals",
+    refPerf: "Your referral performance", refInvited: "Invited", refEarned: "Earned", refUnitMin: "minutes",
     plans: {
       free: { name: "Free", tagline: "Free to try", cta: "Get started", priceMonthly: "$0",
         features: ["30 translation min / month", "1 target language", "Basic summary", "7-day history"] },
@@ -113,6 +119,10 @@ const T: Record<Lang, Dict> = {
     refShareTitle: "Chia sẻ ngay",
     refBottom: "Mỗi lượt đăng ký thành công đều cộng +120 phút dịch miễn phí cho cả hai. Không giới hạn — chia sẻ càng nhiều, nhận càng nhiều.",
     refStart: "Bắt đầu chia sẻ", refLater: "Để sau",
+    refProgram: "Chương trình giới thiệu", refBannerH: "Nhận thêm phút dịch",
+    refBannerSub: "Mời đồng nghiệp & mở rộng không gian làm việc. Mỗi lượt đăng ký thành công, bạn và họ mỗi người nhận +120 phút.",
+    refInviteTeam: "Mời nhóm của bạn", refUnlimited: "Không giới hạn lượt mời",
+    refPerf: "Hiệu quả giới thiệu của bạn", refInvited: "Đã mời", refEarned: "Đã nhận", refUnitMin: "phút",
     plans: {
       free: { name: "Free", tagline: "Dùng thử miễn phí", cta: "Bắt đầu", priceMonthly: "0đ",
         features: ["30 phút dịch / tháng", "1 ngôn ngữ đích", "Tóm tắt cơ bản", "Lịch sử 7 ngày"] },
@@ -151,6 +161,10 @@ const T: Record<Lang, Dict> = {
     refShareTitle: "바로 공유",
     refBottom: "가입이 완료될 때마다 두 사람 모두 +120분 무료 번역 시간을 받습니다. 제한 없음 — 많이 공유할수록 많이 받습니다.",
     refStart: "공유 시작", refLater: "나중에",
+    refProgram: "추천 프로그램", refBannerH: "번역 시간을 더 받으세요",
+    refBannerSub: "동료를 초대하고 워크스페이스를 확장하세요. 가입이 완료될 때마다 본인과 친구 각각 +120분을 받습니다.",
+    refInviteTeam: "팀 초대하기", refUnlimited: "무제한 추천",
+    refPerf: "내 추천 실적", refInvited: "초대", refEarned: "획득", refUnitMin: "분",
     plans: {
       free: { name: "Free", tagline: "무료 체험", cta: "시작하기", priceMonthly: "₩0",
         features: ["월 30분 번역", "대상 언어 1개", "기본 요약", "7일 기록"] },
@@ -217,6 +231,36 @@ const REF_CSS = `
 @media(max-width:560px){.ref-modal{padding:24px}.ref-h{font-size:26px}}
 `;
 
+// Premium referral banner (Stripe/Linear/Notion-style enterprise card).
+const REFBANNER_CSS = `
+@keyframes refbIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.refb{max-width:1160px;margin:36px auto 0;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:28px;
+  box-shadow:0 1px 2px rgba(15,23,42,.04),0 10px 30px -22px rgba(15,23,42,.25);
+  display:flex;align-items:center;gap:30px;flex-wrap:wrap;font-family:'Inter',system-ui,sans-serif;animation:refbIn .3s ease}
+.refb-left{flex:1;min-width:280px}
+.refb-badge{display:inline-block;background:#eff6ff;color:#2563eb;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px}
+.refb-h{font-size:27px;font-weight:700;letter-spacing:-.02em;color:#0f172a;margin:14px 0 0;line-height:1.2}
+.refb-sub{font-size:14px;line-height:1.6;color:#64748b;margin:9px 0 0;max-width:480px;font-weight:450}
+.refb-metrics{display:flex;gap:14px}
+.refb-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:16px 24px;text-align:center;min-width:124px;transition:.18s}
+.refb-card:hover{transform:scale(1.02);box-shadow:0 12px 26px -18px rgba(15,23,42,.3);border-color:#cdd9ec}
+.refb-clabel{font-size:12px;font-weight:600;color:#64748b}
+.refb-cval{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin:3px 0 1px;
+  background:linear-gradient(135deg,#2563eb,#3b82f6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#2563eb}
+.refb-cunit{font-size:11px;font-weight:600;color:#94a3b8}
+.refb-right{display:flex;flex-direction:column;gap:8px;min-width:172px}
+.refb-cta{height:52px;border:none;border-radius:13px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;
+  font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(37,99,235,.28);transition:.18s}
+.refb-cta:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(37,99,235,.45)}
+.refb-mut{font-size:12.5px;color:#94a3b8;text-align:center;font-weight:500}
+.refb-stats{max-width:1160px;margin:14px auto 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:0 6px;
+  font-family:'Inter',system-ui,sans-serif;font-size:13px;color:#64748b;font-weight:500}
+.refb-perf{font-weight:700;color:#475569}
+.refb-stats b{color:#0f172a;font-weight:800}
+.refb-dot{color:#cbd5e1}
+@media(max-width:560px){.refb{padding:22px}.refb-h{font-size:23px}.refb-metrics{width:100%}.refb-card{flex:1}.refb-right{width:100%}}
+`;
+
 export default function Pricing() {
   const [busy, setBusy] = useState("");
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
@@ -229,7 +273,12 @@ export default function Pricing() {
   const [qrDone, setQrDone] = useState(false);
   const [invite, setInvite] = useState<{ link: string; bonus: number } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [refData, setRefData] = useState<{ link?: string; stats?: { invited: number; earned: number } } | null>(null);
   const fmtVnd = (n: number) => n.toLocaleString("vi-VN") + "đ";
+
+  useEffect(() => {
+    fetch("/api/referral").then((r) => (r.ok ? r.json() : null)).then((d) => { if (d) setRefData(d); }).catch(() => {});
+  }, []);
 
   async function payVietQR(planId: string) {
     setQrBusy(true);
@@ -384,14 +433,39 @@ export default function Pricing() {
         ))}
       </div>
 
-      <section style={S.refBox}>
-        <div style={S.refIcon}>🎁</div>
-        <div style={{ flex: 1 }}>
-          <div style={S.refTitle}>{t.refTitle}</div>
-          <div style={S.refSub}>{t.refSub}</div>
+      <style>{REFBANNER_CSS}</style>
+      <div className="refb">
+        <div className="refb-left">
+          <span className="refb-badge">{t.refProgram}</span>
+          <div className="refb-h">{t.refBannerH}</div>
+          <p className="refb-sub">{t.refBannerSub}</p>
         </div>
-        <button onClick={getInvite} style={S.refCta}>{t.refCta}</button>
-      </section>
+        <div className="refb-metrics">
+          <div className="refb-card">
+            <div className="refb-clabel">{t.refYouEarn}</div>
+            <div className="refb-cval">+120</div>
+            <div className="refb-cunit">{t.refUnitMin}</div>
+          </div>
+          <div className="refb-card">
+            <div className="refb-clabel">{t.refFriendEarns}</div>
+            <div className="refb-cval">+120</div>
+            <div className="refb-cunit">{t.refUnitMin}</div>
+          </div>
+        </div>
+        <div className="refb-right">
+          <button className="refb-cta" onClick={getInvite}>{t.refInviteTeam}</button>
+          <div className="refb-mut">{t.refUnlimited}</div>
+        </div>
+      </div>
+      {refData?.stats && (
+        <div className="refb-stats">
+          <span className="refb-perf">{t.refPerf}</span>
+          <span className="refb-dot">·</span>
+          <span>{t.refInvited}: <b>{refData.stats.invited}</b></span>
+          <span className="refb-dot">·</span>
+          <span>{t.refEarned}: <b>{refData.stats.earned.toLocaleString()} {t.refUnitMin}</b></span>
+        </div>
+      )}
 
       <section style={S.faqWrap}>
         {t.faq.map((f) => (
