@@ -9,7 +9,7 @@ type Profile = {
 };
 const PLANS = ["free", "pro", "business", "enterprise"];
 const LIM: Record<string, { day: number | null; month: number | null }> = {
-  free: { day: 10, month: 30 }, pro: { day: null, month: 600 }, business: { day: null, month: 2400 }, enterprise: { day: null, month: null },
+  free: { day: 10, month: 30 }, pro: { day: null, month: 1000 }, business: { day: null, month: 5000 }, enterprise: { day: null, month: null },
 };
 
 export default function AdminTable({ profiles, me }: { profiles: Profile[]; me: string }) {

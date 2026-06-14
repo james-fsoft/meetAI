@@ -1,8 +1,8 @@
 // Monthly / daily minute limits per plan. null = unlimited.
 export const LIMITS: Record<string, { day: number | null; month: number | null }> = {
   free: { day: 10, month: 30 },
-  pro: { day: null, month: 600 },
-  business: { day: null, month: 2400 },
+  pro: { day: null, month: 1000 },
+  business: { day: null, month: 5000 },
   enterprise: { day: null, month: null },
 };
 
