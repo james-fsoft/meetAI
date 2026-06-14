@@ -55,17 +55,26 @@
     else micWarnEl.style.display = "none";
   }
   // m = "live" | "paused" | "stopped"
+  // The header close button only appears while PAUSED (to abort a session). Once
+  // stopped + summarized, closing happens from the summary panel footer instead —
+  // keeping it away from the download buttons so it isn't tapped by accident.
   function setMode(m) {
     btnPause.style.display = m === "live" ? "" : "none";
     btnResume.style.display = m === "paused" ? "" : "none";
     btnSum.style.display = m === "stopped" ? "none" : "";
-    btnClose.style.display = m === "stopped" || m === "paused" ? "" : "none";
+    btnClose.style.display = m === "paused" ? "" : "none";
     if (m !== "stopped") btnSum.textContent = "⏹ Tóm tắt";
+  }
+  // ended = the session is already finished (summary shown) — just hide the overlay.
+  function doClose(ended) {
+    if (!confirm("Đóng phụ đề?\nHãy tải Tóm tắt / Transcript trước nếu bạn muốn lưu lại.")) return;
+    if (!ended) chrome.runtime.sendMessage({ cmd: "end", summarize: false });
+    box.style.display = "none";
   }
   btnPause.onclick = () => { chrome.runtime.sendMessage({ cmd: "pause" }); setMode("paused"); setStatus("PAUSED"); };
   btnResume.onclick = () => { chrome.runtime.sendMessage({ cmd: "resume" }); setMode("live"); };
   btnSum.onclick = () => { chrome.runtime.sendMessage({ cmd: "end", summarize: true }); btnSum.textContent = "đang xử lý…"; };
-  btnClose.onclick = () => { chrome.runtime.sendMessage({ cmd: "end", summarize: false }); box.style.display = "none"; };
+  btnClose.onclick = () => doClose(false);
 
   function md(x) {
     return esc(x)
@@ -91,11 +100,13 @@
       '<button id="tt-dl">Tải tóm tắt</button>' +
       (transcript ? '<button id="tt-dltr">Tải transcript</button>' : "") +
       '</span></div>' +
-      '<div class="tt-sum-b">' + md(text) + "</div>";
+      '<div class="tt-sum-b">' + md(text) + "</div>" +
+      '<div class="tt-sum-foot"><button id="tt-sumclose">× Đóng phụ đề</button></div>';
     sumEl.querySelector("#tt-copy").onclick = () => navigator.clipboard.writeText(text);
     sumEl.querySelector("#tt-dl").onclick = () => dlFile(text, "summary.txt");
     const tr = sumEl.querySelector("#tt-dltr");
     if (tr) tr.onclick = () => dlFile(transcript, "transcript.txt");
+    sumEl.querySelector("#tt-sumclose").onclick = () => doClose(true);
   }
 
   function setStatus(text) {

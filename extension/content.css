@@ -67,3 +67,7 @@
 .tt-sum-b{font-size:13px;color:#e6edf8;line-height:1.6}
 .tt-sum-b .tt-h{display:block;color:#9fc0ff;font-size:12px;text-transform:uppercase;letter-spacing:.03em;margin:12px 0 4px;font-weight:800}
 .tt-sum-b b{color:#fff}
+.tt-sum-foot{margin-top:18px;padding-top:13px;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:center}
+.tt-sum-foot button{border:1px solid rgba(255,255,255,.18);background:transparent;color:#9fb3d6;
+  font-family:inherit;font-size:12px;font-weight:700;padding:8px 22px;border-radius:9px;cursor:pointer}
+.tt-sum-foot button:hover{background:rgba(239,68,68,.18);color:#ffd9d9;border-color:rgba(239,68,68,.42)}
