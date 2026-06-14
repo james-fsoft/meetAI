@@ -280,6 +280,18 @@ body.recing .cap-center{gap:0}
   body.recing .ai-panel{position:static;max-height:none;overflow:visible}
   .ai-panel.min .ai-sec{display:none}
 }
+/* Phones: collapse the recording controls into one slim sticky bar. */
+@media(max-width:640px){
+  body.recing .cap-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 12px}
+  body.recing .cap-meta{margin:0;flex-direction:row;align-items:center;gap:10px;flex-wrap:nowrap}
+  body.recing .viz,body.recing .usage-badge,body.recing #lvToggle [data-t]{display:none}
+  body.recing .lv-seg,body.recing .lv-langs{display:none}
+  body.recing #capRec{margin:0}
+  body.recing .cap-top #capRec .dual{flex-direction:row;gap:8px;margin:0}
+  body.recing .cap-top #capRec .btn{width:auto;padding:9px 18px;font-size:13.5px;border-radius:10px}
+  body.recing .timer{font-size:14px;margin:0}
+  body.recing .lvtog{gap:7px}
+}
 .live-interim{min-height:24px;margin-bottom:12px;font-size:14px;color:var(--acc);text-align:left;font-weight:600;display:flex;align-items:center;gap:9px}
 .live-interim:empty{display:none}
 .live-interim .eq{display:inline-flex;align-items:flex-end;gap:2px;height:14px;flex-shrink:0}
