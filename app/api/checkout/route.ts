@@ -35,8 +35,13 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "Cần đăng nhập" }, { status: 401 });
 
   if (!apiKey || !storeId || !variant) {
+    const missing = [
+      !apiKey && "LEMONSQUEEZY_API_KEY",
+      !storeId && "LEMONSQUEEZY_STORE_ID",
+      !variant && `VARIANT cho ${plan}/${billing}`,
+    ].filter(Boolean).join(", ");
     return NextResponse.json(
-      { error: "Thanh toán thẻ chưa được cấu hình (Lemon Squeezy)." },
+      { error: `Thanh toán thẻ chưa được cấu hình. Thiếu: ${missing}` },
       { status: 400 }
     );
   }
