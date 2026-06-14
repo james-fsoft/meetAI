@@ -600,9 +600,13 @@ const SIGNED=_Q.get('signed')==='1';
 const PLAN=_Q.get('plan')||'free';
 const UNLIMITED=SIGNED&&PLAN!=='free'&&PLAN!=='';
 let usage={unlimited:UNLIMITED,remainDay:null,remainMonth:null};
+const ANON_LIMIT=180; // guests (not signed in): 3 minutes of live translation
+function anonUsed(){return parseInt(localStorage.getItem('mr_anon_used')||'0',10)||0;}
+function anonAdd(sec){localStorage.setItem('mr_anon_used',anonUsed()+sec);}
+function anonRemain(){return Math.max(0,ANON_LIMIT-anonUsed());}
 function goTop(url){try{window.top.location.href=url;}catch(e){window.parent.location.href=url;}}
 function renderUsage(){const el=$('usageBadge');if(!el)return;
-  if(!SIGNED){el.style.display='none';return;}
+  if(!SIGNED){el.textContent='🎁 Dùng thử · còn '+Math.ceil(anonRemain()/60)+'p';el.style.display='';return;}
   let t;
   if(usage.unlimited)t='⏱ Không giới hạn';
   else{t='⏱ ';if(usage.remainDay!=null)t+='Hôm nay '+Math.max(0,usage.remainDay)+'p';
@@ -614,7 +618,7 @@ function quotaOk(){if(usage.unlimited)return true;
   if(usage.remainMonth!=null&&usage.remainMonth<=0)return false;
   if(usage.remainDay!=null&&usage.remainDay<=0)return false;return true;}
 function gateStart(){
-  if(!SIGNED){showGate('login');return false;}
+  if(!SIGNED){if(anonUsed()>=ANON_LIMIT){showGate('login');return false;}return true;}
   if(usage.unlimited)return true;
   if(usage.remainMonth!=null&&usage.remainMonth<=0){showGate('total');return false;}
   if(usage.remainDay!=null&&usage.remainDay<=0){showGate('daily');return false;}
@@ -624,6 +628,9 @@ async function reportUsage(sec){if(!SIGNED||UNLIMITED||sec<=0)return;
   try{const r=await fetch('/api/usage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({seconds:sec})});const d=await r.json();if(r.ok)applyUsage(d);}catch(e){}}
 function trialStart(){if(UNLIMITED||usageInt)return;
   usageInt=setInterval(async()=>{pendingSec++;
+    if(!SIGNED){anonAdd(1);renderUsage();
+      if(anonUsed()>=ANON_LIMIT){clearInterval(usageInt);usageInt=null;pendingSec=0;stopLive();showGate('login');}
+      return;}
     if(pendingSec>=REPORT_EVERY){const s=pendingSec;pendingSec=0;await reportUsage(s);
       if(!quotaOk()){trialStop();stopLive();showGate((usage.remainMonth!=null&&usage.remainMonth<=0)?'total':'daily');}}
   },1000);}
@@ -747,7 +754,7 @@ $('yr').textContent=new Date().getFullYear();
 const _lvon=localStorage.getItem('mr_lvon')!=='0';$('lvOn').checked=_lvon;$('lvToggle').classList.toggle('on',_lvon);
 if(localStorage.getItem('mr_lvto'))$('lvTo').value=localStorage.getItem('mr_lvto');
 applyLang();
-fetchUsage();
+fetchUsage();renderUsage();
 </script>
 </body>
 </html>

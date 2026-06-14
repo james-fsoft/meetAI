@@ -13,7 +13,18 @@ const PLAN_LABEL: Record<string, string> = {
  * Anonymous visitors get a 10-minute live-translation trial (?trial=1);
  * signed-in users run without the trial limit.
  */
-export default function MeetingApp({ email, plan = "free", admin = false }: { email?: string; plan?: string; admin?: boolean }) {
+type Usage = { unlimited: boolean; day: { remain: number | null }; month: { remain: number | null } } | null;
+
+function usageText(u: NonNullable<Usage>) {
+  if (u.unlimited) return "⏱ Không giới hạn";
+  const d = u.day?.remain, m = u.month?.remain;
+  let s = "⏱ ";
+  if (d != null) s += `Còn ${Math.max(0, d)}p hôm nay`;
+  if (m != null) s += (d != null ? " · " : "") + `${Math.max(0, m)}p tháng`;
+  return s;
+}
+
+export default function MeetingApp({ email, plan = "free", admin = false, usage = null }: { email?: string; plan?: string; admin?: boolean; usage?: Usage }) {
   const router = useRouter();
   const signedIn = !!email;
 
@@ -26,8 +37,8 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
   }
 
   const iframeSrc = signedIn
-    ? `/meeting.html?v=34&signed=1&plan=${encodeURIComponent(plan)}`
-    : "/meeting.html?v=34";
+    ? `/meeting.html?v=35&signed=1&plan=${encodeURIComponent(plan)}`
+    : "/meeting.html?v=35";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -36,6 +47,7 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
         <span style={{ flex: 1 }} />
         {signedIn ? (
           <>
+            {usage && <a href="/pricing" style={usageBadgeStyle} title="Phút còn lại">{usageText(usage)}</a>}
             {admin && <a href="/admin" style={adminLink}>⚙ Admin</a>}
             <a href="/pricing" style={planBadge(plan)} title="Quản lý gói">{PLAN_LABEL[plan] || "Free"}</a>
             <span style={mail}>👤 {email}</span>
@@ -43,7 +55,7 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
           </>
         ) : (
           <>
-            <span style={trialBadge}>Dùng thử miễn phí 50 phút</span>
+            <span style={trialBadge}>🎁 Dùng thử · 3 phút</span>
             <a href="/pricing" style={linkBtn}>Các gói</a>
             <a href="/login" style={primaryBtn}>Đăng nhập</a>
           </>
@@ -84,6 +96,10 @@ const primaryBtn: React.CSSProperties = {
 const trialBadge: React.CSSProperties = {
   fontSize: 11, fontWeight: 800, letterSpacing: ".03em", color: "#b45309",
   background: "#fffbeb", border: "1px solid #fde68a", padding: "4px 10px", borderRadius: 20,
+};
+const usageBadgeStyle: React.CSSProperties = {
+  fontSize: 11.5, fontWeight: 800, color: "#1f6bff", background: "#eef4ff", border: "1px solid #d3e0fb",
+  borderRadius: 20, padding: "4px 11px", textDecoration: "none", whiteSpace: "nowrap",
 };
 const planBadge = (plan: string): React.CSSProperties => ({
   fontSize: 11, fontWeight: 800, letterSpacing: ".03em", textDecoration: "none",
