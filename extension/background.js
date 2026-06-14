@@ -31,9 +31,15 @@ async function startCapture(lang, resume, mic, wayv, langBv) {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab) throw new Error("No active tab");
 
-  if (resume) await ensureOffscreen(); else await recreateOffscreen();
-  try { await chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ["content.css"] }); } catch {}
-  try { await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] }); } catch {}
+  if (resume) {
+    // Resume: the overlay is still alive (paused state) — re-injecting content.js
+    // would rebuild it from scratch and wipe the existing transcript lines.
+    await ensureOffscreen();
+  } else {
+    await recreateOffscreen();
+    try { await chrome.scripting.insertCSS({ target: { tabId: tab.id }, files: ["content.css"] }); } catch {}
+    try { await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content.js"] }); } catch {}
+  }
   active = {
     tabId: tab.id, running: true,
     lang: lang || active.lang || "ko",
