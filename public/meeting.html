@@ -80,6 +80,7 @@ h1{font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1;margin-bo
 /* Record / Pause / Stop controls pinned to the top of the card */
 .cap-top{position:sticky;top:0;z-index:12;background:var(--paper);padding:14px 0 14px;margin-bottom:6px;border-bottom:1px solid var(--hair)}
 .cap-meta{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.usage-badge{font-size:11.5px;font-weight:800;color:#1f6bff;background:#eef4ff;border:1px solid #d3e0fb;border-radius:20px;padding:4px 11px;white-space:nowrap}
 .cap-top .btn{margin-top:10px}
 .cap-top #capRec .dual{margin-top:0}
 .btn{cursor:pointer;border:2px solid var(--acc);font-family:inherit;font-size:16px;font-weight:800;
@@ -295,6 +296,7 @@ audio{width:100%;margin-top:16px;height:42px}
       <div class="cap-meta">
         <div class="viz" id="viz"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
         <div class="timer" id="timer">00:00</div>
+        <span class="usage-badge" id="usageBadge" style="display:none"></span>
         <label class="lvtog on" id="lvToggle">
           <span class="live-ic"><span class="live-dot"></span><span class="live-txt">LIVE</span></span>
           <span class="sw"></span><input type="checkbox" id="lvOn" checked>
@@ -592,35 +594,44 @@ function sxHints(){return['en','vi','ko','ja','zh'];}
 // Pick an audio container the browser actually supports (iOS lacks webm).
 function pickMime(){const c=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/aac','audio/mpeg'];
   if(window.MediaRecorder&&MediaRecorder.isTypeSupported)for(const m of c)if(MediaRecorder.isTypeSupported(m))return m;return'';}
-// ── Login + trial gate: must sign in; trial = 50 min total, max 10 min/day ──
+// ── Login + server-side usage quota (minutes / day & month) ──
 const _Q=new URLSearchParams(location.search);
 const SIGNED=_Q.get('signed')==='1';
 const PLAN=_Q.get('plan')||'free';
-const UNLIMITED=SIGNED&&PLAN!=='free'&&PLAN!==''; // paid plans skip trial limits
-const TRIAL_TOTAL=3000; // 50 minutes (seconds)
-const TRIAL_DAILY=600;  // 10 minutes per day (seconds)
-const today=()=>new Date().toISOString().slice(0,10);
-function trialTotal(){return parseInt(localStorage.getItem('mr_trial_total')||'0',10)||0;}
-function trialDay(){let o={};try{o=JSON.parse(localStorage.getItem('mr_trial_day')||'{}');}catch(e){}return o.d===today()?(o.s||0):0;}
-function trialAdd(sec){localStorage.setItem('mr_trial_total',trialTotal()+sec);
-  localStorage.setItem('mr_trial_day',JSON.stringify({d:today(),s:trialDay()+sec}));}
+const UNLIMITED=SIGNED&&PLAN!=='free'&&PLAN!=='';
+let usage={unlimited:UNLIMITED,remainDay:null,remainMonth:null};
 function goTop(url){try{window.top.location.href=url;}catch(e){window.parent.location.href=url;}}
-// Allowed to begin a billable action? Otherwise show the right prompt.
+function renderUsage(){const el=$('usageBadge');if(!el)return;
+  if(!SIGNED){el.style.display='none';return;}
+  let t;
+  if(usage.unlimited)t='⏱ Không giới hạn';
+  else{t='⏱ ';if(usage.remainDay!=null)t+='Hôm nay '+Math.max(0,usage.remainDay)+'p';
+    if(usage.remainMonth!=null)t+=(usage.remainDay!=null?' · ':'')+'Tháng '+Math.max(0,usage.remainMonth)+'p';}
+  el.textContent=t;el.style.display='';}
+function applyUsage(d){usage.unlimited=!!d.unlimited;usage.remainDay=d.day?d.day.remain:null;usage.remainMonth=d.month?d.month.remain:null;renderUsage();}
+async function fetchUsage(){if(!SIGNED)return;try{const r=await fetch('/api/usage');const d=await r.json();if(r.ok)applyUsage(d);}catch(e){}}
+function quotaOk(){if(usage.unlimited)return true;
+  if(usage.remainMonth!=null&&usage.remainMonth<=0)return false;
+  if(usage.remainDay!=null&&usage.remainDay<=0)return false;return true;}
 function gateStart(){
   if(!SIGNED){showGate('login');return false;}
-  if(UNLIMITED)return true;
-  if(trialDay()>=TRIAL_DAILY){showGate('daily');return false;}
-  if(trialTotal()>=TRIAL_TOTAL){showGate('total');return false;}
+  if(usage.unlimited)return true;
+  if(usage.remainMonth!=null&&usage.remainMonth<=0){showGate('total');return false;}
+  if(usage.remainDay!=null&&usage.remainDay<=0){showGate('daily');return false;}
   return true;}
-let trialInt=null;
-function trialStart(){if(UNLIMITED||trialInt)return;trialInt=setInterval(()=>{trialAdd(1);
-  if(trialDay()>=TRIAL_DAILY){trialStop();stopLive();showGate('daily');}
-  else if(trialTotal()>=TRIAL_TOTAL){trialStop();stopLive();showGate('total');}},1000);}
-function trialStop(){if(trialInt){clearInterval(trialInt);trialInt=null;}}
+let usageInt=null,pendingSec=0;const REPORT_EVERY=20;
+async function reportUsage(sec){if(!SIGNED||UNLIMITED||sec<=0)return;
+  try{const r=await fetch('/api/usage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({seconds:sec})});const d=await r.json();if(r.ok)applyUsage(d);}catch(e){}}
+function trialStart(){if(UNLIMITED||usageInt)return;
+  usageInt=setInterval(async()=>{pendingSec++;
+    if(pendingSec>=REPORT_EVERY){const s=pendingSec;pendingSec=0;await reportUsage(s);
+      if(!quotaOk()){trialStop();stopLive();showGate((usage.remainMonth!=null&&usage.remainMonth<=0)?'total':'daily');}}
+  },1000);}
+function trialStop(){if(usageInt){clearInterval(usageInt);usageInt=null;}if(pendingSec>0){const s=pendingSec;pendingSec=0;reportUsage(s);}}
 function showGate(kind){if(document.getElementById('gateOv'))return;
-  const D={login:{i:'🔑',h:'Đăng nhập để dùng thử',p:'Đăng nhập miễn phí để dùng thử 50 phút dịch trực tiếp (tối đa 10 phút mỗi ngày).',b:'Đăng nhập',u:'/login'},
-    daily:{i:'⏱️',h:'Đã hết 10 phút hôm nay',p:'Bạn đã dùng hết hạn mức dùng thử trong ngày. Quay lại ngày mai hoặc nâng cấp gói để dùng nhiều hơn.',b:'Xem các gói',u:'/pricing'},
-    total:{i:'🎁',h:'Đã hết 50 phút dùng thử',p:'Bạn đã dùng hết thời gian dùng thử. Nâng cấp gói để tiếp tục sử dụng.',b:'Xem các gói',u:'/pricing'}}[kind];
+  const D={login:{i:'🔑',h:'Đăng nhập để dùng',p:'Đăng nhập để dùng dịch trực tiếp. Gói Free có 30 phút/tháng (tối đa 10 phút/ngày).',b:'Đăng nhập',u:'/login'},
+    daily:{i:'⏱️',h:'Đã hết phút trong ngày',p:'Bạn đã dùng hết hạn mức phút hôm nay. Quay lại ngày mai hoặc nâng cấp gói để dùng nhiều hơn.',b:'Xem các gói',u:'/pricing'},
+    total:{i:'🎁',h:'Đã hết phút trong tháng',p:'Bạn đã dùng hết hạn mức phút tháng này. Nâng cấp gói để tiếp tục sử dụng.',b:'Xem các gói',u:'/pricing'}}[kind];
   const ov=document.createElement('div');ov.id='gateOv';
   ov.style.cssText='position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(10,17,36,.55);backdrop-filter:blur(4px)';
   ov.innerHTML='<div style="background:#fff;border-radius:20px;max-width:380px;width:100%;padding:30px 26px;text-align:center;box-shadow:0 30px 60px -30px rgba(10,17,36,.5);font-family:inherit">'+
@@ -736,6 +747,7 @@ $('yr').textContent=new Date().getFullYear();
 const _lvon=localStorage.getItem('mr_lvon')!=='0';$('lvOn').checked=_lvon;$('lvToggle').classList.toggle('on',_lvon);
 if(localStorage.getItem('mr_lvto'))$('lvTo').value=localStorage.getItem('mr_lvto');
 applyLang();
+fetchUsage();
 </script>
 </body>
 </html>

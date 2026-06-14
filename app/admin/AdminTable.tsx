@@ -3,13 +3,24 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-type Profile = { id: string; email: string | null; plan: string; created_at: string };
+type Profile = {
+  id: string; email: string | null; plan: string; created_at: string;
+  seconds_today?: number; day_key?: string | null; seconds_month?: number; month_key?: string | null;
+};
 const PLANS = ["free", "pro", "business", "enterprise"];
+const LIM: Record<string, { day: number | null; month: number | null }> = {
+  free: { day: 10, month: 30 }, pro: { day: null, month: 600 }, business: { day: null, month: 2400 }, enterprise: { day: null, month: null },
+};
 
 export default function AdminTable({ profiles, me }: { profiles: Profile[]; me: string }) {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState("");
+
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const monthKey = todayKey.slice(0, 7);
+  const minToday = (p: Profile) => (p.day_key === todayKey ? Math.floor((p.seconds_today || 0) / 60) : 0);
+  const minMonth = (p: Profile) => (p.month_key === monthKey ? Math.floor((p.seconds_month || 0) / 60) : 0);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { free: 0, pro: 0, business: 0, enterprise: 0 };
@@ -63,6 +74,7 @@ export default function AdminTable({ profiles, me }: { profiles: Profile[]; me: 
             <tr>
               <th style={S.th}>Email</th>
               <th style={S.th}>Gói</th>
+              <th style={S.th}>Phút (ngày · tháng)</th>
               <th style={S.th}>Tạo lúc</th>
             </tr>
           </thead>
@@ -83,11 +95,17 @@ export default function AdminTable({ profiles, me }: { profiles: Profile[]; me: 
                     {PLANS.map((pl) => <option key={pl} value={pl}>{pl}</option>)}
                   </select>
                 </td>
+                <td style={{ ...S.td, fontSize: 12.5, whiteSpace: "nowrap" }}>
+                  <b>{minToday(p)}</b>
+                  <span style={{ color: "#9aa6bd" }}>{LIM[p.plan]?.day != null ? "/" + LIM[p.plan].day : ""} · </span>
+                  <b>{minMonth(p)}</b>
+                  <span style={{ color: "#9aa6bd" }}>{LIM[p.plan]?.month != null ? "/" + LIM[p.plan].month : ""} p</span>
+                </td>
                 <td style={{ ...S.td, color: "#9aa6bd", fontSize: 12 }}>{fmt(p.created_at)}</td>
               </tr>
             ))}
             {rows.length === 0 && (
-              <tr><td style={{ ...S.td, textAlign: "center", color: "#9aa6bd" }} colSpan={3}>Không có người dùng</td></tr>
+              <tr><td style={{ ...S.td, textAlign: "center", color: "#9aa6bd" }} colSpan={4}>Không có người dùng</td></tr>
             )}
           </tbody>
         </table>
