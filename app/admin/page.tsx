@@ -1,6 +1,7 @@
 import { createClient, supabaseConfigured } from "@/lib/supabase-server";
 import { createAdminClient, isAdmin } from "@/lib/supabase-admin";
 import AdminTable from "./AdminTable";
+import AdminPayments from "./AdminPayments";
 
 export const dynamic = "force-dynamic";
 
@@ -33,5 +34,10 @@ export default async function Admin() {
 
   if (error) return <Denied msg={"Lỗi đọc dữ liệu: " + error.message} />;
 
-  return <AdminTable profiles={profiles || []} me={user.email || ""} />;
+  return (
+    <div style={{ background: "#f5f7fc", paddingTop: 28, fontFamily: "'Inter',system-ui,sans-serif" }}>
+      <AdminPayments />
+      <AdminTable profiles={profiles || []} me={user.email || ""} />
+    </div>
+  );
 }

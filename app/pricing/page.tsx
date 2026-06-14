@@ -114,11 +114,48 @@ const T: Record<Lang, Dict> = {
   },
 };
 
+type QrInfo = { id: string; amount: number; content: string; confirmHours: number;
+  bank: { name: string; account: string; holder: string }; qrUrl: string };
+
 export default function Pricing() {
   const [busy, setBusy] = useState("");
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const [lang, setLang] = useLang();
   const t = T[lang];
+
+  // Vietnamese bank-transfer (VietQR) flow
+  const [qr, setQr] = useState<QrInfo | null>(null);
+  const [qrBusy, setQrBusy] = useState(false);
+  const [qrDone, setQrDone] = useState(false);
+  const fmtVnd = (n: number) => n.toLocaleString("vi-VN") + "đ";
+
+  async function payVietQR(planId: string) {
+    setQrBusy(true);
+    try {
+      const r = await fetch("/api/bank-payment", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create", plan: planId, billing }),
+      });
+      const d = await r.json();
+      if (r.status === 401) { location.href = "/login"; return; }
+      if (!r.ok) throw new Error(d.error || "Không tạo được đơn");
+      setQrDone(false); setQr(d);
+    } catch (e: any) {
+      alert(e.message);
+    } finally { setQrBusy(false); }
+  }
+  async function confirmTransferred() {
+    if (!qr) return;
+    setQrBusy(true);
+    try {
+      await fetch("/api/bank-payment", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "submitted", id: qr.id }),
+      });
+      setQrDone(true);
+    } finally { setQrBusy(false); }
+  }
+  function copyContent() { if (qr) navigator.clipboard?.writeText(qr.content).catch(() => {}); }
 
   async function choose(p: PlanBase) {
     if (p.id === "free") { location.href = "/"; return; }
@@ -178,6 +215,11 @@ export default function Pricing() {
               <button onClick={() => choose(p)} disabled={busy === p.id} style={{ ...S.cta, ...(p.highlight ? S.ctaHi : {}) }}>
                 {busy === p.id ? t.busy : tx.cta}
               </button>
+              {lang === "vi" && isPaid && (
+                <button onClick={() => payVietQR(p.id)} disabled={qrBusy} style={S.qrBtn}>
+                  🏦 Chuyển khoản QR ngân hàng
+                </button>
+              )}
               <ul style={S.feats}>
                 {tx.features.map((f) => (
                   <li key={f} style={S.feat}><span style={S.check}>✓</span><span>{f}</span></li>
@@ -213,7 +255,58 @@ export default function Pricing() {
           </div>
         ))}
       </section>
+
+      {qr && (
+        <div style={S.modalWrap} onClick={() => setQr(null)}>
+          <div style={S.modal} onClick={(e) => e.stopPropagation()}>
+            <button style={S.modalX} onClick={() => setQr(null)}>×</button>
+            {!qrDone ? (
+              <>
+                <div style={S.modalTitle}>Chuyển khoản QR ngân hàng</div>
+                <p style={S.modalSub}>Quét mã bằng app ngân hàng — số tiền & nội dung đã điền sẵn.</p>
+                <img src={qr.qrUrl} alt="VietQR" style={S.qrImg} />
+                <div style={S.bankBox}>
+                  <Row label="Ngân hàng" value={qr.bank.name} />
+                  <Row label="Số tài khoản" value={qr.bank.account} />
+                  <Row label="Chủ tài khoản" value={qr.bank.holder} />
+                  <Row label="Số tiền" value={fmtVnd(qr.amount)} strong />
+                  <div style={S.contentRow}>
+                    <div>
+                      <div style={S.bankLabel}>Nội dung chuyển khoản</div>
+                      <div style={S.contentCode}>{qr.content}</div>
+                    </div>
+                    <button style={S.copyBtn} onClick={copyContent}>Copy</button>
+                  </div>
+                </div>
+                <p style={S.warn}>⚠ Chuyển <b>đúng số tiền</b> và <b>đúng nội dung</b> để được xác nhận tự động nhanh nhất.</p>
+                <button style={S.modalCta} onClick={confirmTransferred} disabled={qrBusy}>
+                  {qrBusy ? "Đang gửi…" : "Tôi đã chuyển khoản"}
+                </button>
+              </>
+            ) : (
+              <div style={{ textAlign: "center", padding: "10px 0" }}>
+                <div style={{ fontSize: 44, marginBottom: 10 }}>✅</div>
+                <div style={S.modalTitle}>Đã ghi nhận yêu cầu!</div>
+                <p style={S.modalSub}>
+                  Admin sẽ kiểm tra và kích hoạt gói cho bạn <b>trong vòng {qr.confirmHours} giờ</b>.
+                  Một email xác nhận đã được gửi tới bạn.
+                </p>
+                <button style={S.modalCta} onClick={() => setQr(null)}>Đóng</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </main>
+  );
+}
+
+function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+  return (
+    <div style={S.bankRow}>
+      <span style={S.bankLabel}>{label}</span>
+      <span style={{ fontWeight: strong ? 900 : 700, fontSize: strong ? 16 : 14 }}>{value}</span>
+    </div>
   );
 }
 
@@ -270,4 +363,27 @@ const S: Record<string, React.CSSProperties> = {
   faqItem: { background: "#fff", border: "1px solid #e7ebf3", borderRadius: 14, padding: "16px 18px" },
   faqQ: { fontSize: 13.5, fontWeight: 800, marginBottom: 6, letterSpacing: "-.01em" },
   faqA: { fontSize: 12.5, color: "#6b7690", lineHeight: 1.6, fontWeight: 500 },
+  qrBtn: { width: "100%", border: "1.5px solid #d3e0fb", background: "#f4f8ff", color: "#1f4fff", cursor: "pointer",
+    fontFamily: FONT, fontSize: 13, fontWeight: 800, padding: "10px", borderRadius: 11, marginTop: -8, marginBottom: 20 },
+  modalWrap: { position: "fixed", inset: 0, background: "rgba(10,17,36,.55)", display: "grid", placeItems: "center",
+    padding: 18, zIndex: 50, backdropFilter: "blur(3px)" },
+  modal: { position: "relative", width: "100%", maxWidth: 380, background: "#fff", borderRadius: 20,
+    padding: "26px 24px", boxShadow: "0 40px 80px -20px rgba(10,17,36,.5)", maxHeight: "92vh", overflowY: "auto" },
+  modalX: { position: "absolute", top: 12, right: 14, border: "none", background: "none", fontSize: 24,
+    color: "#9aa6bd", cursor: "pointer", lineHeight: 1, fontWeight: 700 },
+  modalTitle: { fontSize: 18, fontWeight: 900, letterSpacing: "-.02em", marginBottom: 4 },
+  modalSub: { fontSize: 13, color: "#5b6b8c", lineHeight: 1.55, marginBottom: 16 },
+  qrImg: { display: "block", width: 200, height: 200, margin: "0 auto 16px", border: "1px solid #e7ebf3", borderRadius: 14 },
+  bankBox: { background: "#f7faff", border: "1px solid #e3e8f2", borderRadius: 14, padding: "12px 14px", marginBottom: 14 },
+  bankRow: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px 0", borderBottom: "1px solid #eef2f9" },
+  bankLabel: { fontSize: 12, color: "#7b88a3", fontWeight: 600 },
+  contentRow: { display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 9 },
+  contentCode: { fontFamily: "'Space Mono',monospace", fontSize: 15, fontWeight: 800, color: "#1f4fff", letterSpacing: ".01em" },
+  copyBtn: { border: "1px solid #d3e0fb", background: "#fff", color: "#1f4fff", cursor: "pointer", fontFamily: FONT,
+    fontSize: 12, fontWeight: 800, padding: "7px 12px", borderRadius: 9 },
+  warn: { fontSize: 12, color: "#b45309", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 10,
+    padding: "9px 12px", lineHeight: 1.5, marginBottom: 16 },
+  modalCta: { width: "100%", border: "none", background: "linear-gradient(135deg,#3b82f6,#1f4fff)", color: "#fff",
+    cursor: "pointer", fontFamily: FONT, fontSize: 14.5, fontWeight: 800, padding: "13px", borderRadius: 12,
+    boxShadow: "0 12px 26px -10px rgba(31,79,255,.6)" },
 };
