@@ -22,6 +22,7 @@ export function usagePayload(plan: string, secToday: number, secMonth: number, b
   return {
     plan,
     unlimited: lim.month == null,
+    bonus: bonusMin || 0,
     day: { used: toMin(secToday), limit: lim.day, remain: remain(lim.day, secToday) },
     month: {
       used: toMin(secMonth), limit: monthLimit,

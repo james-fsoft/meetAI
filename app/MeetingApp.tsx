@@ -14,23 +14,22 @@ type Lang = "en" | "vi" | "ko";
 // the in-app switcher (localStorage key "mr_lang"), so the top bar follows it.
 const T: Record<Lang, {
   trial: string; pricing: string; signin: string; signout: string;
-  unlimited: string; usageTitle: string; planTitle: string;
-  left: (d: number | null, m: number | null) => string;
+  planTitle: string; account: string; refBanner: string; refClaim: string;
 }> = {
   en: {
     trial: "🎁 Free trial · 3 min", pricing: "Pricing", signin: "Sign in", signout: "Sign out",
-    unlimited: "⏱ Unlimited", usageTitle: "Minutes left", planTitle: "Manage plan",
-    left: (d, m) => "⏱ " + [d != null ? `${Math.max(0, d)} min today` : "", m != null ? `${Math.max(0, m)} min/mo` : ""].filter(Boolean).join(" · "),
+    planTitle: "Manage plan", account: "My Page",
+    refBanner: "🎁 A friend invited you to Flash Meet — sign in to claim 120 free minutes (2 hours)!", refClaim: "Sign in & claim →",
   },
   vi: {
     trial: "🎁 Dùng thử · 3 phút", pricing: "Các gói", signin: "Đăng nhập", signout: "Đăng xuất",
-    unlimited: "⏱ Không giới hạn", usageTitle: "Phút còn lại", planTitle: "Quản lý gói",
-    left: (d, m) => "⏱ " + [d != null ? `Còn ${Math.max(0, d)}p hôm nay` : "", m != null ? `${Math.max(0, m)}p tháng` : ""].filter(Boolean).join(" · "),
+    planTitle: "Quản lý gói", account: "Tài khoản",
+    refBanner: "🎁 Bạn được mời dùng Flash Meet — đăng nhập để nhận 120 phút (2 giờ) miễn phí!", refClaim: "Đăng nhập & nhận →",
   },
   ko: {
     trial: "🎁 무료 체험 · 3분", pricing: "요금제", signin: "로그인", signout: "로그아웃",
-    unlimited: "⏱ 무제한", usageTitle: "남은 시간", planTitle: "요금제 관리",
-    left: (d, m) => "⏱ " + [d != null ? `오늘 ${Math.max(0, d)}분` : "", m != null ? `이번 달 ${Math.max(0, m)}분` : ""].filter(Boolean).join(" · "),
+    planTitle: "요금제 관리", account: "마이페이지",
+    refBanner: "🎁 친구가 Flash Meet에 초대했어요 — 로그인하고 120분(2시간) 무료 받으세요!", refClaim: "로그인하고 받기 →",
   },
 };
 
@@ -41,12 +40,11 @@ const T: Record<Lang, {
  * localStorage "mr_lang" key (same origin → the iframe's change fires a
  * storage event here).
  */
-type Usage = { unlimited: boolean; day: { remain: number | null }; month: { remain: number | null } } | null;
-
-export default function MeetingApp({ email, plan = "free", admin = false, usage = null }: { email?: string; plan?: string; admin?: boolean; usage?: Usage }) {
+export default function MeetingApp({ email, plan = "free", admin = false }: { email?: string; plan?: string; admin?: boolean }) {
   const router = useRouter();
   const signedIn = !!email;
   const [lang, setLang] = useState<Lang>("en");
+  const [refPending, setRefPending] = useState(false);
 
   useEffect(() => {
     const read = () => {
@@ -70,8 +68,8 @@ export default function MeetingApp({ email, plan = "free", admin = false, usage 
         window.history.replaceState({}, "", url.toString());
       }
     } catch {}
-    if (!signedIn) return;
     const ref = (() => { try { return localStorage.getItem("fm_ref"); } catch { return null; } })();
+    if (!signedIn) { setRefPending(!!ref); return; }
     if (!ref) return;
     fetch("/api/referral", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: ref }) })
       .then((r) => r.json()).then((d) => { if (d) { try { localStorage.removeItem("fm_ref"); } catch {} if (d.credited) router.refresh(); } })
@@ -106,14 +104,10 @@ export default function MeetingApp({ email, plan = "free", admin = false, usage 
         <span style={{ flex: 1 }} />
         {signedIn ? (
           <div className="fm-right">
-            {usage && (
-              <a href="/pricing" style={usageBadgeStyle} title={t.usageTitle}>
-                {usage.unlimited ? t.unlimited : t.left(usage.day?.remain ?? null, usage.month?.remain ?? null)}
-              </a>
-            )}
             {admin && <a href="/admin" style={adminLink}>⚙ Admin</a>}
+            <a href="/account" style={accountLink}>📊 {t.account}</a>
             <a href="/pricing" style={planBadge(plan)} title={t.planTitle}>{PLAN_LABEL[plan] || "Free"}</a>
-            <span className="fm-mail">👤 {email}</span>
+            <a href="/account" className="fm-mail" style={{ textDecoration: "none", color: "#5b6b8c" }}>👤 {email}</a>
             <button onClick={signOut} style={out}>{t.signout}</button>
           </div>
         ) : (
@@ -124,6 +118,12 @@ export default function MeetingApp({ email, plan = "free", admin = false, usage 
           </div>
         )}
       </div>
+      {refPending && !signedIn && (
+        <div style={refBanner}>
+          <span style={{ flex: 1 }}>{t.refBanner}</span>
+          <a href="/login" style={refBannerBtn}>{t.refClaim}</a>
+        </div>
+      )}
       <iframe
         src={iframeSrc}
         title="Flash Meet"
@@ -166,9 +166,18 @@ const primaryBtn: React.CSSProperties = {
   fontSize: 12, fontWeight: 800, color: "#fff", background: "#1f6bff", textDecoration: "none",
   padding: "7px 16px", borderRadius: 8, whiteSpace: "nowrap",
 };
-const usageBadgeStyle: React.CSSProperties = {
-  fontSize: 11.5, fontWeight: 800, color: "#1f6bff", background: "#eef4ff", border: "1px solid #d3e0fb",
-  borderRadius: 20, padding: "4px 11px", textDecoration: "none", whiteSpace: "nowrap",
+const refBanner: React.CSSProperties = {
+  display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", padding: "10px 16px",
+  background: "linear-gradient(135deg,#eef4ff,#f3f0ff)", borderBottom: "1px solid #dbe4fb",
+  fontFamily: "'Inter',system-ui,sans-serif", fontSize: 13.5, fontWeight: 700, color: "#1f3a8a",
+};
+const refBannerBtn: React.CSSProperties = {
+  fontSize: 12.5, fontWeight: 800, color: "#fff", background: "#1f6bff", textDecoration: "none",
+  padding: "8px 16px", borderRadius: 9, whiteSpace: "nowrap",
+};
+const accountLink: React.CSSProperties = {
+  fontSize: 12, fontWeight: 800, color: "#1f6bff", background: "#eef4ff", border: "1px solid #d3e0fb",
+  borderRadius: 8, padding: "5px 11px", textDecoration: "none", whiteSpace: "nowrap",
 };
 const planBadge = (plan: string): React.CSSProperties => ({
   fontSize: 11, fontWeight: 800, letterSpacing: ".03em", textDecoration: "none",
