@@ -27,10 +27,20 @@ langB.onchange = () => chrome.storage.local.set({ langB: langB.value });
 document.getElementById("redir").textContent = chrome.identity.getRedirectURL();
 
 function render() {
-  btn.textContent = running ? "■ Dừng" : "▶ Bắt đầu";
+  btn.textContent = running ? "■ Dừng nhanh" : "▶ Bắt đầu";
   btn.className = running ? "act stop" : "act start";
   lang.disabled = running;
+  langB.disabled = running;
   mic.disabled = running;
+  modeseg.querySelectorAll("button").forEach((b) => (b.disabled = running));
+  // When a session is live, the on-page overlay is the control surface — dim the
+  // config here and point the user there so the two windows feel like one flow.
+  const cfg = document.getElementById("cfg");
+  const runbar = document.getElementById("runbar");
+  cfg.style.opacity = running ? ".45" : "1";
+  cfg.style.pointerEvents = running ? "none" : "auto";
+  runbar.style.display = running ? "block" : "none";
+  if (running) runbar.innerHTML = "● Đang dịch trực tiếp<span>Dừng · Tiếp tục · Tóm tắt nằm ở khung phụ đề ngay trên trang →</span>";
 }
 
 chrome.storage.local.get(["lang", "langB", "way", "mic"], (d) => {

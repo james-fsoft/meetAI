@@ -37,8 +37,8 @@ export default function MeetingApp({ email, plan = "free", admin = false, usage 
   }
 
   const iframeSrc = signedIn
-    ? `/meeting.html?v=36&signed=1&plan=${encodeURIComponent(plan)}`
-    : "/meeting.html?v=36";
+    ? `/meeting.html?v=37&signed=1&plan=${encodeURIComponent(plan)}`
+    : "/meeting.html?v=37";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>

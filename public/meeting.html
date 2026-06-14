@@ -87,6 +87,15 @@ h1{font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1;margin-bo
 .cap-top #capRec .dual{margin-top:0}
 .cap-top #capReady .link,.cap-top #capIdle .link{margin-top:10px}
 .cap-top #capReady audio{height:34px;margin-top:10px}
+/* While actually recording: collapse the controls into a slim bar (like the
+   extension header) so the conversation gets the room. Resume/Stop rarely get
+   touched mid-call, so they shouldn't dominate the screen. */
+body.recing .cap-top{padding:6px 0 7px}
+body.recing .cap-meta{gap:8px 10px;margin-bottom:7px}
+body.recing #capRec .dual{max-width:330px;margin:0 auto;gap:10px}
+body.recing #capRec .btn{margin-top:6px;font-size:13px;padding:8px 14px;border-radius:9px}
+body.recing .lv-seg button{padding:5px 11px;font-size:12px}
+body.recing .lvto-sel{padding:5px 9px;font-size:12.5px}
 .btn{cursor:pointer;border:2px solid var(--acc);font-family:inherit;font-size:16px;font-weight:800;
   letter-spacing:-.01em;padding:17px 26px;width:100%;border-radius:13px;transition:.12s;
   display:inline-flex;align-items:center;justify-content:center;gap:10px;margin-top:18px}
@@ -101,9 +110,9 @@ h1{font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1;margin-bo
 .timer{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;letter-spacing:1px;line-height:1;
   margin-bottom:8px;font-variant-numeric:tabular-nums;color:var(--faint)}
 /* timer stays small & unobtrusive — the conversation text is what matters */
-body.recing .timer{font-size:18px;margin-bottom:6px}
+body.recing .timer{font-size:15px;margin-bottom:0}
 body.recing .hero-mark{width:0;height:0;margin:0;overflow:hidden}
-body.recing .viz{height:30px;margin-bottom:10px}
+body.recing .viz{height:22px;margin-bottom:0}
 body.recing #diarNote{display:none}
 body.recing .rec-hint{margin-bottom:10px}
 .viz{display:flex;align-items:center;justify-content:center;gap:5px;height:44px;margin-bottom:18px}
