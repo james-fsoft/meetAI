@@ -1,165 +1,209 @@
 "use client";
 
 import { useState } from "react";
+import { useLang, type Lang } from "@/lib/use-lang";
+import LangSwitch from "../LangSwitch";
 
-type Plan = {
-  id: string; name: string; tagline: string;
-  priceMonthly: string;           // per-month price, monthly billing
-  priceAnnual?: string;           // per-month price, when billed annually
-  annualTotal?: string;           // full amount charged once per year
-  period: string;
-  tag?: string; highlight?: boolean; cta: string; features: string[];
+// Numeric plan data (prices are in VND, language-independent).
+type PlanBase = {
+  id: string; priceMonthly: string; priceAnnual?: string; annualTotal?: string;
+  highlight?: boolean;
+};
+const PLANS: PlanBase[] = [
+  { id: "free", priceMonthly: "0" },
+  { id: "pro", priceMonthly: "199.000", priceAnnual: "159.000", annualTotal: "1.910.000", highlight: true },
+  { id: "business", priceMonthly: "599.000", priceAnnual: "479.000", annualTotal: "5.750.000" },
+  { id: "enterprise", priceMonthly: "—" },
+];
+
+type PlanText = { name: string; tagline: string; cta: string; tag?: string; features: string[] };
+type Dict = {
+  back: string; eyebrow: string; h1: string; sub: string;
+  monthly: string; annual: string; period: string; contact: string;
+  billedYear: (x: string) => string; busy: string;
+  trust: string[];
+  refTitle: string; refSub: string; refCta: string;
+  plans: Record<string, PlanText>;
+  faq: { q: string; a: string }[];
 };
 
-const PLANS: Plan[] = [
-  {
-    id: "free", name: "Free", tagline: "Dùng thử miễn phí", priceMonthly: "0", period: "đ", cta: "Bắt đầu",
-    features: ["30 phút dịch / tháng", "1 ngôn ngữ đích", "Tóm tắt cơ bản", "Lịch sử 7 ngày"],
-  },
-  {
-    id: "pro", name: "Pro", tagline: "Cho cá nhân chuyên nghiệp",
-    priceMonthly: "199.000", priceAnnual: "159.000", annualTotal: "1.910.000",
-    period: "đ / tháng", tag: "Phổ biến nhất", highlight: true, cta: "Nâng cấp Pro",
-    features: [
-      "600 phút dịch / tháng (~10 giờ)",
-      "Đa ngôn ngữ 60+ & chế độ song ngữ",
-      "Tách giọng tự động (Speaker 1, 2, 3…)",
-      "Tóm tắt AI đầy đủ + tải file",
-      "Lịch sử không giới hạn",
+const T: Record<Lang, Dict> = {
+  en: {
+    back: "← Back to app", eyebrow: "PRICING", h1: "Transparent pricing, no hidden fees",
+    sub: "Every plan includes real-time translation minutes and AI summaries. Cancel anytime.",
+    monthly: "Monthly", annual: "Annual", period: "đ / mo", contact: "Contact",
+    billedYear: (x) => `Billed ${x}đ / year`, busy: "Opening…",
+    trust: ["✓ Cancel anytime", "✓ No hidden fees", "✓ Private — we don't sell data"],
+    refTitle: "Invite friends — you both get 60 minutes",
+    refSub: "Share your referral link. When a friend signs up, you both get 60 free translation minutes. No limit on invites.",
+    refCta: "Get invite link →",
+    plans: {
+      free: { name: "Free", tagline: "Free to try", cta: "Get started",
+        features: ["30 translation min / month", "1 target language", "Basic summary", "7-day history"] },
+      pro: { name: "Pro", tagline: "For professionals", cta: "Upgrade to Pro", tag: "Most popular",
+        features: ["600 translation min / month (~10 hrs)", "60+ languages & two-way mode", "Automatic speaker separation (Speaker 1, 2, 3…)", "Full AI summary + file download", "Unlimited history"] },
+      business: { name: "Business", tagline: "For teams & businesses", cta: "Upgrade to Business",
+        features: ["2,400 translation min / month (~40 hrs)", "Everything in Pro", "Call Center mode", "5 user accounts", "Custom glossary + priority support"] },
+      enterprise: { name: "Enterprise", tagline: "Custom solution", cta: "Contact us",
+        features: ["Custom translation minutes", "Multiple users + SSO", "Custom prompts & glossary", "Dedicated support + SLA"] },
+    },
+    faq: [
+      { q: "What is a “translation minute”?", a: "Minutes of audio translated live or summarized. A 30-min meeting = 30 translation minutes. The quota resets every month." },
+      { q: "Multi-language vs two-way?", a: "Multi-language: auto-detects any speech and translates into 1 language. Two-way: pick 2 languages — speak either and it shows the other." },
+      { q: "How much does annual save?", a: "Annual billing is 20% cheaper than monthly — like getting 2+ months free." },
+      { q: "Can I change or cancel?", a: "Yes. Upgrade, downgrade or cancel anytime; you keep access until the paid period ends." },
     ],
   },
-  {
-    id: "business", name: "Business", tagline: "Cho đội nhóm & doanh nghiệp",
-    priceMonthly: "599.000", priceAnnual: "479.000", annualTotal: "5.750.000",
-    period: "đ / tháng", cta: "Nâng cấp Business",
-    features: [
-      "2.400 phút dịch / tháng (~40 giờ)",
-      "Toàn bộ tính năng Pro",
-      "Call Center mode",
-      "5 tài khoản người dùng",
-      "Từ điển riêng + hỗ trợ ưu tiên",
+  vi: {
+    back: "← Quay lại app", eyebrow: "BẢNG GIÁ", h1: "Giá minh bạch, không phí ẩn",
+    sub: "Mọi gói đã gồm phút dịch real-time và tóm tắt AI. Huỷ bất cứ lúc nào.",
+    monthly: "Theo tháng", annual: "Theo năm", period: "đ / tháng", contact: "Liên hệ",
+    billedYear: (x) => `Thanh toán ${x}đ / năm`, busy: "Đang mở…",
+    trust: ["✓ Huỷ bất cứ lúc nào", "✓ Không phí ẩn", "✓ Bảo mật — không bán dữ liệu"],
+    refTitle: "Mời bạn bè — cả hai cùng được tặng 60 phút",
+    refSub: "Chia sẻ link giới thiệu của bạn. Khi bạn bè đăng ký, cả hai nhận thêm 60 phút dịch miễn phí. Không giới hạn số lượt mời.",
+    refCta: "Lấy link mời →",
+    plans: {
+      free: { name: "Free", tagline: "Dùng thử miễn phí", cta: "Bắt đầu",
+        features: ["30 phút dịch / tháng", "1 ngôn ngữ đích", "Tóm tắt cơ bản", "Lịch sử 7 ngày"] },
+      pro: { name: "Pro", tagline: "Cho cá nhân chuyên nghiệp", cta: "Nâng cấp Pro", tag: "Phổ biến nhất",
+        features: ["600 phút dịch / tháng (~10 giờ)", "Đa ngôn ngữ 60+ & chế độ song ngữ", "Tách giọng tự động (Speaker 1, 2, 3…)", "Tóm tắt AI đầy đủ + tải file", "Lịch sử không giới hạn"] },
+      business: { name: "Business", tagline: "Cho đội nhóm & doanh nghiệp", cta: "Nâng cấp Business",
+        features: ["2.400 phút dịch / tháng (~40 giờ)", "Toàn bộ tính năng Pro", "Call Center mode", "5 tài khoản người dùng", "Từ điển riêng + hỗ trợ ưu tiên"] },
+      enterprise: { name: "Enterprise", tagline: "Giải pháp theo nhu cầu", cta: "Liên hệ",
+        features: ["Phút dịch tuỳ chỉnh", "Nhiều người dùng + SSO", "Tuỳ chỉnh prompt & từ điển", "Dedicated support + SLA"] },
+    },
+    faq: [
+      { q: "“Phút dịch” là gì?", a: "Số phút âm thanh được dịch trực tiếp hoặc tạo biên bản. Họp 30 phút = 30 phút dịch. Hạn mức làm mới mỗi tháng." },
+      { q: "Đa ngôn ngữ và song ngữ khác gì?", a: "Đa ngôn ngữ: tự nhận diện rồi dịch sang 1 ngôn ngữ. Song ngữ: chọn 2 ngôn ngữ, nói tiếng nào ra tiếng còn lại." },
+      { q: "Trả theo năm tiết kiệm bao nhiêu?", a: "Trả theo năm được giảm 20% so với trả tháng — tương đương được tặng hơn 2 tháng dùng miễn phí." },
+      { q: "Đổi hoặc huỷ gói được không?", a: "Được. Nâng/hạ/huỷ bất cứ lúc nào, dùng đến hết chu kỳ đã trả." },
     ],
   },
-  {
-    id: "enterprise", name: "Enterprise", tagline: "Giải pháp theo nhu cầu",
-    priceMonthly: "Liên hệ", period: "", cta: "Liên hệ",
-    features: [
-      "Phút dịch tuỳ chỉnh",
-      "Nhiều người dùng + SSO",
-      "Tuỳ chỉnh prompt & từ điển",
-      "Dedicated support + SLA",
+  ko: {
+    back: "← 앱으로", eyebrow: "요금제", h1: "투명한 가격, 숨은 비용 없음",
+    sub: "모든 요금제에 실시간 번역 시간과 AI 요약이 포함됩니다. 언제든 해지 가능합니다.",
+    monthly: "월간", annual: "연간", period: "đ / 월", contact: "문의",
+    billedYear: (x) => `연 ${x}đ 청구`, busy: "여는 중…",
+    trust: ["✓ 언제든 해지", "✓ 숨은 비용 없음", "✓ 데이터 미판매"],
+    refTitle: "친구 초대 — 둘 다 60분 추가",
+    refSub: "추천 링크를 공유하세요. 친구가 가입하면 둘 다 60분 무료 번역을 받습니다. 초대 횟수 제한 없음.",
+    refCta: "초대 링크 받기 →",
+    plans: {
+      free: { name: "Free", tagline: "무료 체험", cta: "시작하기",
+        features: ["월 30분 번역", "대상 언어 1개", "기본 요약", "7일 기록"] },
+      pro: { name: "Pro", tagline: "전문가용", cta: "Pro 업그레이드", tag: "가장 인기",
+        features: ["월 600분 번역 (~10시간)", "60개 이상 언어 & 양방향 모드", "자동 화자 분리 (Speaker 1, 2, 3…)", "전체 AI 요약 + 파일 다운로드", "무제한 기록"] },
+      business: { name: "Business", tagline: "팀 & 기업용", cta: "Business 업그레이드",
+        features: ["월 2,400분 번역 (~40시간)", "Pro의 모든 기능", "콜센터 모드", "사용자 계정 5개", "맞춤 사전 + 우선 지원"] },
+      enterprise: { name: "Enterprise", tagline: "맞춤 솔루션", cta: "문의하기",
+        features: ["맞춤 번역 시간", "다중 사용자 + SSO", "맞춤 프롬프트 & 사전", "전담 지원 + SLA"] },
+    },
+    faq: [
+      { q: "“번역 분”이란?", a: "실시간으로 번역되거나 요약된 오디오의 분 수. 30분 회의 = 번역 30분. 매월 초기화됩니다." },
+      { q: "다국어와 양방향의 차이?", a: "다국어: 모든 음성을 감지해 1개 언어로 번역. 양방향: 두 언어를 선택하면 어느 쪽을 말해도 반대 언어로 표시." },
+      { q: "연간 결제는 얼마나 절약되나요?", a: "연간 결제는 월간보다 20% 저렴 — 2개월 이상 무료와 같습니다." },
+      { q: "변경하거나 해지할 수 있나요?", a: "네. 언제든 업/다운그레이드 또는 해지할 수 있으며, 결제 기간 종료까지 이용됩니다." },
     ],
   },
-];
-
-const FAQ = [
-  { q: "“Phút dịch” là gì?", a: "Số phút âm thanh được dịch trực tiếp hoặc tạo biên bản. Họp 30 phút = 30 phút dịch. Hạn mức làm mới mỗi tháng." },
-  { q: "Đa ngôn ngữ và song ngữ khác gì?", a: "Đa ngôn ngữ: tự nhận diện rồi dịch sang 1 ngôn ngữ. Song ngữ: chọn 2 ngôn ngữ, nói tiếng nào ra tiếng còn lại." },
-  { q: "Trả theo năm tiết kiệm bao nhiêu?", a: "Trả theo năm được giảm 20% so với trả tháng — tương đương được tặng hơn 2 tháng dùng miễn phí." },
-  { q: "Đổi hoặc huỷ gói được không?", a: "Được. Nâng/hạ/huỷ bất cứ lúc nào, dùng đến hết chu kỳ đã trả." },
-];
+};
 
 export default function Pricing() {
   const [busy, setBusy] = useState("");
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
+  const [lang, setLang] = useLang();
+  const t = T[lang];
 
-  async function choose(plan: Plan) {
-    if (plan.id === "free") { location.href = "/"; return; }
-    if (plan.id === "enterprise") { location.href = "mailto:support@transflash.app?subject=Meeting AI Enterprise"; return; }
-    setBusy(plan.id);
+  async function choose(p: PlanBase) {
+    if (p.id === "free") { location.href = "/"; return; }
+    if (p.id === "enterprise") { location.href = "mailto:support@transflash.app?subject=Meeting AI Enterprise"; return; }
+    setBusy(p.id);
     try {
-      const r = await fetch(`/api/checkout?plan=${plan.id}&billing=${billing}`, { method: "POST" });
+      const r = await fetch(`/api/checkout?plan=${p.id}&billing=${billing}`, { method: "POST" });
       const d = await r.json();
-      if (!r.ok) throw new Error(d.error || "Chưa thể thanh toán");
+      if (!r.ok) throw new Error(d.error || "Checkout unavailable");
       if (d.url) { location.href = d.url; return; }
-      throw new Error("Thiếu liên kết thanh toán");
+      throw new Error("Missing checkout link");
     } catch (e: any) {
-      alert(e.message + "\n\n(Thanh toán sẽ được kích hoạt sau khi cấu hình Lemon Squeezy.)");
+      alert(e.message + "\n\n(Payment activates once Lemon Squeezy is configured.)");
       setBusy("");
     }
   }
 
-  function priceOf(p: Plan) {
-    if (p.id === "free" || p.id === "enterprise") return p.priceMonthly;
+  function priceOf(p: PlanBase) {
+    if (p.id === "enterprise") return t.contact;
+    if (p.id === "free") return p.priceMonthly;
     return billing === "annual" && p.priceAnnual ? p.priceAnnual : p.priceMonthly;
   }
 
   return (
     <main style={S.wrap}>
-      <a href="/" style={S.back}>← Quay lại app</a>
+      <div style={S.topRow}>
+        <a href="/" style={S.back}>{t.back}</a>
+        <LangSwitch lang={lang} onChange={setLang} />
+      </div>
 
       <header style={S.head}>
-        <span style={S.eyebrow}>BẢNG GIÁ</span>
-        <h1 style={S.h1}>Giá minh bạch, không phí ẩn</h1>
-        <p style={S.sub}>Mọi gói đã gồm phút dịch real-time và tóm tắt AI. Huỷ bất cứ lúc nào.</p>
+        <span style={S.eyebrow}>{t.eyebrow}</span>
+        <h1 style={S.h1}>{t.h1}</h1>
+        <p style={S.sub}>{t.sub}</p>
       </header>
 
-      {/* monthly / annual toggle */}
       <div style={S.billRow}>
-        <button
-          onClick={() => setBilling("monthly")}
-          style={{ ...S.billBtn, ...(billing === "monthly" ? S.billOn : {}) }}
-        >Theo tháng</button>
-        <button
-          onClick={() => setBilling("annual")}
-          style={{ ...S.billBtn, ...(billing === "annual" ? S.billOn : {}) }}
-        >Theo năm <span style={S.save}>-20%</span></button>
+        <button onClick={() => setBilling("monthly")} style={{ ...S.billBtn, ...(billing === "monthly" ? S.billOn : {}) }}>{t.monthly}</button>
+        <button onClick={() => setBilling("annual")} style={{ ...S.billBtn, ...(billing === "annual" ? S.billOn : {}) }}>
+          {t.annual} <span style={S.save}>-20%</span>
+        </button>
       </div>
 
       <section style={S.grid}>
-        {PLANS.map((p) => (
-          <div key={p.id} style={{ ...S.card, ...(p.highlight ? S.cardHi : {}) }}>
-            {p.tag && <div style={S.tag}>{p.tag}</div>}
-            <div style={S.name}>{p.name}</div>
-            <div style={S.tagline}>{p.tagline}</div>
-            <div style={S.priceRow}>
-              <span style={S.price}>{priceOf(p)}</span>
-              {p.period && <span style={S.period}>{p.period}</span>}
+        {PLANS.map((p) => {
+          const tx = t.plans[p.id];
+          const isMoney = p.id !== "enterprise" && p.id !== "free";
+          return (
+            <div key={p.id} style={{ ...S.card, ...(p.highlight ? S.cardHi : {}) }}>
+              {tx.tag && <div style={S.tag}>{tx.tag}</div>}
+              <div style={S.name}>{tx.name}</div>
+              <div style={S.tagline}>{tx.tagline}</div>
+              <div style={S.priceRow}>
+                <span style={S.price}>{priceOf(p)}</span>
+                {p.id !== "enterprise" && <span style={S.period}>{t.period}</span>}
+              </div>
+              <div style={S.annualNote}>
+                {billing === "annual" && isMoney && p.annualTotal ? t.billedYear(p.annualTotal) : " "}
+              </div>
+              <button onClick={() => choose(p)} disabled={busy === p.id} style={{ ...S.cta, ...(p.highlight ? S.ctaHi : {}) }}>
+                {busy === p.id ? t.busy : tx.cta}
+              </button>
+              <ul style={S.feats}>
+                {tx.features.map((f) => (
+                  <li key={f} style={S.feat}><span style={S.check}>✓</span><span>{f}</span></li>
+                ))}
+              </ul>
             </div>
-            <div style={S.annualNote}>
-              {billing === "annual" && p.annualTotal
-                ? `Thanh toán ${p.annualTotal}đ/năm`
-                : " "}
-            </div>
-            <button
-              onClick={() => choose(p)}
-              disabled={busy === p.id}
-              style={{ ...S.cta, ...(p.highlight ? S.ctaHi : {}) }}
-            >
-              {busy === p.id ? "Đang mở…" : p.cta}
-            </button>
-            <ul style={S.feats}>
-              {p.features.map((f) => (
-                <li key={f} style={S.feat}><span style={S.check}>✓</span><span>{f}</span></li>
-              ))}
-            </ul>
-          </div>
-        ))}
+          );
+        })}
       </section>
 
       <div style={S.trust}>
-        <span>✓ Huỷ bất cứ lúc nào</span>
-        <span style={S.dot}>·</span>
-        <span>✓ Không phí ẩn</span>
-        <span style={S.dot}>·</span>
-        <span>✓ Bảo mật — không bán dữ liệu</span>
+        {t.trust.map((x, i) => (
+          <span key={x} style={{ display: "inline-flex", gap: 10 }}>
+            {i > 0 && <span style={S.dot}>·</span>}{x}
+          </span>
+        ))}
       </div>
 
-      {/* referral */}
       <section style={S.refBox}>
         <div style={S.refIcon}>🎁</div>
         <div style={{ flex: 1 }}>
-          <div style={S.refTitle}>Mời bạn bè — cả hai cùng được tặng 60 phút</div>
-          <div style={S.refSub}>
-            Chia sẻ link giới thiệu của bạn. Khi bạn bè đăng ký, cả hai nhận thêm 60 phút dịch miễn phí.
-            Không giới hạn số lượt mời.
-          </div>
+          <div style={S.refTitle}>{t.refTitle}</div>
+          <div style={S.refSub}>{t.refSub}</div>
         </div>
-        <a href="/" style={S.refCta}>Lấy link mời →</a>
+        <a href="/" style={S.refCta}>{t.refCta}</a>
       </section>
 
       <section style={S.faqWrap}>
-        {FAQ.map((f) => (
+        {t.faq.map((f) => (
           <div key={f.q} style={S.faqItem}>
             <div style={S.faqQ}>{f.q}</div>
             <div style={S.faqA}>{f.a}</div>
@@ -172,10 +216,11 @@ export default function Pricing() {
 
 const FONT = "'Inter',system-ui,-apple-system,sans-serif";
 const S: Record<string, React.CSSProperties> = {
-  wrap: { minHeight: "100vh", padding: "30px 22px 70px", fontFamily: FONT, color: "#0a1124",
+  wrap: { minHeight: "100vh", padding: "20px 22px 70px", fontFamily: FONT, color: "#0a1124",
     background: "radial-gradient(1100px 560px at 50% -12%,rgba(31,107,255,.10),transparent 62%),#fbfcfe",
     WebkitFontSmoothing: "antialiased" },
-  back: { display: "inline-block", fontSize: 13, fontWeight: 600, color: "#5b6b8c", textDecoration: "none", marginBottom: 18 },
+  topRow: { display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: 1160, margin: "0 auto 8px" },
+  back: { display: "inline-block", fontSize: 13, fontWeight: 600, color: "#5b6b8c", textDecoration: "none" },
   head: { textAlign: "center", maxWidth: 620, margin: "10px auto 22px" },
   eyebrow: { display: "inline-block", fontSize: 11.5, fontWeight: 800, letterSpacing: ".14em", color: "#1f6bff",
     background: "#eef4ff", border: "1px solid #d9e6ff", borderRadius: 30, padding: "5px 13px", marginBottom: 16 },
