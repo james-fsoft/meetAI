@@ -59,6 +59,25 @@ export default function MeetingApp({ email, plan = "free", admin = false, usage 
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
+  // Referral: capture ?ref= on landing; once signed in, claim it (credits both).
+  useEffect(() => {
+    try {
+      const url = new URL(window.location.href);
+      const ref = url.searchParams.get("ref");
+      if (ref) {
+        localStorage.setItem("fm_ref", ref);
+        url.searchParams.delete("ref");
+        window.history.replaceState({}, "", url.toString());
+      }
+    } catch {}
+    if (!signedIn) return;
+    const ref = (() => { try { return localStorage.getItem("fm_ref"); } catch { return null; } })();
+    if (!ref) return;
+    fetch("/api/referral", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: ref }) })
+      .then((r) => r.json()).then((d) => { if (d) { try { localStorage.removeItem("fm_ref"); } catch {} if (d.credited) router.refresh(); } })
+      .catch(() => {});
+  }, [signedIn, router]);
+
   const t = T[lang];
 
   async function signOut() {

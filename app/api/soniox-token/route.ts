@@ -57,13 +57,13 @@ export async function POST(req: NextRequest) {
     try {
       const admin = createAdminClient();
       const { data: prof } = await admin.from("profiles")
-        .select("plan, seconds_today, day_key, seconds_month, month_key").eq("id", userId).single();
+        .select("plan, seconds_today, day_key, seconds_month, month_key, bonus_minutes").eq("id", userId).single();
       const plan = prof?.plan || "free";
       const today = new Date().toISOString().slice(0, 10);
       const mkey = today.slice(0, 7);
       const secToday = prof?.day_key === today ? (prof.seconds_today || 0) : 0;
       const secMonth = prof?.month_key === mkey ? (prof.seconds_month || 0) : 0;
-      if (!hasQuota(plan, secToday, secMonth)) {
+      if (!hasQuota(plan, secToday, secMonth, prof?.bonus_minutes || 0)) {
         return NextResponse.json(
           { error: "Bạn đã dùng hết hạn mức dịch của gói. Nâng cấp gói hoặc đợi kỳ sau.", code: "quota_exceeded" },
           { status: 403 }

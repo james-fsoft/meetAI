@@ -24,7 +24,7 @@ type Dict = {
   billedYear: (x: string) => string; busy: string; promo: string;
   usageTitle: string; reassure: string;
   trust: string[];
-  refTitle: string; refSub: string; refCta: string;
+  refTitle: string; refSub: string; refCta: string; refCopied: string;
   plans: Record<string, PlanText>;
   faq: { q: string; a: string }[];
 };
@@ -62,7 +62,7 @@ const T: Record<Lang, Dict> = {
     trust: ["✓ Cancel anytime", "✓ No hidden fees", "✓ Private — we don't sell data"],
     refTitle: "Invite friends — you both get 60 minutes",
     refSub: "Share your referral link. When a friend signs up, you both get 60 free translation minutes. No limit on invites.",
-    refCta: "Get invite link →",
+    refCta: "Get invite link →", refCopied: "Invite link copied to clipboard:",
     plans: {
       free: { name: "Free", tagline: "Free to try", cta: "Get started", priceMonthly: "$0",
         features: ["30 translation min / month", "1 target language", "Basic summary", "7-day history"] },
@@ -92,7 +92,7 @@ const T: Record<Lang, Dict> = {
     trust: ["✓ Huỷ bất cứ lúc nào", "✓ Không phí ẩn", "✓ Bảo mật — không bán dữ liệu"],
     refTitle: "Mời bạn bè — cả hai cùng được tặng 60 phút",
     refSub: "Chia sẻ link giới thiệu của bạn. Khi bạn bè đăng ký, cả hai nhận thêm 60 phút dịch miễn phí. Không giới hạn số lượt mời.",
-    refCta: "Lấy link mời →",
+    refCta: "Lấy link mời →", refCopied: "Đã sao chép link mời:",
     plans: {
       free: { name: "Free", tagline: "Dùng thử miễn phí", cta: "Bắt đầu", priceMonthly: "0đ",
         features: ["30 phút dịch / tháng", "1 ngôn ngữ đích", "Tóm tắt cơ bản", "Lịch sử 7 ngày"] },
@@ -122,7 +122,7 @@ const T: Record<Lang, Dict> = {
     trust: ["✓ 언제든 해지", "✓ 숨은 비용 없음", "✓ 데이터 미판매"],
     refTitle: "친구 초대 — 둘 다 60분 추가",
     refSub: "추천 링크를 공유하세요. 친구가 가입하면 둘 다 60분 무료 번역을 받습니다. 초대 횟수 제한 없음.",
-    refCta: "초대 링크 받기 →",
+    refCta: "초대 링크 받기 →", refCopied: "초대 링크가 복사되었습니다:",
     plans: {
       free: { name: "Free", tagline: "무료 체험", cta: "시작하기", priceMonthly: "₩0",
         features: ["월 30분 번역", "대상 언어 1개", "기본 요약", "7일 기록"] },
@@ -187,6 +187,18 @@ export default function Pricing() {
     } finally { setQrBusy(false); }
   }
   function copyContent() { if (qr) navigator.clipboard?.writeText(qr.content).catch(() => {}); }
+
+  async function getInvite() {
+    try {
+      const r = await fetch("/api/referral");
+      if (r.status === 401) { location.href = "/login"; return; }
+      const d = await r.json();
+      if (d.link) {
+        await navigator.clipboard?.writeText(d.link).catch(() => {});
+        alert(`${t.refCopied}\n${d.link}`);
+      }
+    } catch { /* ignore */ }
+  }
 
   async function choose(p: PlanBase) {
     if (p.id === "free") { location.href = "/"; return; }
@@ -289,7 +301,7 @@ export default function Pricing() {
           <div style={S.refTitle}>{t.refTitle}</div>
           <div style={S.refSub}>{t.refSub}</div>
         </div>
-        <a href="/" style={S.refCta}>{t.refCta}</a>
+        <button onClick={getInvite} style={S.refCta}>{t.refCta}</button>
       </section>
 
       <section style={S.faqWrap}>
@@ -415,7 +427,7 @@ const S: Record<string, React.CSSProperties> = {
   refTitle: { fontSize: 16, fontWeight: 800, letterSpacing: "-.01em", marginBottom: 4 },
   refSub: { fontSize: 12.5, color: "#5b6b8c", lineHeight: 1.55, fontWeight: 500 },
   refCta: { fontSize: 13.5, fontWeight: 800, color: "#fff", background: "#1f6bff", textDecoration: "none",
-    padding: "11px 18px", borderRadius: 11, whiteSpace: "nowrap" },
+    padding: "11px 18px", borderRadius: 11, whiteSpace: "nowrap", border: "none", cursor: "pointer", fontFamily: FONT },
   faqWrap: { maxWidth: 860, margin: "30px auto 0", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))", gap: 12 },
   faqItem: { background: "#fff", border: "1px solid #e7ebf3", borderRadius: 14, padding: "16px 18px" },
   faqQ: { fontSize: 13.5, fontWeight: 800, marginBottom: 6, letterSpacing: "-.01em" },

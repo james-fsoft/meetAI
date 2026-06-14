@@ -24,7 +24,7 @@ async function handle(req: NextRequest, seconds: number) {
 
   const admin = createAdminClient();
   const { data: prof } = await admin.from("profiles")
-    .select("plan, seconds_today, day_key, seconds_month, month_key").eq("id", userId).single();
+    .select("plan, seconds_today, day_key, seconds_month, month_key, bonus_minutes").eq("id", userId).single();
   if (!prof) return NextResponse.json({ error: "no profile" }, { status: 404 });
 
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
@@ -39,7 +39,7 @@ async function handle(req: NextRequest, seconds: number) {
     }).eq("id", userId);
   }
 
-  return NextResponse.json(usagePayload(prof.plan || "free", secToday, secMonth));
+  return NextResponse.json(usagePayload(prof.plan || "free", secToday, secMonth, prof.bonus_minutes || 0));
 }
 
 export async function GET(req: NextRequest) { return handle(req, 0); }

@@ -14,21 +14,27 @@ const toMin = (sec: number) => Math.floor((sec || 0) / 60);
 const remain = (limit: number | null, usedSec: number) =>
   limit == null ? null : Math.max(0, limit - toMin(usedSec));
 
-// Builds the usage payload returned to the client.
-export function usagePayload(plan: string, secToday: number, secMonth: number) {
+// Builds the usage payload returned to the client. bonusMin = referral credit
+// (added to the monthly allowance).
+export function usagePayload(plan: string, secToday: number, secMonth: number, bonusMin = 0) {
   const lim = planLimits(plan);
+  const monthLimit = lim.month == null ? null : lim.month + (bonusMin || 0);
   return {
     plan,
     unlimited: lim.month == null,
     day: { used: toMin(secToday), limit: lim.day, remain: remain(lim.day, secToday) },
-    month: { used: toMin(secMonth), limit: lim.month, remain: remain(lim.month, secMonth) },
+    month: {
+      used: toMin(secMonth), limit: monthLimit,
+      remain: monthLimit == null ? null : Math.max(0, monthLimit - toMin(secMonth)),
+    },
   };
 }
 
 // true if the user still has quota left (both day and month).
-export function hasQuota(plan: string, secToday: number, secMonth: number) {
+export function hasQuota(plan: string, secToday: number, secMonth: number, bonusMin = 0) {
   const lim = planLimits(plan);
-  if (lim.month != null && toMin(secMonth) >= lim.month) return false;
+  const monthLimit = lim.month == null ? null : lim.month + (bonusMin || 0);
+  if (monthLimit != null && toMin(secMonth) >= monthLimit) return false;
   if (lim.day != null && toMin(secToday) >= lim.day) return false;
   return true;
 }

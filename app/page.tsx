@@ -19,7 +19,7 @@ export default async function Home() {
       if (user) {
         const { data } = await supabase
           .from("profiles")
-          .select("plan,seconds_today,day_key,seconds_month,month_key")
+          .select("plan,seconds_today,day_key,seconds_month,month_key,bonus_minutes")
           .eq("id", user.id)
           .single();
         if (data?.plan) plan = data.plan;
@@ -28,7 +28,7 @@ export default async function Home() {
           const mkey = today.slice(0, 7);
           const secToday = data.day_key === today ? (data.seconds_today || 0) : 0;
           const secMonth = data.month_key === mkey ? (data.seconds_month || 0) : 0;
-          usage = usagePayload(plan, secToday, secMonth);
+          usage = usagePayload(plan, secToday, secMonth, data.bonus_minutes || 0);
         }
       }
     } catch {
