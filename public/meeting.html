@@ -218,7 +218,7 @@ body.recing .rec-hint{margin-bottom:10px}
 .lvtog input{display:none}
 .lvto-sel{border:1px solid var(--hair);background:var(--soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa6bd' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center;color:var(--ink);padding:8px 28px 8px 12px;font-size:13px;font-family:inherit;font-weight:700;outline:none;cursor:pointer;appearance:none;border-radius:10px;transition:.15s}
 .lvto-sel:hover{border-color:color-mix(in srgb,var(--acc) 45%,var(--hair))}
-.live-feed{position:relative;border:1px solid var(--hair);border-radius:18px;min-height:120px;width:100%;overflow:visible;padding:16px 18px 12px;text-align:left;display:flex;flex-direction:column;gap:0;margin-bottom:12px;background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 7%,transparent),transparent 130px),var(--soft);box-shadow:0 14px 34px -24px var(--acc)}
+.live-feed{position:relative;border:1px solid var(--hair);border-radius:18px;min-height:120px;width:100%;overflow:visible;padding:16px 18px 12px;text-align:left;display:flex;flex-direction:column;gap:0;margin-bottom:12px;background:var(--soft);box-shadow:0 14px 34px -28px var(--acc)}
 .live-feed::-webkit-scrollbar{width:6px}
 .live-feed::-webkit-scrollbar-thumb{background:var(--hair);border-radius:10px}
 .lv-msg{display:flex;gap:13px;align-items:flex-start;padding:9px 0;animation:lvIn .35s cubic-bezier(.2,.7,.3,1)}
@@ -746,9 +746,12 @@ if(localStorage.getItem('mr_lva'))$('lvA').value=localStorage.getItem('mr_lva');
 if(localStorage.getItem('mr_lvb'))$('lvB').value=localStorage.getItem('mr_lvb');
 (function(){const w=localStorage.getItem('mr_lvway')||'one';
   $('lvWaySeg').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.w===w));applyWay();})();
-function lvInfo(msg){$('lvFeed').style.display='flex';$('lvInterim').style.display='flex';$('lvInterim').textContent=msg;}
+function lvInfo(msg){$('lvFeed').style.display='flex';$('lvInterim').style.display='inline-flex';$('lvInterim').textContent=msg;}
 const EQ='<span class="eq"><i></i><i></i><i></i><i></i></span>';
-function setInterim(txt){$('lvInterim').innerHTML=EQ+'<span>'+(txt?esc(txt):t('lv_listening'))+'</span>';}
+// The "Listening…" status used to sit between messages and got in the way; we
+// now hide it entirely when idle. lvInterim is kept only for transient status
+// messages (reconnecting, mic denied, …) shown via lvInfo().
+function setInterim(txt){const el=$('lvInterim');if(!txt){el.style.display='none';el.innerHTML='';return;}el.style.display='inline-flex';el.innerHTML=EQ+'<span>'+esc(txt)+'</span>';}
 // ── Live translation via Soniox real-time WebSocket (STT + translation) ──
 const SX_ISO={Vietnamese:'vi',English:'en',Korean:'ko',Japanese:'ja',Chinese:'zh'};
 let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:'',segSpk:null,curRow:null};
