@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useLang, type Lang } from "@/lib/use-lang";
 import LangSwitch from "../LangSwitch";
 
@@ -31,6 +31,8 @@ type Dict = {
   refShareTitle: string; refBottom: string; refStart: string; refLater: string;
   refProgram: string; refBannerH: string; refBannerSub: string; refInviteTeam: string;
   refUnlimited: string; refPerf: string; refInvited: string; refEarned: string; refUnitMin: string;
+  hiwTitle: string; hiwSub: string; steps: { t: string; d: string }[];
+  perfTitle: string; perfSuccess: string; perfEarned: string; perfRank: string; rankNew: string; refEmpty: string;
   plans: Record<string, PlanText>;
   faq: { q: string; a: string }[];
 };
@@ -81,6 +83,15 @@ const T: Record<Lang, Dict> = {
     refBannerSub: "Invite colleagues and expand your workspace. For every successful signup, you and they each receive +120 minutes.",
     refInviteTeam: "Invite Your Team", refUnlimited: "Unlimited referrals",
     refPerf: "Your referral performance", refInvited: "Invited", refEarned: "Earned", refUnitMin: "minutes",
+    hiwTitle: "How it works", hiwSub: "Earn translation minutes by helping your team discover Flash Meet.",
+    steps: [
+      { t: "Invite a colleague", d: "Share your personal referral link." },
+      { t: "They join", d: "They create a Flash Meet account." },
+      { t: "Both earn", d: "You and your colleague each receive +120 translation minutes." },
+      { t: "Repeat", d: "Unlimited successful referrals — keep earning." },
+    ],
+    perfTitle: "Your referral performance", perfSuccess: "Successful referrals", perfEarned: "Minutes earned",
+    perfRank: "Referral rank", rankNew: "New", refEmpty: "You haven't invited anyone yet.",
     plans: {
       free: { name: "Free", tagline: "Free to try", cta: "Get started", priceMonthly: "$0",
         features: ["30 translation min / month", "1 target language", "Basic summary", "7-day history"] },
@@ -123,6 +134,15 @@ const T: Record<Lang, Dict> = {
     refBannerSub: "Mời đồng nghiệp & mở rộng không gian làm việc. Mỗi lượt đăng ký thành công, bạn và họ mỗi người nhận +120 phút.",
     refInviteTeam: "Mời nhóm của bạn", refUnlimited: "Không giới hạn lượt mời",
     refPerf: "Hiệu quả giới thiệu của bạn", refInvited: "Đã mời", refEarned: "Đã nhận", refUnitMin: "phút",
+    hiwTitle: "Cách hoạt động", hiwSub: "Nhận phút dịch khi giúp nhóm của bạn biết đến Flash Meet.",
+    steps: [
+      { t: "Mời đồng nghiệp", d: "Chia sẻ link giới thiệu cá nhân của bạn." },
+      { t: "Họ tham gia", d: "Họ tạo tài khoản Flash Meet." },
+      { t: "Cả hai cùng nhận", d: "Bạn và đồng nghiệp mỗi người nhận +120 phút dịch." },
+      { t: "Lặp lại", d: "Không giới hạn lượt giới thiệu thành công — nhận mãi." },
+    ],
+    perfTitle: "Hiệu quả giới thiệu của bạn", perfSuccess: "Giới thiệu thành công", perfEarned: "Phút đã nhận",
+    perfRank: "Hạng giới thiệu", rankNew: "Mới", refEmpty: "Bạn chưa mời ai cả.",
     plans: {
       free: { name: "Free", tagline: "Dùng thử miễn phí", cta: "Bắt đầu", priceMonthly: "0đ",
         features: ["30 phút dịch / tháng", "1 ngôn ngữ đích", "Tóm tắt cơ bản", "Lịch sử 7 ngày"] },
@@ -165,6 +185,15 @@ const T: Record<Lang, Dict> = {
     refBannerSub: "동료를 초대하고 워크스페이스를 확장하세요. 가입이 완료될 때마다 본인과 친구 각각 +120분을 받습니다.",
     refInviteTeam: "팀 초대하기", refUnlimited: "무제한 추천",
     refPerf: "내 추천 실적", refInvited: "초대", refEarned: "획득", refUnitMin: "분",
+    hiwTitle: "이용 방법", hiwSub: "팀이 Flash Meet을 알도록 도우며 번역 분을 받으세요.",
+    steps: [
+      { t: "동료 초대", d: "내 추천 링크를 공유하세요." },
+      { t: "친구 가입", d: "Flash Meet 계정을 만듭니다." },
+      { t: "둘 다 적립", d: "본인과 동료가 각각 +120 번역 분을 받습니다." },
+      { t: "반복", d: "성공 추천 무제한 — 계속 적립." },
+    ],
+    perfTitle: "내 추천 실적", perfSuccess: "성공 추천", perfEarned: "획득 분",
+    perfRank: "추천 등급", rankNew: "신규", refEmpty: "아직 초대한 사람이 없습니다.",
     plans: {
       free: { name: "Free", tagline: "무료 체험", cta: "시작하기", priceMonthly: "₩0",
         features: ["월 30분 번역", "대상 언어 1개", "기본 요약", "7일 기록"] },
@@ -259,6 +288,34 @@ const REFBANNER_CSS = `
 .refb-stats b{color:#0f172a;font-weight:800}
 .refb-dot{color:#cbd5e1}
 @media(max-width:560px){.refb{padding:22px}.refb-h{font-size:23px}.refb-metrics{width:100%}.refb-card{flex:1}.refb-right{width:100%}}
+
+/* How it works */
+.hiw-wrap{max-width:1160px;margin:52px auto 0;font-family:'Inter',system-ui,sans-serif;animation:refbIn .3s ease}
+.hiw-head{text-align:center;margin-bottom:26px}
+.hiw-title{font-size:24px;font-weight:800;letter-spacing:-.02em;color:#0f172a}
+.hiw-sub{font-size:14.5px;color:#64748b;margin-top:8px}
+.hiw{display:flex;align-items:stretch;justify-content:center}
+.hiw-card{flex:1;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:22px 20px;transition:.18s}
+.hiw-card:hover{box-shadow:0 16px 32px -22px rgba(15,23,42,.32);transform:translateY(-3px);border-color:#cdd9ec}
+.hiw-num{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-size:14px;font-weight:800;display:grid;place-items:center;margin-bottom:14px;box-shadow:0 4px 12px rgba(37,99,235,.3)}
+.hiw-t{font-size:15px;font-weight:700;color:#0f172a;letter-spacing:-.01em}
+.hiw-d{font-size:13px;line-height:1.55;color:#64748b;margin-top:5px}
+.hiw-arrow{display:flex;align-items:center;color:#cbd5e1;font-size:24px;font-weight:400;padding:0 10px;flex:0 0 auto}
+@media(max-width:760px){.hiw{flex-direction:column}.hiw-arrow{transform:rotate(90deg);justify-content:center;padding:4px 0}}
+
+/* Referral performance */
+.perf-wrap{max-width:1160px;margin:52px auto 0;font-family:'Inter',system-ui,sans-serif;animation:refbIn .3s ease}
+.perf-title{font-size:24px;font-weight:800;letter-spacing:-.02em;color:#0f172a;text-align:center;margin-bottom:24px}
+.perf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.perf-card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:24px 18px;text-align:center;transition:.18s}
+.perf-card:hover{box-shadow:0 16px 32px -22px rgba(15,23,42,.32);transform:translateY(-3px);border-color:#cdd9ec}
+.perf-k{font-size:12.5px;font-weight:600;color:#64748b}
+.perf-v{font-size:36px;font-weight:800;letter-spacing:-.03em;color:#0f172a;margin-top:6px;line-height:1.1}
+.perf-v.grad{background:linear-gradient(135deg,#2563eb,#3b82f6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#2563eb}
+.perf-empty{text-align:center;margin:20px 0 0}
+.perf-empty p{font-size:14px;color:#64748b;margin:0 0 12px}
+.perf-cta{height:48px;padding:0 28px;display:inline-block}
+@media(max-width:760px){.perf-grid{grid-template-columns:repeat(2,1fr)}}
 `;
 
 export default function Pricing() {
@@ -457,24 +514,47 @@ export default function Pricing() {
           <div className="refb-mut">{t.refUnlimited}</div>
         </div>
       </div>
-      {refData?.stats && (
-        <div className="refb-stats">
-          <span className="refb-perf">{t.refPerf}</span>
-          <span className="refb-dot">·</span>
-          <span>{t.refInvited}: <b>{refData.stats.invited}</b></span>
-          <span className="refb-dot">·</span>
-          <span>{t.refEarned}: <b>{refData.stats.earned.toLocaleString()} {t.refUnitMin}</b></span>
+      <section className="hiw-wrap">
+        <div className="hiw-head">
+          <div className="hiw-title">{t.hiwTitle}</div>
+          <div className="hiw-sub">{t.hiwSub}</div>
         </div>
-      )}
-
-      <section style={S.faqWrap}>
-        {t.faq.map((f) => (
-          <div key={f.q} style={S.faqItem}>
-            <div style={S.faqQ}>{f.q}</div>
-            <div style={S.faqA}>{f.a}</div>
-          </div>
-        ))}
+        <div className="hiw">
+          {t.steps.map((s, i) => (
+            <Fragment key={i}>
+              <div className="hiw-card">
+                <div className="hiw-num">{i + 1}</div>
+                <div className="hiw-t">{s.t}</div>
+                <div className="hiw-d">{s.d}</div>
+              </div>
+              {i < t.steps.length - 1 && <div className="hiw-arrow">›</div>}
+            </Fragment>
+          ))}
+        </div>
       </section>
+
+      {(() => {
+        const invited = refData?.stats?.invited ?? 0;
+        const earned = refData?.stats?.earned ?? 0;
+        const rankName = invited >= 10 ? "Platinum" : invited >= 6 ? "Gold" : invited >= 3 ? "Silver" : invited >= 1 ? "Bronze" : t.rankNew;
+        return (
+          <section className="perf-wrap">
+            <div className="perf-title">{t.perfTitle}</div>
+            <div className="perf-grid">
+              <div className="perf-card"><div className="perf-k">{t.refInvited}</div><div className="perf-v">{invited}</div></div>
+              <div className="perf-card"><div className="perf-k">{t.perfSuccess}</div><div className="perf-v">{invited}</div></div>
+              <div className="perf-card"><div className="perf-k">{t.perfEarned}</div><div className="perf-v grad">{earned.toLocaleString()}</div></div>
+              <div className="perf-card"><div className="perf-k">{t.perfRank}</div><div className="perf-v">{rankName}</div></div>
+            </div>
+            {invited === 0 && (
+              <div className="perf-empty">
+                <p>{t.refEmpty}</p>
+                <button className="refb-cta perf-cta" onClick={getInvite}>{t.refInviteTeam}</button>
+              </div>
+            )}
+          </section>
+        );
+      })()}
 
       {invite && (
         <>
