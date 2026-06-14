@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase-server";
 import { createAdminClient, isAdmin } from "@/lib/supabase-admin";
-import { sendEmail, emailLayout, sendOrderEmails } from "@/lib/email";
+import { sendEmail, emailLayout, infoBox, sendOrderEmails } from "@/lib/email";
 import { fmtVnd } from "@/lib/billing";
 
 export const dynamic = "force-dynamic";
@@ -55,11 +55,15 @@ export async function POST(req: NextRequest) {
       await sendEmail(
         pay.email,
         "Gói của bạn đã được kích hoạt — Flash Meet",
-        emailLayout("Kích hoạt thành công ✅", `
-          <p style="font-size:14px;line-height:1.6;color:#33405c">Gói <b>${String(pay.plan).toUpperCase()}</b> (${pay.billing === "annual" ? "theo năm" : "theo tháng"}) đã được kích hoạt cho tài khoản của bạn.</p>
-          <p style="font-size:14px;line-height:1.6;color:#33405c">Số tiền: <b>${fmtVnd(pay.amount)}</b></p>
-          <p style="font-size:14px;color:#33405c">Cảm ơn bạn đã sử dụng Flash Meet! Đăng nhập tại meet.transflash.app để bắt đầu.</p>
-        `)
+        emailLayout("Kích hoạt thành công ✅",
+          `<p style="font-family:-apple-system,'Segoe UI',Inter,Roboto,Arial,sans-serif;font-size:14.5px;line-height:1.65;color:#3a4660;margin:0 0 14px">Gói của bạn đã được kích hoạt và sẵn sàng sử dụng. Cảm ơn bạn đã tin dùng Flash Meet!</p>` +
+          infoBox([
+            ["Gói", `${String(pay.plan).toUpperCase()} · ${pay.billing === "annual" ? "theo năm" : "theo tháng"}`],
+            ["Số tiền", fmtVnd(pay.amount)],
+            ["Trạng thái", "✅ Đang hoạt động"],
+          ]),
+          { cta: { text: "Bắt đầu dùng Flash Meet →", url: "https://meet.transflash.app" },
+            preheader: `Gói ${String(pay.plan).toUpperCase()} đã được kích hoạt.` })
       );
     }
     return NextResponse.json({ ok: true });
