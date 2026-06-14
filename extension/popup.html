@@ -22,6 +22,11 @@
   .modeseg button{flex:1;border:none;background:none;color:#9fb3d6;font-family:inherit;font-size:12px;font-weight:800;
     padding:7px;border-radius:7px;cursor:pointer}
   .modeseg button.on{background:#1f6bff;color:#fff}
+  .srcseg{display:flex;gap:4px;background:#101a2e;border:1px solid #2a3852;border-radius:9px;padding:3px;margin-bottom:7px}
+  .srcseg button{flex:1;border:none;background:none;color:#9fb3d6;font-family:inherit;font-size:11px;font-weight:800;
+    padding:7px 4px;border-radius:7px;cursor:pointer;white-space:nowrap}
+  .srcseg button.on{background:#1f6bff;color:#fff}
+  .srchint{font-size:10px;color:#7e8da8;margin-bottom:14px;line-height:1.45}
   .langrow{display:flex;align-items:center;gap:7px;margin-bottom:14px}
   .swapic{color:#9fb3d6;font-weight:800;font-size:15px}
   button.act{width:100%;border:none;border-radius:10px;padding:12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;color:#fff;transition:.15s}
@@ -80,8 +85,13 @@
     </select>
   </div>
 
-  <label class="microw"><input type="checkbox" id="mic"> 🎤 Bao gồm mic của tôi
-    <span class="mhint">dịch cả 2 phía</span></label>
+  <label>Nguồn âm thanh</label>
+  <div class="srcseg" id="srcseg">
+    <button type="button" data-s="tab" class="on">🔊 Tab</button>
+    <button type="button" data-s="tabmic">🔊+🎤 Tab + mic</button>
+    <button type="button" data-s="mic">🎤 Mic</button>
+  </div>
+  <div class="srchint" id="srchint">Dịch âm thanh của tab đang mở (Meet, Zoom, YouTube…).</div>
   </div>
 
   <button id="toggle" class="act start">▶ Bắt đầu</button>

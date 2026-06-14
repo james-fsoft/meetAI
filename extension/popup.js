@@ -5,7 +5,8 @@ const langB = document.getElementById("langB");
 const swapIc = document.getElementById("swapIc");
 const langLbl = document.getElementById("langLbl");
 const modeseg = document.getElementById("modeseg");
-const mic = document.getElementById("mic");
+const srcseg = document.getElementById("srcseg");
+const srchint = document.getElementById("srchint");
 const status = document.getElementById("status");
 const authBox = document.getElementById("auth");
 let running = false;
@@ -23,6 +24,25 @@ modeseg.querySelectorAll("button").forEach((b) => b.onclick = () => {
 });
 langB.onchange = () => chrome.storage.local.set({ langB: langB.value });
 
+function getSource() { const b = srcseg.querySelector("button.on"); return b ? b.dataset.s : "tab"; }
+const SRC_HINT = {
+  tab: "Dịch âm thanh của tab đang mở (Meet, Zoom, YouTube…).",
+  tabmic: "Dịch cả tiếng trong tab và giọng bạn nói — cho cuộc gọi 2 chiều.",
+  mic: "Dịch trực tiếp qua micro — họp gặp mặt, không cần mở video/call.",
+};
+function applySource(openPerm) {
+  const s = getSource();
+  srchint.textContent = SRC_HINT[s] || "";
+  if (openPerm && (s === "mic" || s === "tabmic")) {
+    chrome.tabs.create({ url: chrome.runtime.getURL("mic-permission.html") });
+    status.textContent = "👉 Bấm “Cho phép” ở tab vừa mở, rồi quay lại bấm Bắt đầu";
+  } else status.textContent = "";
+}
+srcseg.querySelectorAll("button").forEach((b) => b.onclick = () => {
+  srcseg.querySelectorAll("button").forEach((x) => x.classList.remove("on"));
+  b.classList.add("on"); chrome.storage.local.set({ source: b.dataset.s }); applySource(true);
+});
+
 // show the redirect URL (for Supabase config)
 document.getElementById("redir").textContent = chrome.identity.getRedirectURL();
 
@@ -31,8 +51,8 @@ function render() {
   btn.className = running ? "act stop" : "act start";
   lang.disabled = running;
   langB.disabled = running;
-  mic.disabled = running;
   modeseg.querySelectorAll("button").forEach((b) => (b.disabled = running));
+  srcseg.querySelectorAll("button").forEach((b) => (b.disabled = running));
   // When a session is live, the on-page overlay is the control surface — dim the
   // config here and point the user there so the two windows feel like one flow.
   const cfg = document.getElementById("cfg");
@@ -43,31 +63,24 @@ function render() {
   if (running) runbar.innerHTML = "● Đang dịch trực tiếp<span>Dừng · Tiếp tục · Tóm tắt nằm ở khung phụ đề ngay trên trang →</span>";
 }
 
-chrome.storage.local.get(["lang", "langB", "way", "mic"], (d) => {
+chrome.storage.local.get(["lang", "langB", "way", "source"], (d) => {
   if (d.lang) lang.value = d.lang;
   if (d.langB) langB.value = d.langB;
   if (d.way) { modeseg.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.w === d.way)); }
-  if (d.mic) mic.checked = true;
-  applyMode();
+  if (d.source) { srcseg.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.s === d.source)); }
+  applyMode(); applySource(false);
 });
 chrome.runtime.sendMessage({ cmd: "getState" }, (s) => { running = !!(s && s.running); render(); });
 loadMe();
-mic.onchange = () => {
-  chrome.storage.local.set({ mic: mic.checked });
-  if (!mic.checked) { status.textContent = ""; return; }
-  // Popups can't prompt for the mic reliably → grant it via a dedicated page.
-  chrome.tabs.create({ url: chrome.runtime.getURL("mic-permission.html") });
-  status.textContent = "👉 Bấm “Cho phép” ở tab vừa mở, rồi quay lại bấm Bắt đầu";
-};
 
 btn.onclick = async () => {
   if (running) {
     chrome.runtime.sendMessage({ cmd: "end", summarize: false }, () => { running = false; render(); status.textContent = ""; });
     return;
   }
-  chrome.storage.local.set({ lang: lang.value, langB: langB.value, way: getWay(), mic: mic.checked });
+  chrome.storage.local.set({ lang: lang.value, langB: langB.value, way: getWay(), source: getSource() });
   status.textContent = "준비 중…";
-  chrome.runtime.sendMessage({ cmd: "start", lang: lang.value, langB: langB.value, way: getWay(), mic: mic.checked }, (r) => {
+  chrome.runtime.sendMessage({ cmd: "start", lang: lang.value, langB: langB.value, way: getWay(), source: getSource() }, (r) => {
     if (r && r.ok) { running = true; render(); }
     else { status.textContent = "⚠ " + ((r && r.error) || "Không bắt được tab"); }
   });

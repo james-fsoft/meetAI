@@ -15,7 +15,7 @@ let meterTimer = null, meterLast = 0; // usage metering (only while audio is liv
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.target !== "offscreen") return;
-  if (msg.type === "start") { target = msg.lang || target; way = msg.way || "one"; if (msg.langB) langB = msg.langB; startCap(msg.streamId, msg.resume, msg.mic); }
+  if (msg.type === "start") { target = msg.lang || target; way = msg.way || "one"; if (msg.langB) langB = msg.langB; startCap(msg.streamId, msg.resume, msg.source || "tab"); }
   else if (msg.type === "pause") { pauseCap(); }
   else if (msg.type === "end") { endCap(!!msg.summarize); }
   else if (msg.type === "setLang") { if (msg.lang) target = msg.lang; if (msg.way) way = msg.way; if (msg.langB) langB = msg.langB; if (ws) { try { ws.close(); } catch {} } } // reconnect with new config
@@ -51,35 +51,44 @@ function meterPauseSeg() { meterFlush(); meterLast = 0; }            // socket c
 function meterStopAll() { meterFlush(); meterLast = 0; if (meterTimer) { clearInterval(meterTimer); meterTimer = null; } }
 function pickMime() { const c = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"]; for (const m of c) if (MediaRecorder.isTypeSupported(m)) return m; return ""; }
 
-async function startCap(streamId, resume, mic) {
-  running = true; stopping = false; fails = 0; useMic = !!mic;
+async function startCap(streamId, resume, source) {
+  running = true; stopping = false; fails = 0;
+  const useTab = source !== "mic";          // "mic" = in-person, no tab capture
+  useMic = source === "mic" || source === "tabmic";
   if (!resume) fullLines = [];
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      audio: { mandatory: { chromeMediaSource: "tab", chromeMediaSourceId: streamId } }, video: false,
-    });
-  } catch (e) { send({ type: "status", text: "탭 오디오 오류: " + e.message }); running = false; return; }
-  // optional microphone
+
+  // Tab audio (skipped for mic-only / in-person mode)
+  stream = null;
+  if (useTab) {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: { mandatory: { chromeMediaSource: "tab", chromeMediaSourceId: streamId } }, video: false,
+      });
+    } catch (e) { send({ type: "status", text: "탭 오디오 오류: " + e.message }); running = false; return; }
+  }
+
+  // Microphone
   micStream = null; let micErr = "";
   if (useMic) {
     try { micStream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
     catch (e) { micErr = e.name || e.message || "lỗi"; micStream = null; }
   }
-  // persistent banner so the mic problem is obvious (status line gets overwritten by LIVE)
-  if (useMic && !micStream) send({ type: "micWarn", text: "⚠ Mic KHÔNG hoạt động (" + micErr + ") — chỉ dịch tiếng trong tab. Hãy cấp quyền micro, hoặc đóng app đang chiếm mic (Zoom/Meet)." });
-  else send({ type: "micWarn", text: "" });
-  // single audio graph: tab → speakers + recording; mic → recording only (no echo)
-  recStream = stream;
+  if (useMic && !micStream) {
+    if (!useTab) { send({ type: "status", text: "🎤 Mic lỗi (" + micErr + ") — cấp quyền micro rồi thử lại." }); running = false; return; }
+    send({ type: "micWarn", text: "⚠ Mic KHÔNG hoạt động (" + micErr + ") — chỉ dịch tiếng trong tab. Hãy cấp quyền micro, hoặc đóng app đang chiếm mic (Zoom/Meet)." });
+  } else send({ type: "micWarn", text: "" });
+
+  // Audio graph → Soniox. Tab is also played back so the user still hears the call;
+  // the mic is never played back (avoids echo/feedback).
+  recStream = stream || micStream;
   try {
     audioCtx = new AudioContext();
     const dest = audioCtx.createMediaStreamDestination();
-    const tabSrc = audioCtx.createMediaStreamSource(stream);
-    tabSrc.connect(audioCtx.destination); // user still hears the call
-    tabSrc.connect(dest);                 // tab audio → Soniox
-    if (micStream) audioCtx.createMediaStreamSource(micStream).connect(dest); // mic → Soniox only
+    if (stream) { const tabSrc = audioCtx.createMediaStreamSource(stream); tabSrc.connect(audioCtx.destination); tabSrc.connect(dest); }
+    if (micStream) audioCtx.createMediaStreamSource(micStream).connect(dest);
     if (audioCtx.state === "suspended") audioCtx.resume();
     recStream = dest.stream;
-  } catch (e) { recStream = stream; }
+  } catch (e) { recStream = stream || micStream; }
   openWs();
 }
 

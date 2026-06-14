@@ -1,6 +1,7 @@
 // Service worker: orchestrates tab-audio capture → offscreen Soniox stream → content overlay.
 
-let active = { tabId: null, running: false, lang: "ko", langB: "vi", way: "one", mic: false };
+// source: "tab" (tab audio) | "tabmic" (tab + your mic) | "mic" (microphone only, in-person)
+let active = { tabId: null, running: false, lang: "ko", langB: "vi", way: "one", source: "tab" };
 
 async function hasOffscreen() {
   const ctxs = await chrome.runtime.getContexts({ contextTypes: ["OFFSCREEN_DOCUMENT"] });
@@ -27,7 +28,7 @@ async function recreateOffscreen() {
   });
 }
 
-async function startCapture(lang, resume, mic, wayv, langBv) {
+async function startCapture(lang, resume, sourcev, wayv, langBv) {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab) throw new Error("No active tab");
 
@@ -45,13 +46,17 @@ async function startCapture(lang, resume, mic, wayv, langBv) {
     lang: lang || active.lang || "ko",
     langB: (resume ? active.langB : langBv) || active.langB || "vi",
     way: (resume ? active.way : wayv) || "one",
-    mic: resume ? active.mic : !!mic,
+    source: (resume ? active.source : sourcev) || "tab",
   };
   chrome.tabs.sendMessage(tab.id, { from: "bg", type: "show", resume: !!resume, lang: active.lang, langB: active.langB, way: active.way }).catch(() => {});
 
-  // Get the stream id LAST so it's consumed immediately (ids are short-lived).
-  const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
-  chrome.runtime.sendMessage({ target: "offscreen", type: "start", streamId, lang: active.lang, langB: active.langB, way: active.way, resume: !!resume, mic: active.mic });
+  // Tab audio only when the source uses it; "mic" (in-person) skips tab capture
+  // so it works on any page without a meeting/video.
+  let streamId = null;
+  if (active.source !== "mic") {
+    streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tab.id });
+  }
+  chrome.runtime.sendMessage({ target: "offscreen", type: "start", streamId, source: active.source, lang: active.lang, langB: active.langB, way: active.way, resume: !!resume });
 }
 
 function pauseCapture() {
@@ -89,7 +94,7 @@ async function getAuthToken() {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.cmd === "start") {
-    startCapture(msg.lang, false, msg.mic, msg.way, msg.langB).then(() => sendResponse({ ok: true })).catch((e) => sendResponse({ ok: false, error: e.message }));
+    startCapture(msg.lang, false, msg.source, msg.way, msg.langB).then(() => sendResponse({ ok: true })).catch((e) => sendResponse({ ok: false, error: e.message }));
     return true;
   }
   if (msg.cmd === "resume") {
