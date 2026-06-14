@@ -78,11 +78,15 @@ h1{font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1;margin-bo
 .app-card{background:var(--paper);border:1px solid var(--hair);border-radius:24px;padding:18px 30px 26px;
   box-shadow:0 30px 60px -34px rgba(10,17,36,.45)}
 /* Record / Pause / Stop controls pinned to the top of the card */
-.cap-top{position:sticky;top:0;z-index:12;background:var(--paper);padding:14px 0 14px;margin-bottom:6px;border-bottom:1px solid var(--hair)}
-.cap-meta{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.cap-top{position:sticky;top:0;z-index:12;background:var(--paper);padding:10px 0 10px;margin-bottom:4px;border-bottom:1px solid var(--hair)}
+.cap-meta{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
 .usage-badge{font-size:11.5px;font-weight:800;color:#1f6bff;background:#eef4ff;border:1px solid #d3e0fb;border-radius:20px;padding:4px 11px;white-space:nowrap}
-.cap-top .btn{margin-top:10px}
+/* compact control buttons inside the sticky bar → more room for subtitles */
+.cap-top .btn{margin-top:8px;font-size:14.5px;padding:11px 20px;border-radius:11px}
+.cap-top .btn.big{font-size:15px;padding:13px;animation:none}
 .cap-top #capRec .dual{margin-top:0}
+.cap-top #capReady .link,.cap-top #capIdle .link{margin-top:10px}
+.cap-top #capReady audio{height:34px;margin-top:10px}
 .btn{cursor:pointer;border:2px solid var(--acc);font-family:inherit;font-size:16px;font-weight:800;
   letter-spacing:-.01em;padding:17px 26px;width:100%;border-radius:13px;transition:.12s;
   display:inline-flex;align-items:center;justify-content:center;gap:10px;margin-top:18px}
@@ -377,7 +381,7 @@ audio{width:100%;margin-top:16px;height:42px}
   </div>
 
 </div>
-<div class="foot">© <span id="yr"></span> <b>V-Kookmin™</b> · Meeting AI</div>
+<div class="foot">© <span id="yr"></span> <b>ai.transflash</b> · Meeting AI</div>
 
 <div class="overlay" id="overlay">
   <div class="panel">
