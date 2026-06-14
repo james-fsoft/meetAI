@@ -70,13 +70,19 @@ export default function MeetingApp({ email, plan = "free", admin = false, usage 
   }
 
   const iframeSrc = signedIn
-    ? `/meeting.html?v=37&signed=1&plan=${encodeURIComponent(plan)}`
-    : "/meeting.html?v=37";
+    ? `/meeting.html?v=38&signed=1&plan=${encodeURIComponent(plan)}`
+    : "/meeting.html?v=38";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <div style={bar}>
-        <a href="/" style={brand}>🎙️ Meeting AI</a>
+        <a href="/" style={brand}>
+          <svg viewBox="0 0 100 100" width="22" height="22" style={{ display: "block" }} aria-hidden="true">
+            <path d="M22 8 H78 a16 16 0 0 1 16 16 V60 a16 16 0 0 1 -16 16 H50 l-20 18 v-18 H22 a16 16 0 0 1 -16 -16 V24 A16 16 0 0 1 22 8 Z" fill="#1f6bff"/>
+            <g fill="#fff"><rect x="26" y="38" width="7.5" height="12" rx="3.75"/><rect x="39" y="29" width="7.5" height="30" rx="3.75"/><rect x="52" y="22" width="7.5" height="44" rx="3.75"/><rect x="65" y="32" width="7.5" height="24" rx="3.75"/></g>
+          </svg>
+          <span>Flash Meet</span>
+        </a>
         <span style={{ flex: 1 }} />
         {signedIn ? (
           <>
@@ -100,7 +106,7 @@ export default function MeetingApp({ email, plan = "free", admin = false, usage 
       </div>
       <iframe
         src={iframeSrc}
-        title="Meeting AI"
+        title="Flash Meet"
         allow="microphone; display-capture; clipboard-write"
         style={{ border: "none", width: "100%", flex: 1, display: "block" }}
       />
@@ -113,7 +119,7 @@ const bar: React.CSSProperties = {
   fontFamily: "'Inter',system-ui,sans-serif", fontSize: 13, color: "#5b6b8c",
   borderBottom: "1px solid #e3e8f2", background: "#fff",
 };
-const brand: React.CSSProperties = { fontWeight: 900, color: "#0a1124", letterSpacing: "-.03em", textDecoration: "none" };
+const brand: React.CSSProperties = { display: "inline-flex", alignItems: "center", gap: 8, fontWeight: 900, fontSize: 15, color: "#0a1124", letterSpacing: "-.03em", textDecoration: "none" };
 const mail: React.CSSProperties = { fontSize: 12.5 };
 const out: React.CSSProperties = {
   border: "1.5px solid #e3e8f2", background: "#fff", color: "#0a1124", cursor: "pointer",

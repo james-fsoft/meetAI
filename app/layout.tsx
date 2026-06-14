@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Meeting AI",
+  title: "Flash Meet",
   description: "Record meetings, separate speakers, translate live, and get summaries.",
   icons: { icon: "/icon.svg" },
 };

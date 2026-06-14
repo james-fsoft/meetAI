@@ -53,7 +53,7 @@ export default function Login() {
       <div style={S.top}><LangSwitch lang={lang} onChange={setLang} /></div>
       <div style={S.card}>
         <div style={S.logo}>🎙️</div>
-        <h1 style={S.h1}>Meeting AI</h1>
+        <h1 style={S.h1}>Flash Meet</h1>
         <p style={S.sub}>{t.sub}</p>
 
         <button onClick={signInWithGoogle} disabled={loading} style={S.gbtn}>
