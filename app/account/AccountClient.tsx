@@ -60,7 +60,7 @@ export default function AccountClient({ email, usage }: { email: string; usage: 
       }).join("\n\n");
     } else txt += m.transcript || "";
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain;charset=utf-8" }));
+    a.href = URL.createObjectURL(new Blob(["﻿" + txt], { type: "text/plain;charset=utf-8" }));
     a.download = (m.title || "meeting").replace(/[^\w\s-]/g, "").slice(0, 40).trim() + ".txt";
     a.click();
   }

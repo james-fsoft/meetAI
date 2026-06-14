@@ -89,7 +89,7 @@
   }
   function dlFile(content, name) {
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([content || ""], { type: "text/plain;charset=utf-8" }));
+    a.href = URL.createObjectURL(new Blob(["﻿" + (content || "")], { type: "text/plain;charset=utf-8" }));
     a.download = name; a.click();
   }
   function showSummary(text, transcript) {
