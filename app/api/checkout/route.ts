@@ -1,21 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, supabaseConfigured } from "@/lib/supabase-server";
 
-// Map each paid plan to its Lemon Squeezy variant id (set in env once products exist).
-const VARIANTS: Record<string, string | undefined> = {
-  pro: process.env.LEMONSQUEEZY_VARIANT_PRO,
-  business: process.env.LEMONSQUEEZY_VARIANT_BUSINESS,
+// Map each paid plan + billing cycle to its Lemon Squeezy variant id.
+// Set these in env once the products/variants exist in your store.
+const VARIANTS: Record<string, Record<string, string | undefined>> = {
+  pro: {
+    monthly: process.env.LEMONSQUEEZY_VARIANT_PRO,
+    annual: process.env.LEMONSQUEEZY_VARIANT_PRO_ANNUAL,
+  },
+  business: {
+    monthly: process.env.LEMONSQUEEZY_VARIANT_BUSINESS,
+    annual: process.env.LEMONSQUEEZY_VARIANT_BUSINESS_ANNUAL,
+  },
 };
 
 /**
- * POST /api/checkout?plan=pro|business
+ * POST /api/checkout?plan=pro|business&billing=monthly|annual
  * Creates a Lemon Squeezy checkout for the signed-in user and returns its URL.
- * Until Lemon Squeezy is configured, responds with a clear 400 so the UI can
- * fall back gracefully.
+ * The user id + plan ride along in custom data so the webhook can upgrade them.
  */
 export async function POST(req: NextRequest) {
-  const plan = new URL(req.url).searchParams.get("plan") || "";
-  const variant = VARIANTS[plan];
+  const url = new URL(req.url);
+  const plan = url.searchParams.get("plan") || "";
+  const billing = url.searchParams.get("billing") === "annual" ? "annual" : "monthly";
+  const variant = VARIANTS[plan]?.[billing];
   const apiKey = process.env.LEMONSQUEEZY_API_KEY;
   const storeId = process.env.LEMONSQUEEZY_STORE_ID;
 
@@ -28,12 +36,11 @@ export async function POST(req: NextRequest) {
 
   if (!apiKey || !storeId || !variant) {
     return NextResponse.json(
-      { error: "Thanh toán chưa được cấu hình (Lemon Squeezy)." },
+      { error: "Thanh toán thẻ chưa được cấu hình (Lemon Squeezy)." },
       { status: 400 }
     );
   }
 
-  const origin = new URL(req.url).origin;
   const r = await fetch("https://api.lemonsqueezy.com/v1/checkouts", {
     method: "POST",
     headers: {
@@ -46,7 +53,7 @@ export async function POST(req: NextRequest) {
         type: "checkouts",
         attributes: {
           checkout_data: { email: user.email, custom: { user_id: user.id, plan } },
-          product_options: { redirect_url: `${origin}/?upgraded=${plan}` },
+          product_options: { redirect_url: `${url.origin}/?upgraded=${plan}` },
         },
         relationships: {
           store: { data: { type: "stores", id: String(storeId) } },
