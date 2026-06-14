@@ -231,6 +231,35 @@ body.recing .rec-hint{margin-bottom:10px}
 .lv-bubble{background:var(--paper);border:1px solid var(--hair);border-radius:5px 16px 16px 16px;padding:11px 14px;box-shadow:0 6px 18px -12px rgba(10,17,36,.45)}
 .lv-orig{font-size:13px;color:var(--grey);line-height:1.46}
 .lv-trans{font-size:15.5px;font-weight:600;color:var(--ink);line-height:1.46;margin-top:7px;padding-top:7px;border-top:1px dashed color-mix(in srgb,var(--hair) 85%,transparent);letter-spacing:-.01em}
+.lv-time{font-size:10.5px;font-weight:700;color:var(--faint);margin-left:7px}
+/* ── AI Meeting Intelligence console (3-column live layout) ── */
+.cap-grid{display:flex;flex-direction:column}
+.cap-center{display:flex;flex-direction:column;min-width:0;width:100%}
+.ai-panel{display:none}
+body.recing #sc-cap{max-width:1340px}
+body.recing #sc-cap .app-card{display:grid;grid-template-columns:262px minmax(0,1fr) 322px;gap:18px;align-items:start;max-width:1340px;padding:18px;text-align:left}
+body.recing .cap-top{position:sticky;top:14px;background:var(--paper);border:1px solid var(--hair);border-radius:18px;padding:16px;margin:0;box-shadow:0 16px 36px -28px rgba(15,23,42,.45)}
+body.recing .cap-meta{flex-direction:column;align-items:stretch;gap:12px;margin-bottom:14px}
+body.recing .cap-top #capRec .dual{flex-direction:column;gap:8px;max-width:none;margin:0}
+body.recing .cap-top #capRec .btn{width:100%}
+body.recing .ai-panel{display:block;position:sticky;top:14px}
+body.recing .cap-center{gap:0}
+.ai-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:#0f172a;letter-spacing:-.01em;margin:0 0 12px;padding:0 2px}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 4px rgba(22,163,74,.15);animation:livedot 1.6s ease-out infinite}
+.ai-sec{background:var(--paper);border:1px solid var(--hair);border-radius:16px;padding:14px 16px;margin-bottom:12px;box-shadow:0 10px 26px -24px rgba(15,23,42,.4)}
+.ai-st{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:9px}
+.ai-body{font-size:13px;color:#334155;line-height:1.55}
+.ai-empty{color:#cbd5e1;font-size:12.5px;font-weight:600}
+.ai-item{display:flex;gap:8px;padding:5px 0;align-items:flex-start}
+.ai-item .b{color:var(--acc);flex-shrink:0;font-weight:800;line-height:1.5}
+.ai-item .who{font-weight:800;color:#0f172a}
+.ai-check{width:15px;height:15px;border:1.7px solid #cbd5e1;border-radius:5px;flex-shrink:0;margin-top:1px}
+.ai-up{animation:aiUp .6s ease}
+@keyframes aiUp{0%{box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 35%,transparent) inset}100%{box-shadow:none}}
+@media(max-width:980px){
+  body.recing #sc-cap .app-card{grid-template-columns:1fr;max-width:760px}
+  body.recing .cap-top,body.recing .ai-panel{position:static}
+}
 .live-interim{min-height:24px;margin-bottom:12px;font-size:14px;color:var(--acc);text-align:left;font-weight:600;display:flex;align-items:center;gap:9px}
 .live-interim:empty{display:none}
 .live-interim .eq{display:inline-flex;align-items:flex-end;gap:2px;height:14px;flex-shrink:0}
@@ -299,7 +328,7 @@ audio{width:100%;margin-top:16px;height:42px}
   </div>
 
   <div class="screen" id="sc-cap">
-   <div class="app-card" style="display:flex;flex-direction:column">
+   <div class="app-card cap-grid">
     <div class="cap-top">
       <div class="cap-meta">
         <div class="viz" id="viz"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
@@ -344,10 +373,19 @@ audio{width:100%;margin-top:16px;height:42px}
         <audio id="player" controls></audio>
       </div>
     </div>
-    <div class="rec-hint" id="recHint" data-t="c_hint">Press record to start</div>
-    <div class="live-feed" id="lvFeed" style="display:none"></div>
-    <div class="live-interim" id="lvInterim" style="display:none"></div>
-    <p class="note" id="diarNote" data-t="c_diar">👥 Voices are separated automatically (Speaker 1, 2, 3…).</p>
+    <div class="cap-center">
+      <div class="rec-hint" id="recHint" data-t="c_hint">Press record to start</div>
+      <div class="live-feed" id="lvFeed" style="display:none"></div>
+      <div class="live-interim" id="lvInterim" style="display:none"></div>
+      <p class="note" id="diarNote" data-t="c_diar">👥 Voices are separated automatically (Speaker 1, 2, 3…).</p>
+    </div>
+    <aside class="ai-panel" id="aiPanel">
+      <div class="ai-head"><span class="ai-dot"></span><span data-t="ai_title">AI Meeting Intelligence</span></div>
+      <div class="ai-sec"><div class="ai-st" data-t="ai_summary">Summary</div><div class="ai-body" id="aiSummary"><div class="ai-empty" data-t="ai_wait">AI is listening…</div></div></div>
+      <div class="ai-sec"><div class="ai-st" data-t="ai_actions">Action items</div><div class="ai-body" id="aiActions"><div class="ai-empty">—</div></div></div>
+      <div class="ai-sec"><div class="ai-st" data-t="ai_decisions">Key decisions</div><div class="ai-body" id="aiDecisions"><div class="ai-empty">—</div></div></div>
+      <div class="ai-sec"><div class="ai-st" data-t="ai_risks">Risks &amp; follow-ups</div><div class="ai-body" id="aiRisks"><div class="ai-empty">—</div></div></div>
+    </aside>
    </div>
   </div>
 
@@ -421,6 +459,7 @@ const I={
    c_diar:"👥 Voices are separated automatically (Speaker 1, 2, 3…).",
    p_upload:"Uploading audio…",p_diar:"Separating voices…",p_sum:"Writing the summary…",p_wait:"Your AI assistant is hard at work…",
    r_summary:"Summary",r_transcript:"Transcript",r_copy:"Copy",r_download:"Download",r_new:"+ New meeting",r_dl_live:"⬇ Live translation",words:"words",
+   ai_title:"AI Meeting Intelligence",ai_summary:"Summary",ai_actions:"Action items",ai_decisions:"Key decisions",ai_risks:"Risks & follow-ups",ai_wait:"AI is listening…",
    h_title:"History",open:"Open",empty:"No meetings yet",
    sp_title:"Rename speakers (optional)",sp_apply:"Apply",sp_ph:"Real name",sp_done:"Names applied",
    c_translate:"Live translate",lv_listening:"Listening…",lv_file:"Live translate needs the page served over http(s).",lv_net:"Reconnecting…",lv_nosupport:"Live translate needs Chrome or Edge (Web Speech API).",lv_mic:"Microphone permission was denied.",
@@ -435,6 +474,7 @@ const I={
    c_diar:"👥 Tự động tách giọng từng người (Speaker 1, 2, 3…).",
    p_upload:"Đang tải audio lên…",p_diar:"Đang tách giọng nói…",p_sum:"Đang viết tóm tắt…",p_wait:"Trợ lý AI đang chăm chỉ làm việc…",
    r_summary:"Tóm tắt",r_transcript:"Bản ghi",r_copy:"Copy",r_download:"Tải xuống",r_new:"+ Cuộc họp mới",r_dl_live:"⬇ Bản dịch trực tiếp",words:"từ",
+   ai_title:"AI Tổng hợp cuộc họp",ai_summary:"Tóm tắt",ai_actions:"Việc cần làm",ai_decisions:"Quyết định",ai_risks:"Rủi ro & theo dõi",ai_wait:"AI đang lắng nghe…",
    h_title:"Lịch sử",open:"Mở",empty:"Chưa có cuộc họp",
    sp_title:"Đổi tên người nói (tùy chọn)",sp_apply:"Áp dụng",sp_ph:"Tên thật",sp_done:"Đã áp dụng tên",
    c_translate:"Dịch trực tiếp",lv_listening:"Đang nghe…",lv_file:"Dịch trực tiếp cần mở qua http(s).",lv_net:"Đang kết nối lại…",lv_nosupport:"Dịch trực tiếp cần Chrome hoặc Edge (Web Speech API).",lv_mic:"Micro đã bị từ chối quyền.",
@@ -449,6 +489,7 @@ const I={
    c_diar:"👥 화자를 자동으로 분리합니다 (Speaker 1, 2, 3…).",
    p_upload:"오디오 업로드 중…",p_diar:"화자 분리 중…",p_sum:"요약 작성 중…",p_wait:"AI 비서가 열심히 작업 중…",
    r_summary:"요약",r_transcript:"전체 기록",r_copy:"복사",r_download:"다운로드",r_new:"+ 새 회의",r_dl_live:"⬇ 실시간 번역",words:"단어",
+   ai_title:"AI 회의 인텔리전스",ai_summary:"요약",ai_actions:"액션 아이템",ai_decisions:"주요 결정",ai_risks:"리스크 & 후속",ai_wait:"AI가 듣고 있어요…",
    h_title:"기록",open:"열기",empty:"회의가 없습니다",
    sp_title:"화자 이름 변경 (선택)",sp_apply:"적용",sp_ph:"실명",sp_done:"이름이 적용됨",
    c_translate:"실시간 번역",lv_listening:"듣는 중…",lv_file:"실시간 번역은 http(s)로 열어야 합니다.",lv_net:"다시 연결 중…",lv_nosupport:"실시간 번역은 Chrome 또는 Edge가 필요합니다.",lv_mic:"마이크 권한이 거부되었습니다.",
@@ -471,6 +512,7 @@ $('goApp').onclick=()=>show('sc-cap');
 let mediaRecorder,chunks=[],audioBlob=null,audioStream=null,extra=[];
 let startTime=0,elapsed=0,timerInt=null,paused=false;
 let curTr="",curSum="",view="summary",capState="idle",curId=null,spkNames={};
+let insTimer=null,insLastLen=0,insBusy=false;
 let actx=null,analyser=null,raf=null;
 let recog=null,lvRunning=false,lvWantOn=false,lvHistory=[],lvAll=[];
 let mlRec=null,mlTimer=null,mlStream=null;const ML_SEGMENT_MS=7000;
@@ -487,12 +529,12 @@ function startViz(stream){try{actx=new(window.AudioContext||window.webkitAudioCo
   const draw=()=>{analyser.getByteFrequencyData(d);for(let i=0;i<bars.length;i++)bars[i].style.height=Math.max(6,(d[i*2]||0)/255*40)+'px';raf=requestAnimationFrame(draw);};draw();}catch(e){}}
 function stopViz(){if(raf)cancelAnimationFrame(raf);[...$('viz').children].forEach(b=>b.style.height='6px');if(actx){actx.close().catch(()=>{});actx=null;}}
 async function buildStream(){const mic=await navigator.mediaDevices.getUserMedia({audio:true});extra=[mic];return mic;}
-function setCap(s){capState=s;$('capIdle').style.display=s==='idle'?'':'none';$('capRec').style.display=(s==='recording'||s==='paused')?'':'none';$('capReady').style.display=s==='ready'?'':'none';document.body.classList.toggle('recing',s==='recording');refreshDyn();}
+function setCap(s){capState=s;$('capIdle').style.display=s==='idle'?'':'none';$('capRec').style.display=(s==='recording'||s==='paused')?'':'none';$('capReady').style.display=s==='ready'?'':'none';document.body.classList.toggle('recing',s==='recording'||s==='paused');if(s==='recording')startInsights();else stopInsights();refreshDyn();}
 $('btnRec').onclick=async()=>{
   if(!gateStart())return;
   try{audioStream=await buildStream();chunks=[];
     $('lvFeed').innerHTML='';$('lvFeed').style.display='none';$('lvInterim').textContent='';$('lvInterim').style.display='none';
-    curTr="";curSum="";lvHistory=[];lvAll=[];spkNames={};
+    curTr="";curSum="";lvHistory=[];lvAll=[];spkNames={};resetInsights();
     mediaRecorder=new MediaRecorder(audioStream);
     mediaRecorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
     mediaRecorder.onstop=()=>{audioBlob=new Blob(chunks,{type:chunks[0]?.type||'audio/webm'});$('player').src=URL.createObjectURL(audioBlob);stopViz();setCap('ready');};
@@ -733,12 +775,12 @@ function sxRender(oI,tI){const o=(sx.segOrig+(oI||'')).trim(),tr=(sx.segTrans+(t
   if(!o&&!tr)return;
   if(!sx.curRow){
     const row=document.createElement('div');row.className='lv-msg';
-    row.innerHTML='<div class="lv-av"></div><div class="lv-msg-b"><div class="lv-name"></div>'+
+    row.innerHTML='<div class="lv-av"></div><div class="lv-msg-b"><div class="lv-name"><span class="lv-who"></span><span class="lv-time"></span></div>'+
       '<div class="lv-bubble"><div class="lv-orig"></div><div class="lv-trans"></div></div></div>';
-    $('lvFeed').appendChild(row);sx.curRow=row;feedScroll(row);
+    $('lvFeed').appendChild(row);sx.curRow=row;row.querySelector('.lv-time').textContent=hm();feedScroll(row);
   }
   const row=sx.curRow,spk=sx.segSpk,av=row.querySelector('.lv-av');
-  if(spk!=null){av.textContent=String(spk);av.dataset.s=((spk-1)%6+6)%6;row.querySelector('.lv-name').textContent='Speaker '+spk;}
+  if(spk!=null){av.textContent=String(spk);av.dataset.s=((spk-1)%6+6)%6;row.querySelector('.lv-who').textContent='Speaker '+spk;}
   else{av.textContent='•';av.dataset.s=0;}
   row.querySelector('.lv-orig').textContent=o;
   const tEl=row.querySelector('.lv-trans');tEl.textContent=tr;tEl.style.display=tr?'':'none';
@@ -765,6 +807,23 @@ function sxStop(){
   sxFinalize();}
 function pauseLive(){lvWantOn=false;sxStop();}
 function stopLive(){lvWantOn=false;$('lvInterim').textContent='';sxStop();}
+// ── AI Meeting Intelligence: periodic structured extraction during the session ──
+function hm(){const d=new Date();return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
+function resetInsights(){insLastLen=0;
+  if($('aiSummary')){$('aiSummary').innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';
+    ['aiActions','aiDecisions','aiRisks'].forEach(id=>$(id).innerHTML='<div class="ai-empty">—</div>');}}
+function startInsights(){if(insTimer)return;insTimer=setInterval(runInsights,40000);setTimeout(runInsights,16000);}
+function stopInsights(){if(insTimer){clearInterval(insTimer);insTimer=null;}}
+async function runInsights(){const tx=curTr||'';if(insBusy||tx.length<60||tx.length===insLastLen)return;insBusy=true;insLastLen=tx.length;
+  try{const r=await fetch('/api/insights',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx})});
+    const d=await r.json();if(r.ok)renderInsights(d);}catch(e){}finally{insBusy=false;}}
+function aiList(id,items,fmt,empty){const el=$(id);if(!el)return;const html=(items&&items.length)?items.map(fmt).join(''):'<div class="ai-empty">'+(empty||'—')+'</div>';
+  if(el.innerHTML!==html){el.innerHTML=html;const sec=el.closest('.ai-sec');if(sec){sec.classList.remove('ai-up');void sec.offsetWidth;sec.classList.add('ai-up');}}}
+function renderInsights(d){
+  aiList('aiSummary',d.summary,s=>'<div class="ai-item"><span class="b">•</span><span>'+esc(s)+'</span></div>',t('ai_wait'));
+  aiList('aiActions',d.actionItems,a=>'<div class="ai-item"><span class="ai-check"></span><span>'+(a.who?'<span class="who">'+esc(a.who)+'</span> — ':'')+esc(a.task)+'</span></div>');
+  aiList('aiDecisions',d.decisions,s=>'<div class="ai-item"><span class="b">✓</span><span>'+esc(s)+'</span></div>');
+  aiList('aiRisks',d.risks,s=>'<div class="ai-item"><span class="b">!</span><span>'+esc(s)+'</span></div>');}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function md(x){if(!x)return'';return esc(x).replace(/^### (.*)$/gm,'<h3>$1</h3>').replace(/^#{1,2} (.*)$/gm,'<h2>$1</h2>').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/^- \[x\] (.*)$/gmi,'<span class="ck">☑</span> $1').replace(/^- \[ \] (.*)$/gm,'☐ $1').replace(/^[-*] (.*)$/gm,'• $1').replace(/\n/g,'<br>');}
 $('theme').onclick=e=>{const b=e.target.closest('button');if(!b)return;setTheme(b.dataset.th);localStorage.setItem('mr_theme',b.dataset.th);};

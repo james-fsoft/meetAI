@@ -1,0 +1,64 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+:root{--paper:#fff;--hair:#e7ebf3;--ink:#0a1124;--grey:#5b6b8c;--acc:#1f6bff;--soft:#f7f9fc;--faint:#9aa6bd}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI','Malgun Gothic',Inter,sans-serif;background:#f8fafc;padding:24px}
+.app-card{display:grid;grid-template-columns:262px minmax(0,1fr) 322px;gap:18px;align-items:start;max-width:1340px;margin:0 auto;padding:18px}
+.cap-top{position:sticky;top:14px;background:#fff;border:1px solid var(--hair);border-radius:18px;padding:16px;box-shadow:0 16px 36px -28px rgba(15,23,42,.45)}
+.cap-meta{display:flex;flex-direction:column;align-items:stretch;gap:12px;margin-bottom:14px}
+.timer{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--faint)}
+.lvtog{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:var(--grey)}
+.dot{width:9px;height:9px;border-radius:50%;background:#e5484d}
+.sw{width:40px;height:23px;background:var(--acc);border-radius:20px;position:relative}.sw::after{content:"";position:absolute;top:2.5px;right:2.5px;width:18px;height:18px;background:#fff;border-radius:50%}
+.lv-seg{display:flex;background:#fff;border:1px solid var(--hair);border-radius:11px;padding:3px;gap:2px}
+.lv-seg button{flex:1;border:none;background:none;font-size:12px;font-weight:800;color:var(--grey);padding:6px;border-radius:8px}
+.lv-seg button.on{background:var(--acc);color:#fff}
+.langs{display:flex;align-items:center;gap:8px}.sel{flex:1;border:1px solid var(--hair);border-radius:9px;padding:8px;font-size:12.5px;font-weight:700}
+.dual{display:flex;flex-direction:column;gap:8px}
+.btn{border:2px solid var(--acc);font-size:14px;font-weight:800;padding:11px;border-radius:11px;text-align:center}
+.btn.out{background:#fff;color:var(--ink)}.btn.full{background:var(--acc);color:#fff;border-color:var(--acc)}
+.live-feed{border:1px solid var(--hair);border-radius:18px;padding:16px 18px;background:linear-gradient(180deg,rgba(31,107,255,.07),transparent 130px),var(--soft);box-shadow:0 14px 34px -24px var(--acc);min-height:420px}
+.lv-msg{display:flex;gap:10px;padding:9px 0}
+.lv-av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;font-family:'Space Mono',monospace}
+.s1{background:#1f6bff}.s2{background:#e5484d}
+.lv-msg-b{flex:1;min-width:0}
+.lv-name{font-size:11.5px;font-weight:800;color:var(--grey);margin:1px 0 5px 2px}
+.lv-time{font-size:10.5px;font-weight:700;color:var(--faint);margin-left:7px}
+.lv-bubble{background:#fff;border:1px solid var(--hair);border-radius:5px 16px 16px 16px;padding:11px 14px;box-shadow:0 6px 18px -12px rgba(10,17,36,.45)}
+.lv-orig{font-size:13px;color:var(--grey);line-height:1.46}
+.lv-trans{font-size:15.5px;font-weight:600;color:var(--ink);line-height:1.46;margin-top:7px;padding-top:7px;border-top:1px dashed #e7ebf3}
+.ai-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:#0f172a;margin-bottom:12px;padding:0 2px}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 4px rgba(22,163,74,.15)}
+.ai-sec{background:#fff;border:1px solid var(--hair);border-radius:16px;padding:14px 16px;margin-bottom:12px;box-shadow:0 10px 26px -24px rgba(15,23,42,.4)}
+.ai-st{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:9px}
+.ai-item{display:flex;gap:8px;padding:5px 0;align-items:flex-start;font-size:13px;color:#334155;line-height:1.55}
+.ai-item .b{color:var(--acc);font-weight:800}.ai-item .who{font-weight:800;color:#0f172a}
+.ai-check{width:15px;height:15px;border:1.7px solid #cbd5e1;border-radius:5px;flex-shrink:0;margin-top:1px}
+</style></head><body>
+<div class="app-card">
+  <div class="cap-top"><div class="cap-meta">
+    <div class="timer">● 03:42</div>
+    <div class="lvtog"><span class="dot"></span><span class="sw"></span> Live translate</div>
+    <div class="lv-seg"><button>→ 1 chiều</button><button class="on">⇄ Song ngữ</button></div>
+    <div class="langs"><div class="sel">🇰🇷 한국어</div>⇄<div class="sel">🇻🇳 Tiếng Việt</div></div>
+  </div>
+  <div class="dual"><div class="btn out">Pause</div><div class="btn full">Stop</div></div></div>
+
+  <div class="live-feed">
+    <div class="lv-msg"><div class="lv-av s1">1</div><div class="lv-msg-b"><div class="lv-name">Speaker 1<span class="lv-time">09:31</span></div><div class="lv-bubble"><div class="lv-orig">이 기능은 다음 주에 출시할 예정입니다.</div><div class="lv-trans">Tính năng này dự kiến phát hành vào tuần tới.</div></div></div></div>
+    <div class="lv-msg"><div class="lv-av s2">2</div><div class="lv-msg-b"><div class="lv-name">Speaker 2<span class="lv-time">09:32</span></div><div class="lv-bubble"><div class="lv-orig">금요일까지 문서를 준비해 주세요.</div><div class="lv-trans">Hãy chuẩn bị tài liệu trước thứ Sáu nhé.</div></div></div></div>
+  </div>
+
+  <aside class="ai-panel">
+    <div class="ai-head"><span class="ai-dot"></span> AI Meeting Intelligence</div>
+    <div class="ai-sec"><div class="ai-st">Summary</div>
+      <div class="ai-item"><span class="b">•</span><span>Bàn về thời điểm ra mắt sản phẩm tuần tới.</span></div>
+      <div class="ai-item"><span class="b">•</span><span>Phân công chuẩn bị tài liệu & phân tích thị trường.</span></div></div>
+    <div class="ai-sec"><div class="ai-st">Action items</div>
+      <div class="ai-item"><span class="ai-check"></span><span><span class="who">Speaker 2</span> — Chuẩn bị tài liệu trước thứ Sáu</span></div>
+      <div class="ai-item"><span class="ai-check"></span><span><span class="who">Minh</span> — Phân tích thị trường</span></div></div>
+    <div class="ai-sec"><div class="ai-st">Key decisions</div>
+      <div class="ai-item"><span class="b">✓</span><span>Ngày ra mắt: tuần tới.</span></div></div>
+    <div class="ai-sec"><div class="ai-st">Risks &amp; follow-ups</div>
+      <div class="ai-item"><span class="b">!</span><span>Cần duyệt ngân sách marketing.</span></div></div>
+  </aside>
+</div>
+</body></html>
