@@ -18,24 +18,31 @@ const T: Record<Lang, {
   trial: string; pricing: string; signin: string; signout: string;
   planTitle: string; account: string; refBanner: string; refClaim: string; ext: string;
   extPromo: string; extAdd: string; extMore: string;
+  nudgeTitle: string; nudgeBody: string; nudgeLater: string; nudgeHave: string;
 }> = {
   en: {
     trial: "🎁 Free trial · 3 min", pricing: "Pricing", signin: "Sign in", signout: "Sign out",
     planTitle: "Manage plan", account: "My Page", ext: "Extension",
     refBanner: "🎁 A friend invited you to Flash Meet — sign in to claim 120 free minutes (2 hours)!", refClaim: "Sign in & claim →",
     extPromo: "Translate Google Meet, Zoom & YouTube live — free extension for Chrome, Edge & Brave.", extAdd: "Get it free", extMore: "Learn more",
+    nudgeTitle: "Get the best experience", nudgeBody: "Install the TransFlash extension to translate meetings live, right in your browser.",
+    nudgeLater: "Later", nudgeHave: "I've installed it",
   },
   vi: {
     trial: "🎁 Dùng thử · 3 phút", pricing: "Các gói", signin: "Đăng nhập", signout: "Đăng xuất",
     planTitle: "Quản lý gói", account: "Tài khoản", ext: "Tiện ích",
     refBanner: "🎁 Bạn được mời dùng Flash Meet — đăng nhập để nhận 120 phút (2 giờ) miễn phí!", refClaim: "Đăng nhập & nhận →",
     extPromo: "Dịch trực tiếp Google Meet, Zoom & YouTube — tiện ích miễn phí cho Chrome, Edge & Brave.", extAdd: "Cài miễn phí", extMore: "Tìm hiểu",
+    nudgeTitle: "Trải nghiệm tốt nhất", nudgeBody: "Cài tiện ích TransFlash để dịch cuộc họp trực tiếp ngay trên trình duyệt.",
+    nudgeLater: "Để sau", nudgeHave: "Tôi đã cài",
   },
   ko: {
     trial: "🎁 무료 체험 · 3분", pricing: "요금제", signin: "로그인", signout: "로그아웃",
     planTitle: "요금제 관리", account: "마이페이지", ext: "확장 프로그램",
     refBanner: "🎁 친구가 Flash Meet에 초대했어요 — 로그인하고 120분(2시간) 무료 받으세요!", refClaim: "로그인하고 받기 →",
     extPromo: "Google Meet·Zoom·YouTube 실시간 번역 — Chrome·Edge·Brave용 무료 확장 프로그램.", extAdd: "무료 설치", extMore: "자세히",
+    nudgeTitle: "최상의 경험", nudgeBody: "TransFlash 확장 프로그램을 설치하면 브라우저에서 바로 회의를 실시간 번역합니다.",
+    nudgeLater: "나중에", nudgeHave: "이미 설치함",
   },
 };
 
@@ -59,6 +66,30 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
     } catch {}
   }, []);
   function dismissExt() { try { localStorage.setItem("fm_ext_dismiss", "1"); } catch {} setShowExt(false); }
+
+  // Detect whether the TransFlash extension is installed, by probing its
+  // web-accessible icon (no extension change needed). Installed users are never
+  // nagged; everyone else gets a recurring nudge until they install it.
+  const [extInstalled, setExtInstalled] = useState<boolean | null>(null);
+  const [nudgeOff, setNudgeOff] = useState(false);
+  useEffect(() => {
+    try { if (localStorage.getItem("fm_ext_have") === "1") { setExtInstalled(true); return; } } catch {}
+    const ua = navigator.userAgent;
+    const chromium = /Chrome|Chromium|Edg|OPR/.test(ua) && !/Firefox/.test(ua);
+    if (!chromium) { setExtInstalled(true); return; } // extension only installs on Chromium
+    try { if (sessionStorage.getItem("fm_ext_later") === "1") setNudgeOff(true); } catch {}
+    const img = new Image();
+    let done = false;
+    const finish = (ok: boolean) => { if (!done) { done = true; setExtInstalled(ok); } };
+    img.onload = () => finish(true);
+    img.onerror = () => finish(false);
+    img.src = "chrome-extension://fnaffendjnopgpfehgoocdegbffakofl/icons/icon16.png";
+    const tmr = setTimeout(() => finish(false), 1800);
+    return () => clearTimeout(tmr);
+  }, []);
+  function nudgeLater() { try { sessionStorage.setItem("fm_ext_later", "1"); } catch {} setNudgeOff(true); }
+  function nudgeHave() { try { localStorage.setItem("fm_ext_have", "1"); } catch {} setExtInstalled(true); }
+  const showNudge = extInstalled === false && !nudgeOff && !showExt;
 
   useEffect(() => {
     const read = () => {
@@ -146,7 +177,7 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
           <a href="/login" style={refBannerBtn}>{t.refClaim}</a>
         </div>
       )}
-      {showExt && (
+      {showExt && extInstalled === false && (
         <div style={extBar}>
           <span style={extIcon} aria-hidden>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="#1f6bff"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v3.8h1.4a2.3 2.3 0 0 1 0 4.4H2V19a2 2 0 0 0 2 2h3.8v-1.4a2.3 2.3 0 0 1 4.4 0V21H17a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z" /></svg>
@@ -163,6 +194,23 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
         allow="microphone; display-capture; clipboard-write"
         style={{ border: "none", width: "100%", flex: 1, display: "block" }}
       />
+      {showNudge && (
+        <div style={nudgeWrap} role="dialog" aria-label={t.nudgeTitle}>
+          <button onClick={nudgeLater} style={nudgeX} aria-label="Close">✕</button>
+          <div style={nudgeIcon} aria-hidden>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#1f6bff"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v3.8h1.4a2.3 2.3 0 0 1 0 4.4H2V19a2 2 0 0 0 2 2h3.8v-1.4a2.3 2.3 0 0 1 4.4 0V21H17a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z" /></svg>
+          </div>
+          <div style={nudgeTitleS}>{t.nudgeTitle}</div>
+          <div style={nudgeBodyS}>{t.nudgeBody}</div>
+          <a href={STORE_URL} target="_blank" rel="noopener noreferrer" style={nudgeBtn} onClick={() => { try { sessionStorage.setItem("fm_ext_later", "1"); } catch {} }}>
+            {t.extAdd}
+          </a>
+          <div style={nudgeFoot}>
+            <button onClick={nudgeLater} style={nudgeGhost}>{t.nudgeLater}</button>
+            <button onClick={nudgeHave} style={nudgeGhost}>{t.nudgeHave}</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -226,6 +274,31 @@ const extMoreLink: React.CSSProperties = {
 const extX: React.CSSProperties = {
   border: "none", background: "none", cursor: "pointer", color: "#9aa6bd", fontSize: 14, fontWeight: 700,
   padding: "4px 6px", lineHeight: 1, flexShrink: 0,
+};
+const nudgeWrap: React.CSSProperties = {
+  position: "fixed", right: 16, bottom: 16, zIndex: 60, width: 312, maxWidth: "calc(100vw - 28px)",
+  background: "#fff", border: "1px solid #e7ebf3", borderRadius: 16, padding: "18px 18px 16px",
+  boxShadow: "0 24px 60px -20px rgba(10,17,36,.42)", fontFamily: "'Inter',system-ui,sans-serif", color: "#0a1124",
+};
+const nudgeX: React.CSSProperties = {
+  position: "absolute", top: 10, right: 10, border: "none", background: "none", cursor: "pointer",
+  color: "#9aa6bd", fontSize: 13, fontWeight: 700, lineHeight: 1, padding: 4,
+};
+const nudgeIcon: React.CSSProperties = {
+  width: 38, height: 38, borderRadius: 11, display: "grid", placeItems: "center",
+  background: "#eef4ff", border: "1px solid #d6e4ff", marginBottom: 12,
+};
+const nudgeTitleS: React.CSSProperties = { fontSize: 15.5, fontWeight: 800, letterSpacing: "-.02em", marginBottom: 5 };
+const nudgeBodyS: React.CSSProperties = { fontSize: 13, color: "#5b6b8c", lineHeight: 1.55, marginBottom: 14 };
+const nudgeBtn: React.CSSProperties = {
+  display: "block", textAlign: "center", fontSize: 13.5, fontWeight: 800, color: "#fff",
+  background: "linear-gradient(135deg,#2563eb,#3b82f6)", textDecoration: "none", padding: "11px 14px",
+  borderRadius: 11, boxShadow: "0 6px 16px -6px rgba(37,99,235,.5)",
+};
+const nudgeFoot: React.CSSProperties = { display: "flex", justifyContent: "space-between", gap: 8, marginTop: 11 };
+const nudgeGhost: React.CSSProperties = {
+  border: "none", background: "none", cursor: "pointer", fontFamily: "inherit",
+  fontSize: 12.5, fontWeight: 700, color: "#7b88a3", padding: "4px 2px",
 };
 const accountLink: React.CSSProperties = {
   display: "inline-flex", alignItems: "center", gap: 6,
