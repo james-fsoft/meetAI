@@ -556,7 +556,7 @@ const I={
    h_title:"History",open:"Open",empty:"No meetings yet",
    sp_title:"Rename speakers (optional)",sp_apply:"Apply",sp_ph:"Real name",sp_done:"Names applied",
    c_translate:"Live translate",lv_one:"→ One-way",lv_two:"⇄ Two-way",lv_to:"Translate to",lv_listening:"Listening…",lv_file:"Live translate needs the page served over http(s).",lv_net:"Reconnecting…",lv_nosupport:"Live translate needs Chrome or Edge (Web Speech API).",lv_mic:"Microphone permission was denied.",
-   copied:"Copied",err:"Error: ",delq:"Delete this meeting?",deflt:"Meeting",
+   copied:"Copied",err:"Error: ",nospeech:"No speech detected — nothing to summarize.",delq:"Delete this meeting?",deflt:"Meeting",
    set_title:"Settings · API Keys",set_oa:"OpenAI key — for the summary",set_oa_link:"Get OpenAI key →",set_aai:"AssemblyAI key — to separate speakers",set_aai_link:"Get AssemblyAI key (free) →",set_note:"🔒 Keys are stored only on this device. AssemblyAI is optional — without it, speakers are guessed from context.",set_save:"Save",set_saved:"Keys saved",
    nokey:"Open Settings (⚙ top right) and add your API key first.",
    sys:"You are a professional meeting-minutes assistant. The transcript is labeled by speaker (Speaker 1, Speaker 2, …) — keep these exact labels. Write minutes in English, in Markdown:\n## Participants\n## Overview\n## Key points\n## Decisions\n## Action items\n## Open issues\nNever invent anything not in the transcript."},
@@ -572,7 +572,7 @@ const I={
    h_title:"Lịch sử",open:"Mở",empty:"Chưa có cuộc họp",
    sp_title:"Đổi tên người nói (tùy chọn)",sp_apply:"Áp dụng",sp_ph:"Tên thật",sp_done:"Đã áp dụng tên",
    c_translate:"Dịch trực tiếp",lv_one:"→ 1 chiều",lv_two:"⇄ Song ngữ",lv_to:"Dịch sang",lv_listening:"Đang nghe…",lv_file:"Dịch trực tiếp cần mở qua http(s).",lv_net:"Đang kết nối lại…",lv_nosupport:"Dịch trực tiếp cần Chrome hoặc Edge (Web Speech API).",lv_mic:"Micro đã bị từ chối quyền.",
-   copied:"Đã copy",err:"Lỗi: ",delq:"Xóa cuộc họp này?",deflt:"Cuộc họp",
+   copied:"Đã copy",err:"Lỗi: ",nospeech:"Không nhận được giọng nói — chưa có nội dung để tóm tắt.",delq:"Xóa cuộc họp này?",deflt:"Cuộc họp",
    set_title:"Cài đặt · API Key",set_oa:"OpenAI key — để tóm tắt",set_oa_link:"Lấy OpenAI key →",set_aai:"AssemblyAI key — để tách giọng nói",set_aai_link:"Lấy AssemblyAI key (miễn phí) →",set_note:"🔒 Key chỉ lưu trên máy này. AssemblyAI là tùy chọn.",set_save:"Lưu",set_saved:"Đã lưu key",
    nokey:"Mở Cài đặt (⚙ góc trên phải) và nhập API key trước.",
    sys:"Bạn là trợ lý ghi biên bản họp chuyên nghiệp. Transcript đã gắn nhãn người nói (Speaker 1, Speaker 2, …) — giữ nguyên. Viết biên bản bằng Tiếng Việt, Markdown:\n## Thành phần tham dự\n## Tóm tắt chung\n## Điểm chính\n## Quyết định\n## Việc cần làm\n## Vấn đề còn mở\nKhông bịa thông tin ngoài transcript."},
@@ -588,7 +588,7 @@ const I={
    h_title:"기록",open:"열기",empty:"회의가 없습니다",
    sp_title:"화자 이름 변경 (선택)",sp_apply:"적용",sp_ph:"실명",sp_done:"이름이 적용됨",
    c_translate:"실시간 번역",lv_one:"→ 단방향",lv_two:"⇄ 양방향",lv_to:"번역 대상",lv_listening:"듣는 중…",lv_file:"실시간 번역은 http(s)로 열어야 합니다.",lv_net:"다시 연결 중…",lv_nosupport:"실시간 번역은 Chrome 또는 Edge가 필요합니다.",lv_mic:"마이크 권한이 거부되었습니다.",
-   copied:"복사됨",err:"오류: ",delq:"이 회의를 삭제할까요?",deflt:"회의",
+   copied:"복사됨",err:"오류: ",nospeech:"음성이 감지되지 않았습니다 — 요약할 내용이 없습니다.",delq:"이 회의를 삭제할까요?",deflt:"회의",
    set_title:"설정 · API 키",set_oa:"OpenAI 키 — 요약용",set_oa_link:"OpenAI 키 받기 →",set_aai:"AssemblyAI 키 — 화자 분리용",set_aai_link:"AssemblyAI 키 받기 (무료) →",set_note:"🔒 키는 이 기기에만 저장됩니다. AssemblyAI는 선택 사항.",set_save:"저장",set_saved:"키가 저장됨",
    nokey:"설정(⚙ 오른쪽 위)을 열고 API 키를 입력하세요.",
    sys:"당신은 전문 회의록 작성 비서입니다. 기록은 화자(Speaker 1, Speaker 2, …)로 라벨링되어 있습니다 — 유지하세요. 한국어 Markdown 회의록:\n## 참석자\n## 개요\n## 핵심 사항\n## 결정 사항\n## 액션 아이템\n## 미해결 사항\n기록에 없는 내용을 지어내지 마세요."}
@@ -651,6 +651,8 @@ $('fileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;audioBlob=f;$('p
 $('btnRedo').onclick=()=>{audioBlob=null;$('timer').textContent='00:00';setCap('idle');$('lvFeed').style.display='none';$('lvInterim').style.display='none';$('lvFeed').innerHTML='';};
 function setProc(msg,sub){$('procMsg').textContent=msg;$('procSub').textContent=sub||'';}
 $('btnSummarize').onclick=async()=>{if(!gateStart())return;
+  // Nothing was said and nothing recorded → don't get stuck on the loading screen.
+  if(!(curTr&&curTr.trim())&&!audioBlob){toast(t('nospeech'));return;}
   show('sc-res');$('resProc').style.display='';$('resBody').style.display='none';
   const ok=await transcribe();if(!ok)return;setProc(t('p_sum'),t('p_wait'));await summarize();};
 async function transcribe(){
@@ -659,7 +661,10 @@ async function transcribe(){
   if(!audioBlob){curSum='⚠ '+t('err')+'no audio';renderResult();return false;}
   try{
     curTr=await transcribeAAI();
-    return !!curTr;
+    // Silent recording → no transcript. Show an empty result (don't freeze on
+    // the processing screen) and tell the user nothing was captured.
+    if(!curTr.trim()){curSum='';renderResult();toast(t('nospeech'));return false;}
+    return true;
   }catch(e){curTr='';curSum='⚠ '+t('err')+e.message;renderResult();toast(t('err')+e.message);return false;}}
 async function transcribeAAI(){setProc(t('p_upload'),t('p_wait'));
   const fd=new FormData();fd.append('file',audioBlob,audioBlob.name||'audio.webm');
