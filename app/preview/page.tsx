@@ -294,8 +294,8 @@ export default function Preview() {
                 <p className="trust">Không cần thẻ tín dụng · Cài đặt trong 1 phút · Hủy bất cứ lúc nào</p>
                 <p className="brochures">
                   Tài liệu giới thiệu (PDF):
-                  <a href="/brochure?lang=vi" target="_blank" rel="noopener noreferrer"><PdfI /> Tiếng Việt</a>
-                  <a href="/brochure?lang=en" target="_blank" rel="noopener noreferrer"><PdfI /> English</a>
+                  <a href="/docs/flash-meet-vi.pdf" download target="_blank" rel="noopener noreferrer"><PdfI /> Tiếng Việt</a>
+                  <a href="/docs/flash-meet-en.pdf" download target="_blank" rel="noopener noreferrer"><PdfI /> English</a>
                 </p>
               </div>
             </div>
