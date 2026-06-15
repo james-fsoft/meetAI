@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 type Profile = {
   id: string; email: string | null; plan: string; created_at: string;
   seconds_today?: number; day_key?: string | null; seconds_month?: number; month_key?: string | null;
+  referred_by?: string | null;
 };
 const PLANS = ["free", "pro", "business", "enterprise"];
 const LIM: Record<string, { day: number | null; month: number | null }> = {
@@ -27,6 +28,20 @@ export default function AdminTable({ profiles, me }: { profiles: Profile[]; me: 
     profiles.forEach((p) => { c[p.plan] = (c[p.plan] || 0) + 1; });
     return c;
   }, [profiles]);
+
+  // Growth + activity metrics (computed from the data we already loaded).
+  const growth = useMemo(() => {
+    const now = Date.now(), DAY = 86400000;
+    const since = (d: number) => profiles.filter((p) => {
+      const t = new Date(p.created_at).getTime();
+      return !isNaN(t) && now - t <= d * DAY;
+    }).length;
+    const activeMonth = profiles.filter((p) => p.month_key === monthKey && (p.seconds_month || 0) > 0).length;
+    const minutesMonth = profiles.reduce((s, p) => s + (p.month_key === monthKey ? Math.floor((p.seconds_month || 0) / 60) : 0), 0);
+    const referred = profiles.filter((p) => p.referred_by).length;
+    const paid = profiles.filter((p) => p.plan !== "free").length;
+    return { d1: since(1), d7: since(7), d30: since(30), activeMonth, minutesMonth, referred, paid };
+  }, [profiles, monthKey]);
 
   const rows = useMemo(() => {
     const s = q.trim().toLowerCase();
@@ -65,6 +80,16 @@ export default function AdminTable({ profiles, me }: { profiles: Profile[]; me: 
           {PLANS.map((p) => <span key={p} style={{ ...S.stat, ...badge(p) }}>{p}: <b>{counts[p] || 0}</b></span>)}
         </div>
       </header>
+
+      <div style={S.cards}>
+        <Metric label="Đăng ký hôm nay" value={growth.d1} accent="#1f6bff" />
+        <Metric label="Mới · 7 ngày" value={growth.d7} accent="#1f6bff" />
+        <Metric label="Mới · 30 ngày" value={growth.d30} accent="#1f6bff" />
+        <Metric label="Hoạt động tháng này" value={growth.activeMonth} accent="#16a34a" />
+        <Metric label="Phút dịch tháng này" value={growth.minutesMonth} accent="#16a34a" />
+        <Metric label="Đến từ giới thiệu" value={growth.referred} accent="#8e4ec6" />
+        <Metric label="Khách trả phí" value={growth.paid} accent="#d97706" />
+      </div>
 
       <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Tìm theo email…" style={S.search} />
 
@@ -114,6 +139,15 @@ export default function AdminTable({ profiles, me }: { profiles: Profile[]; me: 
   );
 }
 
+function Metric({ label, value, accent }: { label: string; value: number; accent: string }) {
+  return (
+    <div style={S.card}>
+      <div style={{ ...S.cardVal, color: accent }}>{value.toLocaleString("vi-VN")}</div>
+      <div style={S.cardLabel}>{label}</div>
+    </div>
+  );
+}
+
 function badge(plan: string): React.CSSProperties {
   if (plan === "free") return { color: "#5b6b8c" };
   if (plan === "pro") return { color: "#1f6bff" };
@@ -128,6 +162,10 @@ const S: Record<string, React.CSSProperties> = {
   h1: { fontSize: 26, fontWeight: 900, letterSpacing: "-.03em", marginTop: 4 },
   stats: { display: "flex", gap: 8, flexWrap: "wrap" },
   stat: { fontSize: 12, fontWeight: 700, background: "#fff", border: "1px solid #e3e8f2", borderRadius: 20, padding: "5px 12px" },
+  cards: { maxWidth: 900, margin: "0 auto 14px", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(118px,1fr))", gap: 10 },
+  card: { background: "#fff", border: "1px solid #e3e8f2", borderRadius: 14, padding: "13px 14px", boxShadow: "0 12px 30px -26px rgba(10,17,36,.5)" },
+  cardVal: { fontSize: 23, fontWeight: 900, letterSpacing: "-.03em", lineHeight: 1 },
+  cardLabel: { fontSize: 11.5, fontWeight: 700, color: "#7b88a3", marginTop: 5 },
   search: { display: "block", width: "100%", maxWidth: 900, margin: "0 auto 14px", border: "1px solid #e3e8f2", borderRadius: 10, padding: "11px 14px", fontSize: 14, fontFamily: "inherit", outline: "none" },
   tableWrap: { maxWidth: 900, margin: "0 auto", background: "#fff", border: "1px solid #e3e8f2", borderRadius: 14, overflow: "hidden" },
   table: { width: "100%", borderCollapse: "collapse" },
