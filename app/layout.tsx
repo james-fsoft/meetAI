@@ -1,6 +1,13 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
+import PWA from "./PWA";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#1f6bff",
+};
 
 const SITE = "https://meet.transflash.app";
 const TITLE = "Flash Meet — Live Meeting Translation & AI Summaries";
@@ -32,7 +39,8 @@ export const metadata: Metadata = {
   creator: "TransFlash",
   publisher: "TransFlash",
   category: "productivity",
-  icons: { icon: "/icon.svg" },
+  icons: { icon: "/icon.svg", apple: "/icon-192" },
+  appleWebApp: { capable: true, title: "Flash Meet", statusBarStyle: "default" },
   alternates: { canonical: "/" },
   robots: {
     index: true,
@@ -119,6 +127,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         {children}
+        <PWA />
         <Analytics />
       </body>
     </html>
