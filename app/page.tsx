@@ -1,4 +1,5 @@
 import MeetingApp from "./MeetingApp";
+import SeoLanding from "./SeoLanding";
 import { createClient, supabaseConfigured } from "@/lib/supabase-server";
 import { isAdmin } from "@/lib/supabase-admin";
 
@@ -22,5 +23,12 @@ export default async function Home() {
       // profile may not exist yet — fall back gracefully
     }
   }
-  return <MeetingApp email={email} plan={plan} admin={admin} />;
+  return (
+    <>
+      <MeetingApp email={email} plan={plan} admin={admin} />
+      {/* Crawlable marketing content for logged-out visitors (the app hero is in
+          an iframe and not indexable). Hidden once signed in. */}
+      {!email && <SeoLanding />}
+    </>
+  );
 }
