@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import LandingHeader from "../LandingHeader";
-import LandingContent, { landingFaq } from "../LandingContent";
+import LandingContent from "../LandingContent";
+import { landingFaq } from "@/lib/landing-data";
 
 const LANGUAGES = { en: "/", vi: "/vi", ko: "/ko", "x-default": "/" };
 

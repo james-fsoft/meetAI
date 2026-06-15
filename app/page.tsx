@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import MeetingApp from "./MeetingApp";
-import LandingContent, { landingFaq } from "./LandingContent";
+import HomeLanding from "./HomeLanding";
+import { landingFaq } from "@/lib/landing-data";
 import { createClient, supabaseConfigured } from "@/lib/supabase-server";
 import { isAdmin } from "@/lib/supabase-admin";
 
@@ -39,7 +40,7 @@ export default async function Home() {
       {!email && (
         <>
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(landingFaq("en")) }} />
-          <LandingContent lang="en" />
+          <HomeLanding />
         </>
       )}
     </>

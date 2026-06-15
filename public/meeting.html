@@ -355,13 +355,19 @@ audio{width:100%;margin-top:16px;height:42px}
   body.recing .cap-center{height:100%;min-height:0;overflow-y:auto;scrollbar-gutter:stable;padding-right:2px}
   body.recing .cap-top,body.recing .ai-panel{scrollbar-gutter:stable}
 }
-@media(min-width:641px) and (max-width:980px){
-  body.recing{overflow:hidden}
-  body.recing .stage{align-items:stretch;min-height:0;overflow:hidden;padding:12px}
-  body.recing #sc-cap.on{display:flex;height:100%;min-height:0}
-  body.recing #sc-cap .app-card{display:flex;flex-direction:column;height:100%;max-height:100%;min-height:0;overflow:hidden;gap:10px}
-  body.recing .cap-top{position:static;top:auto;flex:0 0 auto;max-height:50%;overflow-y:auto}
-  body.recing .cap-center{flex:1 1 auto;min-height:0;overflow-y:auto}
+/* ── Mobile/tablet recording (≤980px): natural vertical scroll with the AI
+   panel stacked at the BOTTOM. No floating collapse tab on small screens. ── */
+@media(max-width:980px){
+  body.recing{overflow:auto}
+  body.recing .stage{display:block;height:auto;min-height:0;overflow:visible;align-items:stretch;padding:10px}
+  body.recing #sc-cap.on{display:block;height:auto;min-height:0}
+  body.recing #sc-cap .app-card,
+  body.recing.ai-hidden #sc-cap .app-card{display:flex;flex-direction:column;grid-template-columns:none;height:auto;max-height:none;overflow:visible;gap:12px}
+  body.recing .cap-top{position:sticky;top:0;flex:0 0 auto;max-height:none;overflow:visible;align-self:stretch;z-index:8}
+  body.recing .cap-center{flex:0 0 auto;height:auto;overflow:visible;order:2}
+  body.recing .ai-panel,body.ai-hidden .ai-panel{display:block;position:static;max-height:none;overflow:visible;order:3}
+  body.recing.ai-hidden .ai-reopen{display:none}
+  body.recing .ai-head .ai-tog{display:none}
 }
 </style>
 </head>
@@ -408,11 +414,11 @@ audio{width:100%;margin-top:16px;height:42px}
           <span class="sw"></span><input type="checkbox" id="lvOn" checked>
           <span data-t="c_translate">Live translate</span></label>
         <div class="lv-seg" id="lvWaySeg">
-          <button type="button" data-w="one" class="on">→ 1 chiều</button>
-          <button type="button" data-w="two">⇄ Song ngữ</button>
+          <button type="button" data-w="one" data-t="lv_one" class="on">→ 1 chiều</button>
+          <button type="button" data-w="two" data-t="lv_two">⇄ Song ngữ</button>
         </div>
         <div class="lv-langs" id="lvOneLangs">
-          <span class="lv-to-label">Dịch sang</span>
+          <span class="lv-to-label" data-t="lv_to">Dịch sang</span>
           <select id="lvTo" class="lvto-sel">
             <option value="Vietnamese">🇻🇳 Tiếng Việt</option><option value="English">🇺🇸 English</option>
             <option value="Korean">🇰🇷 한국어</option><option value="Japanese">🇯🇵 日本語</option><option value="Chinese">🇨🇳 中文</option>
@@ -549,7 +555,7 @@ const I={
    ready_h:"Ready to translate",ready_sub:"Start speaking and Flash Meet will automatically:",ready_1:"✓ Transcribe",ready_2:"✓ Translate",ready_3:"✓ Summarize",ready_4:"✓ Extract action items",
    h_title:"History",open:"Open",empty:"No meetings yet",
    sp_title:"Rename speakers (optional)",sp_apply:"Apply",sp_ph:"Real name",sp_done:"Names applied",
-   c_translate:"Live translate",lv_listening:"Listening…",lv_file:"Live translate needs the page served over http(s).",lv_net:"Reconnecting…",lv_nosupport:"Live translate needs Chrome or Edge (Web Speech API).",lv_mic:"Microphone permission was denied.",
+   c_translate:"Live translate",lv_one:"→ One-way",lv_two:"⇄ Two-way",lv_to:"Translate to",lv_listening:"Listening…",lv_file:"Live translate needs the page served over http(s).",lv_net:"Reconnecting…",lv_nosupport:"Live translate needs Chrome or Edge (Web Speech API).",lv_mic:"Microphone permission was denied.",
    copied:"Copied",err:"Error: ",delq:"Delete this meeting?",deflt:"Meeting",
    set_title:"Settings · API Keys",set_oa:"OpenAI key — for the summary",set_oa_link:"Get OpenAI key →",set_aai:"AssemblyAI key — to separate speakers",set_aai_link:"Get AssemblyAI key (free) →",set_note:"🔒 Keys are stored only on this device. AssemblyAI is optional — without it, speakers are guessed from context.",set_save:"Save",set_saved:"Keys saved",
    nokey:"Open Settings (⚙ top right) and add your API key first.",
@@ -565,7 +571,7 @@ const I={
    ready_h:"Sẵn sàng dịch",ready_sub:"Bắt đầu nói, Flash Meet sẽ tự động:",ready_1:"✓ Ghi lời",ready_2:"✓ Dịch",ready_3:"✓ Tóm tắt",ready_4:"✓ Trích việc cần làm",
    h_title:"Lịch sử",open:"Mở",empty:"Chưa có cuộc họp",
    sp_title:"Đổi tên người nói (tùy chọn)",sp_apply:"Áp dụng",sp_ph:"Tên thật",sp_done:"Đã áp dụng tên",
-   c_translate:"Dịch trực tiếp",lv_listening:"Đang nghe…",lv_file:"Dịch trực tiếp cần mở qua http(s).",lv_net:"Đang kết nối lại…",lv_nosupport:"Dịch trực tiếp cần Chrome hoặc Edge (Web Speech API).",lv_mic:"Micro đã bị từ chối quyền.",
+   c_translate:"Dịch trực tiếp",lv_one:"→ 1 chiều",lv_two:"⇄ Song ngữ",lv_to:"Dịch sang",lv_listening:"Đang nghe…",lv_file:"Dịch trực tiếp cần mở qua http(s).",lv_net:"Đang kết nối lại…",lv_nosupport:"Dịch trực tiếp cần Chrome hoặc Edge (Web Speech API).",lv_mic:"Micro đã bị từ chối quyền.",
    copied:"Đã copy",err:"Lỗi: ",delq:"Xóa cuộc họp này?",deflt:"Cuộc họp",
    set_title:"Cài đặt · API Key",set_oa:"OpenAI key — để tóm tắt",set_oa_link:"Lấy OpenAI key →",set_aai:"AssemblyAI key — để tách giọng nói",set_aai_link:"Lấy AssemblyAI key (miễn phí) →",set_note:"🔒 Key chỉ lưu trên máy này. AssemblyAI là tùy chọn.",set_save:"Lưu",set_saved:"Đã lưu key",
    nokey:"Mở Cài đặt (⚙ góc trên phải) và nhập API key trước.",
@@ -581,7 +587,7 @@ const I={
    ready_h:"번역 준비 완료",ready_sub:"말하기 시작하면 Flash Meet이 자동으로:",ready_1:"✓ 전사",ready_2:"✓ 번역",ready_3:"✓ 요약",ready_4:"✓ 액션 아이템 추출",
    h_title:"기록",open:"열기",empty:"회의가 없습니다",
    sp_title:"화자 이름 변경 (선택)",sp_apply:"적용",sp_ph:"실명",sp_done:"이름이 적용됨",
-   c_translate:"실시간 번역",lv_listening:"듣는 중…",lv_file:"실시간 번역은 http(s)로 열어야 합니다.",lv_net:"다시 연결 중…",lv_nosupport:"실시간 번역은 Chrome 또는 Edge가 필요합니다.",lv_mic:"마이크 권한이 거부되었습니다.",
+   c_translate:"실시간 번역",lv_one:"→ 단방향",lv_two:"⇄ 양방향",lv_to:"번역 대상",lv_listening:"듣는 중…",lv_file:"실시간 번역은 http(s)로 열어야 합니다.",lv_net:"다시 연결 중…",lv_nosupport:"실시간 번역은 Chrome 또는 Edge가 필요합니다.",lv_mic:"마이크 권한이 거부되었습니다.",
    copied:"복사됨",err:"오류: ",delq:"이 회의를 삭제할까요?",deflt:"회의",
    set_title:"설정 · API 키",set_oa:"OpenAI 키 — 요약용",set_oa_link:"OpenAI 키 받기 →",set_aai:"AssemblyAI 키 — 화자 분리용",set_aai_link:"AssemblyAI 키 받기 (무료) →",set_note:"🔒 키는 이 기기에만 저장됩니다. AssemblyAI는 선택 사항.",set_save:"저장",set_saved:"키가 저장됨",
    nokey:"설정(⚙ 오른쪽 위)을 열고 API 키를 입력하세요.",
