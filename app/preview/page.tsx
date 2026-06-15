@@ -305,7 +305,7 @@ export default function Preview() {
 
       <footer>
         <div className="container frow">
-          <div className="flogo"><span className="mark"><Mark s={13} /></span><span className="name">Flash Meet</span></div>
+          <div className="flogo"><span className="mark"><Mark s={22} /></span><span className="name">Flash Meet</span></div>
           <p className="copy">© {new Date().getFullYear()} Flash Meet · Một giải pháp của TransFlash</p>
         </div>
       </footer>
@@ -314,7 +314,14 @@ export default function Preview() {
 }
 
 /* icons */
-function Mark({ s = 15 }: { s?: number }) { return <svg width={s} height={s} viewBox="0 0 24 24" fill="none"><path d="M4 5h16v10H8l-4 4V5z" stroke="#fff" strokeWidth="2" strokeLinejoin="round" /></svg>; }
+function Mark({ s = 28 }: { s?: number }) {
+  return (
+    <svg viewBox="0 0 100 100" width={s} height={s} aria-hidden style={{ display: "block" }}>
+      <path d="M22 8 H78 a16 16 0 0 1 16 16 V60 a16 16 0 0 1 -16 16 H50 l-20 18 v-18 H22 a16 16 0 0 1 -16 -16 V24 A16 16 0 0 1 22 8 Z" fill="#2563FF" />
+      <g fill="#fff"><rect x="26" y="38" width="7.5" height="12" rx="3.75" /><rect x="39" y="29" width="7.5" height="30" rx="3.75" /><rect x="52" y="22" width="7.5" height="44" rx="3.75" /><rect x="65" y="32" width="7.5" height="24" rx="3.75" /></g>
+    </svg>
+  );
+}
 function Arrow() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>; }
 function Check20() { return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>; }
 function Check16() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>; }
@@ -348,7 +355,7 @@ body{background:#050B1F}
 .fx header.scrolled{border-bottom-color:rgba(148,163,184,0.12);background:rgba(5,11,31,0.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .fx .hbar{height:64px;display:flex;align-items:center;justify-content:space-between}
 .fx .logo{display:flex;align-items:center;gap:10px}
-.fx .logo .mark{width:28px;height:28px;border-radius:8px;background:var(--a1);display:flex;align-items:center;justify-content:center}
+.fx .logo .mark{display:flex;align-items:center;justify-content:center}
 .fx .logo .name{font-size:15px;font-weight:600;letter-spacing:-0.01em}
 .fx .nav{display:none;align-items:center;gap:28px}
 .fx .nav a{font-size:13.5px;color:var(--t2);transition:.2s}
@@ -469,7 +476,7 @@ body{background:#050B1F}
 .fx .frow{display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:16px}
 @media(min-width:640px){.fx .frow{flex-direction:row}}
 .fx .flogo{display:flex;align-items:center;gap:10px}
-.fx .flogo .mark{width:24px;height:24px;border-radius:6px;background:var(--a1);display:flex;align-items:center;justify-content:center}
+.fx .flogo .mark{display:flex;align-items:center;justify-content:center}
 .fx .flogo .name{font-size:14px;font-weight:600}
 .fx .copy{font-size:13px;color:var(--t3)}
 @keyframes fxFadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
