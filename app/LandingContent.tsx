@@ -11,7 +11,7 @@ type Dict = {
   featTitle: string; features: { h: string; p: string }[];
   platTitle: string; platLead: string; platLink: string; platSuffix: string;
   faqTitle: string; faq: { q: string; a: string }[];
-  by: string; navPrivacy: string; navTerms: string;
+  by: string; navBlog: string; navPrivacy: string; navTerms: string;
 };
 
 const DICT: Record<LandingLang, Dict> = {
@@ -36,7 +36,7 @@ const DICT: Record<LandingLang, Dict> = {
       { q: "Does it summarize the meeting automatically?", a: "Yes. Flash Meet writes an AI summary, action items, decisions and minutes automatically from the transcript — no manual note-taking." },
       { q: "Is there a free version?", a: "Yes, you can start free. Pro and Business plans add more translation minutes and full AI meeting intelligence." },
     ],
-    by: "Flash Meet is a TransFlash solution.", navPrivacy: "Privacy", navTerms: "Terms",
+    by: "Flash Meet is a TransFlash solution.", navBlog: "Blog", navPrivacy: "Privacy", navTerms: "Terms",
   },
   vi: {
     h1: "Dịch cuộc họp trực tiếp & tóm tắt AI",
@@ -59,7 +59,7 @@ const DICT: Record<LandingLang, Dict> = {
       { q: "Có tự động tóm tắt cuộc họp không?", a: "Có. Flash Meet tự viết tóm tắt, việc cần làm, quyết định và biên bản từ bản ghi — không cần ghi chú thủ công." },
       { q: "Có bản miễn phí không?", a: "Có, bạn dùng thử miễn phí. Gói Pro và Business cho thêm phút dịch và đầy đủ tính năng AI." },
     ],
-    by: "Flash Meet là một giải pháp của TransFlash.", navPrivacy: "Bảo mật", navTerms: "Điều khoản",
+    by: "Flash Meet là một giải pháp của TransFlash.", navBlog: "Blog", navPrivacy: "Bảo mật", navTerms: "Điều khoản",
   },
   ko: {
     h1: "실시간 회의 번역 & AI 요약",
@@ -82,7 +82,7 @@ const DICT: Record<LandingLang, Dict> = {
       { q: "회의를 자동으로 요약하나요?", a: "네. Flash Meet이 전사 내용을 바탕으로 요약, 액션 아이템, 결정, 회의록을 자동 작성합니다 — 수기 메모 불필요." },
       { q: "무료 버전이 있나요?", a: "네, 무료로 시작할 수 있습니다. Pro와 Business 요금제는 번역 시간과 전체 AI 기능을 추가합니다." },
     ],
-    by: "Flash Meet은 TransFlash 솔루션입니다.", navPrivacy: "개인정보", navTerms: "이용약관",
+    by: "Flash Meet은 TransFlash 솔루션입니다.", navBlog: "블로그", navPrivacy: "개인정보", navTerms: "이용약관",
   },
 };
 
@@ -138,6 +138,7 @@ export default function LandingContent({ lang }: { lang: LandingLang }) {
 
         <p style={S.foot}>
           {d.by}{" "}
+          <a href="/blog" style={S.link}>{d.navBlog}</a> ·{" "}
           <a href="/pricing" style={S.link}>{d.ctaPrice}</a> ·{" "}
           <a href="/privacy" style={S.link}>{d.navPrivacy}</a> ·{" "}
           <a href="/terms" style={S.link}>{d.navTerms}</a>
