@@ -237,6 +237,8 @@ body.recing .rec-hint{margin-bottom:10px}
 .lv-seg button.on{background:var(--acc);color:#fff;box-shadow:0 4px 12px -4px color-mix(in srgb,var(--acc) 60%,transparent)}
 .lv-langs{display:flex;align-items:center;gap:9px}
 .lv-to-label{font-size:12.5px;font-weight:700;color:var(--grey)}
+.lv-help{font-size:11.5px;color:var(--grey);line-height:1.45;max-width:240px;text-align:center;margin-top:2px}
+.lv-help:empty{display:none}
 .lv-swap{cursor:pointer;font-weight:800;color:var(--acc);font-size:17px;user-select:none;transition:.2s}
 .lv-swap:hover{transform:rotate(180deg)}
 .lvtog{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;font-weight:700;color:var(--grey);user-select:none}
@@ -261,10 +263,14 @@ body.recing .rec-hint{margin-bottom:10px}
 .lv-av[data-s="0"]{background:#1f6bff}.lv-av[data-s="1"]{background:#e5484d}.lv-av[data-s="2"]{background:#12a594}
 .lv-av[data-s="3"]{background:#f76808}.lv-av[data-s="4"]{background:#8e4ec6}.lv-av[data-s="5"]{background:#e5b000}
 .lv-msg-b{flex:1;min-width:0}
-.lv-name{font-size:11.5px;font-weight:800;color:var(--grey);margin:6px 0 5px 0;letter-spacing:.01em}
+.lv-name{display:flex;align-items:center;flex-wrap:wrap;font-size:11.5px;font-weight:800;color:var(--grey);margin:6px 0 5px 0;letter-spacing:.01em}
+.lv-dir{font-size:10px;font-weight:800;letter-spacing:.02em;color:#1f4fff;background:#eef4ff;border:1px solid #d3e0fb;border-radius:6px;padding:1px 7px;margin-left:8px}
+.lv-detect{font-size:11px;color:var(--grey);font-weight:600;margin:0 0 7px 2px}
 .lv-bubble{background:var(--paper);border:1px solid var(--hair);border-radius:5px 16px 16px 16px;padding:11px 14px;box-shadow:0 6px 18px -12px rgba(10,17,36,.45)}
+.lv-lbl{display:block;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--faint);margin-bottom:3px}
+.lv-trans-row{margin-top:9px;padding-top:9px;border-top:1px dashed color-mix(in srgb,var(--hair) 85%,transparent)}
 .lv-orig{font-size:13px;color:var(--grey);line-height:1.46}
-.lv-trans{font-size:15.5px;font-weight:600;color:var(--ink);line-height:1.46;margin-top:7px;padding-top:7px;border-top:1px dashed color-mix(in srgb,var(--hair) 85%,transparent);letter-spacing:-.01em}
+.lv-trans{font-size:15.5px;font-weight:600;color:var(--ink);line-height:1.46;letter-spacing:-.01em}
 .lv-time{font-size:10.5px;font-weight:700;color:var(--faint);margin-left:7px}
 /* ── AI Meeting Intelligence console (3-column live layout) ── */
 .cap-grid{display:flex;flex-direction:column}
@@ -283,7 +289,10 @@ body.recing .cap-center{gap:0}
 .ai-sec{background:var(--paper);border:1px solid var(--hair);border-radius:16px;padding:14px 16px;margin-bottom:12px;box-shadow:0 10px 26px -24px rgba(15,23,42,.4)}
 .ai-st{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:9px}
 .ai-body{font-size:13px;color:#334155;line-height:1.55}
-.ai-empty{color:#cbd5e1;font-size:12.5px;font-weight:600}
+.ai-empty{color:#94a3b8;font-size:12.5px;font-weight:600;line-height:1.5}
+.ai-prev{color:#64748b;font-size:12.5px;font-weight:500;line-height:1.55}
+.ai-pro-badge{display:inline-block;margin-top:10px;font-size:10px;font-weight:800;letter-spacing:.03em;color:#1f4fff;background:#eef4ff;border:1px solid #d3e0fb;border-radius:20px;padding:3px 10px;text-decoration:none}
+.ai-pro-badge:hover{background:#e3edff}
 .ai-item{display:flex;gap:8px;padding:5px 0;align-items:flex-start}
 .ai-item .b{color:var(--acc);flex-shrink:0;font-weight:800;line-height:1.5}
 .ai-item .who{font-weight:800;color:#0f172a}
@@ -321,6 +330,7 @@ body.recing.ai-hidden .ai-reopen:hover svg{color:#fff}
 .ready-sub{font-size:13.5px;color:var(--grey);margin:7px 0 16px;line-height:1.5}
 .ready-list{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
 .ready-list span{font-size:12.5px;font-weight:700;color:var(--acc);background:color-mix(in srgb,var(--acc) 9%,transparent);border:1px solid color-mix(in srgb,var(--acc) 22%,transparent);border-radius:20px;padding:6px 12px}
+.ready-help{font-size:12.5px;color:var(--grey);line-height:1.55;max-width:440px;margin:16px auto 0;padding-top:14px;border-top:1px solid var(--hair)}
 @media(max-width:980px){
   body.recing #sc-cap{max-width:100%}
   body.recing #sc-cap .app-card{grid-template-columns:1fr;max-width:680px;gap:12px}
@@ -487,6 +497,7 @@ audio{width:100%;margin-top:16px;height:42px}
             <option value="vi">🇻🇳 Tiếng Việt</option><option value="ko">🇰🇷 한국어</option><option value="en">🇺🇸 English</option><option value="ja">🇯🇵 日本語</option><option value="zh">🇨🇳 中文</option><option value="th">🇹🇭 ไทย</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option><option value="ru">🇷🇺 Русский</option>
           </select>
         </div>
+        <p class="lv-help" id="lvHelp"></p>
       </div>
       <div id="capIdle">
         <button class="btn big" id="btnRec" data-t="c_record">● Record</button>
@@ -511,6 +522,7 @@ audio{width:100%;margin-top:16px;height:42px}
           <span data-t="ready_1">✓ Transcribe</span><span data-t="ready_2">✓ Translate</span>
           <span data-t="ready_3">✓ Summarize</span><span data-t="ready_4">✓ Extract action items</span>
         </div>
+        <p class="ready-help" data-t="ready_help">In Two-way mode, Vietnamese is translated to Korean and Korean to Vietnamese.</p>
       </div>
       <div class="rec-hint" id="recHint" data-t="c_hint">Press record to start</div>
       <div class="live-feed" id="lvFeed" style="display:none"></div>
@@ -603,48 +615,48 @@ const CONFIG={OPENAI_KEY:'server',ASSEMBLYAI_KEY:'server'};
 const I={
  en:{hero_badge:"AI · Multilingual meetings · Auto minutes",hero_h:"Multilingual meetings,",hero_h2:"made clear.",hero_sub:"Separate every speaker, translate Vietnamese · English · Korean live, and auto-write the minutes after the call — right in your browser.",hero_cta:"Try 3 minutes free",hero_micro:"No payment card · No installation · Runs in your browser",hero_demo:"Watch 60-sec demo",modes_h:"Not just for meetings",modes_sub:"Flash Meet also adds real-time AI subtitles to webinars, training videos, online lectures and multilingual content without captions.",m1t:"Meeting Mode",m1d:"Separate speakers, translate live and create minutes after the call.",m2t:"Viewer Mode",m2d:"Listen to audio from a video, webinar or lecture and show translated subtitles in real time.",m3t:"Dark Subtitle Mode",m3d:"A minimal dark interface focused only on the subtitles — ideal for long content.",f_privacy:"Privacy",f_terms:"Terms",f_contact:"Contact",
    hf1t:"Know exactly who said what",hf1d:"Automatically separates every speaker so requirements from clients, PMs and your team never get mixed up.",hf1r:"Fewer misread requirements",hf2t:"Understand it live",hf2d:"Real-time bilingual subtitles in Vietnamese · English · Korean keep multilingual meetings flowing.",hf2r:"Never miss the key point",hf3t:"Minutes ready after the call",hf3d:"Auto-creates the summary, decisions, action items and owners — no rewriting from scratch.",hf3r:"Save 30–60 minutes",
-   c_hint:"Press record to start",c_record:"● Record",c_upload:"or upload an audio file",c_pause:"Pause",c_resume:"Resume",c_stop:"Stop",c_summarize:"Summarize →",c_redo:"Start over",
-   c_recording:"Recording",c_paused:"Paused",c_ready:"Ready",lv_auto:"Auto",lv_fast:"⚡ Fast",lv_multi:"🌐 Multi",
+   c_hint:"Press start to begin",c_record:"Start free trial",c_upload:"or upload an audio file",c_pause:"Pause",c_resume:"Resume",c_stop:"End",c_summarize:"Summarize →",c_redo:"Start over",
+   c_recording:"LIVE · Translating live",c_paused:"Paused",c_ready:"Ready",lv_auto:"Auto",lv_fast:"⚡ Fast",lv_multi:"🌐 Multi",
    c_diar:"👥 Voices are separated automatically (Speaker 1, 2, 3…).",
    p_upload:"Uploading audio…",p_diar:"Separating voices…",p_sum:"Writing the summary…",p_wait:"Your AI assistant is hard at work…",
    r_summary:"Summary",r_transcript:"Transcript",r_copy:"Copy",r_download:"Download",r_new:"+ New meeting",r_dl_live:"⬇ Download live translation",r_live:"Live translation",words:"words",
-   ai_title:"AI Meeting Intelligence",ai_summary:"Summary",ai_actions:"Action items",ai_decisions:"Decisions",ai_risks:"Risks & follow-ups",ai_wait:"AI is listening…",ai_listen:"AI Listening",ai_pro:"Pro — upgrade to unlock",ai_show:"AI panel",ai_lang_auto:"🌐 Auto",u_trial:"🎁 Trial · {n}m left",u_unlim:"⏱ Unlimited",u_today:"Today",u_month:"Month",u_min:"m",
-   ready_h:"Ready to translate",ready_sub:"Start speaking and Flash Meet will automatically:",ready_1:"✓ Transcribe",ready_2:"✓ Translate",ready_3:"✓ Summarize",ready_4:"✓ Extract action items",
+   ai_title:"AI Meeting Intelligence",ai_summary:"Summary",ai_actions:"Action items",ai_decisions:"Decisions",ai_risks:"Risks & follow-ups",ai_wait:"AI is listening… The summary appears once there's enough content.",ai_prev_actions:"Action items are detected automatically after the meeting.",ai_prev_decisions:"Key decisions will be captured here.",ai_prev_risks:"AI flags risks, open points and follow-ups.",ai_pro_task:"Pro: export tasks & history",ai_listen:"AI Listening",ai_pro:"Pro — upgrade to unlock",ai_show:"AI panel",ai_lang_auto:"🌐 Auto",u_trial:"🎁 Free trial · {n} min left",u_unlim:"⏱ Unlimited",u_today:"Today",u_month:"Month",u_min:"m",
+   ready_h:"Ready to translate your meeting",ready_sub:"Press start and Flash Meet will listen, detect the language and show the live translation.",ready_1:"✓ Transcribe",ready_2:"✓ Translate",ready_3:"✓ Summarize",ready_4:"✓ Extract action items",ready_help:"In Two-way mode, Vietnamese is translated to Korean and Korean to Vietnamese.",
    h_title:"History",open:"Open",empty:"No meetings yet",
    sp_title:"Rename speakers (optional)",sp_apply:"Apply",sp_ph:"Real name",sp_done:"Names applied",
-   c_translate:"Live translate",lv_one:"→ One-way",lv_two:"⇄ Two-way",lv_to:"Translate to",lv_listening:"Listening…",lv_file:"Live translate needs the page served over http(s).",lv_net:"Reconnecting…",lv_nosupport:"Live translate needs Chrome or Edge (Web Speech API).",lv_mic:"Microphone permission was denied.",
+   c_translate:"Live translate",lv_one:"One-way",lv_two:"Two-way",lv_to:"Translate to",lv_help_one:"Always translate into the chosen language.",lv_help_two:"Auto-detects each speaker's language and translates to the other.",lv_detected:"Detected",lv_heard:"Heard",lv_trans:"Translation",lv_listening:"Listening…",lv_file:"Live translate needs the page served over http(s).",lv_net:"Reconnecting…",lv_nosupport:"Live translate needs Chrome or Edge (Web Speech API).",lv_mic:"Microphone permission was denied.",
    copied:"Copied",err:"Error: ",nospeech:"No speech detected — nothing to summarize.",delq:"Delete this meeting?",deflt:"Meeting",
    set_title:"Settings · API Keys",set_oa:"OpenAI key — for the summary",set_oa_link:"Get OpenAI key →",set_aai:"AssemblyAI key — to separate speakers",set_aai_link:"Get AssemblyAI key (free) →",set_note:"🔒 Keys are stored only on this device. AssemblyAI is optional — without it, speakers are guessed from context.",set_save:"Save",set_saved:"Keys saved",
    nokey:"Open Settings (⚙ top right) and add your API key first.",
    sys:"You are a professional meeting-minutes assistant. The transcript is labeled by speaker (Speaker 1, Speaker 2, …) — keep these exact labels. Write minutes in English, in Markdown:\n## Participants\n## Overview\n## Key points\n## Decisions\n## Action items\n## Open issues\nNever invent anything not in the transcript."},
  vi:{hero_badge:"AI · Họp đa ngôn ngữ · Tự động tạo biên bản",hero_h:"Cuộc họp đa ngôn ngữ,",hero_h2:"rõ ràng hơn.",hero_sub:"Tách giọng từng người, dịch trực tiếp Việt · Anh · Hàn, và tự tạo biên bản sau cuộc họp — ngay trên trình duyệt.",hero_cta:"Dùng thử 3 phút miễn phí",hero_micro:"Không cần thẻ thanh toán · Không cần cài đặt · Dùng trực tiếp trên trình duyệt",hero_demo:"Xem demo 60 giây",modes_h:"Không chỉ cho cuộc họp",modes_sub:"Flash Meet cũng hỗ trợ phụ đề AI thời gian thực cho webinar, video training, bài giảng online và nội dung đa ngôn ngữ không có phụ đề.",m1t:"Meeting Mode",m1d:"Tách giọng, dịch trực tiếp và tạo biên bản sau cuộc họp.",m2t:"Viewer Mode",m2d:"Nghe âm thanh từ video, webinar hoặc bài giảng và hiển thị phụ đề dịch theo thời gian thực.",m3t:"Dark Subtitle Mode",m3d:"Giao diện nền tối, tối giản, chỉ tập trung vào phụ đề — phù hợp khi xem nội dung dài.",f_privacy:"Bảo mật",f_terms:"Điều khoản",f_contact:"Liên hệ",
    hf1t:"Biết rõ ai đã nói gì",hf1d:"Tự tách từng người nói trong cuộc họp, tránh nhầm ý giữa khách hàng, PM và team nội bộ.",hf1r:"Giảm nhầm yêu cầu",hf2t:"Hiểu ngay khi đang họp",hf2d:"Dịch phụ đề song ngữ Việt · Anh · Hàn theo thời gian thực, giúp cuộc họp đa ngôn ngữ trôi chảy hơn.",hf2r:"Không bỏ lỡ ý chính",hf3t:"Có biên bản ngay sau họp",hf3d:"Tự tạo tóm tắt, quyết định, việc cần làm và người phụ trách — không phải ngồi viết lại từ đầu.",hf3r:"Tiết kiệm 30–60 phút",
-   c_hint:"Bấm để bắt đầu ghi",c_record:"● Ghi âm",c_upload:"hoặc tải lên file audio",c_pause:"Tạm dừng",c_resume:"Tiếp tục",c_stop:"Dừng",c_summarize:"Tóm tắt →",c_redo:"Làm lại",
-   c_recording:"Đang ghi",c_paused:"Tạm dừng",c_ready:"Sẵn sàng",lv_auto:"Tự động",lv_fast:"⚡ Nhanh",lv_multi:"🌐 Đa ngữ",
+   c_hint:"Bấm bắt đầu để ghi & dịch",c_record:"Bắt đầu dùng thử",c_upload:"hoặc tải lên file audio",c_pause:"Tạm dừng",c_resume:"Tiếp tục",c_stop:"Kết thúc",c_summarize:"Tóm tắt →",c_redo:"Làm lại",
+   c_recording:"LIVE · Đang dịch trực tiếp",c_paused:"Đã tạm dừng",c_ready:"Sẵn sàng",lv_auto:"Tự động",lv_fast:"⚡ Nhanh",lv_multi:"🌐 Đa ngữ",
    c_diar:"👥 Tự động tách giọng từng người (Speaker 1, 2, 3…).",
    p_upload:"Đang tải audio lên…",p_diar:"Đang tách giọng nói…",p_sum:"Đang viết tóm tắt…",p_wait:"Trợ lý AI đang chăm chỉ làm việc…",
    r_summary:"Tóm tắt",r_transcript:"Bản ghi",r_copy:"Copy",r_download:"Tải",r_new:"+ Cuộc họp mới",r_dl_live:"⬇ Tải bản dịch trực tiếp",r_live:"Bản dịch trực tiếp",words:"từ",
-   ai_title:"AI Tổng hợp cuộc họp",ai_summary:"Tóm tắt",ai_actions:"Việc cần làm",ai_decisions:"Quyết định",ai_risks:"Rủi ro & theo dõi",ai_wait:"AI đang lắng nghe…",ai_listen:"AI đang nghe",ai_pro:"Pro — nâng cấp để mở",ai_show:"Bảng AI",ai_lang_auto:"🌐 Tự động",u_trial:"🎁 Dùng thử · còn {n}p",u_unlim:"⏱ Không giới hạn",u_today:"Hôm nay",u_month:"Tháng",u_min:"p",
-   ready_h:"Sẵn sàng dịch",ready_sub:"Bắt đầu nói, Flash Meet sẽ tự động:",ready_1:"✓ Ghi lời",ready_2:"✓ Dịch",ready_3:"✓ Tóm tắt",ready_4:"✓ Trích việc cần làm",
+   ai_title:"AI Tổng hợp cuộc họp",ai_summary:"Tóm tắt",ai_actions:"Việc cần làm",ai_decisions:"Quyết định",ai_risks:"Rủi ro & theo dõi",ai_wait:"AI đang lắng nghe… Tóm tắt sẽ xuất hiện sau khi có đủ nội dung.",ai_prev_actions:"Các việc cần làm sẽ được tự động nhận diện sau cuộc họp.",ai_prev_decisions:"Các quyết định quan trọng sẽ được ghi lại tại đây.",ai_prev_risks:"AI sẽ phát hiện rủi ro, điểm chưa rõ và nội dung cần follow-up.",ai_pro_task:"Pro: xuất task & lưu lịch sử",ai_listen:"AI đang nghe",ai_pro:"Pro — nâng cấp để mở",ai_show:"Bảng AI",ai_lang_auto:"🌐 Tự động",u_trial:"🎁 Dùng thử còn {n} phút",u_unlim:"⏱ Không giới hạn",u_today:"Hôm nay",u_month:"Tháng",u_min:"p",
+   ready_h:"Sẵn sàng dịch cuộc họp của bạn",ready_sub:"Bấm bắt đầu để Flash Meet nghe, nhận diện ngôn ngữ và hiển thị bản dịch trực tiếp.",ready_1:"✓ Ghi lời",ready_2:"✓ Dịch",ready_3:"✓ Tóm tắt",ready_4:"✓ Trích việc cần làm",ready_help:"Trong chế độ Song ngữ, tiếng Việt sẽ được dịch sang tiếng Hàn và tiếng Hàn sẽ được dịch sang tiếng Việt.",
    h_title:"Lịch sử",open:"Mở",empty:"Chưa có cuộc họp",
    sp_title:"Đổi tên người nói (tùy chọn)",sp_apply:"Áp dụng",sp_ph:"Tên thật",sp_done:"Đã áp dụng tên",
-   c_translate:"Dịch trực tiếp",lv_one:"→ 1 chiều",lv_two:"⇄ Song ngữ",lv_to:"Dịch sang",lv_listening:"Đang nghe…",lv_file:"Dịch trực tiếp cần mở qua http(s).",lv_net:"Đang kết nối lại…",lv_nosupport:"Dịch trực tiếp cần Chrome hoặc Edge (Web Speech API).",lv_mic:"Micro đã bị từ chối quyền.",
+   c_translate:"Dịch trực tiếp",lv_one:"Một chiều",lv_two:"Song ngữ",lv_to:"Dịch sang",lv_help_one:"Luôn dịch sang ngôn ngữ đã chọn.",lv_help_two:"Tự nhận diện Việt/Hàn và dịch sang ngôn ngữ còn lại.",lv_detected:"Đã nhận diện",lv_heard:"Nghe được",lv_trans:"Bản dịch",lv_listening:"Đang nghe…",lv_file:"Dịch trực tiếp cần mở qua http(s).",lv_net:"Đang kết nối lại…",lv_nosupport:"Dịch trực tiếp cần Chrome hoặc Edge (Web Speech API).",lv_mic:"Micro đã bị từ chối quyền.",
    copied:"Đã copy",err:"Lỗi: ",nospeech:"Không nhận được giọng nói — chưa có nội dung để tóm tắt.",delq:"Xóa cuộc họp này?",deflt:"Cuộc họp",
    set_title:"Cài đặt · API Key",set_oa:"OpenAI key — để tóm tắt",set_oa_link:"Lấy OpenAI key →",set_aai:"AssemblyAI key — để tách giọng nói",set_aai_link:"Lấy AssemblyAI key (miễn phí) →",set_note:"🔒 Key chỉ lưu trên máy này. AssemblyAI là tùy chọn.",set_save:"Lưu",set_saved:"Đã lưu key",
    nokey:"Mở Cài đặt (⚙ góc trên phải) và nhập API key trước.",
    sys:"Bạn là trợ lý ghi biên bản họp chuyên nghiệp. Transcript đã gắn nhãn người nói (Speaker 1, Speaker 2, …) — giữ nguyên. Viết biên bản bằng Tiếng Việt, Markdown:\n## Thành phần tham dự\n## Tóm tắt chung\n## Điểm chính\n## Quyết định\n## Việc cần làm\n## Vấn đề còn mở\nKhông bịa thông tin ngoài transcript."},
  ko:{hero_badge:"AI · 다국어 회의 · 자동 회의록",hero_h:"다국어 회의를,",hero_h2:"더 명확하게.",hero_sub:"화자를 분리하고 베트남어 · 영어 · 한국어를 실시간 번역하며, 회의 후 회의록까지 자동 작성 — 브라우저에서 바로.",hero_cta:"3분 무료 체험",hero_micro:"결제 카드 불필요 · 설치 불필요 · 브라우저에서 바로 사용",hero_demo:"60초 데모 보기",modes_h:"회의에만 국한되지 않습니다",modes_sub:"Flash Meet은 웨비나, 교육 영상, 온라인 강의 등 자막 없는 다국어 콘텐츠에도 실시간 AI 자막을 제공합니다.",m1t:"Meeting Mode",m1d:"화자 분리, 실시간 번역, 회의 후 회의록 작성.",m2t:"Viewer Mode",m2d:"영상·웨비나·강의의 오디오를 듣고 실시간 번역 자막을 표시합니다.",m3t:"Dark Subtitle Mode",m3d:"자막에만 집중하는 미니멀 다크 UI — 긴 콘텐츠에 적합.",f_privacy:"개인정보",f_terms:"약관",f_contact:"문의",
    hf1t:"누가 무엇을 말했는지 명확히",hf1d:"화자를 자동 분리해 고객·PM·내부 팀의 의견이 헷갈리지 않습니다.",hf1r:"요구사항 혼동 감소",hf2t:"회의 중 바로 이해",hf2d:"베트남어·영어·한국어 실시간 이중 자막으로 다국어 회의가 매끄럽게.",hf2r:"핵심을 놓치지 않음",hf3t:"회의 직후 회의록 완성",hf3d:"요약·결정·액션 아이템·담당자까지 자동 — 처음부터 다시 쓸 필요 없음.",hf3r:"30~60분 절약",
-   c_hint:"녹음하려면 누르세요",c_record:"● 녹음",c_upload:"또는 오디오 파일 업로드",c_pause:"일시정지",c_resume:"계속",c_stop:"정지",c_summarize:"요약하기 →",c_redo:"다시 시작",
-   c_recording:"녹음 중",c_paused:"일시정지됨",c_ready:"준비됨",lv_auto:"자동",lv_fast:"⚡ 빠름",lv_multi:"🌐 다국어",
+   c_hint:"시작을 눌러 녹음 & 번역",c_record:"무료 체험 시작",c_upload:"또는 오디오 파일 업로드",c_pause:"일시정지",c_resume:"계속",c_stop:"종료",c_summarize:"요약하기 →",c_redo:"다시 시작",
+   c_recording:"LIVE · 실시간 번역 중",c_paused:"일시정지됨",c_ready:"준비됨",lv_auto:"자동",lv_fast:"⚡ 빠름",lv_multi:"🌐 다국어",
    c_diar:"👥 화자를 자동으로 분리합니다 (Speaker 1, 2, 3…).",
    p_upload:"오디오 업로드 중…",p_diar:"화자 분리 중…",p_sum:"요약 작성 중…",p_wait:"AI 비서가 열심히 작업 중…",
    r_summary:"요약",r_transcript:"전체 기록",r_copy:"복사",r_download:"다운로드",r_new:"+ 새 회의",r_dl_live:"⬇ 실시간 번역 다운로드",r_live:"실시간 번역",words:"단어",
-   ai_title:"AI 회의 인텔리전스",ai_summary:"요약",ai_actions:"액션 아이템",ai_decisions:"결정",ai_risks:"리스크 & 후속",ai_wait:"AI가 듣고 있어요…",ai_listen:"AI 청취 중",ai_pro:"Pro — 업그레이드",ai_show:"AI 패널",ai_lang_auto:"🌐 자동",u_trial:"🎁 체험 · {n}분 남음",u_unlim:"⏱ 무제한",u_today:"오늘",u_month:"월",u_min:"분",
-   ready_h:"번역 준비 완료",ready_sub:"말하기 시작하면 Flash Meet이 자동으로:",ready_1:"✓ 전사",ready_2:"✓ 번역",ready_3:"✓ 요약",ready_4:"✓ 액션 아이템 추출",
+   ai_title:"AI 회의 인텔리전스",ai_summary:"요약",ai_actions:"액션 아이템",ai_decisions:"결정",ai_risks:"리스크 & 후속",ai_wait:"AI가 듣고 있어요… 충분한 내용이 모이면 요약이 표시됩니다.",ai_prev_actions:"회의 후 액션 아이템이 자동으로 인식됩니다.",ai_prev_decisions:"주요 결정이 여기에 기록됩니다.",ai_prev_risks:"AI가 리스크·미해결 항목·후속 사항을 감지합니다.",ai_pro_task:"Pro: 작업 내보내기 & 기록",ai_listen:"AI 청취 중",ai_pro:"Pro — 업그레이드",ai_show:"AI 패널",ai_lang_auto:"🌐 자동",u_trial:"🎁 무료 체험 · {n}분 남음",u_unlim:"⏱ 무제한",u_today:"오늘",u_month:"월",u_min:"분",
+   ready_h:"회의를 번역할 준비가 되었습니다",ready_sub:"시작을 누르면 Flash Meet이 듣고, 언어를 감지해 실시간 번역을 표시합니다.",ready_1:"✓ 전사",ready_2:"✓ 번역",ready_3:"✓ 요약",ready_4:"✓ 액션 아이템 추출",ready_help:"양방향 모드에서는 베트남어는 한국어로, 한국어는 베트남어로 번역됩니다.",
    h_title:"기록",open:"열기",empty:"회의가 없습니다",
    sp_title:"화자 이름 변경 (선택)",sp_apply:"적용",sp_ph:"실명",sp_done:"이름이 적용됨",
-   c_translate:"실시간 번역",lv_one:"→ 단방향",lv_two:"⇄ 양방향",lv_to:"번역 대상",lv_listening:"듣는 중…",lv_file:"실시간 번역은 http(s)로 열어야 합니다.",lv_net:"다시 연결 중…",lv_nosupport:"실시간 번역은 Chrome 또는 Edge가 필요합니다.",lv_mic:"마이크 권한이 거부되었습니다.",
+   c_translate:"실시간 번역",lv_one:"단방향",lv_two:"양방향",lv_to:"번역 대상",lv_help_one:"항상 선택한 언어로 번역합니다.",lv_help_two:"각자 언어를 자동 감지해 상대 언어로 번역합니다.",lv_detected:"감지됨",lv_heard:"들린 내용",lv_trans:"번역",lv_listening:"듣는 중…",lv_file:"실시간 번역은 http(s)로 열어야 합니다.",lv_net:"다시 연결 중…",lv_nosupport:"실시간 번역은 Chrome 또는 Edge가 필요합니다.",lv_mic:"마이크 권한이 거부되었습니다.",
    copied:"복사됨",err:"오류: ",nospeech:"음성이 감지되지 않았습니다 — 요약할 내용이 없습니다.",delq:"이 회의를 삭제할까요?",deflt:"회의",
    set_title:"설정 · API 키",set_oa:"OpenAI 키 — 요약용",set_oa_link:"OpenAI 키 받기 →",set_aai:"AssemblyAI 키 — 화자 분리용",set_aai_link:"AssemblyAI 키 받기 (무료) →",set_note:"🔒 키는 이 기기에만 저장됩니다. AssemblyAI는 선택 사항.",set_save:"저장",set_saved:"키가 저장됨",
    nokey:"설정(⚙ 오른쪽 위)을 열고 API 키를 입력하세요.",
@@ -678,7 +690,8 @@ function refreshDyn(){
   else if(capState==='paused')$('recHint').textContent=t('c_paused');
   else if(capState==='ready')$('recHint').textContent='✓ '+t('c_ready');
   else $('recHint').textContent=t('c_hint');
-  if(typeof renderUsage==='function')renderUsage();}
+  if(typeof renderUsage==='function')renderUsage();
+  if(typeof applyWay==='function')applyWay();}
 function startViz(stream){try{actx=new(window.AudioContext||window.webkitAudioContext)();
   analyser=actx.createAnalyser();analyser.fftSize=64;actx.createMediaStreamSource(stream).connect(analyser);
   const bars=$('viz').children,d=new Uint8Array(analyser.frequencyBinCount);
@@ -779,7 +792,7 @@ function setView(v){view=v;
 document.querySelectorAll('.res-tabs button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
 // Populate Action Items + Decisions tabs from the full transcript after a meeting.
 async function resInsights(){const tx=curTr||'',ai=$('actionItems'),de=$('decisions');if(!ai||!de)return;
-  if(!PAID){ai.innerHTML=proLock();de.innerHTML=proLock();return;}
+  if(!PAID){ai.innerHTML=aiPreview(t('ai_prev_actions'),t('ai_pro_task'));de.innerHTML=aiPreview(t('ai_prev_decisions'),'Pro');return;}
   if(tx.length<60){ai.innerHTML='<div class="ai-empty">—</div>';de.innerHTML='<div class="ai-empty">—</div>';return;}
   ai.innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';de.innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';
   try{const r=await fetch('/api/insights',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,lang:aiOutLang()})});const d=await r.json();if(!r.ok)return;
@@ -823,7 +836,8 @@ $('lvToggle').onclick=e=>{if(e.target.tagName!=='INPUT')$('lvOn').checked=!$('lv
 function restartLive(){if(capState==='recording'&&$('lvOn').checked){stopLive();startLive();}}
 function getWay(){const b=$('lvWaySeg').querySelector('button.on');return b?b.dataset.w:'one';}
 function applyWay(){const two=getWay()==='two';
-  $('lvOneLangs').style.display=two?'none':'';$('lvTwoLangs').style.display=two?'':'none';}
+  $('lvOneLangs').style.display=two?'none':'';$('lvTwoLangs').style.display=two?'':'none';
+  if($('lvHelp'))$('lvHelp').textContent=t(two?'lv_help_two':'lv_help_one');}
 $('lvTo').onchange=()=>{localStorage.setItem('mr_lvto',$('lvTo').value);restartLive();};
 $('lvWaySeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{
   $('lvWaySeg').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
@@ -844,7 +858,12 @@ const EQ='<span class="eq"><i></i><i></i><i></i><i></i></span>';
 function setInterim(txt){const el=$('lvInterim');if(!txt){el.style.display='none';el.innerHTML='';return;}el.style.display='inline-flex';el.innerHTML=EQ+'<span>'+esc(txt)+'</span>';}
 // ── Live translation via Soniox real-time WebSocket (STT + translation) ──
 const SX_ISO={Vietnamese:'vi',English:'en',Korean:'ko',Japanese:'ja',Chinese:'zh'};
-let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:'',segSpk:null,curRow:null};
+let sx={ws:null,stream:null,rec:null,segOrig:'',segTrans:'',segSpk:null,segLang:null,segTgt:null,curRow:null};
+// Soniox returns the language code per token: the source language on original
+// tokens, the target language on translation tokens. We surface this so the UI
+// can show the direction (VI → KO) and never confuse a translation for the original.
+const LANG_NAME={vi:'Tiếng Việt',ko:'한국어',en:'English',ja:'日本語',zh:'中文',th:'ไทย',es:'Español',fr:'Français',de:'Deutsch',ru:'Русский'};
+const LANG_SHORT={vi:'VI',ko:'KO',en:'EN',ja:'JA',zh:'ZH',th:'TH',es:'ES',fr:'FR',de:'DE',ru:'RU'};
 // Source language is always auto-detected by Soniox; hint the common ones.
 function sxHints(){return['en','vi','ko','ja','zh'];}
 // Pick an audio container the browser actually supports (iOS lacks webm).
@@ -857,6 +876,8 @@ const PLAN=_Q.get('plan')||'free';
 const UNLIMITED=SIGNED&&PLAN!=='free'&&PLAN!=='';
 const PAID=UNLIMITED; // pro/business/enterprise → full AI intelligence; free → summary only
 function proLock(){return '<a class="ai-lock" href="/pricing" target="_top">🔒 '+t('ai_pro')+'</a>';}
+// Free users see a useful preview of each AI box + a small, non-blocking Pro badge.
+function aiPreview(text,badge){return '<div class="ai-prev">'+esc(text)+'</div><a class="ai-pro-badge" href="/pricing" target="_top">'+esc(badge)+'</a>';}
 let usage={unlimited:UNLIMITED,remainDay:null,remainMonth:null};
 const ANON_LIMIT=180; // guests (not signed in): 3 minutes of live translation
 function anonUsed(){return parseInt(localStorage.getItem('mr_anon_used')||'0',10)||0;}
@@ -948,8 +969,8 @@ async function openWs(){
     let oI='',tI='';
     (m.tokens||[]).forEach(tk=>{const x=tk.text;if(x==null)return;
       if(x==='<end>'){sxFinalize();return;}
-      if(tk.translation_status==='translation'){if(tk.is_final)sx.segTrans+=x;else tI+=x;}
-      else{if(tk.is_final){sx.segOrig+=x;if(tk.speaker!=null)sx.segSpk=tk.speaker;}else oI+=x;}});
+      if(tk.translation_status==='translation'){if(tk.is_final)sx.segTrans+=x;else tI+=x;if(tk.language)sx.segTgt=tk.language;}
+      else{if(tk.is_final){sx.segOrig+=x;if(tk.speaker!=null)sx.segSpk=tk.speaker;}else oI+=x;if(tk.language)sx.segLang=tk.language;}});
     sxRender(oI,tI);
     if(m.finished)sxFinalize();};
   ws.onerror=()=>{if(lvWantOn&&!sxStopping)lvInfo('⚠ '+t('lv_net'));};
@@ -967,29 +988,41 @@ async function openWs(){
   };
 }
 // Update the live bubble token-by-token so text streams in smoothly (no jumps).
+// Fill direction badge, "detected language", and labelled original/translation
+// so a translation is never mistaken for the original.
+function lvFillMeta(row,o,tr){const src=sx.segLang,tgt=sx.segTgt;
+  const dir=row.querySelector('.lv-dir');
+  if(src&&tgt&&src!==tgt){dir.textContent=(LANG_SHORT[src]||src.toUpperCase())+' → '+(LANG_SHORT[tgt]||tgt.toUpperCase());dir.style.display='';}else dir.style.display='none';
+  const det=row.querySelector('.lv-detect');
+  if(src){det.textContent=t('lv_detected')+': '+(LANG_NAME[src]||src);det.style.display='';}else det.style.display='none';
+  const oRow=row.querySelector('.lv-orig-row');
+  if(o){row.querySelector('.lv-lbl-o').textContent=t('lv_heard');row.querySelector('.lv-orig').textContent=o;oRow.style.display='';}else oRow.style.display='none';
+  const tRow=row.querySelector('.lv-trans-row');
+  if(tr){row.querySelector('.lv-lbl-t').textContent=t('lv_trans')+(tgt?' · '+(LANG_NAME[tgt]||tgt):'');row.querySelector('.lv-trans').textContent=tr;tRow.style.display='';}else tRow.style.display='none';}
 function sxRender(oI,tI){const o=(sx.segOrig+(oI||'')).trim(),tr=(sx.segTrans+(tI||'')).trim();
   if(!o&&!tr)return;
   if(!sx.curRow){
     const row=document.createElement('div');row.className='lv-msg';
-    row.innerHTML='<div class="lv-av"></div><div class="lv-msg-b"><div class="lv-name"><span class="lv-who"></span><span class="lv-time"></span></div>'+
-      '<div class="lv-bubble"><div class="lv-orig"></div><div class="lv-trans"></div></div></div>';
+    row.innerHTML='<div class="lv-av"></div><div class="lv-msg-b">'+
+      '<div class="lv-name"><span class="lv-who"></span><span class="lv-time"></span><span class="lv-dir" style="display:none"></span></div>'+
+      '<div class="lv-detect" style="display:none"></div>'+
+      '<div class="lv-bubble">'+
+        '<div class="lv-orig-row" style="display:none"><span class="lv-lbl lv-lbl-o"></span><div class="lv-orig"></div></div>'+
+        '<div class="lv-trans-row" style="display:none"><span class="lv-lbl lv-lbl-t"></span><div class="lv-trans"></div></div>'+
+      '</div></div>';
     $('lvFeed').appendChild(row);sx.curRow=row;row.querySelector('.lv-time').textContent=hm();feedScroll(row);
   }
   const row=sx.curRow,spk=sx.segSpk,av=row.querySelector('.lv-av');
   if(spk!=null){av.textContent=String(spk);av.dataset.s=((spk-1)%6+6)%6;row.querySelector('.lv-who').textContent='Speaker '+spk;}
   else{av.textContent='•';av.dataset.s=0;}
-  row.querySelector('.lv-orig').textContent=o;
-  const tEl=row.querySelector('.lv-trans');tEl.textContent=tr;tEl.style.display=tr?'':'none';
+  lvFillMeta(row,o,tr);
   keepInView(row);setInterim('');}
 // Commit the current segment as a finished bubble and start fresh.
 function sxFinalize(){const o=sx.segOrig.trim(),tr=sx.segTrans.trim(),spk=sx.segSpk;
-  if(sx.curRow){if(!o&&!tr){sx.curRow.remove();}else{
-    sx.curRow.querySelector('.lv-orig').textContent=o;
-    const tEl=sx.curRow.querySelector('.lv-trans');tEl.textContent=tr;tEl.style.display=tr?'':'none';
-    feedScroll(sx.curRow);}}
+  if(sx.curRow){if(!o&&!tr){sx.curRow.remove();}else{lvFillMeta(sx.curRow,o,tr);feedScroll(sx.curRow);}}
   if(o)curTr+=(curTr?'\n':'')+(spk!=null?'Speaker '+spk+': ':'')+o;
-  if(o||tr)lvAll.push({src:o,tgt:tr,spk});
-  sx.segOrig='';sx.segTrans='';sx.segSpk=null;sx.curRow=null;setInterim('');}
+  if(o||tr)lvAll.push({src:o,tgt:tr,spk,lang:sx.segLang,tlang:sx.segTgt});
+  sx.segOrig='';sx.segTrans='';sx.segSpk=null;sx.segLang=null;sx.segTgt=null;sx.curRow=null;setInterim('');}
 // Smoothly center a finished/new line (teleprompter feel).
 function feedScroll(row){if(row&&row.scrollIntoView)row.scrollIntoView({behavior:'smooth',block:'center'});}
 // While streaming, only nudge (instantly) if the active line drifts out of view — avoids jitter.
@@ -1007,7 +1040,10 @@ function stopLive(){lvWantOn=false;$('lvInterim').textContent='';sxStop();}
 function hm(){const d=new Date();return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
 function resetInsights(){insLastLen=0;
   if($('aiSummary')){$('aiSummary').innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';
-    ['aiActions','aiDecisions','aiRisks'].forEach(id=>$(id).innerHTML=PAID?'<div class="ai-empty">—</div>':proLock());}}
+    if(PAID){['aiActions','aiDecisions','aiRisks'].forEach(id=>$(id).innerHTML='<div class="ai-empty">—</div>');}
+    else{$('aiActions').innerHTML=aiPreview(t('ai_prev_actions'),t('ai_pro_task'));
+      $('aiDecisions').innerHTML=aiPreview(t('ai_prev_decisions'),'Pro');
+      $('aiRisks').innerHTML=aiPreview(t('ai_prev_risks'),'Pro');}}}
 // AI output language. Defaults to the system language the user picked; 'auto'
 // lets the AI follow the spoken language. Works for bilingual meetings too: the
 // AI normalises everything into the one chosen language.
