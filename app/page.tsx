@@ -1,9 +1,17 @@
+import type { Metadata } from "next";
 import MeetingApp from "./MeetingApp";
-import SeoLanding from "./SeoLanding";
+import LandingContent, { landingFaq } from "./LandingContent";
 import { createClient, supabaseConfigured } from "@/lib/supabase-server";
 import { isAdmin } from "@/lib/supabase-admin";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+    languages: { en: "/", vi: "/vi", ko: "/ko", "x-default": "/" },
+  },
+};
 
 export default async function Home() {
   let email = "";
@@ -28,7 +36,12 @@ export default async function Home() {
       <MeetingApp email={email} plan={plan} admin={admin} />
       {/* Crawlable marketing content for logged-out visitors (the app hero is in
           an iframe and not indexable). Hidden once signed in. */}
-      {!email && <SeoLanding />}
+      {!email && (
+        <>
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(landingFaq("en")) }} />
+          <LandingContent lang="en" />
+        </>
+      )}
     </>
   );
 }
