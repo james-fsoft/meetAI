@@ -312,9 +312,9 @@ function Trust() {
 /* ── Pricing teaser ──────────────────────────────────────────────────────── */
 function PricingTeaser() {
   const plans = [
-    { n: "Free", p: "0₫", d: "Dùng thử với phút dịch hằng tháng.", feats: ["Phụ đề realtime", "Tóm tắt cơ bản"] },
-    { n: "Pro", p: "Phổ biến", d: "Cho cá nhân & freelancer.", feats: ["1.000 phút dịch / tháng", "AI Notes đầy đủ"], hi: true },
-    { n: "Business", p: "Cho team", d: "Cho đội & doanh nghiệp.", feats: ["5.000 phút dịch / tháng", "Nhiều tài khoản"] },
+    { n: "Free", p: "Miễn phí", suf: "", d: "Dùng thử với phút dịch hằng tháng.", feats: ["Phụ đề realtime", "Tóm tắt cơ bản"] },
+    { n: "Pro", p: "9,99 $", suf: "/tháng", d: "Cho cá nhân & freelancer.", feats: ["1.000 phút dịch / tháng", "AI Notes đầy đủ"], hi: true },
+    { n: "Business", p: "29,99 $", suf: "/tháng", d: "Cho đội & doanh nghiệp.", feats: ["5.000 phút dịch / tháng", "Nhiều tài khoản"] },
   ];
   return (
     <section className="fx-sec fx-sec-alt" id="pricing">
@@ -325,7 +325,7 @@ function PricingTeaser() {
             <div key={p.n} className={"fx-plan" + (p.hi ? " hi" : "")}>
               {p.hi && <span className="fx-plan-badge">Phổ biến</span>}
               <div className="fx-plan-n">{p.n}</div>
-              <div className="fx-plan-p">{p.p}</div>
+              <div className="fx-plan-p">{p.p}{p.suf && <span>{p.suf}</span>}</div>
               <p className="fx-plan-d">{p.d}</p>
               <ul>{p.feats.map((f) => <li key={f}><Check /> {f}</li>)}</ul>
             </div>
@@ -377,6 +377,9 @@ function FinalCTA() {
           <a href={APP_URL} className="fx-btn fx-btn-lg">Dùng thử miễn phí</a>
           <a href={EXT_URL} className="fx-btn-ghost fx-btn-lg">Cài Chrome Extension</a>
         </div>
+        <a href="/brochure" target="_blank" rel="noopener noreferrer" className="fx-pdf">
+          <PdfIcon /> Tải brochure giới thiệu (PDF)
+        </a>
         <p className="fx-trust">Không cần thẻ tín dụng <i>·</i> Cài đặt trong 1 phút <i>·</i> Hủy bất cứ lúc nào</p>
       </div>
     </section>
@@ -426,6 +429,7 @@ function Logo() {
   );
 }
 function PlayIcon() { return <svg viewBox="0 0 24 24" width="16" height="16" {...sv}><path d="M7 5l11 7-11 7z" fill="currentColor" stroke="none" /></svg>; }
+function PdfIcon() { return <svg viewBox="0 0 24 24" width="16" height="16" {...sv}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><path d="M12 18v-5M9.5 13h2.5a1.5 1.5 0 0 1 0 3H9.5" opacity=".7" /></svg>; }
 function SparkIcon() { return <svg viewBox="0 0 24 24" width="18" height="18" {...sv}><path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8z" /><path d="M19 14l.7 1.9 1.9.7-1.9.7-.7 1.9-.7-1.9-1.9-.7 1.9-.7z" /></svg>; }
 function CaptionIcon() { return <svg viewBox="0 0 24 24" width="18" height="18" {...sv}><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M8 11h2M14 11h2M7 15h4M13 15h4" /></svg>; }
 function UsersIcon() { return <svg viewBox="0 0 24 24" width="18" height="18" {...sv}><circle cx="9" cy="8" r="3" /><path d="M3.5 19a5.5 5.5 0 0 1 11 0" /><path d="M16 8.2a2.8 2.8 0 0 1 0 5.6M20.5 19a5 5 0 0 0-3-4.6" opacity=".6" /></svg>; }
@@ -560,8 +564,8 @@ body{background:#050B1F}
 .fx-sub-vi{font-size:14.5px;font-weight:700;color:#fff;margin-top:4px;line-height:1.4}
 
 /* notes panel (overlap) */
-.fx-notes{position:absolute;right:-22px;bottom:-30px;width:264px;background:#0b1830;border:1px solid var(--bd);
-  border-radius:16px;padding:14px;box-shadow:0 30px 60px -28px rgba(0,0,0,.85);z-index:2}
+.fx-notes{position:relative;width:100%;max-width:312px;margin:16px 0 0 auto;background:#0b1830;border:1px solid var(--bd);
+  border-radius:16px;padding:16px;box-shadow:0 30px 60px -32px rgba(0,0,0,.7);z-index:2}
 .fx-notes-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
 .fx-notes-hd>span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;color:#fff}
 .fx-notes-hd svg{color:var(--acc3)}
@@ -646,13 +650,14 @@ body{background:#050B1F}
 
 /* pricing */
 .fx-price{align-items:stretch}
-.fx-plan{position:relative;background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:26px 24px;display:flex;flex-direction:column}
+.fx-plan{position:relative;background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:28px 24px;display:flex;flex-direction:column}
 .fx-plan.hi{border-color:var(--bdh);background:linear-gradient(180deg,rgba(37,99,255,.10),rgba(255,255,255,.03))}
-.fx-plan-badge{position:absolute;top:-11px;left:24px;font-size:10.5px;font-weight:800;letter-spacing:.04em;color:#fff;
-  background:var(--acc);border-radius:20px;padding:4px 11px}
-.fx-plan-n{font-size:15px;font-weight:800}
-.fx-plan-p{font-size:26px;font-weight:900;letter-spacing:-.03em;margin:8px 0 2px}
-.fx-plan-d{font-size:13.5px;color:var(--mut);margin-bottom:16px}
+.fx-plan-badge{position:absolute;top:18px;right:18px;font-size:10px;font-weight:800;letter-spacing:.04em;color:var(--acc3);
+  background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.28);border-radius:20px;padding:4px 10px}
+.fx-plan-n{font-size:14px;font-weight:800;color:var(--tx2)}
+.fx-plan-p{font-size:30px;font-weight:900;letter-spacing:-.03em;margin:10px 0 3px;display:flex;align-items:baseline;gap:5px}
+.fx-plan-p span{font-size:14px;font-weight:600;color:var(--mut)}
+.fx-plan-d{font-size:13.5px;color:var(--mut);margin-bottom:18px}
 .fx-plan ul{list-style:none;display:flex;flex-direction:column;gap:9px}
 .fx-plan li{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--tx2)}
 .fx-plan li svg{color:#34d399;flex-shrink:0}
@@ -676,6 +681,8 @@ body{background:#050B1F}
 .fx-final-in{text-align:center;max-width:740px;margin:0 auto}
 .fx-final-h{margin-bottom:30px}
 .fx-center-cta{justify-content:center}
+.fx-pdf{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font-size:13.5px;font-weight:700;color:var(--acc3);transition:.15s}
+.fx-pdf:hover{color:#fff}
 
 /* footer */
 .fx-foot{border-top:1px solid var(--bd);padding:34px 0}
@@ -698,7 +705,7 @@ body{background:#050B1F}
   .fx-lead{font-size:16.5px}
   .fx-nav,.fx-hdr-cta{display:none}
   .fx-burger{display:flex}
-  .fx-notes{position:relative;right:auto;bottom:auto;width:auto;margin-top:14px}
+  .fx-notes{max-width:none;width:auto;margin:14px 0 0}
   .fx-mock{animation:none}
   .fx-sec{padding:74px 0}
   .fx-h2{font-size:28px;margin-bottom:36px}
