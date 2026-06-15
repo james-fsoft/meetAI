@@ -423,13 +423,17 @@ export default function Pricing() {
     setBusy(p.id);
     try {
       const r = await fetch(`/api/checkout?plan=${p.id}&billing=${billing}`, { method: "POST" });
-      const d = await r.json();
-      if (!r.ok) throw new Error(d.error || "Checkout unavailable");
-      if (d.url) { location.href = d.url; return; }
-      throw new Error("Missing checkout link");
-    } catch (e: any) {
-      alert(e.message + "\n\n(Payment activates once Lemon Squeezy is configured.)");
+      // Not signed in → go log in, then come back to pricing.
+      if (r.status === 401) { location.href = "/login?next=" + encodeURIComponent("/pricing"); return; }
+      const d = await r.json().catch(() => ({}));
+      if (r.ok && d.url) { location.href = d.url; return; }
+      // Card checkout unavailable (e.g. Lemon Squeezy not configured yet) →
+      // fall back to the bank-transfer flow, which works now.
       setBusy("");
+      await payVietQR(p.id);
+    } catch {
+      setBusy("");
+      await payVietQR(p.id);
     }
   }
 
