@@ -526,16 +526,16 @@ body{background:#050B1F}
 .fx-hero-in{display:grid;grid-template-columns:46% 54%;align-items:center;gap:40px}
 .fx-eyebrow{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.02em;color:var(--acc3);
   background:rgba(96,165,250,.10);border:1px solid rgba(96,165,250,.22);border-radius:30px;padding:6px 14px;margin-bottom:22px}
-.fx-h1{font-size:54px;line-height:1.06;letter-spacing:-.035em}
-.fx-grad{background:linear-gradient(100deg,#60a5fa,#3b82f6 55%,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent}
-.fx-lead{font-size:18px;line-height:1.62;color:var(--tx2);margin:22px 0 30px;max-width:520px}
+.fx-h1{font-size:46px;line-height:1.12;letter-spacing:-.028em;font-weight:800}
+.fx-grad{background:linear-gradient(94deg,#a9c8ff,#6aa0f7);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fx-lead{font-size:17.5px;line-height:1.62;color:var(--tx2);margin:24px 0 30px;max-width:500px}
 .fx-hero-cta{display:flex;gap:14px;flex-wrap:wrap}
 .fx-trust{font-size:13px;color:var(--mut);margin-top:20px;font-weight:500}
 .fx-trust i{color:#475569;font-style:normal;margin:0 4px}
 
 /* hero visual / mockup */
 .fx-hero-visual{position:relative}
-.fx-glow{position:absolute;inset:-8% -6% -12% -6%;background:radial-gradient(closest-side,rgba(37,99,255,.20),transparent 75%);filter:blur(20px);z-index:0}
+.fx-glow{position:absolute;inset:-6% -4% -10% -4%;background:radial-gradient(closest-side,rgba(37,99,255,.13),transparent 72%);filter:blur(26px);z-index:0}
 .fx-mock{position:relative;z-index:1;animation:fxfloat 7s ease-in-out infinite}
 @keyframes fxfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
 .fx-mock-win{background:linear-gradient(180deg,#0a1730,#091327);border:1px solid var(--bd);border-radius:18px;
@@ -699,10 +699,10 @@ body{background:#050B1F}
 
 /* responsive */
 @media(max-width:980px){
-  .fx-hero{padding:60px 0 110px}
-  .fx-hero-in{grid-template-columns:1fr;gap:64px}
-  .fx-h1{font-size:42px}
-  .fx-lead{font-size:16.5px}
+  .fx-hero{padding:54px 0 96px}
+  .fx-hero-in{grid-template-columns:1fr;gap:52px}
+  .fx-h1{font-size:34px;line-height:1.16}
+  .fx-lead{font-size:16px;margin:20px 0 26px}
   .fx-nav,.fx-hdr-cta{display:none}
   .fx-burger{display:flex}
   .fx-notes{max-width:none;width:auto;margin:14px 0 0}
@@ -714,7 +714,7 @@ body{background:#050B1F}
 }
 @media(max-width:560px){
   .fx-wrap{padding:0 18px}
-  .fx-h1{font-size:34px}
+  .fx-h1{font-size:30px}
   .fx-hero-cta .fx-btn-lg,.fx-hero-cta .fx-btn-ghost{flex:1;text-align:center}
   .fx-secstrip{grid-template-columns:1fr}
   .fx-mock-grid{grid-template-columns:1fr 1fr}
