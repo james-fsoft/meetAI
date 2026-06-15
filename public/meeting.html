@@ -437,10 +437,6 @@ audio{width:100%;margin-top:16px;height:42px}
         <span data-t="hero_cta">Dùng thử 3 phút miễn phí</span>
         <svg class="hc-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="18" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
-      <button class="hero-cta2" id="goDemo">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-        <span data-t="hero_demo">Xem demo 60 giây</span>
-      </button>
     </div>
     <p class="hero-micro" data-t="hero_micro">Không cần thẻ thanh toán · Không cần cài đặt · Dùng trực tiếp trên trình duyệt</p>
     <div class="hero-feats">
@@ -667,7 +663,6 @@ $('lang').onclick=e=>{const b=e.target.closest('button');if(!b)return;L=b.datase
   if(!localStorage.getItem('mr_ailang')&&typeof refreshInsights==='function')refreshInsights();};
 function show(sc){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(sc).classList.add('on');}
 $('goApp').onclick=()=>show('sc-cap');
-if($('goDemo'))$('goDemo').onclick=()=>{const m=$('modes');if(m)m.scrollIntoView({behavior:'smooth',block:'center'});};
 
 let mediaRecorder,chunks=[],audioBlob=null,audioStream=null,extra=[];
 let startTime=0,elapsed=0,timerInt=null,paused=false;
