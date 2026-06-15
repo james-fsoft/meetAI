@@ -49,7 +49,6 @@ export const metadata: Metadata = {
     description: DESC,
     url: SITE,
     siteName: "Flash Meet",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Flash Meet — live meeting translation & AI summaries" }],
     locale: "en_US",
     alternateLocale: ["vi_VN", "ko_KR"],
     type: "website",
@@ -58,7 +57,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: TITLE,
     description: DESC,
-    images: ["/og.png"],
   },
 };
 
