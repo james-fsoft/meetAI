@@ -63,10 +63,20 @@ h1{font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1;margin-bo
 .hero-h{font-size:46px;font-weight:900;letter-spacing:-.04em;line-height:1.04;margin-bottom:16px}
 .hero-h .accent{color:var(--acc)}
 .hero-sub{font-size:17px;color:var(--grey);max-width:540px;margin:0 auto 30px;line-height:1.55}
-.hero-cta{display:inline-flex;align-items:center;gap:9px;cursor:pointer;border:none;border-radius:14px;
-  background:var(--acc);color:#fff;font-family:inherit;font-size:17px;font-weight:800;padding:17px 38px;
-  transition:.15s;box-shadow:0 14px 30px -10px var(--acc)}
-.hero-cta:hover{transform:translateY(-2px);box-shadow:0 20px 40px -10px var(--acc)}
+.hero-cta{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:11px;cursor:pointer;border:none;border-radius:16px;
+  background:linear-gradient(115deg,#2563ff,#4aa3ff 48%,#7c5cff);color:#fff;font-family:inherit;font-size:16.5px;font-weight:700;letter-spacing:-.01em;padding:17px 32px;
+  transition:transform .22s cubic-bezier(.2,.7,.3,1),box-shadow .22s,filter .22s;
+  box-shadow:0 10px 26px -8px rgba(37,99,255,.55),0 0 0 1px rgba(255,255,255,.07) inset}
+.hero-cta:hover{transform:translateY(-3px);filter:brightness(1.06);box-shadow:0 22px 46px -10px rgba(37,99,255,.6),0 0 28px -6px rgba(124,92,255,.45)}
+.hero-cta:active{transform:translateY(-1px) scale(.97)}
+.hero-cta .hc-spark{flex-shrink:0;opacity:.95}
+.hero-cta .hc-arrow{flex-shrink:0;transition:transform .22s cubic-bezier(.2,.7,.3,1)}
+.hero-cta:hover .hc-arrow{transform:translateX(4px)}
+.hero-cta::after{content:"";position:absolute;top:0;left:-150%;width:55%;height:100%;pointer-events:none;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-18deg);animation:hcShine 4.5s ease-in-out infinite}
+@keyframes hcShine{0%{left:-150%}15%{left:150%}100%{left:150%}}
+.hero-micro{margin-top:14px;font-size:12.5px;font-weight:600;color:var(--faint);letter-spacing:.01em}
+@media(prefers-reduced-motion:reduce){.hero-cta::after{display:none}.hero-cta,.hero-cta .hc-arrow{transition:none}}
 .hero-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:46px}
 .feat{background:var(--paper);border:1px solid var(--hair);border-radius:18px;padding:24px 20px;text-align:left;
   box-shadow:0 12px 30px -22px rgba(10,17,36,.5);transition:.18s}
@@ -394,7 +404,12 @@ audio{width:100%;margin-top:16px;height:42px}
     <div class="hero-badge"><span class="live-dot"></span><span data-t="hero_badge">AI · Đa ngôn ngữ · Tách giọng</span></div>
     <h1 class="hero-h" data-t="hero_h">Ghi âm cuộc họp.<br><span class="accent" data-t="hero_h2">AI lo phần còn lại.</span></h1>
     <p class="hero-sub" data-t="hero_sub">Tách giọng từng người, dịch trực tiếp, và tóm tắt cuộc họp tự động — Việt · Anh · Hàn.</p>
-    <button class="hero-cta" id="goApp"><span data-t="hero_cta">Bắt đầu ngay</span> →</button>
+    <button class="hero-cta" id="goApp">
+      <svg class="hc-spark" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.7 4.8L18.5 8.5 13.7 10.2 12 15l-1.7-4.8L5.5 8.5l4.8-1.7z"/><path d="M19 13.5l.75 2.05L21.8 16.3l-2.05.75L19 19.1l-.75-2.05L16.2 16.3l2.05-.75z"/></svg>
+      <span data-t="hero_cta">Dùng thử 3 phút miễn phí</span>
+      <svg class="hc-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="18" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+    <p class="hero-micro" data-t="hero_micro">Không cần thẻ thanh toán · Không cần cài đặt</p>
     <div class="hero-feats">
       <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17.2" cy="9" r="2.2" opacity=".5"/><path d="M16 19a4.4 4.4 0 0 1 5.5-4.2" opacity=".5"/></svg></div><h3 data-t="hf1t">Tách giọng nói</h3><p data-t="hf1d">Tự nhận diện Speaker 1, 2, 3… ai nói gì rõ ràng.</p></div>
       <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.6 2.4 2.6 14.6 0 17"/><path d="M12 3.5c-2.6 2.4-2.6 14.6 0 17"/></svg></div><h3 data-t="hf2t">Dịch trực tiếp</h3><p data-t="hf2d">Phụ đề song ngữ ngay khi đang họp, đa ngôn ngữ.</p></div>
@@ -544,7 +559,7 @@ audio{width:100%;margin-top:16px;height:42px}
 // existing "has a key?" guards happy so every feature stays enabled.
 const CONFIG={OPENAI_KEY:'server',ASSEMBLYAI_KEY:'server'};
 const I={
- en:{hero_badge:"AI · Multilingual · Speaker split",hero_h:"Record the meeting.",hero_h2:"AI does the rest.",hero_sub:"Separate every speaker, translate live, and summarize meetings automatically — Vietnamese · English · Korean.",hero_cta:"Get started",
+ en:{hero_badge:"AI · Multilingual · Speaker split",hero_h:"Record the meeting.",hero_h2:"AI does the rest.",hero_sub:"Separate every speaker, translate live, and summarize meetings automatically — Vietnamese · English · Korean.",hero_cta:"Try 3 minutes free",hero_micro:"No payment card · No installation",
    hf1t:"Speaker separation",hf1d:"Auto-detects Speaker 1, 2, 3… so you know who said what.",hf2t:"Live translation",hf2d:"Bilingual subtitles while you meet, multi-language.",hf3t:"AI summary",hf3d:"Minutes, decisions, action items — automatic.",
    c_hint:"Press record to start",c_record:"● Record",c_upload:"or upload an audio file",c_pause:"Pause",c_resume:"Resume",c_stop:"Stop",c_summarize:"Summarize →",c_redo:"Start over",
    c_recording:"Recording",c_paused:"Paused",c_ready:"Ready",lv_auto:"Auto",lv_fast:"⚡ Fast",lv_multi:"🌐 Multi",
@@ -560,7 +575,7 @@ const I={
    set_title:"Settings · API Keys",set_oa:"OpenAI key — for the summary",set_oa_link:"Get OpenAI key →",set_aai:"AssemblyAI key — to separate speakers",set_aai_link:"Get AssemblyAI key (free) →",set_note:"🔒 Keys are stored only on this device. AssemblyAI is optional — without it, speakers are guessed from context.",set_save:"Save",set_saved:"Keys saved",
    nokey:"Open Settings (⚙ top right) and add your API key first.",
    sys:"You are a professional meeting-minutes assistant. The transcript is labeled by speaker (Speaker 1, Speaker 2, …) — keep these exact labels. Write minutes in English, in Markdown:\n## Participants\n## Overview\n## Key points\n## Decisions\n## Action items\n## Open issues\nNever invent anything not in the transcript."},
- vi:{hero_badge:"AI · Đa ngôn ngữ · Tách giọng",hero_h:"Ghi âm cuộc họp.",hero_h2:"AI lo phần còn lại.",hero_sub:"Tách giọng từng người, dịch trực tiếp, và tóm tắt cuộc họp tự động — Việt · Anh · Hàn.",hero_cta:"Bắt đầu ngay",
+ vi:{hero_badge:"AI · Đa ngôn ngữ · Tách giọng",hero_h:"Ghi âm cuộc họp.",hero_h2:"AI lo phần còn lại.",hero_sub:"Tách giọng từng người, dịch trực tiếp, và tóm tắt cuộc họp tự động — Việt · Anh · Hàn.",hero_cta:"Dùng thử 3 phút miễn phí",hero_micro:"Không cần thẻ thanh toán · Không cần cài đặt",
    hf1t:"Tách giọng nói",hf1d:"Tự nhận diện Speaker 1, 2, 3… ai nói gì rõ ràng.",hf2t:"Dịch trực tiếp",hf2d:"Phụ đề song ngữ ngay khi đang họp, đa ngôn ngữ.",hf3t:"Tóm tắt AI",hf3d:"Biên bản, quyết định, việc cần làm — tự động.",
    c_hint:"Bấm để bắt đầu ghi",c_record:"● Ghi âm",c_upload:"hoặc tải lên file audio",c_pause:"Tạm dừng",c_resume:"Tiếp tục",c_stop:"Dừng",c_summarize:"Tóm tắt →",c_redo:"Làm lại",
    c_recording:"Đang ghi",c_paused:"Tạm dừng",c_ready:"Sẵn sàng",lv_auto:"Tự động",lv_fast:"⚡ Nhanh",lv_multi:"🌐 Đa ngữ",
@@ -576,7 +591,7 @@ const I={
    set_title:"Cài đặt · API Key",set_oa:"OpenAI key — để tóm tắt",set_oa_link:"Lấy OpenAI key →",set_aai:"AssemblyAI key — để tách giọng nói",set_aai_link:"Lấy AssemblyAI key (miễn phí) →",set_note:"🔒 Key chỉ lưu trên máy này. AssemblyAI là tùy chọn.",set_save:"Lưu",set_saved:"Đã lưu key",
    nokey:"Mở Cài đặt (⚙ góc trên phải) và nhập API key trước.",
    sys:"Bạn là trợ lý ghi biên bản họp chuyên nghiệp. Transcript đã gắn nhãn người nói (Speaker 1, Speaker 2, …) — giữ nguyên. Viết biên bản bằng Tiếng Việt, Markdown:\n## Thành phần tham dự\n## Tóm tắt chung\n## Điểm chính\n## Quyết định\n## Việc cần làm\n## Vấn đề còn mở\nKhông bịa thông tin ngoài transcript."},
- ko:{hero_badge:"AI · 다국어 · 화자 분리",hero_h:"회의를 녹음하세요.",hero_h2:"나머지는 AI가.",hero_sub:"화자를 분리하고, 실시간 번역하고, 회의를 자동 요약합니다 — 베트남어 · 영어 · 한국어.",hero_cta:"시작하기",
+ ko:{hero_badge:"AI · 다국어 · 화자 분리",hero_h:"회의를 녹음하세요.",hero_h2:"나머지는 AI가.",hero_sub:"화자를 분리하고, 실시간 번역하고, 회의를 자동 요약합니다 — 베트남어 · 영어 · 한국어.",hero_cta:"3분 무료 체험",hero_micro:"결제 카드 불필요 · 설치 불필요",
    hf1t:"화자 분리",hf1d:"Speaker 1, 2, 3…을 자동 감지해 누가 말했는지 명확히.",hf2t:"실시간 번역",hf2d:"회의 중 이중 언어 자막, 다국어 지원.",hf3t:"AI 요약",hf3d:"회의록, 결정, 액션 아이템 — 자동.",
    c_hint:"녹음하려면 누르세요",c_record:"● 녹음",c_upload:"또는 오디오 파일 업로드",c_pause:"일시정지",c_resume:"계속",c_stop:"정지",c_summarize:"요약하기 →",c_redo:"다시 시작",
    c_recording:"녹음 중",c_paused:"일시정지됨",c_ready:"준비됨",lv_auto:"자동",lv_fast:"⚡ 빠름",lv_multi:"🌐 다국어",
