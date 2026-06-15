@@ -23,19 +23,19 @@ const T: Record<Lang, {
     trial: "🎁 Free trial · 3 min", pricing: "Pricing", signin: "Sign in", signout: "Sign out",
     planTitle: "Manage plan", account: "My Page", ext: "Extension",
     refBanner: "🎁 A friend invited you to Flash Meet — sign in to claim 120 free minutes (2 hours)!", refClaim: "Sign in & claim →",
-    extPromo: "Translate Google Meet, Zoom & YouTube live — get the free Chrome extension.", extAdd: "Add to Chrome", extMore: "Learn more",
+    extPromo: "Translate Google Meet, Zoom & YouTube live — free extension for Chrome, Edge & Brave.", extAdd: "Get it free", extMore: "Learn more",
   },
   vi: {
     trial: "🎁 Dùng thử · 3 phút", pricing: "Các gói", signin: "Đăng nhập", signout: "Đăng xuất",
     planTitle: "Quản lý gói", account: "Tài khoản", ext: "Tiện ích",
     refBanner: "🎁 Bạn được mời dùng Flash Meet — đăng nhập để nhận 120 phút (2 giờ) miễn phí!", refClaim: "Đăng nhập & nhận →",
-    extPromo: "Dịch trực tiếp Google Meet, Zoom & YouTube — cài tiện ích Chrome miễn phí.", extAdd: "Thêm vào Chrome", extMore: "Tìm hiểu",
+    extPromo: "Dịch trực tiếp Google Meet, Zoom & YouTube — tiện ích miễn phí cho Chrome, Edge & Brave.", extAdd: "Cài miễn phí", extMore: "Tìm hiểu",
   },
   ko: {
     trial: "🎁 무료 체험 · 3분", pricing: "요금제", signin: "로그인", signout: "로그아웃",
     planTitle: "요금제 관리", account: "마이페이지", ext: "확장 프로그램",
     refBanner: "🎁 친구가 Flash Meet에 초대했어요 — 로그인하고 120분(2시간) 무료 받으세요!", refClaim: "로그인하고 받기 →",
-    extPromo: "Google Meet·Zoom·YouTube 실시간 번역 — 무료 Chrome 확장 프로그램을 받으세요.", extAdd: "Chrome에 추가", extMore: "자세히",
+    extPromo: "Google Meet·Zoom·YouTube 실시간 번역 — Chrome·Edge·Brave용 무료 확장 프로그램.", extAdd: "무료 설치", extMore: "자세히",
   },
 };
 
@@ -149,7 +149,7 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
       {showExt && (
         <div style={extBar}>
           <span style={extIcon} aria-hidden>
-            <svg width="20" height="20" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#fff" /><path fill="#EA4335" d="M24 9.5c3.5 0 6.7 1.2 9.2 3.6l6.8-6.8C35.9 2.4 30.5 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.2C12.4 13.7 17.7 9.5 24 9.5z" /><path fill="#4285F4" d="M47 24.5c0-1.6-.2-3.1-.4-4.5H24v9h12.9c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 7.2-10.4 7.2-17.7z" /><path fill="#FBBC05" d="M10.5 28.6A14.5 14.5 0 0 1 9.8 24c0-1.6.3-3.1.8-4.6l-8-6.2A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.2z" /><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.2-13.5-9.9l-8 6.2C6.5 42.6 14.6 48 24 48z" /></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#1f6bff"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v3.8h1.4a2.3 2.3 0 0 1 0 4.4H2V19a2 2 0 0 0 2 2h3.8v-1.4a2.3 2.3 0 0 1 4.4 0V21H17a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z" /></svg>
           </span>
           <span style={extText}>{t.extPromo}</span>
           <a href={STORE_URL} target="_blank" rel="noopener noreferrer" style={extAddBtn}>{t.extAdd}</a>

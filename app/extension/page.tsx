@@ -7,13 +7,13 @@ const STORE_URL = "https://chromewebstore.google.com/detail/fnaffendjnopgpfehgoo
 
 const T: Record<Lang, any> = {
   en: {
-    back: "← Back to app", badge: "Chrome Extension",
+    back: "← Back to app", badge: "Browser Extension",
     h1: "Translate any meeting, right in your browser",
-    sub: "Add Flash Meet to Chrome for live translated subtitles on Google Meet, Zoom, Teams and YouTube — with automatic speaker separation and AI summaries.",
-    add: "Add to Chrome — Free", works: "Works with",
+    sub: "Add Flash Meet to your browser for live translated subtitles on Google Meet, Zoom, Teams and YouTube — with automatic speaker separation and AI summaries.",
+    add: "Get it free", works: "Works with", browsers: "Available for Chrome, Edge, Brave, Opera & Arc",
     installTitle: "Install in 30 seconds",
     install: [
-      { t: "Add to Chrome", d: "Open the store and click “Add to Chrome”, then confirm." },
+      { t: "Get the extension", d: "Open the store and click “Add”, then confirm. Works on Chrome, Edge, Brave and other Chromium browsers." },
       { t: "Pin it", d: "Click the puzzle ⧉ icon in the toolbar and pin Flash Meet." },
       { t: "Sign in", d: "Open the popup and sign in with Google for more minutes." },
     ],
@@ -27,13 +27,13 @@ const T: Record<Lang, any> = {
     note: "Tip: sign in to unlock more translation minutes and keep your plan in sync.",
   },
   vi: {
-    back: "← Quay lại app", badge: "Tiện ích Chrome",
+    back: "← Quay lại app", badge: "Tiện ích trình duyệt",
     h1: "Dịch mọi cuộc họp, ngay trên trình duyệt",
-    sub: "Thêm Flash Meet vào Chrome để có phụ đề dịch trực tiếp trên Google Meet, Zoom, Teams và YouTube — tự tách giọng từng người và tóm tắt bằng AI.",
-    add: "Thêm vào Chrome — Miễn phí", works: "Hoạt động với",
+    sub: "Thêm Flash Meet vào trình duyệt để có phụ đề dịch trực tiếp trên Google Meet, Zoom, Teams và YouTube — tự tách giọng từng người và tóm tắt bằng AI.",
+    add: "Cài miễn phí", works: "Hoạt động với", browsers: "Dùng được trên Chrome, Edge, Brave, Opera & Arc",
     installTitle: "Cài trong 30 giây",
     install: [
-      { t: "Thêm vào Chrome", d: "Mở store, bấm “Thêm vào Chrome” rồi xác nhận." },
+      { t: "Cài tiện ích", d: "Mở store, bấm “Thêm” rồi xác nhận. Dùng được trên Chrome, Edge, Brave và các trình duyệt Chromium khác." },
       { t: "Ghim tiện ích", d: "Bấm biểu tượng mảnh ghép ⧉ trên thanh công cụ rồi ghim Flash Meet." },
       { t: "Đăng nhập", d: "Mở popup và đăng nhập Google để có thêm phút dịch." },
     ],
@@ -47,13 +47,13 @@ const T: Record<Lang, any> = {
     note: "Mẹo: đăng nhập để mở khoá thêm phút dịch và đồng bộ gói của bạn.",
   },
   ko: {
-    back: "← 앱으로", badge: "Chrome 확장 프로그램",
+    back: "← 앱으로", badge: "브라우저 확장 프로그램",
     h1: "브라우저에서 바로 모든 회의를 번역하세요",
-    sub: "Flash Meet을 Chrome에 추가하면 Google Meet·Zoom·Teams·YouTube에서 실시간 번역 자막을 — 자동 화자 분리와 AI 요약과 함께 — 받을 수 있습니다.",
-    add: "Chrome에 추가 — 무료", works: "지원",
+    sub: "Flash Meet을 브라우저에 추가하면 Google Meet·Zoom·Teams·YouTube에서 실시간 번역 자막을 — 자동 화자 분리와 AI 요약과 함께 — 받을 수 있습니다.",
+    add: "무료 설치", works: "지원", browsers: "Chrome, Edge, Brave, Opera, Arc 지원",
     installTitle: "30초 설치",
     install: [
-      { t: "Chrome에 추가", d: "스토어에서 “Chrome에 추가”를 클릭하고 확인하세요." },
+      { t: "확장 프로그램 설치", d: "스토어에서 “추가”를 클릭하고 확인하세요. Chrome·Edge·Brave 등 Chromium 브라우저에서 작동합니다." },
       { t: "고정하기", d: "툴바의 퍼즐 ⧉ 아이콘을 클릭해 Flash Meet을 고정하세요." },
       { t: "로그인", d: "팝업을 열고 Google로 로그인하면 더 많은 분을 받습니다." },
     ],
@@ -91,10 +91,11 @@ export default function ExtensionGuide() {
         <h1 style={S.h1}>{t.h1}</h1>
         <p style={S.sub}>{t.sub}</p>
         <a href={STORE_URL} target="_blank" rel="noopener noreferrer" className="ext-cta">
-          <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#fff" /><path fill="#EA4335" d="M24 9.5c3.5 0 6.7 1.2 9.2 3.6l6.8-6.8C35.9 2.4 30.5 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.2C12.4 13.7 17.7 9.5 24 9.5z" /><path fill="#4285F4" d="M47 24.5c0-1.6-.2-3.1-.4-4.5H24v9h12.9c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 7.2-10.4 7.2-17.7z" /><path fill="#FBBC05" d="M10.5 28.6A14.5 14.5 0 0 1 9.8 24c0-1.6.3-3.1.8-4.6l-8-6.2A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.2z" /><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.3 0-11.6-4.2-13.5-9.9l-8 6.2C6.5 42.6 14.6 48 24 48z" /></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5a2.5 2.5 0 0 0-5 0V5H4a2 2 0 0 0-2 2v3.8h1.4a2.3 2.3 0 0 1 0 4.4H2V19a2 2 0 0 0 2 2h3.8v-1.4a2.3 2.3 0 0 1 4.4 0V21H17a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 0-5z" /></svg>
           {t.add}
         </a>
         <div style={S.works}>{t.works}: <b>Google Meet · Zoom · Teams · YouTube</b></div>
+        <div style={S.browsers}>🧩 {t.browsers}</div>
       </section>
 
       <Steps title={t.installTitle} items={t.install} />
@@ -147,6 +148,7 @@ const S: Record<string, React.CSSProperties> = {
   h1: { fontSize: 38, fontWeight: 900, letterSpacing: "-.04em", lineHeight: 1.08, margin: "16px 0 0" },
   sub: { fontSize: 15.5, color: "#5b6b8c", lineHeight: 1.6, margin: "14px auto 22px", maxWidth: 600, fontWeight: 500 },
   works: { fontSize: 13, color: "#7b88a3", marginTop: 18, fontWeight: 500 },
+  browsers: { fontSize: 12.5, color: "#9aa6bd", marginTop: 7, fontWeight: 600 },
   stepsWrap: { maxWidth: 1000, margin: "48px auto 0" },
   stepsTitle: { fontSize: 22, fontWeight: 800, letterSpacing: "-.02em", textAlign: "center", marginBottom: 22 },
   note: { maxWidth: 680, margin: "40px auto 0", textAlign: "center", fontSize: 13.5, fontWeight: 600, color: "#5b6b8c",
