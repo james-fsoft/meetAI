@@ -10,7 +10,7 @@ export default function Brochure() {
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
 
       <div className="bx-bar no-print">
-        <a href="/preview" className="bx-back">← Quay lại</a>
+        <a href="/" className="bx-back">← Quay lại</a>
         <div className="bx-bar-r">
           <span className="bx-hint">Trong hộp thoại in, chọn “Lưu dưới dạng PDF”.</span>
           <button className="bx-dl" onClick={print}><Pdf /> Tải PDF</button>
