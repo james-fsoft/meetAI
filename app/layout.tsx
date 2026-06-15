@@ -38,6 +38,11 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   },
+  // Set GOOGLE_SITE_VERIFICATION in Vercel to the code from Search Console's
+  // "HTML tag" method, then click Verify. Emits nothing until set.
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+    : undefined,
   openGraph: {
     title: TITLE,
     description: DESC,
