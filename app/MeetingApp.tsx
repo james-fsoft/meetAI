@@ -24,7 +24,7 @@ const T: Record<Lang, {
     trial: "🎁 Free trial · 3 min", pricing: "Pricing", signin: "Sign in", signout: "Sign out",
     planTitle: "Manage plan", account: "My Page", ext: "Extension",
     refBanner: "🎁 A friend invited you to Flash Meet — sign in to claim 120 free minutes (2 hours)!", refClaim: "Sign in & claim →",
-    extPromo: "Translate Google Meet, Zoom & YouTube live — free extension for Chrome, Edge & Brave.", extAdd: "Get it free", extMore: "Learn more",
+    extPromo: "Translate Google Meet, Zoom & video live in your browser — free for Chrome, Edge & Brave.", extAdd: "Get the extension", extMore: "Learn more",
     nudgeTitle: "Get the best experience", nudgeBody: "Install the TransFlash extension to translate meetings live, right in your browser.",
     nudgeLater: "Later", nudgeHave: "I've installed it",
   },
@@ -32,7 +32,7 @@ const T: Record<Lang, {
     trial: "🎁 Dùng thử · 3 phút", pricing: "Các gói", signin: "Đăng nhập", signout: "Đăng xuất",
     planTitle: "Quản lý gói", account: "Tài khoản", ext: "Tiện ích",
     refBanner: "🎁 Bạn được mời dùng Flash Meet — đăng nhập để nhận 120 phút (2 giờ) miễn phí!", refClaim: "Đăng nhập & nhận →",
-    extPromo: "Dịch trực tiếp Google Meet, Zoom & YouTube — tiện ích miễn phí cho Chrome, Edge & Brave.", extAdd: "Cài miễn phí", extMore: "Tìm hiểu",
+    extPromo: "Dịch trực tiếp Google Meet, Zoom & video trên trình duyệt — miễn phí cho Chrome, Edge & Brave.", extAdd: "Cài tiện ích", extMore: "Tìm hiểu",
     nudgeTitle: "Trải nghiệm tốt nhất", nudgeBody: "Cài tiện ích TransFlash để dịch cuộc họp trực tiếp ngay trên trình duyệt.",
     nudgeLater: "Để sau", nudgeHave: "Tôi đã cài",
   },
@@ -40,7 +40,7 @@ const T: Record<Lang, {
     trial: "🎁 무료 체험 · 3분", pricing: "요금제", signin: "로그인", signout: "로그아웃",
     planTitle: "요금제 관리", account: "마이페이지", ext: "확장 프로그램",
     refBanner: "🎁 친구가 Flash Meet에 초대했어요 — 로그인하고 120분(2시간) 무료 받으세요!", refClaim: "로그인하고 받기 →",
-    extPromo: "Google Meet·Zoom·YouTube 실시간 번역 — Chrome·Edge·Brave용 무료 확장 프로그램.", extAdd: "무료 설치", extMore: "자세히",
+    extPromo: "브라우저에서 Google Meet·Zoom·영상 실시간 번역 — Chrome·Edge·Brave 무료.", extAdd: "확장 설치", extMore: "자세히",
     nudgeTitle: "최상의 경험", nudgeBody: "TransFlash 확장 프로그램을 설치하면 브라우저에서 바로 회의를 실시간 번역합니다.",
     nudgeLater: "나중에", nudgeHave: "이미 설치함",
   },
@@ -132,8 +132,8 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
   }
 
   const iframeSrc = signedIn
-    ? `/meeting.html?v=54&signed=1&plan=${encodeURIComponent(plan)}`
-    : "/meeting.html?v=54";
+    ? `/meeting.html?v=55&signed=1&plan=${encodeURIComponent(plan)}`
+    : "/meeting.html?v=55";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -257,9 +257,9 @@ const refBannerBtn: React.CSSProperties = {
   padding: "8px 16px", borderRadius: 9, whiteSpace: "nowrap",
 };
 const extBar: React.CSSProperties = {
-  display: "flex", alignItems: "center", gap: 12, padding: "10px 16px",
-  background: "#fff", borderBottom: "1px solid #e3e8f2",
-  fontFamily: "'Inter',system-ui,sans-serif", fontSize: 13.5,
+  display: "flex", alignItems: "center", gap: 12, padding: "7px 16px",
+  background: "linear-gradient(180deg,#f7faff,#ffffff)", borderBottom: "1px solid #e6ecf7",
+  fontFamily: "'Inter',system-ui,sans-serif", fontSize: 13,
 };
 const extIcon: React.CSSProperties = { display: "inline-flex", flexShrink: 0 };
 const extText: React.CSSProperties = { flex: 1, color: "#33405c", fontWeight: 600, minWidth: 0 };

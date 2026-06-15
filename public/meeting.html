@@ -24,8 +24,9 @@ input:focus,select:focus,.set-body input:focus{box-shadow:0 0 0 3px rgba(31,107,
 html,body{height:100%}
 body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;letter-spacing:-.015em;
   display:flex;flex-direction:column;min-height:100vh;
-  background:radial-gradient(900px 480px at 12% -6%,color-mix(in srgb,var(--acc) 9%,transparent),transparent 60%),
-    radial-gradient(820px 460px at 100% 0%,color-mix(in srgb,var(--acc) 7%,transparent),transparent 55%),var(--paper)}
+  background:radial-gradient(1000px 520px at 12% -8%,color-mix(in srgb,var(--acc) 10%,transparent),transparent 60%),
+    radial-gradient(860px 480px at 100% 0%,color-mix(in srgb,#22d3ee 7%,transparent),transparent 55%),
+    radial-gradient(1100px 620px at 50% 30%,color-mix(in srgb,var(--acc) 4%,transparent),transparent 62%),var(--paper)}
 ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:var(--hair);border-radius:8px}
 .top{display:flex;align-items:center;padding:18px 26px;border-bottom:1.5px solid var(--hair);
   position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px)}
@@ -50,7 +51,7 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;l
 .stage{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:40px 26px}
 .screen{display:none;width:100%;max-width:520px;text-align:center;animation:in .35s ease}
 .screen.on{display:block}
-.screen#sc-res{max-width:600px}.screen#sc-hero{max-width:840px}
+.screen#sc-res{max-width:600px}.screen#sc-hero{max-width:1040px}
 /* widen the capture card while recording so subtitles read comfortably */
 body.recing #sc-cap{max-width:640px}
 @keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -60,11 +61,16 @@ h1{font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1;margin-bo
 .hero-badge{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--acc);
   background:color-mix(in srgb,var(--acc) 10%,transparent);padding:6px 13px;border-radius:30px;margin-bottom:22px}
 .hero-badge .live-dot{width:7px;height:7px;border-radius:50%;background:#e5484d;animation:bl 1s steps(2) infinite}
-.hero-h{font-size:46px;font-weight:900;letter-spacing:-.04em;line-height:1.04;margin-bottom:16px}
+.hero-h{font-size:58px;font-weight:900;letter-spacing:-.04em;line-height:1.05;margin:0 auto 18px;max-width:840px}
 .hero-h .accent{color:var(--acc)}
-.hero-sub{font-size:17px;color:var(--grey);max-width:540px;margin:0 auto 30px;line-height:1.55}
+.hero-sub{font-size:18px;color:var(--grey);max-width:680px;margin:0 auto 30px;line-height:1.6}
+.hero-ctas{display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.hero-cta2{display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:1px solid var(--hair);border-radius:16px;
+  background:#fff;color:var(--grey);font-family:inherit;font-size:15.5px;font-weight:700;padding:17px 24px;transition:.18s}
+.hero-cta2:hover{border-color:color-mix(in srgb,var(--acc) 45%,var(--hair));color:var(--ink);transform:translateY(-2px);box-shadow:0 14px 30px -16px rgba(15,23,42,.4)}
+.hero-cta2 svg{flex-shrink:0;color:var(--acc)}
 .hero-cta{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:11px;cursor:pointer;border:none;border-radius:16px;
-  background:linear-gradient(115deg,#2563ff,#4aa3ff 48%,#7c5cff);color:#fff;font-family:inherit;font-size:16.5px;font-weight:700;letter-spacing:-.01em;padding:17px 32px;
+  background:linear-gradient(115deg,#2563ff,#4aa3ff 48%,#7c5cff);color:#fff;font-family:inherit;font-size:17px;font-weight:700;letter-spacing:-.01em;padding:18px 34px;
   transition:transform .22s cubic-bezier(.2,.7,.3,1),box-shadow .22s,filter .22s;
   box-shadow:0 10px 26px -8px rgba(37,99,255,.55),0 0 0 1px rgba(255,255,255,.07) inset}
 .hero-cta:hover{transform:translateY(-3px);filter:brightness(1.06);box-shadow:0 22px 46px -10px rgba(37,99,255,.6),0 0 28px -6px rgba(124,92,255,.45)}
@@ -91,6 +97,19 @@ h1{font-size:30px;font-weight:900;letter-spacing:-.045em;line-height:1;margin-bo
   color:#1f6bff;background:#eef4ff;border:1px solid #dbe8ff;border-radius:20px;padding:6px 13px;letter-spacing:-.005em}
 .feat-r::before{content:"";width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,#1f6bff,#22d3ee);flex-shrink:0}
 @media(max-width:700px){.hero-feats{grid-template-columns:1fr;gap:14px;margin-top:36px}}
+/* "Không chỉ cho cuộc họp" — lighter use-case modes below the feature cards */
+.modes{max-width:1040px;margin:64px auto 0;text-align:center}
+.modes-h{font-size:25px;font-weight:900;letter-spacing:-.03em;color:var(--ink)}
+.modes-sub{font-size:15px;color:var(--grey);max-width:700px;margin:11px auto 30px;line-height:1.6}
+.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;text-align:left}
+.mode{background:color-mix(in srgb,var(--soft) 65%,#fff);border:1px solid var(--hair);border-radius:18px;padding:22px;transition:border-color .25s ease,transform .25s ease,box-shadow .25s ease}
+.mode:hover{border-color:#cdddff;transform:translateY(-2px);box-shadow:0 18px 38px -28px rgba(37,107,255,.4)}
+.mode-ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:var(--acc);background:color-mix(in srgb,var(--acc) 9%,transparent);margin-bottom:14px}
+.mode-ic svg{width:21px;height:21px}
+.mode h4{font-size:15.5px;font-weight:800;color:#0f172a;margin-bottom:6px;letter-spacing:-.01em}
+.mode p{font-size:13.5px;color:var(--grey);line-height:1.55}
+@media(max-width:860px){.hero-h{font-size:44px}.mode-grid{grid-template-columns:1fr}.modes{margin-top:52px}}
+@media(max-width:520px){.hero-ctas{flex-direction:column;width:100%}.hero-cta,.hero-cta2{width:100%;justify-content:center}}
 .app-card{background:var(--paper);border:1px solid var(--hair);border-radius:24px;padding:18px 30px 26px;
   box-shadow:0 30px 60px -34px rgba(10,17,36,.45)}
 /* Record / Pause / Stop controls pinned to the top of the card */
@@ -331,8 +350,11 @@ body.rec-live .live-interim .eq i{animation-play-state:running}
 .live-interim .eq i:nth-child(2){animation-delay:.2s}.live-interim .eq i:nth-child(3){animation-delay:.4s}.live-interim .eq i:nth-child(4){animation-delay:.15s}
 @keyframes eq{0%,100%{height:4px}50%{height:14px}}
 .note{font-size:12px;color:var(--faint);margin-top:18px;line-height:1.6}
-.foot{text-align:center;padding:16px;font-size:11px;color:var(--faint);border-top:1px solid var(--hair)}
+.foot{padding:30px 16px;font-size:12px;color:var(--faint);border-top:1px solid var(--hair);display:flex;flex-direction:column;align-items:center;gap:12px}
 .foot b{color:var(--acc);font-weight:800}
+.foot-links{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+.foot-links a{color:var(--grey);font-weight:600;text-decoration:none}
+.foot-links a:hover{color:var(--ink)}
 audio{width:100%;margin-top:16px;height:42px}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--ink);color:#fff;padding:13px 24px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;border-radius:30px;transition:.22s;z-index:90}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -409,16 +431,32 @@ audio{width:100%;margin-top:16px;height:42px}
     <div class="hero-badge"><span class="live-dot"></span><span data-t="hero_badge">AI · Đa ngôn ngữ · Tách giọng</span></div>
     <h1 class="hero-h" data-t="hero_h">Ghi âm cuộc họp.<br><span class="accent" data-t="hero_h2">AI lo phần còn lại.</span></h1>
     <p class="hero-sub" data-t="hero_sub">Tách giọng từng người, dịch trực tiếp, và tóm tắt cuộc họp tự động — Việt · Anh · Hàn.</p>
-    <button class="hero-cta" id="goApp">
-      <svg class="hc-spark" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.7 4.8L18.5 8.5 13.7 10.2 12 15l-1.7-4.8L5.5 8.5l4.8-1.7z"/><path d="M19 13.5l.75 2.05L21.8 16.3l-2.05.75L19 19.1l-.75-2.05L16.2 16.3l2.05-.75z"/></svg>
-      <span data-t="hero_cta">Dùng thử 3 phút miễn phí</span>
-      <svg class="hc-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="18" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-    </button>
-    <p class="hero-micro" data-t="hero_micro">Không cần thẻ thanh toán · Không cần cài đặt</p>
+    <div class="hero-ctas">
+      <button class="hero-cta" id="goApp">
+        <svg class="hc-spark" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.7 4.8L18.5 8.5 13.7 10.2 12 15l-1.7-4.8L5.5 8.5l4.8-1.7z"/><path d="M19 13.5l.75 2.05L21.8 16.3l-2.05.75L19 19.1l-.75-2.05L16.2 16.3l2.05-.75z"/></svg>
+        <span data-t="hero_cta">Dùng thử 3 phút miễn phí</span>
+        <svg class="hc-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="18" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <button class="hero-cta2" id="goDemo">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+        <span data-t="hero_demo">Xem demo 60 giây</span>
+      </button>
+    </div>
+    <p class="hero-micro" data-t="hero_micro">Không cần thẻ thanh toán · Không cần cài đặt · Dùng trực tiếp trên trình duyệt</p>
     <div class="hero-feats">
       <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17.2" cy="9" r="2.2" opacity=".5"/><path d="M16 19a4.4 4.4 0 0 1 5.5-4.2" opacity=".5"/></svg></div><h3 data-t="hf1t">Biết rõ ai đã nói gì</h3><p data-t="hf1d">Tự tách từng người nói trong cuộc họp, tránh nhầm ý giữa khách hàng, PM và team nội bộ.</p><span class="feat-r" data-t="hf1r">Giảm nhầm yêu cầu</span></div>
       <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.6 2.4 2.6 14.6 0 17"/><path d="M12 3.5c-2.6 2.4-2.6 14.6 0 17"/></svg></div><h3 data-t="hf2t">Hiểu ngay khi đang họp</h3><p data-t="hf2d">Dịch phụ đề song ngữ Việt · Anh · Hàn theo thời gian thực, giúp cuộc họp đa ngôn ngữ trôi chảy hơn.</p><span class="feat-r" data-t="hf2r">Không bỏ lỡ ý chính</span></div>
       <div class="feat"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3.5H6.5A1.5 1.5 0 0 0 5 5v14a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19V9.5Z"/><path d="M13 3.5V9.5h6" opacity=".5"/><path d="M8.5 13.5h7"/><path d="M8.5 17h4.5"/></svg></div><h3 data-t="hf3t">Có biên bản ngay sau họp</h3><p data-t="hf3d">Tự tạo tóm tắt, quyết định, việc cần làm và người phụ trách — không phải ngồi viết lại từ đầu.</p><span class="feat-r" data-t="hf3r">Tiết kiệm 30–60 phút</span></div>
+    </div>
+
+    <div class="modes" id="modes">
+      <h2 class="modes-h" data-t="modes_h">Không chỉ cho cuộc họp</h2>
+      <p class="modes-sub" data-t="modes_sub">Flash Meet cũng hỗ trợ phụ đề AI thời gian thực cho webinar, video training, bài giảng online và nội dung đa ngôn ngữ không có phụ đề.</p>
+      <div class="mode-grid">
+        <div class="mode"><div class="mode-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10a3 3 0 0 0-6 0v2a3 3 0 0 0 6 0z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div><h4 data-t="m1t">Meeting Mode</h4><p data-t="m1d">Tách giọng, dịch trực tiếp và tạo biên bản sau cuộc họp.</p></div>
+        <div class="mode"><div class="mode-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><polygon points="10 9 15 12 10 15 10 9" fill="currentColor" stroke="none"/></svg></div><h4 data-t="m2t">Viewer Mode</h4><p data-t="m2d">Nghe âm thanh từ video, webinar hoặc bài giảng và hiển thị phụ đề dịch theo thời gian thực.</p></div>
+        <div class="mode"><div class="mode-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8z"/></svg></div><h4 data-t="m3t">Dark Subtitle Mode</h4><p data-t="m3d">Giao diện nền tối, tối giản, chỉ tập trung vào phụ đề — phù hợp khi xem nội dung dài.</p></div>
+      </div>
     </div>
   </div>
 
@@ -535,7 +573,10 @@ audio{width:100%;margin-top:16px;height:42px}
   </div>
 
 </div>
-<div class="foot">© <span id="yr"></span> <b>TransFlash</b> · Flash Meet</div>
+<div class="foot">
+  <div class="foot-links"><a href="/privacy" target="_top" data-t="f_privacy">Privacy</a><a href="/terms" target="_top" data-t="f_terms">Terms</a><a href="mailto:support@transflash.app" data-t="f_contact">Contact</a></div>
+  <div>© <span id="yr"></span> <b>TransFlash</b> · Flash Meet</div>
+</div>
 
 <div class="overlay" id="overlay">
   <div class="panel">
@@ -564,7 +605,7 @@ audio{width:100%;margin-top:16px;height:42px}
 // existing "has a key?" guards happy so every feature stays enabled.
 const CONFIG={OPENAI_KEY:'server',ASSEMBLYAI_KEY:'server'};
 const I={
- en:{hero_badge:"AI · Multilingual · Speaker split",hero_h:"Record the meeting.",hero_h2:"AI does the rest.",hero_sub:"Separate every speaker, translate live, and summarize meetings automatically — Vietnamese · English · Korean.",hero_cta:"Try 3 minutes free",hero_micro:"No payment card · No installation",
+ en:{hero_badge:"AI · Multilingual meetings · Auto minutes",hero_h:"Multilingual meetings,",hero_h2:"made clear.",hero_sub:"Separate every speaker, translate Vietnamese · English · Korean live, and auto-write the minutes after the call — right in your browser.",hero_cta:"Try 3 minutes free",hero_micro:"No payment card · No installation · Runs in your browser",hero_demo:"Watch 60-sec demo",modes_h:"Not just for meetings",modes_sub:"Flash Meet also adds real-time AI subtitles to webinars, training videos, online lectures and multilingual content without captions.",m1t:"Meeting Mode",m1d:"Separate speakers, translate live and create minutes after the call.",m2t:"Viewer Mode",m2d:"Listen to audio from a video, webinar or lecture and show translated subtitles in real time.",m3t:"Dark Subtitle Mode",m3d:"A minimal dark interface focused only on the subtitles — ideal for long content.",f_privacy:"Privacy",f_terms:"Terms",f_contact:"Contact",
    hf1t:"Know exactly who said what",hf1d:"Automatically separates every speaker so requirements from clients, PMs and your team never get mixed up.",hf1r:"Fewer misread requirements",hf2t:"Understand it live",hf2d:"Real-time bilingual subtitles in Vietnamese · English · Korean keep multilingual meetings flowing.",hf2r:"Never miss the key point",hf3t:"Minutes ready after the call",hf3d:"Auto-creates the summary, decisions, action items and owners — no rewriting from scratch.",hf3r:"Save 30–60 minutes",
    c_hint:"Press record to start",c_record:"● Record",c_upload:"or upload an audio file",c_pause:"Pause",c_resume:"Resume",c_stop:"Stop",c_summarize:"Summarize →",c_redo:"Start over",
    c_recording:"Recording",c_paused:"Paused",c_ready:"Ready",lv_auto:"Auto",lv_fast:"⚡ Fast",lv_multi:"🌐 Multi",
@@ -580,7 +621,7 @@ const I={
    set_title:"Settings · API Keys",set_oa:"OpenAI key — for the summary",set_oa_link:"Get OpenAI key →",set_aai:"AssemblyAI key — to separate speakers",set_aai_link:"Get AssemblyAI key (free) →",set_note:"🔒 Keys are stored only on this device. AssemblyAI is optional — without it, speakers are guessed from context.",set_save:"Save",set_saved:"Keys saved",
    nokey:"Open Settings (⚙ top right) and add your API key first.",
    sys:"You are a professional meeting-minutes assistant. The transcript is labeled by speaker (Speaker 1, Speaker 2, …) — keep these exact labels. Write minutes in English, in Markdown:\n## Participants\n## Overview\n## Key points\n## Decisions\n## Action items\n## Open issues\nNever invent anything not in the transcript."},
- vi:{hero_badge:"AI · Đa ngôn ngữ · Tách giọng",hero_h:"Ghi âm cuộc họp.",hero_h2:"AI lo phần còn lại.",hero_sub:"Tách giọng từng người, dịch trực tiếp, và tóm tắt cuộc họp tự động — Việt · Anh · Hàn.",hero_cta:"Dùng thử 3 phút miễn phí",hero_micro:"Không cần thẻ thanh toán · Không cần cài đặt",
+ vi:{hero_badge:"AI · Họp đa ngôn ngữ · Tự động tạo biên bản",hero_h:"Cuộc họp đa ngôn ngữ,",hero_h2:"rõ ràng hơn.",hero_sub:"Tách giọng từng người, dịch trực tiếp Việt · Anh · Hàn, và tự tạo biên bản sau cuộc họp — ngay trên trình duyệt.",hero_cta:"Dùng thử 3 phút miễn phí",hero_micro:"Không cần thẻ thanh toán · Không cần cài đặt · Dùng trực tiếp trên trình duyệt",hero_demo:"Xem demo 60 giây",modes_h:"Không chỉ cho cuộc họp",modes_sub:"Flash Meet cũng hỗ trợ phụ đề AI thời gian thực cho webinar, video training, bài giảng online và nội dung đa ngôn ngữ không có phụ đề.",m1t:"Meeting Mode",m1d:"Tách giọng, dịch trực tiếp và tạo biên bản sau cuộc họp.",m2t:"Viewer Mode",m2d:"Nghe âm thanh từ video, webinar hoặc bài giảng và hiển thị phụ đề dịch theo thời gian thực.",m3t:"Dark Subtitle Mode",m3d:"Giao diện nền tối, tối giản, chỉ tập trung vào phụ đề — phù hợp khi xem nội dung dài.",f_privacy:"Bảo mật",f_terms:"Điều khoản",f_contact:"Liên hệ",
    hf1t:"Biết rõ ai đã nói gì",hf1d:"Tự tách từng người nói trong cuộc họp, tránh nhầm ý giữa khách hàng, PM và team nội bộ.",hf1r:"Giảm nhầm yêu cầu",hf2t:"Hiểu ngay khi đang họp",hf2d:"Dịch phụ đề song ngữ Việt · Anh · Hàn theo thời gian thực, giúp cuộc họp đa ngôn ngữ trôi chảy hơn.",hf2r:"Không bỏ lỡ ý chính",hf3t:"Có biên bản ngay sau họp",hf3d:"Tự tạo tóm tắt, quyết định, việc cần làm và người phụ trách — không phải ngồi viết lại từ đầu.",hf3r:"Tiết kiệm 30–60 phút",
    c_hint:"Bấm để bắt đầu ghi",c_record:"● Ghi âm",c_upload:"hoặc tải lên file audio",c_pause:"Tạm dừng",c_resume:"Tiếp tục",c_stop:"Dừng",c_summarize:"Tóm tắt →",c_redo:"Làm lại",
    c_recording:"Đang ghi",c_paused:"Tạm dừng",c_ready:"Sẵn sàng",lv_auto:"Tự động",lv_fast:"⚡ Nhanh",lv_multi:"🌐 Đa ngữ",
@@ -596,7 +637,7 @@ const I={
    set_title:"Cài đặt · API Key",set_oa:"OpenAI key — để tóm tắt",set_oa_link:"Lấy OpenAI key →",set_aai:"AssemblyAI key — để tách giọng nói",set_aai_link:"Lấy AssemblyAI key (miễn phí) →",set_note:"🔒 Key chỉ lưu trên máy này. AssemblyAI là tùy chọn.",set_save:"Lưu",set_saved:"Đã lưu key",
    nokey:"Mở Cài đặt (⚙ góc trên phải) và nhập API key trước.",
    sys:"Bạn là trợ lý ghi biên bản họp chuyên nghiệp. Transcript đã gắn nhãn người nói (Speaker 1, Speaker 2, …) — giữ nguyên. Viết biên bản bằng Tiếng Việt, Markdown:\n## Thành phần tham dự\n## Tóm tắt chung\n## Điểm chính\n## Quyết định\n## Việc cần làm\n## Vấn đề còn mở\nKhông bịa thông tin ngoài transcript."},
- ko:{hero_badge:"AI · 다국어 · 화자 분리",hero_h:"회의를 녹음하세요.",hero_h2:"나머지는 AI가.",hero_sub:"화자를 분리하고, 실시간 번역하고, 회의를 자동 요약합니다 — 베트남어 · 영어 · 한국어.",hero_cta:"3분 무료 체험",hero_micro:"결제 카드 불필요 · 설치 불필요",
+ ko:{hero_badge:"AI · 다국어 회의 · 자동 회의록",hero_h:"다국어 회의를,",hero_h2:"더 명확하게.",hero_sub:"화자를 분리하고 베트남어 · 영어 · 한국어를 실시간 번역하며, 회의 후 회의록까지 자동 작성 — 브라우저에서 바로.",hero_cta:"3분 무료 체험",hero_micro:"결제 카드 불필요 · 설치 불필요 · 브라우저에서 바로 사용",hero_demo:"60초 데모 보기",modes_h:"회의에만 국한되지 않습니다",modes_sub:"Flash Meet은 웨비나, 교육 영상, 온라인 강의 등 자막 없는 다국어 콘텐츠에도 실시간 AI 자막을 제공합니다.",m1t:"Meeting Mode",m1d:"화자 분리, 실시간 번역, 회의 후 회의록 작성.",m2t:"Viewer Mode",m2d:"영상·웨비나·강의의 오디오를 듣고 실시간 번역 자막을 표시합니다.",m3t:"Dark Subtitle Mode",m3d:"자막에만 집중하는 미니멀 다크 UI — 긴 콘텐츠에 적합.",f_privacy:"개인정보",f_terms:"약관",f_contact:"문의",
    hf1t:"누가 무엇을 말했는지 명확히",hf1d:"화자를 자동 분리해 고객·PM·내부 팀의 의견이 헷갈리지 않습니다.",hf1r:"요구사항 혼동 감소",hf2t:"회의 중 바로 이해",hf2d:"베트남어·영어·한국어 실시간 이중 자막으로 다국어 회의가 매끄럽게.",hf2r:"핵심을 놓치지 않음",hf3t:"회의 직후 회의록 완성",hf3d:"요약·결정·액션 아이템·담당자까지 자동 — 처음부터 다시 쓸 필요 없음.",hf3r:"30~60분 절약",
    c_hint:"녹음하려면 누르세요",c_record:"● 녹음",c_upload:"또는 오디오 파일 업로드",c_pause:"일시정지",c_resume:"계속",c_stop:"정지",c_summarize:"요약하기 →",c_redo:"다시 시작",
    c_recording:"녹음 중",c_paused:"일시정지됨",c_ready:"준비됨",lv_auto:"자동",lv_fast:"⚡ 빠름",lv_multi:"🌐 다국어",
@@ -626,6 +667,7 @@ $('lang').onclick=e=>{const b=e.target.closest('button');if(!b)return;L=b.datase
   if(!localStorage.getItem('mr_ailang')&&typeof refreshInsights==='function')refreshInsights();};
 function show(sc){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(sc).classList.add('on');}
 $('goApp').onclick=()=>show('sc-cap');
+if($('goDemo'))$('goDemo').onclick=()=>{const m=$('modes');if(m)m.scrollIntoView({behavior:'smooth',block:'center'});};
 
 let mediaRecorder,chunks=[],audioBlob=null,audioStream=null,extra=[];
 let startTime=0,elapsed=0,timerInt=null,paused=false;
