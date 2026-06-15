@@ -21,7 +21,7 @@ const T: Record<Lang, {
   nudgeTitle: string; nudgeBody: string; nudgeLater: string; nudgeHave: string;
 }> = {
   en: {
-    trial: "🎁 Free trial · 3 min", pricing: "Pricing", signin: "Sign in", signout: "Sign out",
+    trial: "🎁 Translate free · 3 min", pricing: "Pricing", signin: "Sign in", signout: "Sign out",
     planTitle: "Manage plan", account: "My Page", ext: "Extension",
     refBanner: "🎁 A friend invited you to Flash Meet — sign in to claim 120 free minutes (2 hours)!", refClaim: "Sign in & claim →",
     extPromo: "Translate Google Meet, Zoom & video live in your browser — free for Chrome, Edge & Brave.", extAdd: "Get the extension", extMore: "Learn more",
@@ -29,7 +29,7 @@ const T: Record<Lang, {
     nudgeLater: "Later", nudgeHave: "I've installed it",
   },
   vi: {
-    trial: "🎁 Dùng thử · 3 phút", pricing: "Các gói", signin: "Đăng nhập", signout: "Đăng xuất",
+    trial: "🎁 Dịch thử 3 phút", pricing: "Các gói", signin: "Đăng nhập", signout: "Đăng xuất",
     planTitle: "Quản lý gói", account: "Tài khoản", ext: "Tiện ích",
     refBanner: "🎁 Bạn được mời dùng Flash Meet — đăng nhập để nhận 120 phút (2 giờ) miễn phí!", refClaim: "Đăng nhập & nhận →",
     extPromo: "Dịch trực tiếp Google Meet, Zoom & video trên trình duyệt — miễn phí cho Chrome, Edge & Brave.", extAdd: "Cài tiện ích", extMore: "Tìm hiểu",
@@ -37,7 +37,7 @@ const T: Record<Lang, {
     nudgeLater: "Để sau", nudgeHave: "Tôi đã cài",
   },
   ko: {
-    trial: "🎁 무료 체험 · 3분", pricing: "요금제", signin: "로그인", signout: "로그아웃",
+    trial: "🎁 3분 번역 체험", pricing: "요금제", signin: "로그인", signout: "로그아웃",
     planTitle: "요금제 관리", account: "마이페이지", ext: "확장 프로그램",
     refBanner: "🎁 친구가 Flash Meet에 초대했어요 — 로그인하고 120분(2시간) 무료 받으세요!", refClaim: "로그인하고 받기 →",
     extPromo: "브라우저에서 Google Meet·Zoom·영상 실시간 번역 — Chrome·Edge·Brave 무료.", extAdd: "확장 설치", extMore: "자세히",
@@ -132,8 +132,8 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
   }
 
   const iframeSrc = signedIn
-    ? `/meeting.html?v=58&signed=1&plan=${encodeURIComponent(plan)}`
-    : "/meeting.html?v=58";
+    ? `/meeting.html?v=59&signed=1&plan=${encodeURIComponent(plan)}`
+    : "/meeting.html?v=59";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
