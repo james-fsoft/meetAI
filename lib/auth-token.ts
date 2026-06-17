@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { createAdminClient } from "./supabase-admin";
+import { effectivePlan } from "./usage";
 
 export type TokenUser = { id: string; email: string | null; plan: string };
 
@@ -21,8 +22,8 @@ export async function userFromBearer(req: Request): Promise<TokenUser | null> {
     let plan = "free";
     try {
       const admin = createAdminClient();
-      const { data } = await admin.from("profiles").select("plan").eq("id", user.id).single();
-      if (data?.plan) plan = data.plan;
+      const { data } = await admin.from("profiles").select("plan, trial_until").eq("id", user.id).single();
+      plan = effectivePlan(data?.plan, data?.trial_until);
     } catch {}
     return { id: user.id, email: user.email ?? null, plan };
   } catch {
