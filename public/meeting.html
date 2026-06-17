@@ -923,8 +923,12 @@ function pickMime(){const c=['audio/webm;codecs=opus','audio/webm','audio/mp4','
 const _Q=new URLSearchParams(location.search);
 const SIGNED=_Q.get('signed')==='1';
 const PLAN=_Q.get('plan')||'free';
-const UNLIMITED=SIGNED&&PLAN!=='free'&&PLAN!=='';
-const PAID=UNLIMITED; // pro/business/enterprise → full AI intelligence; free → summary only
+// PAID = full AI features (pro/business/enterprise). UNLIMITED = truly no quota
+// (only enterprise) → skip metering. Pro/Business HAVE monthly caps, so they are
+// metered and enforced like everyone else.
+const PAID=SIGNED&&PLAN!=='free'&&PLAN!=='';
+const NO_QUOTA_PLANS={enterprise:1};
+const UNLIMITED=SIGNED&&!!NO_QUOTA_PLANS[PLAN];
 function proLock(){return '<a class="ai-lock" href="/pricing" target="_top">🔒 '+t('ai_pro')+'</a>';}
 // Free users see a useful preview of each AI box + a small, non-blocking Pro badge.
 function aiPreview(text,badge){return '<div class="ai-prev">'+esc(text)+'</div><a class="ai-pro-badge" href="/pricing" target="_top">'+esc(badge)+'</a>';}
