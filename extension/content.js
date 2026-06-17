@@ -22,6 +22,7 @@
     '<span class="tt-acts">' +
     '<button class="tt-act pause" id="tt-pause">⏸ Dừng</button>' +
     '<button class="tt-act resume" id="tt-resume" style="display:none">▶ Tiếp tục</button>' +
+    '<button class="tt-act" id="tt-psum" title="Tóm tắt tạm thời (tự cập nhật mỗi 15 phút)" style="display:none">📝</button>' +
     '<button class="tt-act sum" id="tt-sumbtn">⏹ Tóm tắt</button>' +
     '<button class="tt-act" id="tt-close" style="display:none">× Đóng</button></span></div>' +
     '<div id="tt-micwarn" style="display:none"></div>' +
@@ -38,13 +39,33 @@
   const btnPause = box.querySelector("#tt-pause");
   const btnResume = box.querySelector("#tt-resume");
   const btnSum = box.querySelector("#tt-sumbtn");
+  const btnPsum = box.querySelector("#tt-psum");
   const btnClose = box.querySelector("#tt-close");
   const langSel = box.querySelector("#tt-lang");
   const langBSel = box.querySelector("#tt-langB");
   const langSwap = box.querySelector("#tt-langswap");
   const micWarnEl = box.querySelector("#tt-micwarn");
   let curWay = "one";
-  [btnPause, btnResume, btnSum, btnClose, langSel, langBSel].forEach((b) => b.addEventListener("mousedown", (e) => e.stopPropagation()));
+  [btnPause, btnResume, btnSum, btnPsum, btnClose, langSel, langBSel].forEach((b) => b.addEventListener("mousedown", (e) => e.stopPropagation()));
+  // Latest auto-summary snapshot (updated every 15 min during long meetings).
+  let partialData = null;
+  btnPsum.onclick = () => showPartial();
+  function showPartial() {
+    if (!partialData) return;
+    box.style.display = "flex"; lines.style.display = "none"; sumEl.style.display = "block";
+    sumEl.innerHTML =
+      '<div class="tt-sum-h">📝 Tóm tắt tạm thời<span class="tt-sum-act">' +
+      '<button id="tt-pcopy">Copy</button><button id="tt-pdl">Tải tóm tắt</button>' +
+      (partialData.transcript ? '<button id="tt-pdltr">Tải transcript</button>' : "") +
+      '</span></div>' +
+      '<div class="tt-sum-b">' + md(partialData.text) + "</div>" +
+      '<div class="tt-sum-foot"><button id="tt-pback">← Quay lại phụ đề</button></div>';
+    sumEl.querySelector("#tt-pcopy").onclick = () => navigator.clipboard.writeText(partialData.text);
+    sumEl.querySelector("#tt-pdl").onclick = () => dlFile(partialData.text, "summary-partial.txt");
+    const tr = sumEl.querySelector("#tt-pdltr");
+    if (tr) tr.onclick = () => dlFile(partialData.transcript, "transcript.txt");
+    sumEl.querySelector("#tt-pback").onclick = () => { sumEl.style.display = "none"; lines.style.display = "block"; };
+  }
   function sendLang() { chrome.runtime.sendMessage({ cmd: "setLang", way: curWay, lang: langSel.value, langB: langBSel.value }); }
   langSel.onchange = sendLang;
   langBSel.onchange = sendLang;
@@ -139,12 +160,13 @@
       if (msg.way) curWay = msg.way; const two = curWay === "two";
       langSwap.style.display = two ? "" : "none"; langBSel.style.display = two ? "" : "none";
       if (msg.lang) langSel.value = msg.lang; if (msg.langB) langBSel.value = msg.langB;
-      if (!msg.resume) { lines.innerHTML = ""; cur = null; } setMode("live"); }
+      if (!msg.resume) { lines.innerHTML = ""; cur = null; partialData = null; btnPsum.style.display = "none"; } setMode("live"); }
     else if (msg.type === "hide") box.style.display = "none";
     else if (msg.type === "status") { setStatus(msg.text); if (msg.text === "PAUSED") setMode("paused"); else if (msg.text === "STOPPED") setMode("stopped"); }
     else if (msg.type === "micWarn") setMicWarn(msg.text);
     else if (msg.type === "summarizing") { setMode("stopped"); showSummarizing(); }
     else if (msg.type === "summary") { setMode("stopped"); showSummary(msg.text, msg.transcript); }
+    else if (msg.type === "partialSummary") { partialData = { text: msg.text, transcript: msg.transcript }; btnPsum.style.display = ""; btnPsum.textContent = "📝 Tóm tắt"; }
     else if (msg.type === "partial") partial(msg.orig, msg.trans, msg.spk);
     else if (msg.type === "final") final(msg.orig, msg.trans, msg.spk);
   }

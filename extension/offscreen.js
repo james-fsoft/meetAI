@@ -12,6 +12,7 @@ let target = "ko", way = "one", langB = "vi";
 let running = false, stopping = false, openAt = 0, fails = 0;
 let fullLines = []; // whole-session segments {spk, o (original), t (translation)}
 let meterTimer = null, meterLast = 0; // usage metering (only while audio is live)
+let autoSumTimer = null, autoSumBusy = false; // periodic auto-summary for long sessions
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.target !== "offscreen") return;
@@ -90,6 +91,31 @@ async function startCap(streamId, resume, source) {
     recStream = dest.stream;
   } catch (e) { recStream = stream || micStream; }
   openWs();
+  startAutoSum();
+}
+
+// ── periodic auto-summary (long meetings) ───────────────────────────────────
+// Every 15 min, summarize the session-so-far and push it + the full transcript
+// to the overlay, so a 3-hour meeting isn't one slow summary at the end and the
+// user can copy/download a recent snapshot at any time (anti data-loss).
+function startAutoSum() { stopAutoSum(); autoSumTimer = setInterval(autoSummarize, 900000); }
+function stopAutoSum() { if (autoSumTimer) { clearInterval(autoSumTimer); autoSumTimer = null; } }
+async function autoSummarize() {
+  if (autoSumBusy || fullLines.length < 2) return;
+  const sumInput = fullLines.map((l) => (l.spk != null ? "Speaker " + l.spk + ": " : "") + (l.o || "")).join("\n");
+  if (sumInput.trim().length < 120) return;
+  const transcript = buildTranscript();
+  autoSumBusy = true;
+  try {
+    let authTok = null; try { authTok = await chrome.runtime.sendMessage({ cmd: "authToken" }); } catch {}
+    const r = await fetch(API_BASE + "/api/summarize", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...(authTok ? { Authorization: "Bearer " + authTok } : {}) },
+      body: JSON.stringify({ transcript: sumInput }),
+    });
+    const d = await r.json();
+    if (r.ok && d.summary) send({ type: "partialSummary", text: (d.summary || "").trim(), transcript });
+  } catch (e) {} finally { autoSumBusy = false; }
 }
 
 async function openWs() {
@@ -180,7 +206,7 @@ function buildTranscript() {
 }
 
 function teardown() {
-  meterStopAll();
+  meterStopAll(); stopAutoSum();
   if (rec && rec.state !== "inactive") { try { rec.stop(); } catch {} } rec = null;
   if (ws) { try { if (ws.readyState === 1) ws.send(""); ws.close(); } catch {} } ws = null;
   if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
