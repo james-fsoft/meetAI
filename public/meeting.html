@@ -374,6 +374,7 @@ body.rec-live .live-interim .eq i{animation-play-state:running}
 .live-interim .eq i:nth-child(2){animation-delay:.2s}.live-interim .eq i:nth-child(3){animation-delay:.4s}.live-interim .eq i:nth-child(4){animation-delay:.15s}
 @keyframes eq{0%,100%{height:4px}50%{height:14px}}
 .note{font-size:12px;color:var(--faint);margin-top:18px;line-height:1.6}
+.keep-note{font-size:12px;color:#b45309;margin-top:8px;line-height:1.5}
 .foot{padding:30px 16px;font-size:12px;color:var(--faint);border-top:1px solid var(--hair);display:flex;flex-direction:column;align-items:center;gap:12px}
 .foot b{color:var(--acc);font-weight:800}
 .foot-links{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
@@ -587,7 +588,9 @@ audio{width:100%;margin-top:16px;height:42px}
       <div class="out ai-out" id="decisions" style="display:none"></div>
       <div class="dual" style="margin-top:18px"><button class="btn out" id="btnCopy">Copy</button><button class="btn out" id="btnDl">⬇ Download</button></div>
       <button class="btn out" id="btnDlLive" data-t="r_dl_live" style="margin-top:10px;display:none">⬇ Live translation</button>
-      <button class="btn" id="btnNew" data-t="r_new" style="margin-top:10px">+ New meeting</button>
+      <button class="btn" id="btnKeep" data-t="r_keep" style="margin-top:12px;display:none">💾 Keep this meeting</button>
+      <p class="keep-note" id="keepNote" data-t="r_keep_note" style="display:none">Auto-deletes in 1 day unless you keep it.</p>
+      <button class="btn out" id="btnNew" data-t="r_new" style="margin-top:10px">+ New meeting</button>
       <details class="spbox" id="spbox">
         <summary><span class="arr">▶</span><span data-t="sp_title">Rename speakers (optional)</span></summary>
         <div class="sp-rows" id="spRows"></div>
@@ -635,7 +638,7 @@ const I={
    c_recording:"LIVE · Translating live",c_paused:"Paused",c_ready:"Ready",lv_auto:"Auto",lv_fast:"⚡ Fast",lv_multi:"🌐 Multi",
    c_diar:"👥 Voices are separated automatically (Speaker 1, 2, 3…).",
    p_upload:"Uploading audio…",p_diar:"Separating voices…",p_sum:"Writing the summary…",p_wait:"Your AI assistant is hard at work…",
-   r_summary:"Summary",r_transcript:"Transcript",r_copy:"Copy",r_download:"Download",r_new:"+ New meeting",r_dl_live:"⬇ Download live translation",r_live:"Live translation",words:"words",
+   r_summary:"Summary",r_transcript:"Transcript",r_copy:"Copy",r_download:"Download",r_new:"+ New meeting",r_dl_live:"⬇ Download live translation",r_live:"Live translation",r_keep:"💾 Keep this meeting",r_keep_note:"Auto-deletes in 1 day unless you keep it.",hist_temp:"Temporary · auto-deletes in 1 day",hist_keep:"Keep",hist_saved:"Saved to history",autosum_done:"Auto-saved summary",words:"words",
    ai_title:"AI Meeting Intelligence",ai_summary:"Summary",ai_actions:"Action items",ai_decisions:"Decisions",ai_risks:"Risks & follow-ups",ai_wait:"AI is listening… The summary appears once there's enough content.",ai_prev_actions:"Action items are detected automatically after the meeting.",ai_prev_decisions:"Key decisions will be captured here.",ai_prev_risks:"AI flags risks, open points and follow-ups.",ai_pro_task:"Pro: export tasks & history",ai_listen:"AI Listening",ai_pro:"Pro — upgrade to unlock",ai_show:"AI panel",ai_lang_auto:"🌐 Auto",u_trial:"🎁 Free trial · {n} min left",u_unlim:"⏱ Unlimited",u_today:"Today",u_month:"Month",u_min:"m",
    ready_h:"Ready to translate your meeting",ready_sub:"Press start and Flash Meet will listen, detect the language and show the live translation.",ready_1:"✓ Transcribe",ready_2:"✓ Live translate",ready_3:"✓ Summarize",ready_4:"✓ Extract action items",ready_help:"In Two-way mode, Flash Meet detects each speaker's language and translates to the other in your chosen pair.",
    h_title:"History",open:"Open",empty:"No meetings yet",
@@ -651,7 +654,7 @@ const I={
    c_recording:"LIVE · Đang dịch trực tiếp",c_paused:"Đã tạm dừng",c_ready:"Sẵn sàng",lv_auto:"Tự động",lv_fast:"⚡ Nhanh",lv_multi:"🌐 Đa ngữ",
    c_diar:"👥 Tự động tách giọng từng người (Speaker 1, 2, 3…).",
    p_upload:"Đang tải audio lên…",p_diar:"Đang tách giọng nói…",p_sum:"Đang viết tóm tắt…",p_wait:"Trợ lý AI đang chăm chỉ làm việc…",
-   r_summary:"Tóm tắt",r_transcript:"Bản ghi",r_copy:"Copy",r_download:"Tải",r_new:"+ Cuộc họp mới",r_dl_live:"⬇ Tải bản dịch trực tiếp",r_live:"Bản dịch trực tiếp",words:"từ",
+   r_summary:"Tóm tắt",r_transcript:"Bản ghi",r_copy:"Copy",r_download:"Tải",r_new:"+ Cuộc họp mới",r_dl_live:"⬇ Tải bản dịch trực tiếp",r_live:"Bản dịch trực tiếp",r_keep:"💾 Lưu cuộc họp này",r_keep_note:"Không lưu sẽ tự xóa sau 1 ngày.",hist_temp:"Tạm · tự xóa sau 1 ngày",hist_keep:"Lưu",hist_saved:"Đã lưu vào lịch sử",autosum_done:"Đã tự lưu tóm tắt",words:"từ",
    ai_title:"AI Tổng hợp cuộc họp",ai_summary:"Tóm tắt",ai_actions:"Việc cần làm",ai_decisions:"Quyết định",ai_risks:"Rủi ro & theo dõi",ai_wait:"AI đang lắng nghe… Tóm tắt sẽ xuất hiện sau khi có đủ nội dung.",ai_prev_actions:"Các việc cần làm sẽ được tự động nhận diện sau cuộc họp.",ai_prev_decisions:"Các quyết định quan trọng sẽ được ghi lại tại đây.",ai_prev_risks:"AI sẽ phát hiện rủi ro, điểm chưa rõ và nội dung cần follow-up.",ai_pro_task:"Pro: xuất task & lưu lịch sử",ai_listen:"AI đang nghe",ai_pro:"Pro — nâng cấp để mở",ai_show:"Bảng AI",ai_lang_auto:"🌐 Tự động",u_trial:"🎁 Dùng thử còn {n} phút",u_unlim:"⏱ Không giới hạn",u_today:"Hôm nay",u_month:"Tháng",u_min:"p",
    ready_h:"Sẵn sàng dịch cuộc họp của bạn",ready_sub:"Bấm bắt đầu để Flash Meet nghe, nhận diện ngôn ngữ và hiển thị bản dịch trực tiếp.",ready_1:"✓ Ghi âm",ready_2:"✓ Dịch trực tiếp",ready_3:"✓ Tóm tắt",ready_4:"✓ Trích việc cần làm",ready_help:"Trong chế độ Song ngữ, Flash Meet tự nhận diện ngôn ngữ người nói và dịch sang ngôn ngữ còn lại trong cặp bạn chọn.",
    h_title:"Lịch sử",open:"Mở",empty:"Chưa có cuộc họp",
@@ -667,7 +670,7 @@ const I={
    c_recording:"LIVE · 실시간 번역 중",c_paused:"일시정지됨",c_ready:"준비됨",lv_auto:"자동",lv_fast:"⚡ 빠름",lv_multi:"🌐 다국어",
    c_diar:"👥 화자를 자동으로 분리합니다 (Speaker 1, 2, 3…).",
    p_upload:"오디오 업로드 중…",p_diar:"화자 분리 중…",p_sum:"요약 작성 중…",p_wait:"AI 비서가 열심히 작업 중…",
-   r_summary:"요약",r_transcript:"전체 기록",r_copy:"복사",r_download:"다운로드",r_new:"+ 새 회의",r_dl_live:"⬇ 실시간 번역 다운로드",r_live:"실시간 번역",words:"단어",
+   r_summary:"요약",r_transcript:"전체 기록",r_copy:"복사",r_download:"다운로드",r_new:"+ 새 회의",r_dl_live:"⬇ 실시간 번역 다운로드",r_live:"실시간 번역",r_keep:"💾 이 회의 저장",r_keep_note:"저장하지 않으면 1일 후 자동 삭제됩니다.",hist_temp:"임시 · 1일 후 자동 삭제",hist_keep:"저장",hist_saved:"기록에 저장됨",autosum_done:"요약 자동 저장됨",words:"단어",
    ai_title:"AI 회의 인텔리전스",ai_summary:"요약",ai_actions:"액션 아이템",ai_decisions:"결정",ai_risks:"리스크 & 후속",ai_wait:"AI가 듣고 있어요… 충분한 내용이 모이면 요약이 표시됩니다.",ai_prev_actions:"회의 후 액션 아이템이 자동으로 인식됩니다.",ai_prev_decisions:"주요 결정이 여기에 기록됩니다.",ai_prev_risks:"AI가 리스크·미해결 항목·후속 사항을 감지합니다.",ai_pro_task:"Pro: 작업 내보내기 & 기록",ai_listen:"AI 청취 중",ai_pro:"Pro — 업그레이드",ai_show:"AI 패널",ai_lang_auto:"🌐 자동",u_trial:"🎁 무료 체험 · {n}분 남음",u_unlim:"⏱ 무제한",u_today:"오늘",u_month:"월",u_min:"분",
    ready_h:"회의를 번역할 준비가 되었습니다",ready_sub:"시작을 누르면 Flash Meet이 듣고, 언어를 감지해 실시간 번역을 표시합니다.",ready_1:"✓ 전사",ready_2:"✓ 실시간 번역",ready_3:"✓ 요약",ready_4:"✓ 액션 아이템 추출",ready_help:"양방향 모드에서는 각 화자의 언어를 감지해 선택한 쌍의 상대 언어로 번역합니다.",
    h_title:"기록",open:"열기",empty:"회의가 없습니다",
@@ -729,13 +732,14 @@ $('btnRec').onclick=async()=>{
     mediaRecorder.start();elapsed=0;startTime=Date.now();paused=false;timerInt=setInterval(tick,250);
     startViz(audioStream);setCap('recording');
     if($('lvOn').checked)startLive();
+    startAutosave();
     reset();
   }catch(e){toast(e.message);reset();}};
 function tick(){if(!paused)$('timer').textContent=fmt(Math.round((elapsed+(Date.now()-startTime))/1000));}
 $('btnPause').onclick=()=>{if(!mediaRecorder)return;
   if(!paused){mediaRecorder.pause();paused=true;elapsed+=Date.now()-startTime;$('btnPause').textContent=t('c_resume');setCap('paused');stopViz();pauseLive();}
   else{mediaRecorder.resume();paused=false;startTime=Date.now();$('btnPause').textContent=t('c_pause');setCap('recording');startViz(audioStream);if($('lvOn').checked)startLive();}};
-$('btnStop').onclick=()=>{if(!mediaRecorder)return;if(!paused)elapsed+=Date.now()-startTime;mediaRecorder.stop();clearInterval(timerInt);audioStream.getTracks().forEach(x=>x.stop());extra.forEach(s=>s.getTracks().forEach(x=>x.stop()));$('btnPause').textContent=t('c_pause');stopLive();};
+$('btnStop').onclick=()=>{if(!mediaRecorder)return;if(!paused)elapsed+=Date.now()-startTime;mediaRecorder.stop();clearInterval(timerInt);audioStream.getTracks().forEach(x=>x.stop());extra.forEach(s=>s.getTracks().forEach(x=>x.stop()));$('btnPause').textContent=t('c_pause');stopLive();stopAutosave();if(curTr&&curTr.trim())save(true,{auto:true});};
 $('btnUpload').onclick=()=>$('fileIn').click();
 $('fileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;audioBlob=f;$('player').src=URL.createObjectURL(f);$('timer').textContent='00:00';setCap('ready');toast(f.name);};
 $('btnRedo').onclick=()=>{audioBlob=null;$('timer').textContent='00:00';setCap('idle');$('lvFeed').style.display='none';$('lvInterim').style.display='none';$('lvFeed').innerHTML='';};
@@ -770,12 +774,12 @@ async function transcribeWhisper(){setProc(t('p_diar'),t('p_wait'));let ext='web
   const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);return (d.text||'').trim();}
 async function summarize(){
   try{const r=await fetch('/api/summarize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:curTr,system:t('sys')})});
-    const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);curSum=(d.summary||'').trim();renderResult();save();
+    const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);curSum=(d.summary||'').trim();renderResult();save(true);
   }catch(e){curSum='⚠ '+t('err')+e.message;renderResult();toast(t('err')+e.message);}}
 function renderResult(){$('resProc').style.display='none';$('resBody').style.display='';
   $('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=lvAll.length?fmtTrLive():fmtTr(curTr);
   $('wc').textContent=curTr.split(/\s+/).filter(Boolean).length+' '+t('words');
-  $('btnDlLive').style.display=lvAll.length?'':'none';buildSpeakers();resInsights();setView(curSum?'summary':'transcript');}
+  $('btnDlLive').style.display=lvAll.length?'':'none';buildSpeakers();resInsights();setView(curSum?'summary':'transcript');updateKeepBtn();}
 function spkLabel(spk){return spk!=null?(spkNames['Speaker '+spk]||'Speaker '+spk):'';}
 // Transcript with BOTH the original and the translation per turn (from the live data).
 function fmtTrLive(){return lvAll.map(p=>{
@@ -835,14 +839,40 @@ $('btnCopy').onclick=()=>{const d=viewData();navigator.clipboard.writeText(d.txt
 $('btnDl').onclick=()=>{const d=viewData();if(!d.txt)return;dlBlob(d.txt,fileName(d.suf,d.ext));};
 $('btnDlLive').onclick=()=>{if(!lvAll.length)return;const txt=lvAll.map(p=>p.src+'\n'+p.tgt).join('\n\n');dlBlob(txt,fileName(t('r_live'),'txt'));};
 $('btnNew').onclick=()=>{curTr="";curSum="";curId=null;audioBlob=null;lvHistory=[];lvAll=[];spkNames={};$('timer').textContent='00:00';setCap('idle');show('sc-cap');};
-function save(update){let list=JSON.parse(localStorage.getItem('mr_m')||'[]');
+$('btnKeep').onclick=()=>{save(true,{saved:true});toast(t('hist_saved'));updateKeepBtn();};
+// Persist the current meeting. Auto-saved drafts (opts.auto) are temporary and
+// purged after 1 day unless the user keeps them (opts.saved). ts = last update.
+function save(update,opts){opts=opts||{};let list=JSON.parse(localStorage.getItem('mr_m')||'[]');
   const tt=(curSum.match(/##.*\n+(.+)/)||[])[1]||(curTr.split('\n')[0])||t('deflt');
   const title=tt.replace(/[*_#•-]/g,'').replace(/^Speaker \d+:\s*/,'').trim().slice(0,52)||t('deflt');
-  if(update&&curId){list=list.map(m=>m.id===curId?{...m,title,transcript:curTr,summary:curSum,live:lvAll}:m);}
-  else{curId=Date.now();list.unshift({id:curId,date:new Date().toLocaleString(),title,transcript:curTr,summary:curSum,live:lvAll});}
-  localStorage.setItem('mr_m',JSON.stringify(list.slice(0,40)));renderHist();}
-function renderHist(){const list=JSON.parse(localStorage.getItem('mr_m')||'[]');
-  $('mlist').innerHTML=list.length?list.map(m=>`<li><div class="mt"><b>${esc(m.title)}</b><span>${m.date}</span></div><button class="mini" onclick="openM(${m.id})">${t('open')}</button><button class="mini" onclick="delM(${m.id})">🗑</button></li>`).join(''):`<li class="mempty">${t('empty')}</li>`;}
+  const ts=Date.now(),base={title,transcript:curTr,summary:curSum,live:lvAll,ts};
+  if(update&&curId&&list.some(m=>m.id===curId)){
+    list=list.map(m=>{if(m.id!==curId)return m;const saved=opts.saved||m.saved||false;return {...m,...base,saved,auto:saved?false:(m.auto!==false)};});
+  }else{curId=Date.now();const saved=!!opts.saved;list.unshift({id:curId,date:new Date().toLocaleString(),...base,saved,auto:saved?false:(opts.auto!==false)});}
+  localStorage.setItem('mr_m',JSON.stringify(list.slice(0,40)));renderHist();
+  if(typeof updateKeepBtn==='function')updateKeepBtn();}
+// Remove temporary auto-saved drafts older than 1 day that weren't kept.
+function purgeDrafts(){try{const list=JSON.parse(localStorage.getItem('mr_m')||'[]');const cut=Date.now()-86400000;
+  const kept=list.filter(m=>m.saved||m.auto===false||!m.ts||m.ts>cut);
+  if(kept.length!==list.length)localStorage.setItem('mr_m',JSON.stringify(kept));}catch(e){}}
+// Periodic autosave (anti-loss) + a fresh summary every 15 min, into the draft.
+let autosaveInt=null,autosumInt=null,autosumBusy=false;
+function startAutosave(){if(autosaveInt)return;
+  autosaveInt=setInterval(()=>{if(capState==='recording'&&curTr&&curTr.trim())save(true,{auto:true});},60000);
+  autosumInt=setInterval(autoSummarize,900000);}
+function stopAutosave(){if(autosaveInt){clearInterval(autosaveInt);autosaveInt=null;}if(autosumInt){clearInterval(autosumInt);autosumInt=null;}}
+async function autoSummarize(){const tx=curTr||'';if(autosumBusy||tx.trim().length<120)return;autosumBusy=true;
+  try{const r=await fetch('/api/summarize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,system:t('sys')})});
+    const d=await r.json();if(r.ok&&d.summary){curSum=(d.summary||'').trim();save(true,{auto:true});toast(t('autosum_done'));}}catch(e){}finally{autosumBusy=false;}}
+function keepM(id){const list=JSON.parse(localStorage.getItem('mr_m')||'[]').map(m=>m.id===id?{...m,saved:true,auto:false}:m);
+  localStorage.setItem('mr_m',JSON.stringify(list));renderHist();toast(t('hist_saved'));if(curId===id&&typeof updateKeepBtn==='function')updateKeepBtn();}
+function updateKeepBtn(){const b=$('btnKeep'),n=$('keepNote');if(!b)return;const m=JSON.parse(localStorage.getItem('mr_m')||'[]').find(x=>x.id===curId);
+  const temp=m&&!m.saved&&m.auto!==false;b.style.display=temp?'':'none';if(n)n.style.display=temp?'':'none';}
+function renderHist(){purgeDrafts();const list=JSON.parse(localStorage.getItem('mr_m')||'[]');
+  $('mlist').innerHTML=list.length?list.map(m=>{const temp=!m.saved&&m.auto!==false&&m.ts;
+    return `<li><div class="mt"><b>${esc(m.title)}</b><span>${esc(m.date)}${temp?' · <i style="color:#d97706">'+t('hist_temp')+'</i>':''}</span></div>`+
+      (temp?`<button class="mini" onclick="keepM(${m.id})">💾 ${t('hist_keep')}</button>`:'')+
+      `<button class="mini" onclick="openM(${m.id})">${t('open')}</button><button class="mini" onclick="delM(${m.id})">🗑</button></li>`;}).join(''):`<li class="mempty">${t('empty')}</li>`;}
 function openM(id){const m=JSON.parse(localStorage.getItem('mr_m')||'[]').find(x=>x.id===id);if(!m)return;curTr=m.transcript;curSum=m.summary;lvAll=m.live||[];spkNames={};curId=id;$('overlay').classList.remove('on');show('sc-res');$('resProc').style.display='none';$('resBody').style.display='';renderResult();}
 function delM(id){if(!confirm(t('delq')))return;localStorage.setItem('mr_m',JSON.stringify(JSON.parse(localStorage.getItem('mr_m')||'[]').filter(x=>x.id!==id)));renderHist();}
 $('histBtn').onclick=()=>$('overlay').classList.add('on');
@@ -1098,7 +1128,7 @@ if($('aiLang')){$('aiLang').value=localStorage.getItem('mr_ailang')||L;
   $('aiLang').onchange=()=>{localStorage.setItem('mr_ailang',$('aiLang').value);refreshInsights();};}
 const _lvon=localStorage.getItem('mr_lvon')!=='0';$('lvOn').checked=_lvon;$('lvToggle').classList.toggle('on',_lvon);
 if(localStorage.getItem('mr_lvto'))$('lvTo').value=localStorage.getItem('mr_lvto');
-applyLang();
+purgeDrafts();applyLang();
 fetchUsage();renderUsage();
 </script>
 </body>
