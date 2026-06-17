@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { userFromBearer } from "@/lib/auth-token";
 import { createClient as createServer, supabaseConfigured } from "@/lib/supabase-server";
 import { createAdminClient } from "@/lib/supabase-admin";
-import { hasQuota } from "@/lib/usage";
+import { hasQuota, effectivePlan } from "@/lib/usage";
 
 /**
  * POST /api/soniox-token
@@ -57,8 +57,8 @@ export async function POST(req: NextRequest) {
     try {
       const admin = createAdminClient();
       const { data: prof } = await admin.from("profiles")
-        .select("plan, seconds_today, day_key, seconds_month, month_key, bonus_minutes").eq("id", userId).single();
-      const plan = prof?.plan || "free";
+        .select("plan, seconds_today, day_key, seconds_month, month_key, bonus_minutes, trial_until").eq("id", userId).single();
+      const plan = effectivePlan(prof?.plan, prof?.trial_until);
       const today = new Date().toISOString().slice(0, 10);
       const mkey = today.slice(0, 7);
       const secToday = prof?.day_key === today ? (prof.seconds_today || 0) : 0;

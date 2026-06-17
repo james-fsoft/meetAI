@@ -10,9 +10,9 @@ export function createAdminClient() {
   );
 }
 
-// Admin allowlist (comma-separated env override, else these two).
+// Admin allowlist (comma-separated env override, else these defaults).
 export const ADMIN_EMAILS = (
-  process.env.ADMIN_EMAILS || "james.fsoft@gmail.com,james.le@sotatek.com"
+  process.env.ADMIN_EMAILS || "james.fsoft@gmail.com,james.le@sotatek.com,pttuanh197@gmail.com"
 )
   .split(",")
   .map((s) => s.trim().toLowerCase())

@@ -29,7 +29,7 @@ export default async function Admin() {
   const admin = createAdminClient();
   const { data: profiles, error } = await admin
     .from("profiles")
-    .select("id,email,plan,created_at,seconds_today,day_key,seconds_month,month_key,referred_by")
+    .select("id,email,plan,created_at,seconds_today,day_key,seconds_month,month_key,referred_by,trial_until")
     .order("created_at", { ascending: false });
 
   if (error) return <Denied msg={"Lỗi đọc dữ liệu: " + error.message} />;

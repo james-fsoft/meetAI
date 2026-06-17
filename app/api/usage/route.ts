@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createServer, supabaseConfigured } from "@/lib/supabase-server";
 import { createAdminClient } from "@/lib/supabase-admin";
 import { userFromBearer } from "@/lib/auth-token";
-import { usagePayload, planLimits } from "@/lib/usage";
+import { usagePayload, planLimits, effectivePlan } from "@/lib/usage";
 
 export const dynamic = "force-dynamic";
 
@@ -24,10 +24,10 @@ async function handle(req: NextRequest, seconds: number) {
 
   const admin = createAdminClient();
   const { data: prof } = await admin.from("profiles")
-    .select("plan, seconds_today, day_key, seconds_month, month_key, bonus_minutes").eq("id", userId).single();
+    .select("plan, seconds_today, day_key, seconds_month, month_key, bonus_minutes, trial_until").eq("id", userId).single();
   if (!prof) return NextResponse.json({ error: "no profile" }, { status: 404 });
 
-  const plan = prof.plan || "free";
+  const plan = effectivePlan(prof.plan, prof.trial_until);
   const lim = planLimits(plan);
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const mkey = today.slice(0, 7);                       // YYYY-MM

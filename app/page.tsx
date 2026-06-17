@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import MeetingApp from "./MeetingApp";
 import { createClient, supabaseConfigured } from "@/lib/supabase-server";
 import { isAdmin } from "@/lib/supabase-admin";
+import { effectivePlan } from "@/lib/usage";
 
 export const dynamic = "force-dynamic";
 
@@ -23,8 +24,8 @@ export default async function Home() {
       email = user?.email ?? "";
       admin = isAdmin(user?.email);
       if (user) {
-        const { data } = await supabase.from("profiles").select("plan").eq("id", user.id).single();
-        if (data?.plan) plan = data.plan;
+        const { data } = await supabase.from("profiles").select("plan, trial_until").eq("id", user.id).single();
+        plan = effectivePlan(data?.plan, data?.trial_until);
       }
     } catch {
       // profile may not exist yet — fall back gracefully

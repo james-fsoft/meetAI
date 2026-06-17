@@ -10,6 +10,17 @@ export function planLimits(plan: string) {
   return LIMITS[plan] || LIMITS.free;
 }
 
+// A free user granted a temporary trial by an admin (trial_until in the future)
+// is treated as Pro until it expires. Paid plans are returned unchanged.
+export function effectivePlan(plan?: string | null, trialUntil?: string | null): string {
+  const p = plan || "free";
+  if (p === "free" && trialUntil) {
+    const t = new Date(trialUntil).getTime();
+    if (!isNaN(t) && t > Date.now()) return "pro";
+  }
+  return p;
+}
+
 const toMin = (sec: number) => Math.floor((sec || 0) / 60);
 const remain = (limit: number | null, usedSec: number) =>
   limit == null ? null : Math.max(0, limit - toMin(usedSec));
