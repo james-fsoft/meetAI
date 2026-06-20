@@ -984,7 +984,20 @@ function showGate(kind){if(document.getElementById('gateOv'))return;
   document.body.appendChild(ov);
   document.getElementById('gateBtn').onclick=()=>goTop(D.u);
   document.getElementById('gateClose').onclick=e=>{e.preventDefault();ov.remove();};}
-let sxStopping=false,sxOpenAt=0,sxFails=0;
+let sxStopping=false,sxOpenAt=0,sxFails=0,sxLastTrans=0,sxLastOrig=0,sxWatch=null;
+// Watchdog: sometimes Soniox keeps sending the ORIGINAL text but the translation
+// stream silently stalls (no <close>), so the page shows source-only until a
+// manual stop/resume. Detect "audio flowing but no translation for 18s" and
+// force a clean reconnect (fresh temp key) to self-heal.
+function sxStartWatch(){sxStopWatch();sxWatch=setInterval(()=>{
+  if(!lvWantOn||sxStopping||!sx.ws||sx.ws.readyState!==1)return;
+  const now=Date.now(),transBase=sxLastTrans||sxOpenAt;
+  if(sxLastOrig&&now-sxLastOrig<7000&&transBase&&now-transBase>18000){
+    sxLastTrans=now; // avoid re-trigger before the socket finishes closing
+    try{sx.ws.close();}catch(e){}
+  }
+},5000);}
+function sxStopWatch(){if(sxWatch){clearInterval(sxWatch);sxWatch=null;}}
 async function startLive(){
   if(sx.ws)return;
   if(!gateStart())return;
@@ -1006,7 +1019,7 @@ async function openWs(){
   if(!lvWantOn||!sx.stream)return;
   const ws=new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket');sx.ws=ws;
   ws.onopen=()=>{
-    sxOpenAt=Date.now();
+    sxOpenAt=Date.now();sxLastTrans=0;sxLastOrig=0;sxStartWatch();
     const two=getWay()==='two';
     const translation=two
       ?{type:'two_way',language_a:$('lvA').value,language_b:$('lvB').value}
@@ -1023,13 +1036,13 @@ async function openWs(){
     let oI='',tI='';
     (m.tokens||[]).forEach(tk=>{const x=tk.text;if(x==null)return;
       if(x==='<end>'){sxFinalize();return;}
-      if(tk.translation_status==='translation'){if(tk.is_final)sx.segTrans+=x;else tI+=x;if(tk.language)sx.segTgt=tk.language;}
-      else{if(tk.is_final){sx.segOrig+=x;if(tk.speaker!=null)sx.segSpk=tk.speaker;}else oI+=x;if(tk.language)sx.segLang=tk.language;}});
+      if(tk.translation_status==='translation'){if(tk.is_final)sx.segTrans+=x;else tI+=x;if(tk.language)sx.segTgt=tk.language;sxLastTrans=Date.now();}
+      else{if(tk.is_final){sx.segOrig+=x;if(tk.speaker!=null)sx.segSpk=tk.speaker;}else oI+=x;if(tk.language)sx.segLang=tk.language;sxLastOrig=Date.now();}});
     sxRender(oI,tI);
     if(m.finished)sxFinalize();};
   ws.onerror=()=>{if(lvWantOn&&!sxStopping)lvInfo('⚠ '+t('lv_net'));};
   ws.onclose=()=>{
-    sx.ws=null;
+    sx.ws=null;sxStopWatch();
     if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
     sxFinalize();
     const lasted=sxOpenAt?Date.now()-sxOpenAt:0;sxOpenAt=0;
@@ -1083,7 +1096,7 @@ function feedScroll(row){if(row&&row.scrollIntoView)row.scrollIntoView({behavior
 function keepInView(el){const r=el.getBoundingClientRect(),vh=window.innerHeight||document.documentElement.clientHeight;
   if(r.bottom>vh-80||r.top<64)el.scrollIntoView({block:'center'});}
 function sxStop(){
-  sxStopping=true;trialStop();
+  sxStopping=true;trialStop();sxStopWatch();
   if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
   if(sx.ws){try{if(sx.ws.readyState===1)sx.ws.send('');sx.ws.close();}catch(e){}}sx.ws=null;
   if(sx.stream){sx.stream.getTracks().forEach(t=>t.stop());sx.stream=null;}

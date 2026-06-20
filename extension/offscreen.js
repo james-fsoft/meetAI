@@ -13,6 +13,22 @@ let running = false, stopping = false, openAt = 0, fails = 0;
 let fullLines = []; // whole-session segments {spk, o (original), t (translation)}
 let meterTimer = null, meterLast = 0; // usage metering (only while audio is live)
 let autoSumTimer = null, autoSumBusy = false; // periodic auto-summary for long sessions
+let sxLastTrans = 0, sxLastOrig = 0, sxWatch = null; // translation-stall watchdog
+// Self-heal: Soniox sometimes keeps streaming the ORIGINAL but the translation
+// stalls (no socket close), so the overlay shows source-only until manual
+// stop/resume. If audio is flowing but no translation for 18s, force a clean
+// reconnect (fresh temp key).
+function startWatch() {
+  stopWatch();
+  sxWatch = setInterval(() => {
+    if (!running || stopping || !ws || ws.readyState !== 1) return;
+    const now = Date.now(), base = sxLastTrans || openAt;
+    if (sxLastOrig && now - sxLastOrig < 7000 && base && now - base > 18000) {
+      sxLastTrans = now; try { ws.close(); } catch {} // onclose → openWs reconnects
+    }
+  }, 5000);
+}
+function stopWatch() { if (sxWatch) { clearInterval(sxWatch); sxWatch = null; } }
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.target !== "offscreen") return;
@@ -132,7 +148,7 @@ async function openWs() {
       if (!running || !stream) return;
       const w = new WebSocket(SONIOX_WS); ws = w;
       w.onopen = () => {
-        openAt = Date.now();
+        openAt = Date.now(); sxLastTrans = 0; sxLastOrig = 0; startWatch();
         const two = way === "two";
         w.send(JSON.stringify({
           api_key: tok, model: "stt-rt-v4", audio_format: "auto",
@@ -157,8 +173,8 @@ async function openWs() {
         (m.tokens || []).forEach((tk) => {
           const x = tk.text; if (x == null) return;
           if (x === "<end>") { flush(); return; }
-          if (tk.translation_status === "translation") { if (tk.is_final) seg.trans += x; else tI += x; }
-          else { if (tk.is_final) { seg.orig += x; if (tk.speaker != null) seg.spk = tk.speaker; } else oI += x; }
+          if (tk.translation_status === "translation") { if (tk.is_final) seg.trans += x; else tI += x; sxLastTrans = Date.now(); }
+          else { if (tk.is_final) { seg.orig += x; if (tk.speaker != null) seg.spk = tk.speaker; } else oI += x; sxLastOrig = Date.now(); }
         });
         const o = (seg.orig + oI).trim(), t = (seg.trans + tI).trim();
         if (o || t) send({ type: "partial", orig: o, trans: t, spk: seg.spk });
@@ -166,7 +182,7 @@ async function openWs() {
       };
       w.onerror = () => {};
       w.onclose = () => {
-        ws = null;
+        ws = null; stopWatch();
         meterPauseSeg();
         if (rec && rec.state !== "inactive") { try { rec.stop(); } catch {} } rec = null;
         flush();
@@ -206,7 +222,7 @@ function buildTranscript() {
 }
 
 function teardown() {
-  meterStopAll(); stopAutoSum();
+  meterStopAll(); stopAutoSum(); stopWatch();
   if (rec && rec.state !== "inactive") { try { rec.stop(); } catch {} } rec = null;
   if (ws) { try { if (ws.readyState === 1) ws.send(""); ws.close(); } catch {} } ws = null;
   if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }

@@ -1,4 +1,5 @@
 const API_BASE = "https://meet.transflash.app";
+try { document.getElementById("ver").textContent = "v" + chrome.runtime.getManifest().version; } catch {}
 const btn = document.getElementById("toggle");
 const lang = document.getElementById("lang");
 const langB = document.getElementById("langB");
