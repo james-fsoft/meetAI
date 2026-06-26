@@ -50,11 +50,17 @@ export async function POST(req: NextRequest) {
   const key = process.env.SONIOX_API_KEY;
   if (!key) return NextResponse.json({ error: "Server missing SONIOX_API_KEY" }, { status: 500 });
 
+  // Transcribe-only mode (no translation) is cheaper, so it's unlimited for any
+  // signed-in plan → skip the per-user quota check for it.
+  const body = await req.json().catch(() => ({} as any));
+  const transcribeOnly = !!body?.transcribeOnly;
+
   const userId = supabaseConfigured() ? await getUserId(req) : null;
 
   if (userId) {
     // Signed-in: enforce the per-user quota server-side (hard ceiling).
-    try {
+    // Transcribe-only is unlimited → skip the quota check (but no anon brakes).
+    if (!transcribeOnly) try {
       const admin = createAdminClient();
       const { data: prof } = await admin.from("profiles")
         .select("plan, seconds_today, day_key, seconds_month, month_key, bonus_minutes, trial_until").eq("id", userId).single();
