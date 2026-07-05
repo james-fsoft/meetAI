@@ -61,7 +61,7 @@ function meterFlush() {
   if (!meterLast) return;
   const now = Date.now();
   const sec = Math.round((now - meterLast) / 1000);
-  if (sec > 0) { meterLast = now; reportUsage(sec); }
+  if (sec > 0) { meterLast = now; if (way === "off") chrome.runtime.sendMessage({ cmd: "trUsage", seconds: sec }).catch(() => {}); else reportUsage(sec); }
 }
 function meterResume() { meterLast = Date.now(); if (!meterTimer) meterTimer = setInterval(meterFlush, 60_000); }
 function meterPauseSeg() { meterFlush(); meterLast = 0; }            // socket closed (reconnect gap)
@@ -138,26 +138,28 @@ async function openWs() {
   // The offscreen document can't access chrome.storage — ask the worker for a token.
   let authTok = null;
   try { authTok = await chrome.runtime.sendMessage({ cmd: "authToken" }); } catch {}
-  const headers = authTok ? { Authorization: "Bearer " + authTok } : {};
-  fetch(API_BASE + "/api/soniox-token", { method: "POST", headers })
+  const headers = { "Content-Type": "application/json", ...(authTok ? { Authorization: "Bearer " + authTok } : {}) };
+  fetch(API_BASE + "/api/soniox-token", { method: "POST", headers, body: JSON.stringify({ transcribeOnly: way === "off" }) })
     .then((r) => r.json().then((d) => {
       if (!r.ok) { const e = new Error(d.error || "token"); e.quota = (r.status === 403 || d.code === "quota_exceeded"); throw e; }
       return d.api_key;
     }))
     .then((tok) => {
-      if (!running || !stream) return;
+      if (!running || !recStream) return;
       const w = new WebSocket(SONIOX_WS); ws = w;
       w.onopen = () => {
-        openAt = Date.now(); sxLastTrans = 0; sxLastOrig = 0; startWatch();
-        const two = way === "two";
-        w.send(JSON.stringify({
+        openAt = Date.now(); sxLastTrans = 0; sxLastOrig = 0;
+        const two = way === "two", off = way === "off";
+        if (!off) startWatch(); // transcribe-only has no translation stream to watch
+        const cfg = {
           api_key: tok, model: "stt-rt-v4", audio_format: "auto",
           language_hints: two ? [target, langB] : ["ko", "vi", "en", "ja", "zh", "th", "es", "fr"],
           enable_speaker_diarization: true, enable_endpoint_detection: true,
-          translation: two
-            ? { type: "two_way", language_a: target, language_b: langB }
-            : { type: "one_way", target_language: target },
-        }));
+        };
+        if (!off) cfg.translation = two
+          ? { type: "two_way", language_a: target, language_b: langB }
+          : { type: "one_way", target_language: target };
+        w.send(JSON.stringify(cfg));
         const mime = pickMime();
         try { rec = mime ? new MediaRecorder(recStream, { mimeType: mime }) : new MediaRecorder(recStream); }
         catch (e) { send({ type: "status", text: "녹음 오류: " + e.message }); return; }

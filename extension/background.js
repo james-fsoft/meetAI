@@ -28,11 +28,34 @@ async function recreateOffscreen() {
   });
 }
 
+// Transcribe-only ("Chỉ ghi") is free of translation cost, so it doesn't count
+// against the paid quota — but it's capped at 60 min/day per device to bound the
+// STT cost. Usage is tracked in chrome.storage.local (persistent across sessions).
+const TR_DAILY = 3600;
+function trToday() { return new Date().toISOString().slice(0, 10); }
+async function trRemain() {
+  const s = await chrome.storage.local.get(["tr_day", "tr_used"]);
+  const used = s.tr_day === trToday() ? (s.tr_used || 0) : 0;
+  return Math.max(0, TR_DAILY - used);
+}
+async function trAdd(sec) {
+  const s = await chrome.storage.local.get(["tr_day", "tr_used"]);
+  const used = (s.tr_day === trToday() ? (s.tr_used || 0) : 0) + (sec || 0);
+  await chrome.storage.local.set({ tr_day: trToday(), tr_used: used });
+  return used >= TR_DAILY;
+}
+
 async function startCapture(lang, resume, sourcev, wayv, langBv, tabIdArg) {
   // Use the tab the popup captured (so a mic-permission tab can't hijack "active").
   let tabId = resume ? active.tabId : tabIdArg;
   if (!tabId) { const [t] = await chrome.tabs.query({ active: true, currentWindow: true }); tabId = t && t.id; }
   if (!tabId) throw new Error("Không tìm thấy tab");
+
+  // Enforce the 60-min/day cap for transcribe-only before starting.
+  const effWay = resume ? active.way : wayv;
+  if (effWay === "off" && (await trRemain()) <= 0) {
+    throw new Error("Đã dùng hết 60 phút Chỉ ghi hôm nay. Quay lại ngày mai, hoặc dùng chế độ dịch.");
+  }
 
   if (resume) {
     // Resume: the overlay is still alive (paused state) — re-injecting content.js
@@ -113,6 +136,19 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.cmd === "getState") { sendResponse(active); return; }
   if (msg.cmd === "setLang") { if (msg.lang) active.lang = msg.lang; if (msg.way) active.way = msg.way; if (msg.langB) active.langB = msg.langB; chrome.runtime.sendMessage({ target: "offscreen", type: "setLang", lang: active.lang, way: active.way, langB: active.langB }); sendResponse({ ok: true }); return; }
   if (msg.cmd === "openMicPerm") { chrome.tabs.create({ url: chrome.runtime.getURL("mic-permission.html") }); sendResponse({ ok: true }); return; }
+  if (msg.cmd === "trUsage") {
+    // Transcribe-only seconds → persistent daily counter. When the 60-min cap is
+    // reached, pause the session (transcript kept so the user can still summarize).
+    trAdd(msg.seconds || 0).then((over) => {
+      if (over && active.running) {
+        pauseCapture();
+        const m = { from: "bg", type: "status", text: "⚠ Hết 60 phút Chỉ ghi hôm nay — bấm Tóm tắt để lưu lại." };
+        if (active.tabId) chrome.tabs.sendMessage(active.tabId, m).catch(() => {});
+        chrome.runtime.sendMessage(m).catch(() => {});
+      }
+    });
+    sendResponse({ ok: true }); return;
+  }
   if (msg.cmd === "authToken") { getAuthToken().then((t) => sendResponse(t)).catch(() => sendResponse(null)); return true; }
 
   // Relay results coming up from the offscreen document to the page overlay + popup.

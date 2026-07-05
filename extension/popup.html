@@ -19,8 +19,8 @@
   select{width:100%;padding:9px 10px;border-radius:9px;border:1px solid #2a3852;background:#16223a;color:#fff;
     font-family:inherit;font-size:13px;font-weight:700;outline:none}
   .modeseg{display:flex;gap:4px;background:#101a2e;border:1px solid #2a3852;border-radius:9px;padding:3px;margin-bottom:12px}
-  .modeseg button{flex:1;border:none;background:none;color:#9fb3d6;font-family:inherit;font-size:12px;font-weight:800;
-    padding:7px;border-radius:7px;cursor:pointer}
+  .modeseg button{flex:1;border:none;background:none;color:#9fb3d6;font-family:inherit;font-size:11px;font-weight:800;
+    padding:7px 3px;border-radius:7px;cursor:pointer;white-space:nowrap}
   .modeseg button.on{background:#1f6bff;color:#fff}
   .srcseg{display:flex;gap:4px;background:#101a2e;border:1px solid #2a3852;border-radius:9px;padding:3px;margin-bottom:7px}
   .srcseg button{flex:1;border:none;background:none;color:#9fb3d6;font-family:inherit;font-size:11px;font-weight:800;
@@ -59,7 +59,9 @@
   <div class="modeseg" id="modeseg">
     <button type="button" data-w="one" class="on">→ 1 chiều</button>
     <button type="button" data-w="two">⇄ Song ngữ</button>
+    <button type="button" data-w="off">📝 Chỉ ghi</button>
   </div>
+  <div id="offnote" class="srchint" style="display:none;margin:-6px 0 12px">📝 Chỉ ghi lại lời nói + tóm tắt, KHÔNG dịch. Miễn phí 60 phút/ngày.</div>
 
   <label id="langLbl">Dịch sang / Translate to</label>
   <div class="langrow">

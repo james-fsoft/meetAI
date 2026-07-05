@@ -19,9 +19,14 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => { if (tabs &&
 
 function getWay() { const b = modeseg.querySelector("button.on"); return b ? b.dataset.w : "one"; }
 function applyMode() {
-  const two = getWay() === "two";
-  langB.style.display = two ? "" : "none";
-  swapIc.style.display = two ? "" : "none";
+  const w = getWay(), two = w === "two", off = w === "off";
+  const langrow = document.querySelector(".langrow");
+  const offnote = document.getElementById("offnote");
+  langB.style.display = (two && !off) ? "" : "none";
+  swapIc.style.display = (two && !off) ? "" : "none";
+  langLbl.style.display = off ? "none" : "";
+  if (langrow) langrow.style.display = off ? "none" : "";
+  if (offnote) offnote.style.display = off ? "block" : "none";
   langLbl.textContent = two ? "Cặp ngôn ngữ (nói tiếng nào ra tiếng kia)" : "Dịch sang / Translate to";
 }
 modeseg.querySelectorAll("button").forEach((b) => b.onclick = () => {

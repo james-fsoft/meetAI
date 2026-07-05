@@ -157,8 +157,8 @@
   function onBg(msg) {
     if (msg.from !== "bg") return;
     if (msg.type === "show") { box.style.display = "flex"; sumEl.style.display = "none"; lines.style.display = "block"; setMicWarn("");
-      if (msg.way) curWay = msg.way; const two = curWay === "two";
-      langSwap.style.display = two ? "" : "none"; langBSel.style.display = two ? "" : "none";
+      if (msg.way) curWay = msg.way; const two = curWay === "two", off = curWay === "off";
+      langSel.style.display = off ? "none" : ""; langSwap.style.display = two ? "" : "none"; langBSel.style.display = two ? "" : "none";
       if (msg.lang) langSel.value = msg.lang; if (msg.langB) langBSel.value = msg.langB;
       if (!msg.resume) { lines.innerHTML = ""; cur = null; partialData = null; btnPsum.style.display = "none"; } setMode("live"); }
     else if (msg.type === "hide") box.style.display = "none";
