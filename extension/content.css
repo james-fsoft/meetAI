@@ -72,3 +72,27 @@
 .tt-sum-foot button{border:1px solid rgba(255,255,255,.18);background:transparent;color:#9fb3d6;
   font-family:inherit;font-size:12px;font-weight:700;padding:8px 22px;border-radius:9px;cursor:pointer}
 .tt-sum-foot button:hover{background:rgba(239,68,68,.18);color:#ffd9d9;border-color:rgba(239,68,68,.42)}
+
+/* TransFlash-styled confirm modal (replaces the plain browser confirm) */
+.tt-modal-bd{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:rgba(6,10,20,.62);backdrop-filter:blur(3px);font-family:'Inter',system-ui,Arial,sans-serif;
+  animation:ttfade .12s ease-out}
+@keyframes ttfade{from{opacity:0}to{opacity:1}}
+.tt-modal{width:min(360px,90vw);background:linear-gradient(180deg,#16213a,#0f1728);border:1px solid rgba(255,255,255,.12);
+  border-radius:16px;padding:22px 22px 18px;box-shadow:0 30px 70px -20px rgba(0,0,0,.75);text-align:center;color:#eaf1ff;
+  animation:ttpop .15s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes ttpop{from{transform:translateY(8px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+.tt-modal-ic{width:48px;height:48px;margin:0 auto 13px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:25px;background:rgba(245,158,11,.16);border:1px solid rgba(245,158,11,.42)}
+.tt-modal-ic.q{background:rgba(59,130,246,.16);border-color:rgba(59,130,246,.42)}
+.tt-modal-h{font-size:16px;font-weight:800;margin-bottom:8px;color:#fff;line-height:1.35}
+.tt-modal-p{font-size:12.5px;line-height:1.55;color:#9fb3d6;margin-bottom:18px}
+.tt-modal-acts{display:flex;gap:10px}
+.tt-modal-btn{flex:1;border-radius:10px;padding:11px 10px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;
+  border:1px solid transparent;transition:.15s;white-space:nowrap}
+.tt-modal-btn.cancel{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#cdd9f2}
+.tt-modal-btn.cancel:hover{background:rgba(255,255,255,.16);color:#fff}
+.tt-modal-btn.ok{background:#1f6bff;color:#fff}
+.tt-modal-btn.ok:hover{background:#175fe6}
+.tt-modal-btn.danger{background:#e5484d;color:#fff}
+.tt-modal-btn.danger:hover{background:#d13b40}

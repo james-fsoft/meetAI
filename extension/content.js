@@ -113,11 +113,38 @@
     if (m !== "stopped") btnSum.textContent = "⏹ Tóm tắt";
   }
   // ended = the session is already finished (summary shown) — just hide the overlay.
-  function doClose(ended) {
-    const msg = ended
-      ? "Đóng phụ đề?"
-      : "Đóng và kết thúc phiên dịch?\n\n⚠ Nội dung đang ghi có thể KHÔNG được lưu lại.\nHãy bấm 📋 (Copy script) hoặc ⏹ Tóm tắt trước nếu muốn giữ.\n\nBấm OK để đóng.";
-    if (!confirm(msg)) return;
+  // TransFlash-styled confirm modal → Promise<boolean>. Replaces window.confirm
+  // so the dialog matches the overlay theme instead of the plain browser box.
+  function ttConfirm(o) {
+    return new Promise((resolve) => {
+      const bd = document.createElement("div");
+      bd.className = "tt-modal-bd";
+      bd.innerHTML =
+        '<div class="tt-modal">' +
+        '<div class="tt-modal-ic' + (o.danger ? "" : " q") + '">' + (o.icon || (o.danger ? "⚠" : "❔")) + "</div>" +
+        '<div class="tt-modal-h">' + esc(o.title || "") + "</div>" +
+        (o.body ? '<div class="tt-modal-p">' + esc(o.body) + "</div>" : "") +
+        '<div class="tt-modal-acts">' +
+        '<button class="tt-modal-btn cancel" id="tt-mc">' + esc(o.cancelText || "Huỷ") + "</button>" +
+        '<button class="tt-modal-btn ' + (o.danger ? "danger" : "ok") + '" id="tt-mo">' + esc(o.okText || "OK") + "</button>" +
+        "</div></div>";
+      document.documentElement.appendChild(bd);
+      const close = (v) => { try { bd.remove(); } catch (e) {} window.removeEventListener("keydown", onKey, true); resolve(v); };
+      function onKey(e) { if (e.key === "Escape") { e.stopPropagation(); close(false); } else if (e.key === "Enter") { e.stopPropagation(); close(true); } }
+      bd.querySelector("#tt-mc").onclick = () => close(false);
+      bd.querySelector("#tt-mo").onclick = () => close(true);
+      bd.addEventListener("mousedown", (e) => { e.stopPropagation(); if (e.target === bd) close(false); }); // click backdrop = cancel
+      window.addEventListener("keydown", onKey, true);
+      bd.querySelector("#tt-mo").focus();
+    });
+  }
+  async function doClose(ended) {
+    const ok = await ttConfirm(ended
+      ? { title: "Đóng phụ đề?", okText: "Đóng", cancelText: "Không", danger: false, icon: "👋" }
+      : { title: "Đóng và kết thúc phiên dịch?",
+          body: "Nội dung đang ghi có thể chưa được lưu. Hãy bấm 📋 Copy script hoặc ⏹ Tóm tắt trước nếu bạn muốn giữ lại.",
+          okText: "Đóng phụ đề", cancelText: "Tiếp tục dịch", danger: true });
+    if (!ok) return;
     if (!ended) chrome.runtime.sendMessage({ cmd: "end", summarize: false });
     box.style.display = "none";
   }
