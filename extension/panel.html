@@ -7,8 +7,10 @@
   /* Standalone subtitle window: make the overlay fill the whole window instead
      of being a floating centered card. Reuses content.js + content.css as-is. */
   html,body{margin:0;height:100%;background:#0c1322;overflow:hidden}
-  #tt-overlay{position:static!important;transform:none!important;left:auto!important;top:auto!important;bottom:auto!important;
-    width:100%!important;height:100vh!important;max-width:none!important;max-height:none!important;min-width:0!important;
+  /* Fill the whole window. Must be fixed+inset (not static): content.js appends
+     the overlay AFTER <body>, so static positioning would push it off-screen. */
+  #tt-overlay{position:fixed!important;inset:0!important;transform:none!important;
+    width:auto!important;height:auto!important;max-width:none!important;max-height:none!important;min-width:0!important;
     border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;background:#0c1322!important;display:flex!important}
   #tt-overlay .tt-head{cursor:default}
   #tt-overlay .tt-grip{display:none!important}
