@@ -13,6 +13,7 @@
   // injected into a page, closing should close the window and we announce
   // readiness so the worker (re)sends the current session state.
   const IN_PANEL = location.protocol === "chrome-extension:";
+  let closingViaBtn = false; // set when our ✕ Đóng closes the window, to skip the beforeunload warning
 
   const box = document.createElement("div");
   box.id = "tt-overlay";
@@ -138,7 +139,9 @@
   // The header close button only appears while PAUSED (to abort a session). Once
   // stopped + summarized, closing happens from the summary panel footer instead —
   // keeping it away from the download buttons so it isn't tapped by accident.
+  let curMode = "live";
   function setMode(m) {
+    curMode = m;
     btnPause.style.display = m === "live" ? "" : "none";
     btnResume.style.display = m === "paused" ? "" : "none";
     btnSum.style.display = m === "stopped" ? "none" : "";
@@ -182,7 +185,7 @@
           okText: "Đóng phụ đề", cancelText: "Tiếp tục dịch", danger: true });
     if (!ok) return;
     if (!ended) chrome.runtime.sendMessage({ cmd: "end", summarize: false });
-    if (IN_PANEL) { window.close(); return; }
+    if (IN_PANEL) { closingViaBtn = true; window.close(); return; }
     box.style.display = "none";
   }
   btnPause.onclick = () => { chrome.runtime.sendMessage({ cmd: "pause" }); setMode("paused"); setStatus("PAUSED"); };
@@ -303,7 +306,15 @@
   }
   chrome.runtime.onMessage.addListener(onBg);
   // In the standalone window, ask the worker to (re)send the live session state.
-  if (IN_PANEL) { try { chrome.runtime.sendMessage({ cmd: "panelReady" }); } catch (e) {} }
+  if (IN_PANEL) {
+    try { chrome.runtime.sendMessage({ cmd: "panelReady" }); } catch (e) {}
+    // Guard the native window-close (title-bar ✕): while a session is live/paused,
+    // warn before the window is destroyed so the transcript isn't lost silently.
+    // (Our own ✕ Đóng calls window.close() after confirming, which skips this.)
+    window.addEventListener("beforeunload", (e) => {
+      if (!closingViaBtn && (curMode === "live" || curMode === "paused")) { e.preventDefault(); e.returnValue = ""; return ""; }
+    });
+  }
 
   // drag (header) + resize (corner grip)
   const grip = box.querySelector("#tt-grip");
