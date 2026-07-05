@@ -23,7 +23,7 @@
     '<button class="tt-act pause" id="tt-pause">⏸ Dừng</button>' +
     '<button class="tt-act resume" id="tt-resume" style="display:none">▶ Tiếp tục</button>' +
     '<button class="tt-act" id="tt-psum" title="Tóm tắt tạm thời (tự cập nhật mỗi 15 phút)" style="display:none">📝</button>' +
-    '<button class="tt-act" id="tt-copysc" title="Copy toàn bộ script đã ghi">📋 Script</button>' +
+    '<button class="tt-act ic" id="tt-copysc" title="Copy toàn bộ script đã ghi">📋</button>' +
     '<button class="tt-act sum" id="tt-sumbtn">⏹ Tóm tắt</button>' +
     '<button class="tt-act" id="tt-close" style="display:none">× Đóng</button></span></div>' +
     '<div id="tt-micwarn" style="display:none"></div>' +
@@ -62,10 +62,10 @@
   }
   btnCopySc.onclick = () => {
     const txt = scriptText();
-    if (!txt) { btnCopySc.textContent = "— trống"; setTimeout(() => (btnCopySc.textContent = "📋 Script"), 1200); return; }
+    if (!txt) { btnCopySc.textContent = "∅"; setTimeout(() => (btnCopySc.textContent = "📋"), 1200); return; }
     navigator.clipboard.writeText(txt).then(() => {
-      btnCopySc.textContent = "✓ Đã copy";
-      setTimeout(() => (btnCopySc.textContent = "📋 Script"), 1400);
+      btnCopySc.textContent = "✓";
+      setTimeout(() => (btnCopySc.textContent = "📋"), 1400);
     }).catch(() => {});
   };
   // Latest auto-summary snapshot (updated every 15 min during long meetings).
@@ -107,12 +107,17 @@
     btnResume.style.display = m === "paused" ? "" : "none";
     btnSum.style.display = m === "stopped" ? "none" : "";
     btnCopySc.style.display = m === "stopped" ? "none" : "";
-    btnClose.style.display = m === "paused" ? "" : "none";
+    // Close is available while live OR paused (once stopped, the summary panel has
+    // its own close). Closing mid-session confirms first so nothing is lost.
+    btnClose.style.display = (m === "live" || m === "paused") ? "" : "none";
     if (m !== "stopped") btnSum.textContent = "⏹ Tóm tắt";
   }
   // ended = the session is already finished (summary shown) — just hide the overlay.
   function doClose(ended) {
-    if (!confirm("Đóng phụ đề?\nHãy tải Tóm tắt / Transcript trước nếu bạn muốn lưu lại.")) return;
+    const msg = ended
+      ? "Đóng phụ đề?"
+      : "Đóng và kết thúc phiên dịch?\n\n⚠ Nội dung đang ghi có thể KHÔNG được lưu lại.\nHãy bấm 📋 (Copy script) hoặc ⏹ Tóm tắt trước nếu muốn giữ.\n\nBấm OK để đóng.";
+    if (!confirm(msg)) return;
     if (!ended) chrome.runtime.sendMessage({ cmd: "end", summarize: false });
     box.style.display = "none";
   }
