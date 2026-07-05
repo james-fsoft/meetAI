@@ -7,6 +7,7 @@ const swapIc = document.getElementById("swapIc");
 const langLbl = document.getElementById("langLbl");
 const modeseg = document.getElementById("modeseg");
 const srcseg = document.getElementById("srcseg");
+const panelChk = document.getElementById("panelChk");
 const srchint = document.getElementById("srchint");
 const status = document.getElementById("status");
 const authBox = document.getElementById("auth");
@@ -34,6 +35,7 @@ modeseg.querySelectorAll("button").forEach((b) => b.onclick = () => {
   b.classList.add("on"); chrome.storage.local.set({ way: b.dataset.w }); applyMode();
 });
 langB.onchange = () => chrome.storage.local.set({ langB: langB.value });
+panelChk.onchange = () => chrome.storage.local.set({ panel: panelChk.checked });
 
 function getSource() { const b = srcseg.querySelector("button.on"); return b ? b.dataset.s : "tab"; }
 const SRC_HINT = {
@@ -69,6 +71,7 @@ function render() {
   langB.disabled = running;
   modeseg.querySelectorAll("button").forEach((b) => (b.disabled = running));
   srcseg.querySelectorAll("button").forEach((b) => (b.disabled = running));
+  panelChk.disabled = running;
   // When a session is live, the on-page overlay is the control surface — dim the
   // config here and point the user there so the two windows feel like one flow.
   const cfg = document.getElementById("cfg");
@@ -79,11 +82,12 @@ function render() {
   if (running) runbar.innerHTML = "● Đang dịch trực tiếp<span>Dừng · Tiếp tục · Tóm tắt nằm ở khung phụ đề ngay trên trang →</span>";
 }
 
-chrome.storage.local.get(["lang", "langB", "way", "source"], (d) => {
+chrome.storage.local.get(["lang", "langB", "way", "source", "panel"], (d) => {
   if (d.lang) lang.value = d.lang;
   if (d.langB) langB.value = d.langB;
   if (d.way) { modeseg.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.w === d.way)); }
   if (d.source) { srcseg.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.s === d.source)); }
+  if (d.panel) panelChk.checked = true;
   applyMode(); applySource(false);
 });
 chrome.runtime.sendMessage({ cmd: "getState" }, (s) => { running = !!(s && s.running); render(); });
@@ -94,9 +98,9 @@ btn.onclick = async () => {
     chrome.runtime.sendMessage({ cmd: "end", summarize: false }, () => { running = false; render(); status.textContent = ""; });
     return;
   }
-  chrome.storage.local.set({ lang: lang.value, langB: langB.value, way: getWay(), source: getSource() });
+  chrome.storage.local.set({ lang: lang.value, langB: langB.value, way: getWay(), source: getSource(), panel: panelChk.checked });
   status.textContent = "준비 중…";
-  chrome.runtime.sendMessage({ cmd: "start", lang: lang.value, langB: langB.value, way: getWay(), source: getSource(), tabId: targetTabId }, (r) => {
+  chrome.runtime.sendMessage({ cmd: "start", lang: lang.value, langB: langB.value, way: getWay(), source: getSource(), tabId: targetTabId, panel: panelChk.checked }, (r) => {
     if (r && r.ok) { running = true; render(); }
     else { status.textContent = "⚠ " + ((r && r.error) || "Không bắt được tab"); }
   });

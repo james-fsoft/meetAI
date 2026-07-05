@@ -9,6 +9,10 @@
   const LANGS = [["ko", "🇰🇷 KO"], ["vi", "🇻🇳 VI"], ["en", "🇺🇸 EN"], ["ja", "🇯🇵 JA"], ["zh", "🇨🇳 ZH"], ["th", "🇹🇭 TH"], ["es", "🇪🇸 ES"], ["fr", "🇫🇷 FR"]];
   const LANG_OPTS = LANGS.map(([v, l]) => '<option value="' + v + '">' + l + "</option>").join("");
   const LOGO = chrome.runtime.getURL("icons/icon16.png");
+  // When loaded inside panel.html (a dedicated extension window) rather than
+  // injected into a page, closing should close the window and we announce
+  // readiness so the worker (re)sends the current session state.
+  const IN_PANEL = location.protocol === "chrome-extension:";
 
   const box = document.createElement("div");
   box.id = "tt-overlay";
@@ -146,6 +150,7 @@
           okText: "Đóng phụ đề", cancelText: "Tiếp tục dịch", danger: true });
     if (!ok) return;
     if (!ended) chrome.runtime.sendMessage({ cmd: "end", summarize: false });
+    if (IN_PANEL) { window.close(); return; }
     box.style.display = "none";
   }
   btnPause.onclick = () => { chrome.runtime.sendMessage({ cmd: "pause" }); setMode("paused"); setStatus("PAUSED"); };
@@ -265,6 +270,8 @@
     else if (msg.type === "final") final(msg.orig, msg.trans, msg.spk);
   }
   chrome.runtime.onMessage.addListener(onBg);
+  // In the standalone window, ask the worker to (re)send the live session state.
+  if (IN_PANEL) { try { chrome.runtime.sendMessage({ cmd: "panelReady" }); } catch (e) {} }
 
   // drag (header) + resize (corner grip)
   const grip = box.querySelector("#tt-grip");

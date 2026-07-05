@@ -1,7 +1,23 @@
 // Service worker: orchestrates tab-audio capture → offscreen Soniox stream → content overlay.
 
 // source: "tab" (tab audio) | "tabmic" (tab + your mic) | "mic" (microphone only, in-person)
-let active = { tabId: null, running: false, lang: "ko", langB: "vi", way: "one", source: "tab" };
+let active = { tabId: null, running: false, lang: "ko", langB: "vi", way: "one", source: "tab", panel: false };
+
+// A dedicated subtitle window (panel.html) so translation works even when the
+// current tab can't host the overlay (chrome://, new-tab, blank) or the user
+// wants it always-on without opening any web page (e.g. in-person via mic).
+let panelWindowId = null;
+async function openPanel() {
+  if (panelWindowId != null) {
+    try { await chrome.windows.update(panelWindowId, { focused: true }); return; } catch { panelWindowId = null; }
+  }
+  const w = await chrome.windows.create({ url: chrome.runtime.getURL("panel.html"), type: "popup", width: 470, height: 580, focused: true });
+  panelWindowId = w && w.id != null ? w.id : null;
+}
+chrome.windows.onRemoved.addListener((wid) => {
+  // Closing the panel window ends the session so audio streaming (and cost) stops.
+  if (wid === panelWindowId) { panelWindowId = null; if (active.running) endCapture(false); }
+});
 
 async function hasOffscreen() {
   const ctxs = await chrome.runtime.getContexts({ contextTypes: ["OFFSCREEN_DOCUMENT"] });
@@ -45,11 +61,13 @@ async function trAdd(sec) {
   return used >= TR_DAILY;
 }
 
-async function startCapture(lang, resume, sourcev, wayv, langBv, tabIdArg) {
+async function startCapture(lang, resume, sourcev, wayv, langBv, tabIdArg, panelArg) {
+  const source = (resume ? active.source : sourcev) || "tab";
   // Use the tab the popup captured (so a mic-permission tab can't hijack "active").
   let tabId = resume ? active.tabId : tabIdArg;
   if (!tabId) { const [t] = await chrome.tabs.query({ active: true, currentWindow: true }); tabId = t && t.id; }
-  if (!tabId) throw new Error("Không tìm thấy tab");
+  // Tab/Tab+mic need a real tab to capture; Mic (in-person) doesn't.
+  if (!tabId && source !== "mic") throw new Error("Không tìm thấy tab");
 
   // Enforce the 60-min/day cap for transcribe-only before starting.
   const effWay = resume ? active.way : wayv;
@@ -57,28 +75,40 @@ async function startCapture(lang, resume, sourcev, wayv, langBv, tabIdArg) {
     throw new Error("Đã dùng hết 60 phút Chỉ ghi hôm nay. Quay lại ngày mai, hoặc dùng chế độ dịch.");
   }
 
+  let usePanel = resume ? active.panel : !!panelArg;
   if (resume) {
     // Resume: the overlay is still alive (paused state) — re-injecting content.js
     // would rebuild it from scratch and wipe the existing transcript lines.
     await ensureOffscreen();
   } else {
     await recreateOffscreen();
-    let injected = true;
-    try {
-      await chrome.scripting.insertCSS({ target: { tabId }, files: ["content.css"] });
-      await chrome.scripting.executeScript({ target: { tabId }, files: ["content.js"] });
-    } catch { injected = false; }
-    // The subtitle overlay lives inside the page — it can't run on chrome:// or a blank tab.
-    if (!injected) throw new Error("Mở một trang web thường để hiện phụ đề (không dùng được trên chrome:// hay tab trống).");
+    if (!usePanel) {
+      let injected = true;
+      try {
+        await chrome.scripting.insertCSS({ target: { tabId }, files: ["content.css"] });
+        await chrome.scripting.executeScript({ target: { tabId }, files: ["content.js"] });
+      } catch { injected = false; }
+      // Page can't host the overlay (chrome://, blank, no tab) → fall back to the
+      // dedicated subtitle window instead of failing.
+      if (!injected) usePanel = true;
+    }
   }
   active = {
     tabId, running: true,
     lang: lang || active.lang || "ko",
     langB: (resume ? active.langB : langBv) || active.langB || "vi",
     way: (resume ? active.way : wayv) || "one",
-    source: (resume ? active.source : sourcev) || "tab",
+    source, panel: usePanel,
   };
-  chrome.tabs.sendMessage(tabId, { from: "bg", type: "show", resume: !!resume, lang: active.lang, langB: active.langB, way: active.way }).catch(() => {});
+  const showMsg = { from: "bg", type: "show", resume: !!resume, lang: active.lang, langB: active.langB, way: active.way };
+  if (usePanel) {
+    await openPanel();
+    // New window: its content.js will re-request state via "panelReady". Existing
+    // window (resume): this immediate send reaches it right away.
+    chrome.runtime.sendMessage(showMsg).catch(() => {});
+  } else {
+    chrome.tabs.sendMessage(tabId, showMsg).catch(() => {});
+  }
 
   // Tab audio only when the source uses it; "mic" (in-person) skips tab capture
   // so it works on any page without a meeting/video.
@@ -124,8 +154,14 @@ async function getAuthToken() {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.cmd === "start") {
-    startCapture(msg.lang, false, msg.source, msg.way, msg.langB, msg.tabId).then(() => sendResponse({ ok: true })).catch((e) => sendResponse({ ok: false, error: e.message }));
+    startCapture(msg.lang, false, msg.source, msg.way, msg.langB, msg.tabId, msg.panel).then(() => sendResponse({ ok: true })).catch((e) => sendResponse({ ok: false, error: e.message }));
     return true;
+  }
+  if (msg.cmd === "panelReady") {
+    // The subtitle window finished loading — (re)send it the current state.
+    chrome.runtime.sendMessage({ from: "bg", type: "show", resume: false, lang: active.lang, langB: active.langB, way: active.way }).catch(() => {});
+    chrome.runtime.sendMessage({ from: "bg", type: "status", text: active.running ? "LIVE" : "PAUSED" }).catch(() => {});
+    sendResponse({ ok: true }); return;
   }
   if (msg.cmd === "resume") {
     startCapture(active.lang, true).then(() => sendResponse({ ok: true })).catch((e) => sendResponse({ ok: false, error: e.message }));
