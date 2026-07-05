@@ -776,8 +776,15 @@ async function transcribeWhisper(){setProc(t('p_diar'),t('p_wait'));let ext='web
   const r=await fetch('/api/transcribe-openai',{method:'POST',body:fd});
   const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);return (d.text||'').trim();}
 async function summarize(){
-  try{const r=await fetch('/api/summarize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:curTr,system:t('sys')})});
-    const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);curSum=(d.summary||'').trim();renderResult();save(true);
+  try{const r=await fetch('/api/summarize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:curTr,system:t('sys'),stream:true})});
+    if(!r.ok){let m;try{m=(await r.json()).error;}catch(_){m='HTTP '+r.status;}throw new Error(m||'HTTP '+r.status);}
+    if(r.body&&r.body.getReader){
+      // Stream the summary in live so it fills character-by-character (no wait-then-dump lag).
+      curSum='';$('resProc').style.display='none';$('resBody').style.display='';setView('summary');$('summary').innerHTML='';
+      const reader=r.body.getReader(),dec=new TextDecoder();
+      while(true){const {done,value}=await reader.read();if(done)break;curSum+=dec.decode(value,{stream:true});$('summary').innerHTML=md(curSum);$('summary').scrollTop=$('summary').scrollHeight;}
+      curSum=curSum.trim();renderResult();save(true);
+    }else{const d=await r.json();curSum=(d.summary||'').trim();renderResult();save(true);}
   }catch(e){curSum='⚠ '+t('err')+e.message;renderResult();toast(t('err')+e.message);}}
 function renderResult(){$('resProc').style.display='none';$('resBody').style.display='';
   $('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=lvAll.length?fmtTrLive():fmtTr(curTr);

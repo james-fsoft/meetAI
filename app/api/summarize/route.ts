@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => ({}));
   const { lang = "English", system } = body;
+  const wantStream = body.stream === true; // stream tokens so the UI fills in live (no "wait then dump" lag)
   // Cap the payload (a 3-hour transcript is huge); keep the most recent content.
   let transcript: string = typeof body.transcript === "string" ? body.transcript : "";
   if (transcript.length > 200000) transcript = transcript.slice(-200000);
@@ -37,14 +38,57 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: "gpt-4o-mini",
         temperature: 0.3,
+        stream: wantStream,
         messages: [
           { role: "system", content: sys },
           { role: "user", content: transcript },
         ],
       }),
     });
+    if (!r.ok) {
+      const d = await r.json().catch(() => ({} as any));
+      return NextResponse.json({ error: d.error?.message || "OpenAI error" }, { status: r.status });
+    }
+
+    // Streaming: parse OpenAI's SSE and forward just the text deltas as a plain
+    // UTF-8 stream, so the client can append characters as they arrive.
+    if (wantStream && r.body) {
+      const upstream = r.body;
+      const stream = new ReadableStream<Uint8Array>({
+        async start(controller) {
+          const reader = upstream.getReader();
+          const decoder = new TextDecoder();
+          const encoder = new TextEncoder();
+          let buffer = "";
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              buffer += decoder.decode(value, { stream: true });
+              let nl: number;
+              while ((nl = buffer.indexOf("\n")) >= 0) {
+                const line = buffer.slice(0, nl).trim();
+                buffer = buffer.slice(nl + 1);
+                if (!line.startsWith("data:")) continue;
+                const data = line.slice(5).trim();
+                if (data === "[DONE]") { controller.close(); return; }
+                try {
+                  const j = JSON.parse(data);
+                  const delta = j.choices?.[0]?.delta?.content;
+                  if (delta) controller.enqueue(encoder.encode(delta));
+                } catch {}
+              }
+            }
+          } catch {}
+          controller.close();
+        },
+      });
+      return new Response(stream, {
+        headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no" },
+      });
+    }
+
     const d = await r.json().catch(() => ({}));
-    if (!r.ok) return NextResponse.json({ error: d.error?.message || "OpenAI error" }, { status: r.status });
     const summary = d.choices?.[0]?.message?.content?.trim();
     if (!summary) return NextResponse.json({ error: "Empty summary" }, { status: 502 });
     return NextResponse.json({ summary });

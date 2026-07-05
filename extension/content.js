@@ -23,6 +23,7 @@
     '<button class="tt-act pause" id="tt-pause">⏸ Dừng</button>' +
     '<button class="tt-act resume" id="tt-resume" style="display:none">▶ Tiếp tục</button>' +
     '<button class="tt-act" id="tt-psum" title="Tóm tắt tạm thời (tự cập nhật mỗi 15 phút)" style="display:none">📝</button>' +
+    '<button class="tt-act" id="tt-copysc" title="Copy toàn bộ script đã ghi">📋 Script</button>' +
     '<button class="tt-act sum" id="tt-sumbtn">⏹ Tóm tắt</button>' +
     '<button class="tt-act" id="tt-close" style="display:none">× Đóng</button></span></div>' +
     '<div id="tt-micwarn" style="display:none"></div>' +
@@ -40,13 +41,33 @@
   const btnResume = box.querySelector("#tt-resume");
   const btnSum = box.querySelector("#tt-sumbtn");
   const btnPsum = box.querySelector("#tt-psum");
+  const btnCopySc = box.querySelector("#tt-copysc");
   const btnClose = box.querySelector("#tt-close");
   const langSel = box.querySelector("#tt-lang");
   const langBSel = box.querySelector("#tt-langB");
   const langSwap = box.querySelector("#tt-langswap");
   const micWarnEl = box.querySelector("#tt-micwarn");
   let curWay = "one";
-  [btnPause, btnResume, btnSum, btnPsum, btnClose, langSel, langBSel].forEach((b) => b.addEventListener("mousedown", (e) => e.stopPropagation()));
+  [btnPause, btnResume, btnSum, btnPsum, btnCopySc, btnClose, langSel, langBSel].forEach((b) => b.addEventListener("mousedown", (e) => e.stopPropagation()));
+  // Full running script (every finalized line), so "Copy script" grabs the whole
+  // session — not just the ~7 lines currently visible in the overlay.
+  let allLines = [];
+  function scriptText() {
+    return allLines.map((l) => {
+      const who = l.spk != null ? "Speaker " + l.spk : "";
+      let s = (who ? who + "\n" : "") + (l.o || "");
+      if (l.t) s += "\n→ " + l.t;
+      return s;
+    }).join("\n\n");
+  }
+  btnCopySc.onclick = () => {
+    const txt = scriptText();
+    if (!txt) { btnCopySc.textContent = "— trống"; setTimeout(() => (btnCopySc.textContent = "📋 Script"), 1200); return; }
+    navigator.clipboard.writeText(txt).then(() => {
+      btnCopySc.textContent = "✓ Đã copy";
+      setTimeout(() => (btnCopySc.textContent = "📋 Script"), 1400);
+    }).catch(() => {});
+  };
   // Latest auto-summary snapshot (updated every 15 min during long meetings).
   let partialData = null;
   btnPsum.onclick = () => showPartial();
@@ -55,13 +76,15 @@
     box.style.display = "flex"; lines.style.display = "none"; sumEl.style.display = "block";
     sumEl.innerHTML =
       '<div class="tt-sum-h">📝 Tóm tắt tạm thời<span class="tt-sum-act">' +
-      '<button id="tt-pcopy">Copy</button><button id="tt-pdl">Tải tóm tắt</button>' +
-      (partialData.transcript ? '<button id="tt-pdltr">Tải transcript</button>' : "") +
+      '<button id="tt-pcopy">Copy tóm tắt</button><button id="tt-pdl">Tải tóm tắt</button>' +
+      (partialData.transcript ? '<button id="tt-pcopytr">📋 Copy script</button><button id="tt-pdltr">Tải transcript</button>' : "") +
       '</span></div>' +
       '<div class="tt-sum-b">' + md(partialData.text) + "</div>" +
       '<div class="tt-sum-foot"><button id="tt-pback">← Quay lại phụ đề</button></div>';
     sumEl.querySelector("#tt-pcopy").onclick = () => navigator.clipboard.writeText(partialData.text);
     sumEl.querySelector("#tt-pdl").onclick = () => dlFile(partialData.text, "summary-partial.txt");
+    const ctr = sumEl.querySelector("#tt-pcopytr");
+    if (ctr) ctr.onclick = () => copyBtn(ctr, partialData.transcript, "📋 Copy script");
     const tr = sumEl.querySelector("#tt-pdltr");
     if (tr) tr.onclick = () => dlFile(partialData.transcript, "transcript.txt");
     sumEl.querySelector("#tt-pback").onclick = () => { sumEl.style.display = "none"; lines.style.display = "block"; };
@@ -83,6 +106,7 @@
     btnPause.style.display = m === "live" ? "" : "none";
     btnResume.style.display = m === "paused" ? "" : "none";
     btnSum.style.display = m === "stopped" ? "none" : "";
+    btnCopySc.style.display = m === "stopped" ? "none" : "";
     btnClose.style.display = m === "paused" ? "" : "none";
     if (m !== "stopped") btnSum.textContent = "⏹ Tóm tắt";
   }
@@ -113,18 +137,52 @@
     a.href = URL.createObjectURL(new Blob(["﻿" + (content || "")], { type: "text/plain;charset=utf-8" }));
     a.download = name; a.click();
   }
+  // Streaming summary: build the panel shell once (buttons live immediately —
+  // the script/transcript is already available), then fill the body as tokens
+  // stream in. Avoids rebuilding + re-binding handlers on every chunk.
+  let curSummaryText = "", curTranscript = "";
+  function showSummaryShell(transcript) {
+    curSummaryText = ""; curTranscript = transcript || "";
+    box.style.display = "flex"; lines.style.display = "none"; sumEl.style.display = "block";
+    sumEl.innerHTML =
+      '<div class="tt-sum-h">📝 Tóm tắt<span class="tt-sum-act">' +
+      '<button id="tt-copy">Copy tóm tắt</button>' +
+      '<button id="tt-dl">Tải tóm tắt</button>' +
+      (curTranscript ? '<button id="tt-copytr">📋 Copy script</button><button id="tt-dltr">Tải transcript</button>' : "") +
+      '</span></div>' +
+      '<div class="tt-sum-b" id="tt-sumbody"><span style="color:#9fb3d6">✍️ Đang tóm tắt…</span></div>' +
+      '<div class="tt-sum-foot"><button id="tt-sumclose">× Đóng phụ đề</button></div>';
+    sumEl.querySelector("#tt-copy").onclick = () => navigator.clipboard.writeText(curSummaryText);
+    sumEl.querySelector("#tt-dl").onclick = () => dlFile(curSummaryText, "summary.txt");
+    const ctr = sumEl.querySelector("#tt-copytr"); if (ctr) ctr.onclick = () => copyBtn(ctr, curTranscript, "📋 Copy script");
+    const tr = sumEl.querySelector("#tt-dltr"); if (tr) tr.onclick = () => dlFile(curTranscript, "transcript.txt");
+    sumEl.querySelector("#tt-sumclose").onclick = () => doClose(true);
+  }
+  function updateSummaryBody(text) {
+    curSummaryText = text || "";
+    const b = box.querySelector("#tt-sumbody"); if (b) b.innerHTML = md(curSummaryText);
+  }
+  function finalizeSummary(text, transcript) {
+    if (text) curSummaryText = text; if (transcript) curTranscript = transcript;
+    const b = box.querySelector("#tt-sumbody"); if (b) b.innerHTML = md(curSummaryText || "—");
+  }
+  function copyBtn(btn, text, label) {
+    navigator.clipboard.writeText(text || "").then(() => { btn.textContent = "✓ Đã copy"; setTimeout(() => (btn.textContent = label), 1400); }).catch(() => {});
+  }
   function showSummary(text, transcript) {
     box.style.display = "flex"; lines.style.display = "none"; sumEl.style.display = "block";
     sumEl.innerHTML =
       '<div class="tt-sum-h">📝 Tóm tắt<span class="tt-sum-act">' +
-      '<button id="tt-copy">Copy</button>' +
+      '<button id="tt-copy">Copy tóm tắt</button>' +
       '<button id="tt-dl">Tải tóm tắt</button>' +
-      (transcript ? '<button id="tt-dltr">Tải transcript</button>' : "") +
+      (transcript ? '<button id="tt-copytr">📋 Copy script</button><button id="tt-dltr">Tải transcript</button>' : "") +
       '</span></div>' +
       '<div class="tt-sum-b">' + md(text) + "</div>" +
       '<div class="tt-sum-foot"><button id="tt-sumclose">× Đóng phụ đề</button></div>';
     sumEl.querySelector("#tt-copy").onclick = () => navigator.clipboard.writeText(text);
     sumEl.querySelector("#tt-dl").onclick = () => dlFile(text, "summary.txt");
+    const ctr = sumEl.querySelector("#tt-copytr");
+    if (ctr) ctr.onclick = () => copyBtn(ctr, transcript, "📋 Copy script");
     const tr = sumEl.querySelector("#tt-dltr");
     if (tr) tr.onclick = () => dlFile(transcript, "transcript.txt");
     sumEl.querySelector("#tt-sumclose").onclick = () => doClose(true);
@@ -150,6 +208,7 @@
     cur.innerHTML = html(o, t, spk); trim(); lines.scrollTop = lines.scrollHeight;
   }
   function final(o, t, spk) {
+    if (o || t) allLines.push({ o, t, spk });
     if (!cur) { cur = document.createElement("div"); cur.className = "tt-line"; lines.appendChild(cur); }
     cur.className = "tt-line"; cur.innerHTML = html(o, t, spk); cur = null; trim(); lines.scrollTop = lines.scrollHeight;
   }
@@ -160,11 +219,14 @@
       if (msg.way) curWay = msg.way; const two = curWay === "two", off = curWay === "off";
       langSel.style.display = off ? "none" : ""; langSwap.style.display = two ? "" : "none"; langBSel.style.display = two ? "" : "none";
       if (msg.lang) langSel.value = msg.lang; if (msg.langB) langBSel.value = msg.langB;
-      if (!msg.resume) { lines.innerHTML = ""; cur = null; partialData = null; btnPsum.style.display = "none"; } setMode("live"); }
+      if (!msg.resume) { lines.innerHTML = ""; cur = null; allLines = []; partialData = null; btnPsum.style.display = "none"; } setMode("live"); }
     else if (msg.type === "hide") box.style.display = "none";
     else if (msg.type === "status") { setStatus(msg.text); if (msg.text === "PAUSED") setMode("paused"); else if (msg.text === "STOPPED") setMode("stopped"); }
     else if (msg.type === "micWarn") setMicWarn(msg.text);
     else if (msg.type === "summarizing") { setMode("stopped"); showSummarizing(); }
+    else if (msg.type === "summaryStart") { setMode("stopped"); showSummaryShell(msg.transcript); }
+    else if (msg.type === "summaryChunk") { updateSummaryBody(msg.text); }
+    else if (msg.type === "summaryDone") { finalizeSummary(msg.text, msg.transcript); }
     else if (msg.type === "summary") { setMode("stopped"); showSummary(msg.text, msg.transcript); }
     else if (msg.type === "partialSummary") { partialData = { text: msg.text, transcript: msg.transcript }; btnPsum.style.display = ""; btnPsum.textContent = "📝 Tóm tắt"; }
     else if (msg.type === "partial") partial(msg.orig, msg.trans, msg.spk);

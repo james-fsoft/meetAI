@@ -249,7 +249,9 @@ function endCap(summarize) {
   else fullLines = [];
 }
 
-// After stopping, summarize the whole session via the backend.
+// After stopping, summarize the whole session via the backend. Streams the
+// result so the overlay fills in live (no "wait then dump" lag). Throttles the
+// relayed chunks (~120ms) so we don't flood the worker with a message per token.
 async function summarizeNow() {
   const transcript = buildTranscript();
   const sumInput = fullLines.map((l) => (l.spk != null ? "Speaker " + l.spk + ": " : "") + (l.o || "")).join("\n");
@@ -258,10 +260,24 @@ async function summarizeNow() {
   try {
     const r = await fetch(API_BASE + "/api/summarize", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ transcript: sumInput }),
+      body: JSON.stringify({ transcript: sumInput, stream: true }),
     });
-    const d = await r.json();
-    if (!r.ok) throw new Error(d.error || "summary");
-    send({ type: "summary", text: (d.summary || "").trim(), transcript });
+    if (!r.ok) { let m; try { m = (await r.json()).error; } catch (_) {} throw new Error(m || "summary"); }
+    if (r.body && r.body.getReader) {
+      send({ type: "summaryStart", transcript });
+      const reader = r.body.getReader(), dec = new TextDecoder();
+      let acc = "", lastSent = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        acc += dec.decode(value, { stream: true });
+        const now = Date.now();
+        if (now - lastSent > 120) { lastSent = now; send({ type: "summaryChunk", text: acc }); }
+      }
+      send({ type: "summaryDone", text: acc.trim(), transcript });
+    } else {
+      const d = await r.json();
+      send({ type: "summary", text: (d.summary || "").trim(), transcript });
+    }
   } catch (e) { send({ type: "summary", text: "⚠ Tóm tắt lỗi: " + e.message, transcript }); }
 }
