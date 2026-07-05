@@ -22,6 +22,7 @@
     '<select class="tt-lang" id="tt-lang" title="Dịch sang">' + LANG_OPTS + "</select>" +
     '<span class="tt-langswap" id="tt-langswap" style="display:none">⇄</span>' +
     '<select class="tt-lang" id="tt-langB" style="display:none">' + LANG_OPTS + "</select>" +
+    '<span class="tt-wave" id="tt-wave"><i></i><i></i><i></i><i></i><i></i></span>' +
     '<span class="tt-st" id="tt-st">준비 중…</span>' +
     '<span class="tt-acts">' +
     '<button class="tt-act pause" id="tt-pause">⏸ Dừng</button>' +
@@ -31,6 +32,7 @@
     '<button class="tt-act sum" id="tt-sumbtn">⏹ Tóm tắt</button>' +
     '<button class="tt-act" id="tt-close" style="display:none">× Đóng</button></span></div>' +
     '<div id="tt-micwarn" style="display:none"></div>' +
+    '<div id="tt-prep"></div>' +
     '<div id="tt-lines"></div><div id="tt-sum" style="display:none"></div>' +
     '<div class="tt-grip" id="tt-grip" title="Kéo để chỉnh kích thước">' +
     '<svg width="14" height="14" viewBox="0 0 14 14"><g stroke="#cfe0ff" stroke-width="1.6" stroke-linecap="round">' +
@@ -51,6 +53,36 @@
   const langBSel = box.querySelector("#tt-langB");
   const langSwap = box.querySelector("#tt-langswap");
   const micWarnEl = box.querySelector("#tt-micwarn");
+  const prepEl = box.querySelector("#tt-prep");
+  const waveEl = box.querySelector("#tt-wave");
+
+  // "Get ready" countdown + recording signal. Soniox needs ~1–3s to warm up, so
+  // speech in the very first moments is often missed — count 3·2·1 to tell the
+  // user to wait, then reveal an animated waveform once audio is really flowing.
+  let prepTimer = null, prepDone = false, sxReady = false;
+  function startPrep() {
+    stopPrep(); prepDone = false; sxReady = false;
+    let n = 3; showCount(n);
+    prepTimer = setInterval(() => {
+      n -= 1;
+      if (n >= 1) { showCount(n); }
+      else { clearInterval(prepTimer); prepTimer = null; prepDone = true; afterCount(); }
+    }, 1000);
+  }
+  function showCount(n) {
+    prepEl.style.display = "flex"; lines.style.display = "none"; sumEl.style.display = "none";
+    prepEl.innerHTML = '<div class="tt-prep-num">' + n + '</div><div class="tt-prep-txt">Đang chuẩn bị…<br>hãy đợi một chút rồi bắt đầu nói</div>';
+  }
+  function afterCount() {
+    if (sxReady) endPrep();
+    else prepEl.innerHTML = '<div class="tt-prep-dot"></div><div class="tt-prep-txt">Đang kết nối… sắp xong</div>';
+  }
+  function endPrep() {
+    stopPrep();
+    if (prepEl.style.display !== "none") { prepEl.style.display = "none"; lines.style.display = "block"; }
+  }
+  function stopPrep() { if (prepTimer) { clearInterval(prepTimer); prepTimer = null; } }
+  function markReady() { sxReady = true; waveEl.style.display = "inline-flex"; if (prepDone) endPrep(); }
   let curWay = "one";
   [btnPause, btnResume, btnSum, btnPsum, btnCopySc, btnClose, langSel, langBSel].forEach((b) => b.addEventListener("mousedown", (e) => e.stopPropagation()));
   // Full running script (every finalized line), so "Copy script" grabs the whole
@@ -226,9 +258,9 @@
   }
 
   function setStatus(text) {
-    if (text === "LIVE") { stEl.textContent = "● đang dịch"; stEl.className = "tt-st ok"; }
-    else if (text === "PAUSED") { stEl.textContent = "⏸ tạm dừng"; stEl.className = "tt-st"; }
-    else if (text === "STOPPED") { stEl.textContent = "đã dừng"; stEl.className = "tt-st"; }
+    if (text === "LIVE") { stEl.textContent = "● đang thu"; stEl.className = "tt-st ok"; markReady(); }
+    else if (text === "PAUSED") { stEl.textContent = "⏸ tạm dừng"; stEl.className = "tt-st"; waveEl.style.display = "none"; stopPrep(); }
+    else if (text === "STOPPED") { stEl.textContent = "đã dừng"; stEl.className = "tt-st"; waveEl.style.display = "none"; endPrep(); }
     else { stEl.textContent = text; stEl.className = "tt-st err"; }
   }
 
@@ -256,7 +288,7 @@
       if (msg.way) curWay = msg.way; const two = curWay === "two", off = curWay === "off";
       langSel.style.display = off ? "none" : ""; langSwap.style.display = two ? "" : "none"; langBSel.style.display = two ? "" : "none";
       if (msg.lang) langSel.value = msg.lang; if (msg.langB) langBSel.value = msg.langB;
-      if (!msg.resume) { lines.innerHTML = ""; cur = null; allLines = []; partialData = null; btnPsum.style.display = "none"; } setMode("live"); }
+      if (!msg.resume) { lines.innerHTML = ""; cur = null; allLines = []; partialData = null; btnPsum.style.display = "none"; startPrep(); } else { prepDone = true; } setMode("live"); }
     else if (msg.type === "hide") box.style.display = "none";
     else if (msg.type === "status") { setStatus(msg.text); if (msg.text === "PAUSED") setMode("paused"); else if (msg.text === "STOPPED") setMode("stopped"); }
     else if (msg.type === "micWarn") setMicWarn(msg.text);
@@ -266,8 +298,8 @@
     else if (msg.type === "summaryDone") { finalizeSummary(msg.text, msg.transcript); }
     else if (msg.type === "summary") { setMode("stopped"); showSummary(msg.text, msg.transcript); }
     else if (msg.type === "partialSummary") { partialData = { text: msg.text, transcript: msg.transcript }; btnPsum.style.display = ""; btnPsum.textContent = "📝 Tóm tắt"; }
-    else if (msg.type === "partial") partial(msg.orig, msg.trans, msg.spk);
-    else if (msg.type === "final") final(msg.orig, msg.trans, msg.spk);
+    else if (msg.type === "partial") { markReady(); endPrep(); partial(msg.orig, msg.trans, msg.spk); }
+    else if (msg.type === "final") { markReady(); endPrep(); final(msg.orig, msg.trans, msg.spk); }
   }
   chrome.runtime.onMessage.addListener(onBg);
   // In the standalone window, ask the worker to (re)send the live session state.

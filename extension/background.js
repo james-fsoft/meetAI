@@ -18,6 +18,15 @@ chrome.windows.onRemoved.addListener((wid) => {
   // Closing the panel window ends the session so audio streaming (and cost) stops.
   if (wid === panelWindowId) { panelWindowId = null; if (active.running) endCapture(false); }
 });
+// Keep the panel window from being dragged too narrow (layout breaks below this).
+const PANEL_MIN_W = 380;
+if (chrome.windows.onBoundsChanged) {
+  chrome.windows.onBoundsChanged.addListener((win) => {
+    if (win && win.id === panelWindowId && typeof win.width === "number" && win.width < PANEL_MIN_W) {
+      chrome.windows.update(panelWindowId, { width: PANEL_MIN_W }).catch(() => {});
+    }
+  });
+}
 
 async function hasOffscreen() {
   const ctxs = await chrome.runtime.getContexts({ contextTypes: ["OFFSCREEN_DOCUMENT"] });

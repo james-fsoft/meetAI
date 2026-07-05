@@ -24,6 +24,14 @@
 #tt-overlay .tt-lang option{color:#0c1322}
 #tt-overlay .tt-langswap{color:#9fb3d6;font-weight:800;font-size:13px;flex-shrink:0}
 #tt-overlay .tt-st{flex:1;min-width:0;font-size:10.5px;font-weight:700;color:#9fb3d6;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Recording waveform (shows only while actually capturing audio) */
+#tt-overlay .tt-wave{display:none;align-items:flex-end;gap:2px;height:14px;flex-shrink:0}
+#tt-overlay .tt-wave i{width:3px;height:4px;background:#7ee0a6;border-radius:2px;animation:ttwave 1s ease-in-out infinite}
+#tt-overlay .tt-wave i:nth-child(2){animation-delay:.15s}
+#tt-overlay .tt-wave i:nth-child(3){animation-delay:.3s}
+#tt-overlay .tt-wave i:nth-child(4){animation-delay:.45s}
+#tt-overlay .tt-wave i:nth-child(5){animation-delay:.6s}
+@keyframes ttwave{0%,100%{height:4px}50%{height:14px}}
 #tt-overlay .tt-st.ok{color:#7ee0a6}
 #tt-overlay .tt-st.err{color:#ffb4b4;font-weight:600}
 #tt-overlay .tt-acts{display:flex;align-items:center;flex-wrap:wrap;justify-content:flex-end;gap:6px;row-gap:6px;margin-left:auto;flex-shrink:0}
@@ -38,6 +46,14 @@
 #tt-overlay .tt-act.resume:hover{background:rgba(34,197,94,.42);color:#fff}
 #tt-overlay .tt-act.sum{background:rgba(59,130,246,.24);color:#cfe0ff;border-color:rgba(59,130,246,.4)}
 #tt-overlay .tt-act.sum:hover{background:rgba(59,130,246,.45);color:#fff}
+/* "Get ready" countdown shown for the first seconds while Soniox warms up
+   (speech in the very first ~3s often isn't recognized). */
+#tt-overlay #tt-prep{flex:1;min-height:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;text-align:center}
+#tt-overlay .tt-prep-num{font-size:66px;font-weight:900;color:#fff;line-height:1;animation:ttcount 1s ease-out}
+@keyframes ttcount{0%{transform:scale(.55);opacity:0}45%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:1}}
+#tt-overlay .tt-prep-txt{font-size:13px;font-weight:700;color:#9fb3d6;line-height:1.5}
+#tt-overlay .tt-prep-dot{width:30px;height:30px;border:3px solid rgba(255,255,255,.22);border-top-color:#1f6bff;border-radius:50%;animation:ttspin .8s linear infinite}
+@keyframes ttspin{to{transform:rotate(360deg)}}
 #tt-lines{flex:1; min-height:0; padding:10px 14px 22px; overflow:auto}
 #tt-lines .tt-line{padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06)}
 #tt-lines .tt-line:last-child{border-bottom:none}
@@ -61,7 +77,7 @@
 .tt-grip svg{display:block;pointer-events:none}
 #tt-sum::-webkit-scrollbar{width:6px}#tt-sum::-webkit-scrollbar-thumb{background:rgba(255,255,255,.25);border-radius:8px}
 .tt-sum-h{display:flex;align-items:center;font-size:13px;font-weight:800;color:#fff;margin-bottom:10px}
-.tt-sum-act{margin-left:auto;display:flex;gap:6px}
+.tt-sum-act{margin-left:auto;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;row-gap:6px}
 .tt-sum-act button{border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#dfe8f7;
   font-family:inherit;font-size:11px;font-weight:700;padding:4px 9px;border-radius:7px;cursor:pointer}
 .tt-sum-act button:hover{background:rgba(255,255,255,.18)}
