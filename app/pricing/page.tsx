@@ -23,6 +23,7 @@ type Dict = {
   monthly: string; annual: string; period: string; contact: string;
   billedYear: (x: string) => string; busy: string; promo: string;
   usageTitle: string; reassure: string;
+  current: string; currentNote: (plan: string) => string; switchTo: (plan: string) => string;
   trust: string[];
   refTitle: string; refSub: string; refCta: string; refCopied: string;
   refReward: string; refShareText: string; refCopyBtn: string; refShareMore: string; refYourLink: string;
@@ -68,6 +69,7 @@ const T: Record<Lang, Dict> = {
     monthly: "Monthly", annual: "Annual", period: "/ mo", contact: "Contact",
     billedYear: (x) => `Billed ${x} / year`, busy: "Opening…", promo: "🎉 Launch offer — save 33%, limited time",
     usageTitle: "Comfortably covers", reassure: "💡 Quota resets every month · most users use only ~40% — you'll have plenty of room.",
+    current: "Current plan", currentNote: (p) => `You're on the ${p} plan`, switchTo: (p) => `Switch to ${p}`,
     trust: ["✓ Cancel anytime", "✓ No hidden fees", "✓ Private — we don't sell data"],
     refTitle: "Invite friends — you both get 2 hours free",
     refSub: "Share your link. Every friend who signs up gives you both 120 free minutes (2 hours). No limit — invite 10 friends = 20 free hours.",
@@ -120,6 +122,7 @@ const T: Record<Lang, Dict> = {
     monthly: "Theo tháng", annual: "Theo năm", period: "/ tháng", contact: "Liên hệ",
     billedYear: (x) => `Thanh toán ${x} / năm`, busy: "Đang mở…", promo: "🎉 Ưu đãi ra mắt — giảm 33%, có hạn",
     usageTitle: "Đủ dùng thoải mái cho", reassure: "💡 Hạn mức làm mới mỗi tháng · đa số người dùng chỉ dùng ~40% — bạn sẽ rất thoải mái.",
+    current: "Gói hiện tại", currentNote: (p) => `Bạn đang dùng gói ${p}`, switchTo: (p) => `Chuyển sang ${p}`,
     trust: ["✓ Huỷ bất cứ lúc nào", "✓ Không phí ẩn", "✓ Bảo mật — không bán dữ liệu"],
     refTitle: "Mời bạn bè — cả hai cùng được tặng 2 giờ miễn phí",
     refSub: "Chia sẻ link của bạn. Mỗi người bạn đăng ký → cả hai +120 phút (2 giờ) miễn phí. Không giới hạn — mời 10 bạn = 20 giờ miễn phí.",
@@ -172,6 +175,7 @@ const T: Record<Lang, Dict> = {
     monthly: "월간", annual: "연간", period: "/ 월", contact: "문의",
     billedYear: (x) => `연 ${x} 청구`, busy: "여는 중…", promo: "🎉 출시 기념 — 33% 할인, 기간 한정",
     usageTitle: "여유롭게 사용 가능", reassure: "💡 한도는 매월 초기화 · 대부분 ~40%만 사용 — 충분히 여유롭습니다.",
+    current: "현재 요금제", currentNote: (p) => `현재 ${p} 요금제 이용 중`, switchTo: (p) => `${p}로 변경`,
     trust: ["✓ 언제든 해지", "✓ 숨은 비용 없음", "✓ 데이터 미판매"],
     refTitle: "친구 초대 — 둘 다 2시간 무료",
     refSub: "링크를 공유하세요. 친구가 가입할 때마다 둘 다 120분(2시간) 무료. 제한 없음 — 10명 초대 = 20시간 무료.",
@@ -346,10 +350,14 @@ export default function Pricing() {
   const [invite, setInvite] = useState<{ link: string; bonus: number } | null>(null);
   const [copied, setCopied] = useState(false);
   const [refData, setRefData] = useState<{ link?: string; stats?: { invited: number; earned: number } } | null>(null);
+  // Signed-in user's plan (null = logged out / still loading → no indicator).
+  const [currentPlan, setCurrentPlan] = useState<string | null>(null);
   const fmtVnd = (n: number) => n.toLocaleString("vi-VN") + "đ";
 
   useEffect(() => {
     fetch("/api/referral").then((r) => (r.ok ? r.json() : null)).then((d) => { if (d) setRefData(d); }).catch(() => {});
+    fetch("/api/usage", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.plan) setCurrentPlan(d.plan); }).catch(() => {});
     // Returning from login via "Invite Your Team"? Re-open the invite popup so the
     // flow continues seamlessly instead of dumping the user back on the page.
     if (new URLSearchParams(location.search).get("invite") === "1") {
@@ -452,6 +460,10 @@ export default function Pricing() {
 
       <div style={S.promo}>{t.promo}</div>
 
+      {currentPlan && t.plans[currentPlan] && (
+        <div style={S.curNote}><span style={S.curDot} aria-hidden />{t.currentNote(t.plans[currentPlan].name)}</div>
+      )}
+
       <div style={S.billRow}>
         <button onClick={() => setBilling("monthly")} style={{ ...S.billBtn, ...(billing === "monthly" ? S.billOn : {}) }}>{t.monthly}</button>
         <button onClick={() => setBilling("annual")} style={{ ...S.billBtn, ...(billing === "annual" ? S.billOn : {}) }}>
@@ -460,16 +472,21 @@ export default function Pricing() {
       </div>
 
       <section style={S.grid}>
-        {PLANS.map((p) => {
+        {PLANS.map((p, i) => {
           const tx = t.plans[p.id];
           const isPaid = p.id === "pro" || p.id === "business";
           const price = p.id === "enterprise"
             ? t.contact
             : (billing === "annual" && tx.priceAnnual ? tx.priceAnnual : tx.priceMonthly);
           const orig = billing === "annual" ? tx.origAnnual : tx.origMonthly;
+          const isCur = currentPlan === p.id;
+          // PLANS is ordered by tier, so a paid plan left of the current one is a downgrade.
+          const isDown = isPaid && PLANS.findIndex((x) => x.id === currentPlan) > i;
           return (
-            <div key={p.id} style={{ ...S.card, ...(p.highlight ? S.cardHi : {}) }}>
-              {tx.tag && <div style={S.tag}>{tx.tag}</div>}
+            <div key={p.id} style={{ ...S.card, ...(p.highlight ? S.cardHi : {}), ...(isCur ? S.cardCur : {}) }}>
+              {isCur
+                ? <div style={{ ...S.tag, ...S.tagCur }}>✓ {t.current}</div>
+                : tx.tag && <div style={S.tag}>{tx.tag}</div>}
               <div style={S.name}>{tx.name}</div>
               <div style={S.tagline}>{tx.tagline}</div>
               {isPaid && orig && <div style={S.origRow}><span style={S.orig}>{orig}</span><span style={S.off}>-33%</span></div>}
@@ -480,10 +497,11 @@ export default function Pricing() {
               <div style={S.annualNote}>
                 {billing === "annual" && isPaid && tx.annualTotal ? t.billedYear(tx.annualTotal) : " "}
               </div>
-              <button onClick={() => choose(p)} disabled={busy === p.id} style={{ ...S.cta, ...(p.highlight ? S.ctaHi : {}) }}>
-                {busy === p.id ? t.busy : tx.cta}
+              <button onClick={() => choose(p)} disabled={isCur || busy === p.id}
+                style={{ ...S.cta, ...(p.highlight ? S.ctaHi : {}), ...(isCur ? S.ctaCur : {}) }}>
+                {isCur ? `✓ ${t.current}` : busy === p.id ? t.busy : isDown ? t.switchTo(tx.name) : tx.cta}
               </button>
-              {lang === "vi" && isPaid && (
+              {lang === "vi" && isPaid && !isCur && (
                 <button onClick={() => payVietQR(p.id)} disabled={qrBusy} style={S.qrBtn}>
                   🏦 Chuyển khoản QR ngân hàng
                 </button>
@@ -717,6 +735,14 @@ const S: Record<string, React.CSSProperties> = {
   tag: { position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap",
     background: "linear-gradient(135deg,#3b82f6,#1f4fff)", color: "#fff", fontSize: 11, fontWeight: 800,
     letterSpacing: ".02em", padding: "5px 14px", borderRadius: 30, boxShadow: "0 8px 18px -6px rgba(31,79,255,.6)" },
+  // "current plan" indicator — green so it reads apart from the blue "most popular" highlight
+  cardCur: { border: "1.5px solid #16a34a", boxShadow: "0 30px 60px -30px rgba(22,163,74,.45)" },
+  tagCur: { background: "linear-gradient(135deg,#22c55e,#16a34a)", boxShadow: "0 8px 18px -6px rgba(22,163,74,.6)" },
+  ctaCur: { background: "#e7f8ee", color: "#15803d", border: "1.5px solid #bcebcd", boxShadow: "none", cursor: "default" },
+  curNote: { display: "flex", alignItems: "center", gap: 8, margin: "0 auto 18px", width: "fit-content", maxWidth: "92%",
+    fontSize: 13, fontWeight: 700, color: "#15803d", background: "#f0fdf4", border: "1px solid #bcebcd",
+    borderRadius: 30, padding: "7px 16px" },
+  curDot: { width: 7, height: 7, borderRadius: 7, background: "#16a34a", boxShadow: "0 0 0 3px #16a34a22", flexShrink: 0 },
   name: { fontSize: 19, fontWeight: 800, letterSpacing: "-.02em" },
   tagline: { fontSize: 12.5, color: "#7b88a3", marginTop: 4, minHeight: 32, lineHeight: 1.4, fontWeight: 500 },
   promo: { display: "block", margin: "0 auto 18px", textAlign: "center", width: "fit-content", maxWidth: "92%",
