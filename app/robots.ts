@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/account", "/api/", "/auth/", "/login"],
+        disallow: ["/admin", "/account", "/dashboard", "/api/", "/auth/", "/login"],
       },
     ],
     sitemap: "https://meet.transflash.app/sitemap.xml",

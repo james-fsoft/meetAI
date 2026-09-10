@@ -13,13 +13,13 @@ const STORE_URL = "https://chromewebstore.google.com/detail/fnaffendjnopgpfehgoo
 
 const T: Record<Lang, {
   trial: string; pricing: string; signin: string; signout: string;
-  planTitle: string; account: string; refBanner: string; refClaim: string; ext: string;
+  planTitle: string; account: string; cal: string; refBanner: string; refClaim: string; ext: string;
   extPromo: string; extAdd: string; extMore: string;
   nudgeTitle: string; nudgeBody: string; nudgeLater: string; nudgeHave: string;
 }> = {
   en: {
     trial: "🎁 Translate free · 3 min", pricing: "Pricing", signin: "Sign in", signout: "Sign out",
-    planTitle: "Manage plan", account: "My Page", ext: "Extension",
+    planTitle: "Manage plan", account: "My Page", cal: "Meetings", ext: "Extension",
     refBanner: "🎁 A friend invited you to Flash Meet — sign in to claim 120 free minutes (2 hours)!", refClaim: "Sign in & claim →",
     extPromo: "Translate Google Meet, Zoom & video live in your browser — free for Chrome, Edge & Brave.", extAdd: "Get the extension", extMore: "Learn more",
     nudgeTitle: "Get the best experience", nudgeBody: "Install the TransFlash extension to translate meetings live, right in your browser.",
@@ -27,7 +27,7 @@ const T: Record<Lang, {
   },
   vi: {
     trial: "🎁 Dịch thử 3 phút", pricing: "Các gói", signin: "Đăng nhập", signout: "Đăng xuất",
-    planTitle: "Quản lý gói", account: "Tài khoản", ext: "Tiện ích",
+    planTitle: "Quản lý gói", account: "Tài khoản", cal: "Lịch họp", ext: "Tiện ích",
     refBanner: "🎁 Bạn được mời dùng Flash Meet — đăng nhập để nhận 120 phút (2 giờ) miễn phí!", refClaim: "Đăng nhập & nhận →",
     extPromo: "Dịch trực tiếp Google Meet, Zoom & video trên trình duyệt — miễn phí cho Chrome, Edge & Brave.", extAdd: "Cài tiện ích", extMore: "Tìm hiểu",
     nudgeTitle: "Trải nghiệm tốt nhất", nudgeBody: "Cài tiện ích TransFlash để dịch cuộc họp trực tiếp ngay trên trình duyệt.",
@@ -35,7 +35,7 @@ const T: Record<Lang, {
   },
   ko: {
     trial: "🎁 3분 번역 체험", pricing: "요금제", signin: "로그인", signout: "로그아웃",
-    planTitle: "요금제 관리", account: "마이페이지", ext: "확장 프로그램",
+    planTitle: "요금제 관리", account: "마이페이지", cal: "회의 캘린더", ext: "확장 프로그램",
     refBanner: "🎁 친구가 Flash Meet에 초대했어요 — 로그인하고 120분(2시간) 무료 받으세요!", refClaim: "로그인하고 받기 →",
     extPromo: "브라우저에서 Google Meet·Zoom·영상 실시간 번역 — Chrome·Edge·Brave 무료.", extAdd: "확장 설치", extMore: "자세히",
     nudgeTitle: "최상의 경험", nudgeBody: "TransFlash 확장 프로그램을 설치하면 브라우저에서 바로 회의를 실시간 번역합니다.",
@@ -129,8 +129,8 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
   }
 
   const iframeSrc = signedIn
-    ? `/meeting.html?v=67&signed=1&plan=${encodeURIComponent(plan)}`
-    : "/meeting.html?v=67";
+    ? `/meeting.html?v=68&signed=1&plan=${encodeURIComponent(plan)}`
+    : "/meeting.html?v=68";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -148,6 +148,13 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
           <div className="fm-right">
             <a href="/extension" className="fm-ext" style={{ textDecoration: "none", color: "#5b6b8c", fontWeight: 700 }}>🧩 {t.ext}</a>
             {admin && <a href="/admin" className="fm-admin" style={adminLink}>⚙ Admin</a>}
+            <a href="/dashboard" style={calLink} title={t.cal}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }} aria-hidden="true">
+                <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+                <path d="M3.5 10h17M8 3v4M16 3v4" />
+              </svg>
+              <span className="fm-acct-label">{t.cal}</span>
+            </a>
             <PlanMenu plan={plan} lang={lang} email={email} />
             <a href="/account" style={accountLink} title={t.account}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }} aria-hidden="true">
@@ -306,6 +313,11 @@ const nudgeFoot: React.CSSProperties = { display: "flex", justifyContent: "space
 const nudgeGhost: React.CSSProperties = {
   border: "none", background: "none", cursor: "pointer", fontFamily: "inherit",
   fontSize: 12.5, fontWeight: 700, color: "#7b88a3", padding: "4px 2px",
+};
+const calLink: React.CSSProperties = {
+  display: "inline-flex", alignItems: "center", gap: 6,
+  fontSize: 12, fontWeight: 800, color: "#0a1124", background: "#fff", border: "1.5px solid #e3e8f2",
+  borderRadius: 8, padding: "4.5px 11px", textDecoration: "none", whiteSpace: "nowrap",
 };
 const accountLink: React.CSSProperties = {
   display: "inline-flex", alignItems: "center", gap: 6,
