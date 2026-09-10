@@ -265,7 +265,7 @@ const REF_CSS = `
 .ref-later:hover{background:#f1f5f9;color:#0f172a}
 .ref-start{flex:1;border:none;border-radius:14px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-family:inherit;font-size:15px;font-weight:700;padding:15px;cursor:pointer;box-shadow:0 6px 18px rgba(37,99,235,.3);transition:.18s}
 .ref-start:hover{box-shadow:0 12px 30px rgba(37,99,235,.45);transform:translateY(-1px)}
-@media(max-width:560px){.ref-modal{padding:24px}.ref-h{font-size:26px}}
+@media(max-width:560px){.ref-modal{padding:20px 18px;border-radius:20px}.ref-x{top:14px;right:14px}.ref-h{font-size:22px;margin-top:14px}.ref-sub{font-size:13.5px}.ref-reward{padding:12px 14px;margin-top:16px}.ref-rval{font-size:17px}.ref-rdiv{margin:2px 10px}.ref-linklabel,.ref-sharetitle{margin-top:18px}.ref-input,.ref-copy{height:46px;font-size:13px}.ref-copy{padding:0 16px}.ref-ic{height:42px}.ref-divider{margin-top:18px}.ref-cta{margin-top:16px}.ref-start{padding:13px;font-size:14px}}
 `;
 
 // Premium referral banner (Stripe/Linear/Notion-style enterprise card).
@@ -295,7 +295,7 @@ const REFBANNER_CSS = `
 .refb-perf{font-weight:700;color:#475569}
 .refb-stats b{color:#0f172a;font-weight:800}
 .refb-dot{color:#cbd5e1}
-@media(max-width:560px){.refb{padding:22px}.refb-h{font-size:23px}.refb-metrics{width:100%}.refb-card{flex:1}.refb-right{width:100%}}
+@media(max-width:560px){.refb{padding:18px;gap:16px;margin-top:26px;border-radius:16px}.refb-left{min-width:0}.refb-h{font-size:19px;margin-top:10px}.refb-sub{font-size:13px}.refb-metrics{width:100%;gap:10px}.refb-card{flex:1;min-width:0;padding:12px 10px;border-radius:13px}.refb-cval{font-size:28px}.refb-right{width:100%;min-width:0}.refb-cta{height:46px;font-size:14px;border-radius:12px}}
 
 /* How it works */
 .hiw-wrap{max-width:1160px;margin:52px auto 0;font-family:'Inter',system-ui,sans-serif;animation:refbIn .3s ease}
@@ -335,6 +335,16 @@ const REFBANNER_CSS = `
 .faq2 summary::after{content:"+";color:#94a3b8;font-size:19px;font-weight:500;line-height:1}
 .faq2 details[open] summary::after{content:"\\2013"}
 .faq2 .a{padding:0 18px 16px;font-size:13.5px;line-height:1.65;color:#64748b}
+@media(max-width:560px){
+  .pr-tagline,.pr-annual{min-height:0!important}
+  .hiw-wrap{margin-top:34px}.hiw-head{margin-bottom:14px}.hiw-title{font-size:19px}.hiw-sub{font-size:13px;margin-top:5px}
+  .hiw{gap:8px}.hiw-arrow{display:none}
+  .hiw-card{display:grid;grid-template-columns:28px 1fr;column-gap:12px;padding:13px 14px;border-radius:13px}
+  .hiw-num{grid-row:span 2;width:28px;height:28px;font-size:13px;margin:0;border-radius:8px}.hiw-t{font-size:14px}.hiw-d{font-size:12.5px;margin-top:2px}
+  .perf-wrap{margin-top:34px}.perf-title{font-size:19px;margin-bottom:14px}.perf-grid{gap:10px}
+  .perf-card{padding:14px 10px;border-radius:13px}.perf-k{font-size:11.5px}.perf-v{font-size:24px;margin-top:4px}.perf-empty p{font-size:13px}.perf-cta{height:44px}
+  .faq2{margin-top:34px}.faq2-title{font-size:18px;margin-bottom:12px}.faq2 summary{padding:12px 14px;font-size:13.5px}.faq2 .a{padding:0 14px 12px;font-size:13px;line-height:1.6}
+}
 `;
 
 export default function Pricing() {
@@ -488,13 +498,13 @@ export default function Pricing() {
                 ? <div style={{ ...S.tag, ...S.tagCur }}>✓ {t.current}</div>
                 : tx.tag && <div style={S.tag}>{tx.tag}</div>}
               <div style={S.name}>{tx.name}</div>
-              <div style={S.tagline}>{tx.tagline}</div>
+              <div className="pr-tagline" style={S.tagline}>{tx.tagline}</div>
               {isPaid && orig && <div style={S.origRow}><span style={S.orig}>{orig}</span><span style={S.off}>-33%</span></div>}
               <div style={S.priceRow}>
                 <span style={S.price}>{price}</span>
                 {isPaid && <span style={S.period}>{t.period}</span>}
               </div>
-              <div style={S.annualNote}>
+              <div className="pr-annual" style={S.annualNote}>
                 {billing === "annual" && isPaid && tx.annualTotal ? t.billedYear(tx.annualTotal) : " "}
               </div>
               <button onClick={() => choose(p)} disabled={isCur || busy === p.id}
@@ -711,25 +721,25 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
 
 const FONT = "'Inter',system-ui,-apple-system,sans-serif";
 const S: Record<string, React.CSSProperties> = {
-  wrap: { minHeight: "100vh", padding: "20px 22px 70px", fontFamily: FONT, color: "#0a1124",
+  wrap: { minHeight: "100vh", padding: "clamp(12px,3.5vw,20px) clamp(14px,4vw,22px) clamp(48px,12vw,70px)", fontFamily: FONT, color: "#0a1124",
     background: "radial-gradient(1100px 560px at 50% -12%,rgba(31,107,255,.10),transparent 62%),#fbfcfe",
     WebkitFontSmoothing: "antialiased" },
   topRow: { display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: 1160, margin: "0 auto 8px" },
   back: { display: "inline-block", fontSize: 13, fontWeight: 600, color: "#5b6b8c", textDecoration: "none" },
-  head: { textAlign: "center", maxWidth: 620, margin: "10px auto 22px" },
-  eyebrow: { display: "inline-block", fontSize: 11.5, fontWeight: 800, letterSpacing: ".14em", color: "#1f6bff",
-    background: "#eef4ff", border: "1px solid #d9e6ff", borderRadius: 30, padding: "5px 13px", marginBottom: 16 },
-  h1: { fontSize: 40, fontWeight: 900, letterSpacing: "-.045em", lineHeight: 1.05, marginBottom: 14 },
-  sub: { fontSize: 15.5, color: "#5b6b8c", lineHeight: 1.6, fontWeight: 500 },
+  head: { textAlign: "center", maxWidth: 620, margin: "clamp(4px,1.5vw,10px) auto clamp(14px,4vw,22px)" },
+  eyebrow: { display: "inline-block", fontSize: "clamp(10px,2.7vw,11.5px)", fontWeight: 800, letterSpacing: ".14em", color: "#1f6bff",
+    background: "#eef4ff", border: "1px solid #d9e6ff", borderRadius: 30, padding: "clamp(4px,1.1vw,5px) clamp(11px,3vw,13px)", marginBottom: "clamp(10px,3vw,16px)" },
+  h1: { fontSize: "clamp(25px,7vw,40px)", fontWeight: 900, letterSpacing: "-.04em", lineHeight: 1.1, marginBottom: "clamp(8px,2.4vw,14px)" },
+  sub: { fontSize: "clamp(13.5px,3.6vw,15.5px)", color: "#5b6b8c", lineHeight: 1.55, fontWeight: 500 },
   billRow: { display: "flex", justifyContent: "center", gap: 6, background: "#eef1f7", border: "1px solid #e3e8f2",
-    borderRadius: 30, padding: 4, width: "fit-content", margin: "0 auto 34px" },
-  billBtn: { border: "none", background: "transparent", cursor: "pointer", fontFamily: FONT, fontSize: 13.5,
-    fontWeight: 800, color: "#5b6b8c", padding: "9px 20px", borderRadius: 26, transition: ".15s",
+    borderRadius: 30, padding: 4, width: "fit-content", margin: "0 auto clamp(20px,6vw,34px)" },
+  billBtn: { border: "none", background: "transparent", cursor: "pointer", fontFamily: FONT, fontSize: "clamp(12.5px,3.4vw,13.5px)",
+    fontWeight: 800, color: "#5b6b8c", padding: "clamp(7px,2vw,9px) clamp(15px,4.2vw,20px)", borderRadius: 26, transition: ".15s",
     display: "inline-flex", alignItems: "center", gap: 7 },
   billOn: { background: "#fff", color: "#0a1124", boxShadow: "0 4px 12px -4px rgba(10,17,36,.25)" },
   save: { fontSize: 10.5, fontWeight: 800, color: "#16a34a", background: "#e7f8ee", borderRadius: 20, padding: "2px 7px" },
   grid: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(248px,1fr))", gap: 16, maxWidth: 1160, margin: "0 auto" },
-  card: { position: "relative", background: "#fff", border: "1px solid #e7ebf3", borderRadius: 20, padding: "28px 24px",
+  card: { position: "relative", background: "#fff", border: "1px solid #e7ebf3", borderRadius: "clamp(16px,4.4vw,20px)", padding: "clamp(20px,5.4vw,28px) clamp(16px,4.6vw,24px)",
     boxShadow: "0 16px 40px -30px rgba(10,17,36,.4)", display: "flex", flexDirection: "column", transition: ".2s" },
   cardHi: { border: "1.5px solid #1f6bff", boxShadow: "0 30px 60px -28px rgba(31,107,255,.45)", transform: "translateY(-6px)" },
   tag: { position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap",
@@ -739,37 +749,37 @@ const S: Record<string, React.CSSProperties> = {
   cardCur: { border: "1.5px solid #16a34a", boxShadow: "0 30px 60px -30px rgba(22,163,74,.45)" },
   tagCur: { background: "linear-gradient(135deg,#22c55e,#16a34a)", boxShadow: "0 8px 18px -6px rgba(22,163,74,.6)" },
   ctaCur: { background: "#e7f8ee", color: "#15803d", border: "1.5px solid #bcebcd", boxShadow: "none", cursor: "default" },
-  curNote: { display: "flex", alignItems: "center", gap: 8, margin: "0 auto 18px", width: "fit-content", maxWidth: "92%",
-    fontSize: 13, fontWeight: 700, color: "#15803d", background: "#f0fdf4", border: "1px solid #bcebcd",
-    borderRadius: 30, padding: "7px 16px" },
+  curNote: { display: "flex", alignItems: "center", gap: 8, margin: "0 auto clamp(12px,3.4vw,18px)", width: "fit-content", maxWidth: "92%",
+    fontSize: "clamp(11.5px,3.1vw,13px)", fontWeight: 700, color: "#15803d", background: "#f0fdf4", border: "1px solid #bcebcd",
+    borderRadius: 30, padding: "clamp(5px,1.5vw,7px) clamp(12px,3.4vw,16px)" },
   curDot: { width: 7, height: 7, borderRadius: 7, background: "#16a34a", boxShadow: "0 0 0 3px #16a34a22", flexShrink: 0 },
-  name: { fontSize: 19, fontWeight: 800, letterSpacing: "-.02em" },
+  name: { fontSize: "clamp(16.5px,4.5vw,19px)", fontWeight: 800, letterSpacing: "-.02em" },
   tagline: { fontSize: 12.5, color: "#7b88a3", marginTop: 4, minHeight: 32, lineHeight: 1.4, fontWeight: 500 },
-  promo: { display: "block", margin: "0 auto 18px", textAlign: "center", width: "fit-content", maxWidth: "92%",
-    fontSize: 13, fontWeight: 800, color: "#b45309", background: "linear-gradient(135deg,#fff7ed,#fffbeb)",
-    border: "1px solid #fcd9a8", borderRadius: 30, padding: "8px 18px" },
+  promo: { display: "block", margin: "0 auto clamp(10px,3vw,18px)", textAlign: "center", width: "fit-content", maxWidth: "92%",
+    fontSize: "clamp(11.5px,3.1vw,13px)", fontWeight: 800, color: "#b45309", background: "linear-gradient(135deg,#fff7ed,#fffbeb)",
+    border: "1px solid #fcd9a8", borderRadius: 30, padding: "clamp(6px,1.7vw,8px) clamp(12px,3.4vw,18px)" },
   origRow: { display: "flex", alignItems: "center", gap: 8, marginTop: 8 },
-  orig: { fontSize: 16, color: "#9aa6bd", fontWeight: 700, textDecoration: "line-through" },
+  orig: { fontSize: "clamp(14px,3.8vw,16px)", color: "#9aa6bd", fontWeight: 700, textDecoration: "line-through" },
   off: { fontSize: 11, fontWeight: 800, color: "#16a34a", background: "#e7f8ee", borderRadius: 20, padding: "2px 8px" },
   priceRow: { display: "flex", alignItems: "baseline", gap: 5, margin: "2px 0 2px", flexWrap: "wrap" },
-  price: { fontSize: 32, fontWeight: 900, letterSpacing: "-.04em" },
+  price: { fontSize: "clamp(26px,7vw,32px)", fontWeight: 900, letterSpacing: "-.04em" },
   period: { fontSize: 13.5, color: "#9aa6bd", fontWeight: 600 },
-  annualNote: { fontSize: 11.5, color: "#16a34a", fontWeight: 700, minHeight: 17, marginBottom: 14 },
+  annualNote: { fontSize: 11.5, color: "#16a34a", fontWeight: 700, minHeight: 17, marginBottom: "clamp(10px,3vw,14px)" },
   cta: { width: "100%", border: "1.5px solid #e3e8f2", background: "#fff", color: "#0a1124", cursor: "pointer",
-    fontFamily: FONT, fontSize: 14.5, fontWeight: 800, padding: "13px", borderRadius: 12, marginBottom: 20, transition: ".15s" },
+    fontFamily: FONT, fontSize: "clamp(13.5px,3.6vw,14.5px)", fontWeight: 800, padding: "clamp(10px,2.9vw,13px)", borderRadius: 12, marginBottom: "clamp(14px,4vw,20px)", transition: ".15s" },
   ctaHi: { background: "linear-gradient(135deg,#3b82f6,#1f4fff)", color: "#fff", border: "1.5px solid transparent",
     boxShadow: "0 12px 26px -10px rgba(31,79,255,.6)" },
-  feats: { listStyle: "none", display: "flex", flexDirection: "column", gap: 11 },
-  feat: { fontSize: 13.5, color: "#2a3550", display: "flex", alignItems: "flex-start", gap: 9, lineHeight: 1.5, fontWeight: 500 },
+  feats: { listStyle: "none", display: "flex", flexDirection: "column", gap: "clamp(7px,2.2vw,11px)" },
+  feat: { fontSize: "clamp(12.5px,3.4vw,13.5px)", color: "#2a3550", display: "flex", alignItems: "flex-start", gap: 9, lineHeight: 1.45, fontWeight: 500 },
   check: { color: "#16a34a", fontWeight: 900, flexShrink: 0, fontSize: 13 },
-  usageBox: { marginTop: 16, padding: "12px 14px", background: "#f7faff", border: "1px solid #e6eef9", borderRadius: 12 },
+  usageBox: { marginTop: "clamp(12px,3.4vw,16px)", padding: "clamp(9px,2.6vw,12px) clamp(11px,3.2vw,14px)", background: "#f7faff", border: "1px solid #e6eef9", borderRadius: 12 },
   usageBoxHi: { background: "#eef4ff", border: "1px solid #d6e4ff" },
   usageHd: { fontSize: 11, fontWeight: 800, color: "#1f6bff", textTransform: "uppercase", letterSpacing: ".04em", marginBottom: 7 },
-  usageRow: { fontSize: 13, color: "#33405c", fontWeight: 600, lineHeight: 1.65 },
-  reassure: { maxWidth: 680, margin: "26px auto 0", textAlign: "center", fontSize: 13.5, fontWeight: 600,
-    color: "#5b6b8c", background: "#fff", border: "1px solid #e7ebf3", borderRadius: 12, padding: "12px 18px", lineHeight: 1.55 },
-  trust: { display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginTop: 30,
-    fontSize: 13, color: "#5b6b8c", fontWeight: 600 },
+  usageRow: { fontSize: "clamp(12px,3.2vw,13px)", color: "#33405c", fontWeight: 600, lineHeight: 1.55 },
+  reassure: { maxWidth: 680, margin: "clamp(18px,5vw,26px) auto 0", textAlign: "center", fontSize: "clamp(12.5px,3.3vw,13.5px)", fontWeight: 600,
+    color: "#5b6b8c", background: "#fff", border: "1px solid #e7ebf3", borderRadius: 12, padding: "clamp(10px,2.8vw,12px) clamp(12px,3.6vw,18px)", lineHeight: 1.55 },
+  trust: { display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginTop: "clamp(18px,5vw,30px)",
+    fontSize: "clamp(12px,3.2vw,13px)", color: "#5b6b8c", fontWeight: 600 },
   dot: { color: "#cdd5e4" },
   refBox: { display: "flex", alignItems: "center", gap: 16, maxWidth: 860, margin: "34px auto 0",
     background: "linear-gradient(135deg,#eef4ff,#f7faff)", border: "1px solid #d9e6ff", borderRadius: 18, padding: "20px 22px", flexWrap: "wrap" },
@@ -783,7 +793,7 @@ const S: Record<string, React.CSSProperties> = {
   faqQ: { fontSize: 13.5, fontWeight: 800, marginBottom: 6, letterSpacing: "-.01em" },
   faqA: { fontSize: 12.5, color: "#6b7690", lineHeight: 1.6, fontWeight: 500 },
   qrBtn: { width: "100%", border: "1.5px solid #d3e0fb", background: "#f4f8ff", color: "#1f4fff", cursor: "pointer",
-    fontFamily: FONT, fontSize: 13, fontWeight: 800, padding: "10px", borderRadius: 11, marginTop: -8, marginBottom: 20 },
+    fontFamily: FONT, fontSize: "clamp(12px,3.3vw,13px)", fontWeight: 800, padding: "clamp(8px,2.4vw,10px)", borderRadius: 11, marginTop: -8, marginBottom: "clamp(14px,4vw,20px)" },
   modalWrap: { position: "fixed", inset: 0, background: "rgba(10,17,36,.55)", display: "grid", placeItems: "center",
     padding: 18, zIndex: 50, backdropFilter: "blur(3px)" },
   modal: { position: "relative", width: "100%", maxWidth: 380, background: "#fff", borderRadius: 20,

@@ -389,12 +389,23 @@ audio{width:100%;margin-top:16px;height:42px}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--ink);color:#fff;padding:13px 24px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;border-radius:30px;transition:.22s;z-index:90}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(max-width:620px){
-  .top{padding:13px 16px}.stage{padding:22px 14px}
-  .hero-h{font-size:32px}.hero-sub{font-size:15px}.hero-feats{grid-template-columns:1fr;margin-top:32px}
-  .app-card{padding:22px 16px}h1{font-size:25px}
+  /* phones: compact type & spacing so more fits on one screen */
+  .top{padding:10px 14px}.stage{padding:16px 12px}
+  .hero-badge{font-size:11px;padding:5px 11px;margin-bottom:14px}
+  .hero-h{font-size:27px;margin-bottom:12px}.hero-sub{font-size:14px;line-height:1.55;margin-bottom:20px}
+  .hero-cta{font-size:15px;padding:13px 22px;border-radius:13px}.hero-cta2{font-size:14px;padding:12px 18px;border-radius:13px}
+  .hero-micro{font-size:11.5px;margin-top:10px}
+  .hero-feats{grid-template-columns:1fr;gap:10px;margin-top:24px}
+  .feat{padding:16px;border-radius:16px}.feat .ic{width:40px;height:40px;border-radius:12px;margin-bottom:10px}.feat .ic svg{width:20px;height:20px}
+  .feat h3{font-size:16px;margin-bottom:5px}.feat p{font-size:13.5px;line-height:1.55;margin-bottom:12px}.feat-r{font-size:11.5px;padding:4px 10px}
+  .modes{margin-top:36px}.modes-h{font-size:20px}.modes-sub{font-size:13.5px;margin:8px auto 18px}
+  .mode-grid{gap:10px}.mode{padding:15px;border-radius:14px}.mode-ic{width:34px;height:34px;margin-bottom:10px}.mode h4{font-size:14.5px}.mode p{font-size:13px}
+  .app-card{padding:16px 14px;border-radius:18px}h1{font-size:22px}
   .live-bar{gap:8px;padding:7px 11px}
-  .btn{font-size:15px;padding:15px}.btn.big{padding:18px;font-size:16px}
-  .out{padding:18px}.lv-trans{font-size:16px}
+  .btn{font-size:14px;padding:12px}.btn.big{padding:14px;font-size:15px}
+  .cta-micro{font-size:11.5px;margin-top:10px}
+  .ready-state{padding:20px 14px}.ready-h{font-size:17px}
+  .out{padding:14px}.lv-trans{font-size:15px}
   .res-head{flex-wrap:wrap;gap:10px}
 }
 /* On phones, recording takes over the screen edge-to-edge; the page itself

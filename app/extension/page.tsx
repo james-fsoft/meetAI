@@ -134,23 +134,30 @@ const CSS = `
 .ext-num{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;font-size:14px;font-weight:800;display:grid;place-items:center;margin-bottom:13px;box-shadow:0 4px 12px rgba(37,99,235,.3)}
 .ext-t{font-size:15px;font-weight:700;color:#0f172a;letter-spacing:-.01em}
 .ext-d{font-size:13px;line-height:1.55;color:#64748b;margin-top:5px}
+@media(max-width:560px){
+  .ext-cta{height:48px;padding:0 22px;font-size:15px;border-radius:13px}
+  .ext-steps{gap:8px}
+  .ext-card{display:grid;grid-template-columns:28px 1fr;column-gap:12px;padding:13px 14px;border-radius:13px}
+  .ext-num{grid-row:span 2;width:28px;height:28px;font-size:13px;margin:0;border-radius:8px}
+  .ext-t{font-size:14px}.ext-d{font-size:12.5px;margin-top:2px}
+}
 `;
 
 const FONT = "'Inter',system-ui,-apple-system,sans-serif";
 const S: Record<string, React.CSSProperties> = {
-  wrap: { minHeight: "100vh", padding: "24px 20px 70px", fontFamily: FONT, color: "#0a1124",
+  wrap: { minHeight: "100vh", padding: "clamp(14px,4vw,24px) clamp(14px,4vw,20px) clamp(48px,12vw,70px)", fontFamily: FONT, color: "#0a1124",
     background: "radial-gradient(1100px 560px at 50% -12%,rgba(31,107,255,.10),transparent 62%),#fbfcfe" },
   top: { display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: 1000, margin: "0 auto" },
   back: { fontSize: 13, fontWeight: 700, color: "#5b6b8c", textDecoration: "none" },
-  hero: { textAlign: "center", maxWidth: 680, margin: "14px auto 0" },
-  logo: { display: "flex", justifyContent: "center", marginBottom: 16 },
+  hero: { textAlign: "center", maxWidth: 680, margin: "clamp(8px,2.4vw,14px) auto 0" },
+  logo: { display: "flex", justifyContent: "center", marginBottom: "clamp(10px,3vw,16px)" },
   badge: { display: "inline-block", fontSize: 12, fontWeight: 700, color: "#1f6bff", background: "#eff6ff", border: "1px solid #d9e6ff", borderRadius: 30, padding: "5px 13px" },
-  h1: { fontSize: 38, fontWeight: 900, letterSpacing: "-.04em", lineHeight: 1.08, margin: "16px 0 0" },
-  sub: { fontSize: 15.5, color: "#5b6b8c", lineHeight: 1.6, margin: "14px auto 22px", maxWidth: 600, fontWeight: 500 },
+  h1: { fontSize: "clamp(26px,7vw,38px)", fontWeight: 900, letterSpacing: "-.04em", lineHeight: 1.1, margin: "clamp(10px,3vw,16px) 0 0" },
+  sub: { fontSize: "clamp(13.5px,3.6vw,15.5px)", color: "#5b6b8c", lineHeight: 1.55, margin: "clamp(8px,2.4vw,14px) auto clamp(16px,4.4vw,22px)", maxWidth: 600, fontWeight: 500 },
   works: { fontSize: 13, color: "#7b88a3", marginTop: 18, fontWeight: 500 },
   browsers: { fontSize: 12.5, color: "#9aa6bd", marginTop: 7, fontWeight: 600 },
-  stepsWrap: { maxWidth: 1000, margin: "48px auto 0" },
-  stepsTitle: { fontSize: 22, fontWeight: 800, letterSpacing: "-.02em", textAlign: "center", marginBottom: 22 },
-  note: { maxWidth: 680, margin: "40px auto 0", textAlign: "center", fontSize: 13.5, fontWeight: 600, color: "#5b6b8c",
+  stepsWrap: { maxWidth: 1000, margin: "clamp(30px,8vw,48px) auto 0" },
+  stepsTitle: { fontSize: "clamp(18px,5vw,22px)", fontWeight: 800, letterSpacing: "-.02em", textAlign: "center", marginBottom: "clamp(12px,3.6vw,22px)" },
+  note: { maxWidth: 680, margin: "clamp(26px,7vw,40px) auto 0", textAlign: "center", fontSize: "clamp(12.5px,3.3vw,13.5px)", fontWeight: 600, color: "#5b6b8c",
     background: "#fff", border: "1px solid #e7ebf3", borderRadius: 12, padding: "13px 18px", lineHeight: 1.55 },
 };
