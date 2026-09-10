@@ -3,10 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase-browser";
-
-const PLAN_LABEL: Record<string, string> = {
-  free: "Free", pro: "Pro", business: "Business", enterprise: "Enterprise",
-};
+import PlanMenu from "./PlanMenu";
 
 type Lang = "en" | "vi" | "ko";
 
@@ -149,17 +146,16 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
         <span style={{ flex: 1 }} />
         {signedIn ? (
           <div className="fm-right">
-            <a href="/extension" className="fm-mail" style={{ textDecoration: "none", color: "#5b6b8c", fontWeight: 700 }}>🧩 {t.ext}</a>
-            {admin && <a href="/admin" style={adminLink}>⚙ Admin</a>}
-            <a href="/account" style={accountLink}>
+            <a href="/extension" className="fm-ext" style={{ textDecoration: "none", color: "#5b6b8c", fontWeight: 700 }}>🧩 {t.ext}</a>
+            {admin && <a href="/admin" className="fm-admin" style={adminLink}>⚙ Admin</a>}
+            <PlanMenu plan={plan} lang={lang} email={email} />
+            <a href="/account" style={accountLink} title={t.account}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }} aria-hidden="true">
                 <circle cx="12" cy="8" r="3.4" />
                 <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
               </svg>
-              {t.account}
+              <span className="fm-acct-label">{t.account}</span>
             </a>
-            <a href="/pricing" style={planBadge(plan)} title={t.planTitle}>{PLAN_LABEL[plan] || "Free"}</a>
-            <a href="/account" className="fm-mail" style={{ textDecoration: "none", color: "#5b6b8c" }}>👤 {email}</a>
             <button onClick={signOut} style={out}>{t.signout}</button>
           </div>
         ) : (
@@ -220,13 +216,24 @@ const BAR_CSS = `
 .fm-bar{display:flex;align-items:center;gap:10px;padding:8px 16px;background:#fff;border-bottom:1px solid #e3e8f2;font-family:'Inter',system-ui,sans-serif;font-size:13px;color:#5b6b8c}
 .fm-brand{display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:15.5px;color:#0a1124;letter-spacing:-.03em;text-decoration:none;white-space:nowrap;flex-shrink:0}
 .fm-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.fm-mail{font-size:12.5px;white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+.fm-mail,.fm-ext{font-size:12.5px;white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis}
 .fm-trial{font-size:11px;font-weight:800;letter-spacing:.03em;color:#b45309;background:#fffbeb;border:1px solid #fde68a;padding:4px 11px;border-radius:20px;white-space:nowrap}
+.fm-plan-pill:hover{background:#f7faff;border-color:#b9d0fa}
+.fm-plan-cta:hover{filter:brightness(1.05)}
+@media(max-width:1000px){
+  .fm-ext{display:none}
+  .fm-acct-label{display:none}
+}
+@media(max-width:760px){
+  /* keep the plan pill (it carries the remaining minutes); the CTA lives in its panel */
+  .fm-plan-cta{display:none}
+}
 @media(max-width:600px){
   .fm-bar{gap:8px;padding:8px 13px}
   .fm-brand{font-size:14.5px}
   .fm-mail{display:none}
   .fm-right{gap:7px}
+  .fm-admin{display:none}
 }
 @media(max-width:420px){
   .fm-trial{display:none}
@@ -305,10 +312,3 @@ const accountLink: React.CSSProperties = {
   fontSize: 12, fontWeight: 800, color: "#1f6bff", background: "#eef4ff", border: "1px solid #d3e0fb",
   borderRadius: 8, padding: "5px 11px", textDecoration: "none", whiteSpace: "nowrap",
 };
-const planBadge = (plan: string): React.CSSProperties => ({
-  fontSize: 11, fontWeight: 800, letterSpacing: ".03em", textDecoration: "none",
-  padding: "4px 10px", borderRadius: 20,
-  color: plan === "free" ? "#5b6b8c" : "#1f6bff",
-  background: plan === "free" ? "#f5f7fc" : "#eef4ff",
-  border: `1px solid ${plan === "free" ? "#e3e8f2" : "#d3e0fb"}`,
-});
