@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLang, type Lang } from "@/lib/use-lang";
+import Link from "next/link";
 import LangSwitch from "../LangSwitch";
 
 type Usage = {
@@ -77,7 +78,7 @@ export default function AccountClient({ email, usage }: { email: string; usage: 
   return (
     <main style={S.wrap}>
       <div style={S.top}>
-        <a href="/" style={S.back}>{t.back}</a>
+        <Link href="/" style={S.back}>{t.back}</Link>
         <LangSwitch lang={lang} onChange={setLang} />
       </div>
 
@@ -92,8 +93,8 @@ export default function AccountClient({ email, usage }: { email: string; usage: 
             <div style={S.planName}>{PLAN_LABEL[usage.plan] || "Free"}</div>
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <a href="/pricing" style={S.btnGhost}>{t.manage}</a>
-            <a href="/pricing" style={S.btnPri}>{t.invite}</a>
+            <Link href="/pricing" style={S.btnGhost}>{t.manage}</Link>
+            <Link href="/pricing" style={S.btnPri}>{t.invite}</Link>
           </div>
         </div>
       </div>
@@ -126,7 +127,7 @@ export default function AccountClient({ email, usage }: { email: string; usage: 
       {/* history */}
       <div style={S.histHead}>
         <h2 style={S.h2}>{t.history}</h2>
-        <span style={S.deviceNote}>{t.deviceNote} · <a href="/dashboard" style={{ color: "#1f6bff", fontWeight: 800, textDecoration: "none" }}>{t.cal}</a></span>
+        <span style={S.deviceNote}>{t.deviceNote} · <Link href="/dashboard" style={{ color: "#1f6bff", fontWeight: 800, textDecoration: "none" }}>{t.cal}</Link></span>
       </div>
       <div style={S.histBox}>
         {items.length === 0 ? (

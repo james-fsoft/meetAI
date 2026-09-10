@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 /**
  * Top-bar subscription widget: shows the current plan + remaining minutes with a
@@ -132,9 +133,9 @@ export default function PlanMenu({ plan, lang, email }: { plan: string; lang: La
         </svg>
       </button>
 
-      <a href="/pricing" className="fm-plan-cta" style={paid ? S.ctaGhost : S.ctaPri}>
+      <Link href="/pricing" className="fm-plan-cta" style={paid ? S.ctaGhost : S.ctaPri}>
         {paid ? t.change : `✨ ${t.upgrade}`}
-      </a>
+      </Link>
 
       {open && (
         <div style={S.panel} role="dialog" aria-label={t.sub}>
@@ -143,7 +144,7 @@ export default function PlanMenu({ plan, lang, email }: { plan: string; lang: La
               <div style={S.kicker}>{t.sub}</div>
               <div style={{ ...S.panelPlan, color: paid ? "#1f4fff" : "#0a1124" }}>{label}</div>
             </div>
-            <a href="/pricing" style={S.panelChange}>{paid ? t.change : t.upgrade} →</a>
+            <Link href="/pricing" style={S.panelChange}>{paid ? t.change : t.upgrade} →</Link>
           </div>
 
           {email && <div style={S.panelMail}>👤 {email}</div>}
@@ -170,7 +171,7 @@ export default function PlanMenu({ plan, lang, email }: { plan: string; lang: La
           )}
 
           <div style={S.panelFoot}>
-            <a href="/account" style={S.footLink}>{t.account} →</a>
+            <Link href="/account" style={S.footLink}>{t.account} →</Link>
           </div>
         </div>
       )}

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLang, type Lang } from "@/lib/use-lang";
+import Link from "next/link";
 import LangSwitch from "../LangSwitch";
 
 /**
@@ -402,19 +403,19 @@ export default function DashboardClient({ email }: { email: string }) {
 
   return (
     <div className="db">
-      <style>{CSS}</style>
+      <style dangerouslySetInnerHTML={{ __html: CSS }} />
       <header className="db-bar">
-        <a href="/" className="db-brand" aria-label="Flash Meet">
+        <Link href="/" className="db-brand" aria-label="Flash Meet">
           <svg viewBox="0 0 100 100" width="24" height="24" style={{ display: "block", flexShrink: 0 }} aria-hidden="true">
             <path d="M22 8 H78 a16 16 0 0 1 16 16 V60 a16 16 0 0 1 -16 16 H50 l-20 18 v-18 H22 a16 16 0 0 1 -16 -16 V24 A16 16 0 0 1 22 8 Z" fill="#1f6bff" />
             <g fill="#fff"><rect x="26" y="38" width="7.5" height="12" rx="3.75" /><rect x="39" y="29" width="7.5" height="30" rx="3.75" /><rect x="52" y="22" width="7.5" height="44" rx="3.75" /><rect x="65" y="32" width="7.5" height="24" rx="3.75" /></g>
           </svg>
           <span className="db-brand-t">Flash Meet</span>
-        </a>
+        </Link>
         <span className="db-sp" />
         <LangSwitch lang={lang} onChange={setLang} />
-        <a href="/account" className="db-link acct" title={email}>👤 {t.account}</a>
-        <a href="/" className="db-new">{t.newM}</a>
+        <Link href="/account" className="db-link acct" title={email}>👤 {t.account}</Link>
+        <Link href="/" className="db-new">{t.newM}</Link>
       </header>
 
       <main className="db-wrap">
@@ -433,7 +434,7 @@ export default function DashboardClient({ email }: { email: string }) {
         {err !== "missing" && localPending.length > 0 && (
           <div className="db-note info">
             ☁ {t.local(localPending.length)}
-            <button className="db-btn" onClick={syncLocal} disabled={syncing}>{syncing ? t.syncing : t.sync}</button>
+            <button className="db-btn" onClick={syncLocal} disabled={syncing} data-fm-busy={syncing ? "" : undefined}>{syncing ? t.syncing : t.sync}</button>
           </div>
         )}
 
@@ -442,7 +443,7 @@ export default function DashboardClient({ email }: { email: string }) {
           <button className="db-nav" onClick={() => shift(-1)} aria-label="Previous">‹</button>
           <button className="db-nav" onClick={() => shift(1)} aria-label="Next">›</button>
           <span className="db-title">{periodTitle}</span>
-          {loading && <span className="db-loading">{t.loading}</span>}
+          {loading && <span className="db-loading"><span className="db-spin" />{t.loading}</span>}
           <div className="db-seg" role="tablist">
             {(["month", "week", "list"] as View[]).map((v) => (
               <button key={v} className={view === v ? "on" : ""} onClick={() => setView(v)} role="tab" aria-selected={view === v}>{t[v]}</button>
@@ -450,7 +451,9 @@ export default function DashboardClient({ email }: { email: string }) {
           </div>
         </div>
 
-        {view === "month" ? monthView : view === "week" ? weekView : listView}
+        <div className={loading && rows.length ? "db-stale" : ""}>
+          {view === "month" ? monthView : view === "week" ? weekView : listView}
+        </div>
       </main>
 
       {openRow && (
@@ -472,6 +475,7 @@ function Drawer({ row, t, loc, timeRange, onClose, onDeleted }: {
   const [failed, setFailed] = useState(false);
   const [tab, setTab] = useState<"summary" | "transcript">(row.summary?.trim() ? "summary" : "transcript");
   const [copied, setCopied] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -515,8 +519,9 @@ function Drawer({ row, t, loc, timeRange, onClose, onDeleted }: {
   }
   async function del() {
     if (!confirm(t.delq)) return;
+    setDeleting(true);
     const r = await fetch(`/api/meetings/${row.id}`, { method: "DELETE" }).catch(() => null);
-    if (!r || !r.ok) return;
+    if (!r || !r.ok) { setDeleting(false); return; }
     // Drop this device's copy too, so it doesn't reappear in the in-app history.
     try {
       const l = JSON.parse(localStorage.getItem("mr_m") || "[]");
@@ -526,7 +531,7 @@ function Drawer({ row, t, loc, timeRange, onClose, onDeleted }: {
   }
 
   const transcriptBody = !full
-    ? <div className="db-empty">{failed ? t.err : t.loading}</div>
+    ? <div className="db-empty">{failed ? t.err : <><span className="db-spin" style={{ verticalAlign: "-2px", marginRight: 7 }} />{t.loading}</>}</div>
     : full.live && full.live.length
       ? full.live.map((p, i) => (
           <div key={i} className="db-turn">
@@ -568,7 +573,7 @@ function Drawer({ row, t, loc, timeRange, onClose, onDeleted }: {
         <div className="db-dr-f">
           <button className="db-btn" onClick={copy}>{copied ? `✓ ${t.copied}` : t.copy}</button>
           <button className="db-btn" onClick={download} disabled={!full}>⬇ {t.download}</button>
-          <button className="db-btn db-del" onClick={del}>🗑 {t.del}</button>
+          <button className="db-btn db-del" onClick={del} disabled={deleting} data-fm-busy={deleting ? "" : undefined}>🗑 {t.del}</button>
         </div>
       </aside>
     </div>
@@ -595,7 +600,10 @@ const CSS = `
 .db-nav{width:34px;height:34px;display:grid;place-items:center;font:inherit;font-size:20px;font-weight:700;color:#5b6b8c;background:none;border:none;border-radius:50%;cursor:pointer}
 .db-nav:hover{background:#e9edf5}
 .db-title{font-size:19px;font-weight:800;letter-spacing:-.02em;margin-left:4px;text-transform:capitalize}
-.db-loading{font-size:12px;color:#9aa6bd;font-weight:700}
+.db-loading{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#7b88a3;font-weight:700}
+.db-spin{display:inline-block;flex-shrink:0;width:13px;height:13px;border:2px solid #d6e0f3;border-top-color:#1f6bff;border-radius:50%;animation:dbspin .7s linear infinite}
+@keyframes dbspin{to{transform:rotate(360deg)}}
+.db-stale{opacity:.5;transition:opacity .15s}
 .db-seg{display:inline-flex;background:#eef1f7;border:1px solid #e3e8f2;border-radius:10px;padding:3px;margin-left:auto}
 .db-seg button{font:inherit;font-size:12.5px;font-weight:800;color:#7b88a3;background:none;border:none;border-radius:7px;padding:6px 14px;cursor:pointer}
 .db-seg button.on{background:#fff;color:#0a1124;box-shadow:0 1px 3px rgba(10,17,36,.12)}

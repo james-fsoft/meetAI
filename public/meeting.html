@@ -147,6 +147,10 @@ body.recing .lvto-sel{padding:5px 9px;font-size:12.5px}
 .cta-go.loading::after{display:none}
 .btn-spin{display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;vertical-align:-2px;margin-right:9px;animation:btnspin .7s linear infinite}
 @keyframes btnspin{to{transform:rotate(360deg)}}
+.lv-spin{display:inline-block;flex-shrink:0;width:13px;height:13px;margin-right:8px;border:2px solid #cfd8ea;border-top-color:#1f6bff;border-radius:50%;animation:btnspin .7s linear infinite}
+[data-fm-busy]{cursor:progress!important;pointer-events:none;opacity:.8}
+[data-fm-busy]::after{content:"";display:inline-block;flex-shrink:0;width:.8em;height:.8em;margin-left:.45em;vertical-align:-.1em;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:btnspin .6s linear infinite}
+.btn:not(:disabled):active,.mini:active,.link:active{transform:translateY(1px)}
 .cta-micro{font-size:12.5px;font-weight:600;color:var(--faint);margin-top:13px}
 .mic-help{font-size:12.5px;color:var(--acc);font-weight:600;margin-top:11px;line-height:1.5;max-width:340px;margin-left:auto;margin-right:auto;
   background:color-mix(in srgb,var(--acc) 7%,transparent);border:1px solid color-mix(in srgb,var(--acc) 20%,transparent);border-radius:11px;padding:9px 13px}
@@ -637,7 +641,7 @@ const CONFIG={OPENAI_KEY:'server',ASSEMBLYAI_KEY:'server'};
 const I={
  en:{hero_badge:"AI · Multilingual meetings · Auto minutes",hero_h:"Multilingual meetings,",hero_h2:"made clear.",hero_sub:"Separate every speaker, translate live across languages, and auto-write the minutes after the call — right in your browser.",hero_cta:"Try 3 minutes free",hero_cta_in:"Start",hero_micro:"No payment card · No installation · Runs in your browser",hero_demo:"Watch 60-sec demo",modes_h:"Not just for meetings",modes_sub:"Flash Meet also adds real-time AI subtitles to webinars, training videos, online lectures and multilingual content without captions.",m1t:"Meeting Mode",m1d:"Separate speakers, translate live and create minutes after the call.",m2t:"Viewer Mode",m2d:"Listen to audio from a video, webinar or lecture and show translated subtitles in real time.",m3t:"Dark Subtitle Mode",m3d:"A minimal dark interface focused only on the subtitles — ideal for long content.",f_privacy:"Privacy",f_terms:"Terms",f_contact:"Contact",
    hf1t:"Know exactly who said what",hf1d:"Automatically separates every speaker so requirements from clients, PMs and your team never get mixed up.",hf1r:"Fewer misread requirements",hf2t:"Understand it live",hf2d:"Real-time bilingual subtitles keep multilingual meetings flowing.",hf2r:"Never miss the key point",hf3t:"Minutes ready after the call",hf3d:"Auto-creates the summary, decisions, action items and owners — no rewriting from scratch.",hf3r:"Save 30–60 minutes",
-   c_hint:"Press start to begin",c_record:"Start translating free · 3 min",c_record_in:"Start translating",c_upload:"Upload audio to try",c_pause:"Pause",c_resume:"Resume",c_stop:"End",c_summarize:"Summarize →",c_redo:"Start over",c_micro:"No payment card · No installation",c_michelp:"Please allow microphone so Flash Meet can translate live.",c_opening:"Opening microphone…",
+   c_hint:"Press start to begin",c_record:"Start translating free · 3 min",c_record_in:"Start translating",c_upload:"Upload audio to try",c_pause:"Pause",c_resume:"Resume",c_stop:"End",c_summarize:"Summarize →",c_redo:"Start over",c_micro:"No payment card · No installation",c_michelp:"Please allow microphone so Flash Meet can translate live.",c_opening:"Opening microphone…",lv_connecting:"Connecting live translation…",
    c_recording:"LIVE · Translating live",c_paused:"Paused",c_ready:"Ready",lv_auto:"Auto",lv_fast:"⚡ Fast",lv_multi:"🌐 Multi",
    c_diar:"👥 Voices are separated automatically (Speaker 1, 2, 3…).",
    p_upload:"Uploading audio…",p_diar:"Separating voices…",p_sum:"Writing the summary…",p_wait:"Your AI assistant is hard at work…",
@@ -653,7 +657,7 @@ const I={
    sys:"You are a professional meeting-minutes assistant. The transcript is labeled by speaker (Speaker 1, Speaker 2, …) — keep these exact labels. Write minutes in English, in Markdown:\n## Participants\n## Overview\n## Key points\n## Decisions\n## Action items\n## Open issues\nNever invent anything not in the transcript."},
  vi:{hero_badge:"AI · Họp đa ngôn ngữ · Tự động tạo biên bản",hero_h:"Cuộc họp đa ngôn ngữ,",hero_h2:"rõ ràng hơn.",hero_sub:"Tách giọng từng người, dịch trực tiếp đa ngôn ngữ, và tự tạo biên bản sau cuộc họp — ngay trên trình duyệt.",hero_cta:"Dùng thử 3 phút miễn phí",hero_cta_in:"Bắt đầu",hero_micro:"Không cần thẻ thanh toán · Không cần cài đặt · Dùng trực tiếp trên trình duyệt",hero_demo:"Xem demo 60 giây",modes_h:"Không chỉ cho cuộc họp",modes_sub:"Flash Meet cũng hỗ trợ phụ đề AI thời gian thực cho webinar, video training, bài giảng online và nội dung đa ngôn ngữ không có phụ đề.",m1t:"Meeting Mode",m1d:"Tách giọng, dịch trực tiếp và tạo biên bản sau cuộc họp.",m2t:"Viewer Mode",m2d:"Nghe âm thanh từ video, webinar hoặc bài giảng và hiển thị phụ đề dịch theo thời gian thực.",m3t:"Dark Subtitle Mode",m3d:"Giao diện nền tối, tối giản, chỉ tập trung vào phụ đề — phù hợp khi xem nội dung dài.",f_privacy:"Bảo mật",f_terms:"Điều khoản",f_contact:"Liên hệ",
    hf1t:"Biết rõ ai đã nói gì",hf1d:"Tự tách từng người nói trong cuộc họp, tránh nhầm ý giữa khách hàng, PM và team nội bộ.",hf1r:"Giảm nhầm yêu cầu",hf2t:"Hiểu ngay khi đang họp",hf2d:"Dịch phụ đề song ngữ theo thời gian thực, giúp cuộc họp đa ngôn ngữ trôi chảy hơn.",hf2r:"Không bỏ lỡ ý chính",hf3t:"Có biên bản ngay sau họp",hf3d:"Tự tạo tóm tắt, quyết định, việc cần làm và người phụ trách — không phải ngồi viết lại từ đầu.",hf3r:"Tiết kiệm 30–60 phút",
-   c_hint:"Bấm bắt đầu để ghi & dịch",c_record:"Bắt đầu dịch thử 3 phút",c_record_in:"Bắt đầu dịch",c_upload:"Tải file audio để thử",c_pause:"Tạm dừng",c_resume:"Tiếp tục",c_stop:"Kết thúc",c_summarize:"Tóm tắt →",c_redo:"Làm lại",c_micro:"Không cần thẻ thanh toán · Không cần cài đặt",c_michelp:"Vui lòng cho phép microphone để Flash Meet có thể dịch trực tiếp.",c_opening:"Đang mở microphone…",
+   c_hint:"Bấm bắt đầu để ghi & dịch",c_record:"Bắt đầu dịch thử 3 phút",c_record_in:"Bắt đầu dịch",c_upload:"Tải file audio để thử",c_pause:"Tạm dừng",c_resume:"Tiếp tục",c_stop:"Kết thúc",c_summarize:"Tóm tắt →",c_redo:"Làm lại",c_micro:"Không cần thẻ thanh toán · Không cần cài đặt",c_michelp:"Vui lòng cho phép microphone để Flash Meet có thể dịch trực tiếp.",c_opening:"Đang mở microphone…",lv_connecting:"Đang kết nối dịch trực tiếp…",
    c_recording:"LIVE · Đang dịch trực tiếp",c_paused:"Đã tạm dừng",c_ready:"Sẵn sàng",lv_auto:"Tự động",lv_fast:"⚡ Nhanh",lv_multi:"🌐 Đa ngữ",
    c_diar:"👥 Tự động tách giọng từng người (Speaker 1, 2, 3…).",
    p_upload:"Đang tải audio lên…",p_diar:"Đang tách giọng nói…",p_sum:"Đang viết tóm tắt…",p_wait:"Trợ lý AI đang chăm chỉ làm việc…",
@@ -669,7 +673,7 @@ const I={
    sys:"Bạn là trợ lý ghi biên bản họp chuyên nghiệp. Transcript đã gắn nhãn người nói (Speaker 1, Speaker 2, …) — giữ nguyên. Viết biên bản bằng Tiếng Việt, Markdown:\n## Thành phần tham dự\n## Tóm tắt chung\n## Điểm chính\n## Quyết định\n## Việc cần làm\n## Vấn đề còn mở\nKhông bịa thông tin ngoài transcript."},
  ko:{hero_badge:"AI · 다국어 회의 · 자동 회의록",hero_h:"다국어 회의를,",hero_h2:"더 명확하게.",hero_sub:"화자를 분리하고 여러 언어를 실시간 번역하며, 회의 후 회의록까지 자동 작성 — 브라우저에서 바로.",hero_cta:"3분 무료 체험",hero_cta_in:"시작하기",hero_micro:"결제 카드 불필요 · 설치 불필요 · 브라우저에서 바로 사용",hero_demo:"60초 데모 보기",modes_h:"회의에만 국한되지 않습니다",modes_sub:"Flash Meet은 웨비나, 교육 영상, 온라인 강의 등 자막 없는 다국어 콘텐츠에도 실시간 AI 자막을 제공합니다.",m1t:"Meeting Mode",m1d:"화자 분리, 실시간 번역, 회의 후 회의록 작성.",m2t:"Viewer Mode",m2d:"영상·웨비나·강의의 오디오를 듣고 실시간 번역 자막을 표시합니다.",m3t:"Dark Subtitle Mode",m3d:"자막에만 집중하는 미니멀 다크 UI — 긴 콘텐츠에 적합.",f_privacy:"개인정보",f_terms:"약관",f_contact:"문의",
    hf1t:"누가 무엇을 말했는지 명확히",hf1d:"화자를 자동 분리해 고객·PM·내부 팀의 의견이 헷갈리지 않습니다.",hf1r:"요구사항 혼동 감소",hf2t:"회의 중 바로 이해",hf2d:"실시간 이중 자막으로 다국어 회의가 매끄럽게.",hf2r:"핵심을 놓치지 않음",hf3t:"회의 직후 회의록 완성",hf3d:"요약·결정·액션 아이템·담당자까지 자동 — 처음부터 다시 쓸 필요 없음.",hf3r:"30~60분 절약",
-   c_hint:"시작을 눌러 녹음 & 번역",c_record:"3분 무료 번역 시작",c_record_in:"번역 시작",c_upload:"오디오 파일로 체험",c_pause:"일시정지",c_resume:"계속",c_stop:"종료",c_summarize:"요약하기 →",c_redo:"다시 시작",c_micro:"결제 카드 불필요 · 설치 불필요",c_michelp:"Flash Meet이 실시간 번역할 수 있도록 마이크를 허용해 주세요.",c_opening:"마이크 여는 중…",
+   c_hint:"시작을 눌러 녹음 & 번역",c_record:"3분 무료 번역 시작",c_record_in:"번역 시작",c_upload:"오디오 파일로 체험",c_pause:"일시정지",c_resume:"계속",c_stop:"종료",c_summarize:"요약하기 →",c_redo:"다시 시작",c_micro:"결제 카드 불필요 · 설치 불필요",c_michelp:"Flash Meet이 실시간 번역할 수 있도록 마이크를 허용해 주세요.",c_opening:"마이크 여는 중…",lv_connecting:"실시간 번역 연결 중…",
    c_recording:"LIVE · 실시간 번역 중",c_paused:"일시정지됨",c_ready:"준비됨",lv_auto:"자동",lv_fast:"⚡ 빠름",lv_multi:"🌐 다국어",
    c_diar:"👥 화자를 자동으로 분리합니다 (Speaker 1, 2, 3…).",
    p_upload:"오디오 업로드 중…",p_diar:"화자 분리 중…",p_sum:"요약 작성 중…",p_wait:"AI 비서가 열심히 작업 중…",
@@ -942,6 +946,8 @@ if(localStorage.getItem('mr_lva'))$('lvA').value=localStorage.getItem('mr_lva');
 if(localStorage.getItem('mr_lvb'))$('lvB').value=localStorage.getItem('mr_lvb');
 (function(){const w=localStorage.getItem('mr_lvway')||'one';
   $('lvWaySeg').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.w===w));applyWay();})();
+// Spinner in the live feed while the token is minted and the socket opens (can take a second).
+function lvConnecting(){const el=$('lvInterim');$('lvFeed').style.display='flex';el.style.display='inline-flex';el.dataset.conn='1';el.innerHTML='<span class="lv-spin"></span><span>'+esc(t('lv_connecting'))+'</span>';}
 function lvInfo(msg){$('lvFeed').style.display='flex';$('lvInterim').style.display='inline-flex';$('lvInterim').textContent=msg;}
 const EQ='<span class="eq"><i></i><i></i><i></i><i></i></span>';
 // The "Listening…" status used to sit between messages and got in the way; we
@@ -985,7 +991,11 @@ function trToday(){return new Date().toISOString().slice(0,10);}
 function trUsed(){try{return localStorage.getItem('tf_tr_day')===trToday()?(parseInt(localStorage.getItem('tf_tr_used')||'0',10)||0):0;}catch(e){return 0;}}
 function trAdd(sec){try{localStorage.setItem('tf_tr_day',trToday());localStorage.setItem('tf_tr_used',String(trUsed()+sec));}catch(e){}}
 function trRemain(){return Math.max(0,TR_DAILY-trUsed());}
-function goTop(url){try{window.top.location.href=url;}catch(e){window.parent.location.href=url;}}
+// Leaving the app (links with target=_top, gate buttons): mark the clicked element busy and
+// tell the parent shell to show its progress bar, so the click never looks ignored.
+function navBusy(el){if(el)el.setAttribute('data-fm-busy','');try{parent.postMessage({fm:'nav'},location.origin);}catch(e){}}
+document.addEventListener('click',e=>{if(e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey)return;const a=e.target.closest&&e.target.closest('a[target="_top"][href]');if(a&&a.getAttribute('href').charAt(0)==='/')navBusy(a);},true);
+function goTop(url){navBusy(null);try{window.top.location.href=url;}catch(e){window.parent.location.href=url;}}
 function renderUsage(){const el=$('usageBadge');if(!el)return;
   if(!SIGNED){el.textContent=t('u_trial').replace('{n}',Math.ceil(anonRemain()/60));el.style.display='';return;}
   const m=t('u_min');let x;
@@ -1064,6 +1074,7 @@ async function startLive(){
     catch(e){lvInfo('⚠ '+t('lv_mic'));lvWantOn=false;return;}
   }
   if(!lvWantOn)return;
+  lvConnecting();
   openWs();
 }
 // Opens (or re-opens) the Soniox socket, reusing the existing mic stream.
@@ -1074,6 +1085,7 @@ async function openWs(){
   if(!lvWantOn||!sx.stream)return;
   const ws=new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket');sx.ws=ws;
   ws.onopen=()=>{
+    const _li=$('lvInterim');if(_li.dataset.conn){delete _li.dataset.conn;setInterim('');}
     sxOpenAt=Date.now();sxLastTrans=0;sxLastOrig=0;sxStartWatch();
     const two=getWay()==='two';
     const cfg={api_key:tok,model:'stt-rt-v4',audio_format:'auto',

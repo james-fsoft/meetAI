@@ -4,3 +4,13 @@ body.sota{--ink:#e9eefb;--paper:#0a1124;--grey:#9fb0d4;--faint:#5c6a8c;--hair:#1
 html,body{height:100%}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5;letter-spacing:-.015em}
 /* The full component styles are injected by the MeetingApp component. */
+
+/* Click feedback (NavFeedback): top progress bar + spinner on the busy element. */
+.fm-nprog{position:fixed;top:0;left:0;height:3px;width:0;z-index:9999;pointer-events:none;opacity:0;background:linear-gradient(90deg,#1f6bff,#5b9bff);box-shadow:0 0 10px rgba(31,107,255,.6)}
+.fm-nprog.run{opacity:1;animation:fmprog 9s cubic-bezier(.05,.75,.2,1) forwards}
+.fm-nprog.end{opacity:0;width:100%;transition:width .2s ease,opacity .25s ease .2s}
+@keyframes fmprog{0%{width:0}8%{width:38%}100%{width:90%}}
+[data-fm-busy]{cursor:progress!important;pointer-events:none;opacity:.8}
+[data-fm-busy]::after{content:"";display:inline-block;flex-shrink:0;width:.8em;height:.8em;margin-left:.45em;vertical-align:-.1em;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:fmspin .6s linear infinite}
+@keyframes fmspin{to{transform:rotate(360deg)}}
+button:not(:disabled):active,a[href]:active{transform:translateY(1px)}

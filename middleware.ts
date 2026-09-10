@@ -29,6 +29,12 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
 
+  // Signed-in-only pages: bounce anonymous visitors here, before any rendering —
+  // otherwise their loading.tsx skeleton streams first and the redirect happens client-side.
+  if (!user && (path === "/account" || path === "/dashboard")) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   // Anonymous visitors may use the app (with a client-side trial limit).
   // Only bounce signed-in users away from the login page.
   if (user && path === "/login") {

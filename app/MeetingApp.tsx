@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase-browser";
+import Link from "next/link";
 import PlanMenu from "./PlanMenu";
 
 type Lang = "en" | "vi" | "ko";
@@ -52,6 +53,8 @@ const T: Record<Lang, {
  */
 export default function MeetingApp({ email, plan = "free", admin = false }: { email?: string; plan?: string; admin?: boolean }) {
   const router = useRouter();
+  const [refreshing, startRefresh] = useTransition();
+  const [signingOut, setSigningOut] = useState(false);
   const signedIn = !!email;
   const [lang, setLang] = useState<Lang>("en");
   const [refPending, setRefPending] = useState(false);
@@ -120,21 +123,25 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
 
   const t = T[lang];
 
+  // Spinner from the click until the signed-out shell has re-rendered (refresh is a transition).
   async function signOut() {
+    if (signingOut || refreshing) return;
+    setSigningOut(true);
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
     } catch {}
-    router.refresh();
+    startRefresh(() => router.refresh());
+    setSigningOut(false);
   }
 
   const iframeSrc = signedIn
-    ? `/meeting.html?v=68&signed=1&plan=${encodeURIComponent(plan)}`
-    : "/meeting.html?v=68";
+    ? `/meeting.html?v=69&signed=1&plan=${encodeURIComponent(plan)}`
+    : "/meeting.html?v=69";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
-      <style>{BAR_CSS}</style>
+      <style dangerouslySetInnerHTML={{ __html: BAR_CSS }} />
       <div className="fm-bar">
         <a href="/" className="fm-brand">
           <svg viewBox="0 0 100 100" width="24" height="24" style={{ display: "block", flexShrink: 0 }} aria-hidden="true">
@@ -146,38 +153,38 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
         <span style={{ flex: 1 }} />
         {signedIn ? (
           <div className="fm-right">
-            <a href="/extension" className="fm-ext" style={{ textDecoration: "none", color: "#5b6b8c", fontWeight: 700 }}>🧩 {t.ext}</a>
-            {admin && <a href="/admin" className="fm-admin" style={adminLink}>⚙ Admin</a>}
-            <a href="/dashboard" style={calLink} title={t.cal}>
+            <Link href="/extension" className="fm-ext" style={{ textDecoration: "none", color: "#5b6b8c", fontWeight: 700 }}>🧩 {t.ext}</Link>
+            {admin && <Link href="/admin" className="fm-admin" style={adminLink}>⚙ Admin</Link>}
+            <Link href="/dashboard" style={calLink} title={t.cal}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }} aria-hidden="true">
                 <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
                 <path d="M3.5 10h17M8 3v4M16 3v4" />
               </svg>
               <span className="fm-acct-label">{t.cal}</span>
-            </a>
+            </Link>
             <PlanMenu plan={plan} lang={lang} email={email} />
-            <a href="/account" style={accountLink} title={t.account}>
+            <Link href="/account" style={accountLink} title={t.account}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" style={{ display: "block" }} aria-hidden="true">
                 <circle cx="12" cy="8" r="3.4" />
                 <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
               </svg>
               <span className="fm-acct-label">{t.account}</span>
-            </a>
-            <button onClick={signOut} style={out}>{t.signout}</button>
+            </Link>
+            <button onClick={signOut} style={out} disabled={signingOut || refreshing} data-fm-busy={signingOut || refreshing ? "" : undefined}>{t.signout}</button>
           </div>
         ) : (
           <div className="fm-right">
             <span className="fm-trial">{t.trial}</span>
-            <a href="/extension" className="fm-mail" style={{ ...linkBtn }}>🧩 {t.ext}</a>
-            <a href="/pricing" style={linkBtn}>{t.pricing}</a>
-            <a href="/login" style={primaryBtn}>{t.signin}</a>
+            <Link href="/extension" className="fm-mail" style={{ ...linkBtn }}>🧩 {t.ext}</Link>
+            <Link href="/pricing" style={linkBtn}>{t.pricing}</Link>
+            <Link href="/login" style={primaryBtn}>{t.signin}</Link>
           </div>
         )}
       </div>
       {refPending && !signedIn && (
         <div style={refBanner}>
           <span style={{ flex: 1 }}>{t.refBanner}</span>
-          <a href="/login" style={refBannerBtn}>{t.refClaim}</a>
+          <Link href="/login" style={refBannerBtn}>{t.refClaim}</Link>
         </div>
       )}
       {showExt && extInstalled === false && (
@@ -187,7 +194,7 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
           </span>
           <span style={extText}>{t.extPromo}</span>
           <a href={STORE_URL} target="_blank" rel="noopener noreferrer" style={extAddBtn}>{t.extAdd}</a>
-          <a href="/extension" style={extMoreLink}>{t.extMore}</a>
+          <Link href="/extension" style={extMoreLink}>{t.extMore}</Link>
           <button onClick={dismissExt} style={extX} aria-label="Dismiss">✕</button>
         </div>
       )}

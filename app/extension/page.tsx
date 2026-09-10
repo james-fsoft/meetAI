@@ -74,7 +74,7 @@ export default function ExtensionGuide() {
 
   return (
     <main style={S.wrap}>
-      <style>{CSS}</style>
+      <style dangerouslySetInnerHTML={{ __html: CSS }} />
       <div style={S.top}>
         <a href="/" style={S.back}>{t.back}</a>
         <LangSwitch lang={lang} onChange={setLang} />

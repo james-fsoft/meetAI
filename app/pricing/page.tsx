@@ -534,7 +534,7 @@ export default function Pricing() {
         ))}
       </div>
 
-      <style>{REFBANNER_CSS}</style>
+      <style dangerouslySetInnerHTML={{ __html: REFBANNER_CSS }} />
       <div className="refb">
         <div className="refb-left">
           <span className="refb-badge">{t.refProgram}</span>
@@ -612,7 +612,7 @@ export default function Pricing() {
 
       {invite && (
         <>
-          <style>{REF_CSS}</style>
+          <style dangerouslySetInnerHTML={{ __html: REF_CSS }} />
           <div className="ref-overlay" onClick={() => setInvite(null)}>
             <div className="ref-modal" onClick={(e) => e.stopPropagation()}>
               <button className="ref-x" onClick={() => setInvite(null)} aria-label="Close">

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
 import PWA from "./PWA";
+import NavFeedback from "./NavFeedback";
 import "./globals.css";
 
 export const viewport: Viewport = {
@@ -126,6 +127,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <NavFeedback />
         {children}
         <PWA />
         <Analytics />
