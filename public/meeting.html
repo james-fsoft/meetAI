@@ -156,6 +156,7 @@ body.recing .lvto-sel{padding:5px 9px;font-size:12.5px}
   background:color-mix(in srgb,var(--acc) 7%,transparent);border:1px solid color-mix(in srgb,var(--acc) 20%,transparent);border-radius:11px;padding:9px 13px}
 .upload-link{display:inline-block;margin-top:16px;font-size:13px;font-weight:600;color:var(--grey);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--hair)}
 .upload-link:hover{color:var(--ink);text-decoration-color:var(--grey)}
+.upload-rule{font-size:11.5px;font-weight:500;color:var(--faint);margin-top:6px;line-height:1.5}
 @keyframes recGlow{0%,100%{box-shadow:0 10px 24px -12px color-mix(in srgb,var(--acc) 55%,transparent)}50%{box-shadow:0 16px 38px -10px color-mix(in srgb,var(--acc) 82%,transparent)}}
 .link{display:inline-block;margin-top:20px;background:none;border:none;cursor:pointer;font-family:inherit;
   font-size:13px;font-weight:600;color:var(--grey);text-decoration:underline;text-underline-offset:3px}
@@ -535,8 +536,9 @@ audio{width:100%;margin-top:16px;height:42px}
         <button class="btn big cta-go" id="btnRec" data-t="c_record">Start</button>
         <p class="cta-micro" data-t="c_micro">No card · No install</p>
         <p class="mic-help" id="micHelp" data-t="c_michelp" style="display:none">Allow microphone…</p>
-        <a class="link upload-link" id="btnUpload" data-t="c_upload">Upload audio to try</a>
-        <input type="file" id="fileIn" accept="audio/*" style="display:none">
+        <a class="link upload-link" id="btnUpload" data-t="c_upload">Upload an audio file to get translation &amp; summary</a>
+        <p class="upload-rule" data-t="c_upload_rule">MP3, WAV, M4A, WebM, OGG, FLAC, AAC · Max 4MB (~4 min MP3)</p>
+        <input type="file" id="fileIn" accept="audio/*,.mp3,.wav,.m4a,.webm,.ogg,.flac,.aac" style="display:none">
       </div>
       <div id="capRec" style="display:none">
         <div class="dual"><button class="btn out" id="btnPause" data-t="c_pause">Pause</button><button class="btn" id="btnStop" data-t="c_stop">Stop</button></div>
@@ -652,7 +654,7 @@ const CONFIG={OPENAI_KEY:'server',ASSEMBLYAI_KEY:'server'};
 const I={
  en:{hero_badge:"AI · Multilingual meetings · Auto minutes",hero_h:"Multilingual meetings,",hero_h2:"made clear.",hero_sub:"Separate every speaker, translate live across languages, and auto-write the minutes after the call — right in your browser.",hero_cta:"Try 3 minutes free",hero_cta_in:"Start",hero_micro:"No payment card · No installation · Runs in your browser",hero_demo:"Watch 60-sec demo",modes_h:"Not just for meetings",modes_sub:"Flash Meet also adds real-time AI subtitles to webinars, training videos, online lectures and multilingual content without captions.",m1t:"Meeting Mode",m1d:"Separate speakers, translate live and create minutes after the call.",m2t:"Viewer Mode",m2d:"Listen to audio from a video, webinar or lecture and show translated subtitles in real time.",m3t:"Dark Subtitle Mode",m3d:"A minimal dark interface focused only on the subtitles — ideal for long content.",f_privacy:"Privacy",f_terms:"Terms",f_contact:"Contact",
    hf1t:"Know exactly who said what",hf1d:"Automatically separates every speaker so requirements from clients, PMs and your team never get mixed up.",hf1r:"Fewer misread requirements",hf2t:"Understand it live",hf2d:"Real-time bilingual subtitles keep multilingual meetings flowing.",hf2r:"Never miss the key point",hf3t:"Minutes ready after the call",hf3d:"Auto-creates the summary, decisions, action items and owners — no rewriting from scratch.",hf3r:"Save 30–60 minutes",
-   c_hint:"Press start to begin",c_record:"Start translating free · 3 min",c_record_in:"Start translating",c_upload:"Upload audio to try",c_pause:"Pause",c_resume:"Resume",c_stop:"End",c_summarize:"Summarize →",c_redo:"Start over",c_micro:"No payment card · No installation",c_michelp:"Please allow microphone so Flash Meet can translate live.",c_opening:"Opening microphone…",lv_connecting:"Connecting live translation…",
+   c_hint:"Press start to begin",c_record:"Start translating free · 3 min",c_record_in:"Start translating",c_upload:"Upload an audio file to get translation & summary",c_upload_rule:"MP3, WAV, M4A, WebM, OGG, FLAC, AAC · Max 4MB (~4 min MP3)",up_bad_type:"Unsupported file. Please choose an MP3, WAV, M4A, WebM, OGG, FLAC or AAC audio file.",up_too_big:"File too large (max 4MB). Trim it or compress to MP3, then try again.",c_pause:"Pause",c_resume:"Resume",c_stop:"End",c_summarize:"Summarize →",c_redo:"Start over",c_micro:"No payment card · No installation",c_michelp:"Please allow microphone so Flash Meet can translate live.",c_opening:"Opening microphone…",lv_connecting:"Connecting live translation…",
    c_recording:"LIVE · Translating live",c_paused:"Paused",c_ready:"Ready",lv_auto:"Auto",lv_fast:"⚡ Fast",lv_multi:"🌐 Multi",
    c_diar:"👥 Voices are separated automatically (Speaker 1, 2, 3…).",
    p_upload:"Uploading audio…",p_diar:"Separating voices…",p_sum:"Writing the summary…",p_wait:"Your AI assistant is hard at work…",
@@ -668,7 +670,7 @@ const I={
    sys:"You are a professional meeting-minutes assistant. The transcript is labeled by speaker (Speaker 1, Speaker 2, …) — keep these exact labels. Write minutes in English, in Markdown:\n## Participants\n## Overview\n## Key points\n## Decisions\n## Action items\n## Open issues\nNever invent anything not in the transcript."},
  vi:{hero_badge:"AI · Họp đa ngôn ngữ · Tự động tạo biên bản",hero_h:"Cuộc họp đa ngôn ngữ,",hero_h2:"rõ ràng hơn.",hero_sub:"Tách giọng từng người, dịch trực tiếp đa ngôn ngữ, và tự tạo biên bản sau cuộc họp — ngay trên trình duyệt.",hero_cta:"Dùng thử 3 phút miễn phí",hero_cta_in:"Bắt đầu",hero_micro:"Không cần thẻ thanh toán · Không cần cài đặt · Dùng trực tiếp trên trình duyệt",hero_demo:"Xem demo 60 giây",modes_h:"Không chỉ cho cuộc họp",modes_sub:"Flash Meet cũng hỗ trợ phụ đề AI thời gian thực cho webinar, video training, bài giảng online và nội dung đa ngôn ngữ không có phụ đề.",m1t:"Meeting Mode",m1d:"Tách giọng, dịch trực tiếp và tạo biên bản sau cuộc họp.",m2t:"Viewer Mode",m2d:"Nghe âm thanh từ video, webinar hoặc bài giảng và hiển thị phụ đề dịch theo thời gian thực.",m3t:"Dark Subtitle Mode",m3d:"Giao diện nền tối, tối giản, chỉ tập trung vào phụ đề — phù hợp khi xem nội dung dài.",f_privacy:"Bảo mật",f_terms:"Điều khoản",f_contact:"Liên hệ",
    hf1t:"Biết rõ ai đã nói gì",hf1d:"Tự tách từng người nói trong cuộc họp, tránh nhầm ý giữa khách hàng, PM và team nội bộ.",hf1r:"Giảm nhầm yêu cầu",hf2t:"Hiểu ngay khi đang họp",hf2d:"Dịch phụ đề song ngữ theo thời gian thực, giúp cuộc họp đa ngôn ngữ trôi chảy hơn.",hf2r:"Không bỏ lỡ ý chính",hf3t:"Có biên bản ngay sau họp",hf3d:"Tự tạo tóm tắt, quyết định, việc cần làm và người phụ trách — không phải ngồi viết lại từ đầu.",hf3r:"Tiết kiệm 30–60 phút",
-   c_hint:"Bấm bắt đầu để ghi & dịch",c_record:"Bắt đầu dịch thử 3 phút",c_record_in:"Bắt đầu dịch",c_upload:"Tải file audio để thử",c_pause:"Tạm dừng",c_resume:"Tiếp tục",c_stop:"Kết thúc",c_summarize:"Tóm tắt →",c_redo:"Làm lại",c_micro:"Không cần thẻ thanh toán · Không cần cài đặt",c_michelp:"Vui lòng cho phép microphone để Flash Meet có thể dịch trực tiếp.",c_opening:"Đang mở microphone…",lv_connecting:"Đang kết nối dịch trực tiếp…",
+   c_hint:"Bấm bắt đầu để ghi & dịch",c_record:"Bắt đầu dịch thử 3 phút",c_record_in:"Bắt đầu dịch",c_upload:"Tải file audio lên để nhận bản dịch & tóm tắt",c_upload_rule:"Hỗ trợ MP3, WAV, M4A, WebM, OGG, FLAC, AAC · Tối đa 4MB (~4 phút MP3)",up_bad_type:"File không được hỗ trợ. Vui lòng chọn file audio MP3, WAV, M4A, WebM, OGG, FLAC hoặc AAC.",up_too_big:"File quá lớn (tối đa 4MB). Hãy cắt ngắn hoặc nén sang MP3 rồi thử lại.",c_pause:"Tạm dừng",c_resume:"Tiếp tục",c_stop:"Kết thúc",c_summarize:"Tóm tắt →",c_redo:"Làm lại",c_micro:"Không cần thẻ thanh toán · Không cần cài đặt",c_michelp:"Vui lòng cho phép microphone để Flash Meet có thể dịch trực tiếp.",c_opening:"Đang mở microphone…",lv_connecting:"Đang kết nối dịch trực tiếp…",
    c_recording:"LIVE · Đang dịch trực tiếp",c_paused:"Đã tạm dừng",c_ready:"Sẵn sàng",lv_auto:"Tự động",lv_fast:"⚡ Nhanh",lv_multi:"🌐 Đa ngữ",
    c_diar:"👥 Tự động tách giọng từng người (Speaker 1, 2, 3…).",
    p_upload:"Đang tải audio lên…",p_diar:"Đang tách giọng nói…",p_sum:"Đang viết tóm tắt…",p_wait:"Trợ lý AI đang chăm chỉ làm việc…",
@@ -684,7 +686,7 @@ const I={
    sys:"Bạn là trợ lý ghi biên bản họp chuyên nghiệp. Transcript đã gắn nhãn người nói (Speaker 1, Speaker 2, …) — giữ nguyên. Viết biên bản bằng Tiếng Việt, Markdown:\n## Thành phần tham dự\n## Tóm tắt chung\n## Điểm chính\n## Quyết định\n## Việc cần làm\n## Vấn đề còn mở\nKhông bịa thông tin ngoài transcript."},
  ko:{hero_badge:"AI · 다국어 회의 · 자동 회의록",hero_h:"다국어 회의를,",hero_h2:"더 명확하게.",hero_sub:"화자를 분리하고 여러 언어를 실시간 번역하며, 회의 후 회의록까지 자동 작성 — 브라우저에서 바로.",hero_cta:"3분 무료 체험",hero_cta_in:"시작하기",hero_micro:"결제 카드 불필요 · 설치 불필요 · 브라우저에서 바로 사용",hero_demo:"60초 데모 보기",modes_h:"회의에만 국한되지 않습니다",modes_sub:"Flash Meet은 웨비나, 교육 영상, 온라인 강의 등 자막 없는 다국어 콘텐츠에도 실시간 AI 자막을 제공합니다.",m1t:"Meeting Mode",m1d:"화자 분리, 실시간 번역, 회의 후 회의록 작성.",m2t:"Viewer Mode",m2d:"영상·웨비나·강의의 오디오를 듣고 실시간 번역 자막을 표시합니다.",m3t:"Dark Subtitle Mode",m3d:"자막에만 집중하는 미니멀 다크 UI — 긴 콘텐츠에 적합.",f_privacy:"개인정보",f_terms:"약관",f_contact:"문의",
    hf1t:"누가 무엇을 말했는지 명확히",hf1d:"화자를 자동 분리해 고객·PM·내부 팀의 의견이 헷갈리지 않습니다.",hf1r:"요구사항 혼동 감소",hf2t:"회의 중 바로 이해",hf2d:"실시간 이중 자막으로 다국어 회의가 매끄럽게.",hf2r:"핵심을 놓치지 않음",hf3t:"회의 직후 회의록 완성",hf3d:"요약·결정·액션 아이템·담당자까지 자동 — 처음부터 다시 쓸 필요 없음.",hf3r:"30~60분 절약",
-   c_hint:"시작을 눌러 녹음 & 번역",c_record:"3분 무료 번역 시작",c_record_in:"번역 시작",c_upload:"오디오 파일로 체험",c_pause:"일시정지",c_resume:"계속",c_stop:"종료",c_summarize:"요약하기 →",c_redo:"다시 시작",c_micro:"결제 카드 불필요 · 설치 불필요",c_michelp:"Flash Meet이 실시간 번역할 수 있도록 마이크를 허용해 주세요.",c_opening:"마이크 여는 중…",lv_connecting:"실시간 번역 연결 중…",
+   c_hint:"시작을 눌러 녹음 & 번역",c_record:"3분 무료 번역 시작",c_record_in:"번역 시작",c_upload:"오디오 파일을 업로드하여 번역 & 요약 받기",c_upload_rule:"MP3, WAV, M4A, WebM, OGG, FLAC, AAC · 최대 4MB (MP3 약 4분)",up_bad_type:"지원하지 않는 파일입니다. MP3, WAV, M4A, WebM, OGG, FLAC, AAC 오디오 파일을 선택해 주세요.",up_too_big:"파일이 너무 큽니다 (최대 4MB). 길이를 줄이거나 MP3로 압축한 후 다시 시도해 주세요.",c_pause:"일시정지",c_resume:"계속",c_stop:"종료",c_summarize:"요약하기 →",c_redo:"다시 시작",c_micro:"결제 카드 불필요 · 설치 불필요",c_michelp:"Flash Meet이 실시간 번역할 수 있도록 마이크를 허용해 주세요.",c_opening:"마이크 여는 중…",lv_connecting:"실시간 번역 연결 중…",
    c_recording:"LIVE · 실시간 번역 중",c_paused:"일시정지됨",c_ready:"준비됨",lv_auto:"자동",lv_fast:"⚡ 빠름",lv_multi:"🌐 다국어",
    c_diar:"👥 화자를 자동으로 분리합니다 (Speaker 1, 2, 3…).",
    p_upload:"오디오 업로드 중…",p_diar:"화자 분리 중…",p_sum:"요약 작성 중…",p_wait:"AI 비서가 열심히 작업 중…",
@@ -725,7 +727,7 @@ let insTimer=null,insLastLen=0,insBusy=false;
 let actx=null,analyser=null,raf=null;
 let recog=null,lvRunning=false,lvWantOn=false,lvHistory=[],lvAll=[];
 let mlRec=null,mlTimer=null,mlStream=null;const ML_SEGMENT_MS=7000;
-function toast(m){const el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),1800);}
+function toast(m,ms){const el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),ms||1800);}
 function fmt(s){return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;}
 function refreshDyn(){
   if(capState==='recording')$('recHint').innerHTML='<span class="live"></span>'+t('c_recording');
@@ -764,7 +766,12 @@ $('btnPause').onclick=()=>{if(!mediaRecorder)return;
   else{mediaRecorder.resume();paused=false;startTime=Date.now();$('btnPause').textContent=t('c_pause');setCap('recording');startViz(audioStream);if($('lvOn').checked)startLive();}};
 $('btnStop').onclick=()=>{if(!mediaRecorder)return;autoSumPending=true;if(!paused)elapsed+=Date.now()-startTime;curDur=Math.round(elapsed/1000);mediaRecorder.stop();clearInterval(timerInt);audioStream.getTracks().forEach(x=>x.stop());extra.forEach(s=>s.getTracks().forEach(x=>x.stop()));$('btnPause').textContent=t('c_pause');stopLive();stopAutosave();if(curTr&&curTr.trim())save(true,{auto:true});};
 $('btnUpload').onclick=()=>$('fileIn').click();
-$('fileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;e.target.value='';audioBlob=f;curTr="";curSum="";lvAll=[];lvHistory=[];spkNames={};curId=null;curStart=Date.now();curDur=0;$('player').src=URL.createObjectURL(f);$('timer').textContent='00:00';setCap('ready');toast(f.name);runSummary();};
+// Server body limit is ~4.5MB (Vercel), so reject bad files here with a clear message.
+const UP_MAX=4*1024*1024,UP_EXT=/\.(mp3|wav|m4a|webm|ogg|flac|aac)$/i;
+$('fileIn').onchange=e=>{const f=e.target.files[0];if(!f)return;e.target.value='';
+  if(!UP_EXT.test(f.name)&&!(f.type||'').startsWith('audio/')){toast(t('up_bad_type'),4500);return;}
+  if(f.size>UP_MAX){toast(t('up_too_big'),4500);return;}
+  audioBlob=f;curTr="";curSum="";lvAll=[];lvHistory=[];spkNames={};curId=null;curStart=Date.now();curDur=0;$('player').src=URL.createObjectURL(f);$('timer').textContent='00:00';setCap('ready');toast(f.name);runSummary();};
 $('player').addEventListener('loadedmetadata',()=>{const d=$('player').duration;if(!curDur&&isFinite(d))curDur=Math.round(d);});
 $('btnRedo').onclick=()=>{audioBlob=null;$('timer').textContent='00:00';setCap('idle');$('lvFeed').style.display='none';$('lvInterim').style.display='none';$('lvFeed').innerHTML='';};
 let autoSumPending=false,curStart=0,curDur=0;
