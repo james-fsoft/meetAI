@@ -448,7 +448,7 @@ if (RATING) {
   const allTracks = [];    // every mic track ever opened — lets the diagnostic below prove none stays live
 
   const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const fmt = (sec) => '00:' + String(sec).padStart(2, '0');
+  const fmt = (sec) => String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
   const today = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
   function uses() { let x = null; try { x = JSON.parse(localStorage.getItem('mf_trial_uses') || 'null'); } catch (e) {} return x && x.day === today() ? x : { day: today(), count: 0 }; }
   function addUse(n) { const x = uses(); x.count = Math.max(0, x.count + n); try { localStorage.setItem('mf_trial_uses', JSON.stringify(x)); } catch (e) {} }
