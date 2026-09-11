@@ -4,112 +4,773 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Meetflash — Premium Concept</title>
+<!-- Served inside the /concept wrapper iframe: links navigate the whole window. -->
+<base target="_top">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<!-- Korean: Pretendard, split by unicode-range so only glyphs on the page are fetched -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
-:root{--bg:#f7f9fb;--card:#fff;--text:#101923;--muted:#677382;--line:#e5e9ee;--soft:#eef2f5;--accent:#12212d;--accentText:#fff;--shadow:0 24px 70px rgba(20,36,52,.09)}
-body.dark{--bg:#08121a;--card:#0f1b25;--text:#f4f7f9;--muted:#9eacb7;--line:#21303b;--soft:#14232e;--accent:#f7f9fa;--accentText:#0b151d;--shadow:0 26px 70px rgba(0,0,0,.3)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;transition:.2s}a{color:inherit;text-decoration:none}button,select{font:inherit}.wrap{width:min(1180px,calc(100% - 44px));margin:auto}
-.nav{height:72px;display:flex;align-items:center;border-bottom:1px solid var(--line)}.brand{font-size:22px;font-weight:850;letter-spacing:-.035em}.links{display:flex;gap:28px;margin:auto;font-size:13px;color:var(--muted)}.navR{display:flex;gap:9px;align-items:center}.ghost,.theme{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;height:40px}.ghost{padding:0 16px;display:grid;place-items:center;font-size:12px;font-weight:750}.theme{width:40px;cursor:pointer}
-.hero{display:grid;grid-template-columns:.95fr 1.05fr;gap:58px;align-items:center;padding:66px 0 54px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:.17em;color:var(--muted)}h1{font-size:66px;line-height:1;letter-spacing:-.06em;margin:15px 0 20px}.hero p{font-size:18px;color:var(--muted);line-height:1.65;max-width:560px}.cta{border:0;background:var(--accent);color:var(--accentText);border-radius:999px;padding:17px 23px;font-size:16px;font-weight:800;display:inline-flex;align-items:center;gap:12px;cursor:pointer;margin-top:10px;box-shadow:0 14px 34px rgba(16,31,43,.16)}.cta:hover{transform:translateY(-1px)}.meta{display:flex;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:15px}
-.heroVisual{position:relative;border-radius:30px;overflow:hidden;box-shadow:var(--shadow);background:var(--card);min-height:410px}.heroVisual img{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}.darkImg{display:none!important}body.dark .lightImg{display:none!important}body.dark .darkImg{display:block!important}
-.benefits{background:var(--card);border-block:1px solid var(--line)}.benefitGrid{display:grid;grid-template-columns:repeat(4,1fr)}.benefit{padding:22px 20px;display:flex;align-items:center;gap:12px}.benefit+.benefit{border-left:1px solid var(--line)}.ico{width:40px;height:40px;border-radius:14px;background:var(--soft);display:grid;place-items:center;font-size:18px}.benefit b{display:block;font-size:13px}.benefit small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
-.section{padding:68px 0}.head{text-align:center;margin-bottom:28px}.head.left{text-align:left}.head h2{font-size:39px;letter-spacing:-.045em;margin:8px 0}.head p{color:var(--muted);font-size:14px;margin:0}
-.useGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.use{background:var(--card);border:1px solid var(--line);border-radius:19px;overflow:hidden}.useImg{height:185px;background-size:cover;background-position:center;position:relative;filter:saturate(.82)}.cap{position:absolute;left:10px;right:10px;bottom:10px;background:rgba(8,15,22,.8);color:#fff;padding:9px 10px;border-radius:11px;font-size:11px;line-height:1.4}.useText{padding:14px}.useText b{font-size:13px}.useText p{font-size:11px;color:var(--muted);line-height:1.45;margin:5px 0 0}
-.reviewRow{display:grid;grid-template-columns:1fr 1.25fr;gap:16px}.review,.listen{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px}.score{font-size:50px;font-weight:850;letter-spacing:-.055em}.stars{color:#d99c26;letter-spacing:2px}.review p,.listen p{color:var(--muted);line-height:1.6;font-size:12px}.feedback{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:10px 14px;font-size:11px;font-weight:800;margin-top:8px}
-.final{background:#0b151e;color:#fff}.finalIn{min-height:210px;display:flex;justify-content:space-between;align-items:center;gap:24px}.final h2{font-size:36px;letter-spacing:-.04em;margin:6px 0}.final p{color:#9eb0bd;margin:0;font-size:13px}.final .cta{background:#fff;color:#0b151e;margin:0}
-.modal{position:fixed;inset:0;background:rgba(3,9,14,.55);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}.modal.on{display:flex}.dialog{width:min(760px,100%);background:var(--card);border:1px solid var(--line);border-radius:28px;padding:26px;box-shadow:0 30px 90px rgba(0,0,0,.28);position:relative}.close{position:absolute;right:17px;top:17px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--soft);color:var(--text);cursor:pointer}.dialogHead{text-align:center;padding:10px 44px 18px}.dialogHead h3{font-size:28px;letter-spacing:-.035em;margin:4px 0 6px}.dialogHead p{color:var(--muted);font-size:13px;margin:0}.controls{display:flex;justify-content:center;align-items:center;gap:10px;margin:8px 0 20px}.controls select{border:1px solid var(--line);background:var(--soft);color:var(--text);border-radius:999px;padding:10px 14px;outline:none}.trialGrid{display:grid;grid-template-columns:140px 1fr;gap:20px;align-items:center}.mic{width:92px;height:92px;border-radius:50%;border:0;background:var(--accent);color:var(--accentText);font-size:32px;cursor:pointer;margin:auto;box-shadow:0 12px 34px rgba(15,25,34,.2)}.mic.live{animation:pulse 1.2s infinite}.outs{display:grid;gap:10px}.out{background:var(--soft);border-radius:16px;padding:15px;min-height:86px}.out span{font-size:9px;font-weight:850;letter-spacing:.13em;color:var(--muted)}.out p{margin:7px 0 0;line-height:1.5;font-size:14px}.trialFoot{text-align:center;color:var(--muted);font-size:11px;margin-top:18px}.limit{margin-top:6px}.limit.err{color:#d54b4b}
-@keyframes pulse{50%{transform:scale(1.05);box-shadow:0 0 0 14px color-mix(in srgb,var(--text) 7%,transparent),0 16px 36px rgba(0,0,0,.18)}}
-@media(max-width:900px){.links{display:none}.hero{grid-template-columns:1fr;gap:28px;padding-top:38px}.heroVisual{min-height:360px}.benefitGrid{grid-template-columns:1fr 1fr}.benefit:nth-child(3),.benefit:nth-child(4){border-top:1px solid var(--line)}.benefit:nth-child(3){border-left:0}.useGrid{grid-template-columns:1fr 1fr}.reviewRow{grid-template-columns:1fr}}
-@media(max-width:580px){.wrap{width:min(100% - 28px,560px)}.nav{height:64px}.brand{font-size:19px}.hero{padding:34px 0 30px}.heroVisual{order:-1;min-height:300px;border-radius:22px}h1{font-size:46px}.hero p{font-size:16px}.cta{width:100%;justify-content:center}.meta{justify-content:center;gap:12px}.benefit{padding:16px 11px;align-items:flex-start}.useGrid{display:flex;overflow:auto;scroll-snap-type:x mandatory}.use{min-width:78vw;scroll-snap-align:start}.finalIn{min-height:240px;flex-direction:column;align-items:flex-start;justify-content:center}.final .cta{width:100%}.trialGrid{grid-template-columns:1fr}.dialog{padding:20px 14px;border-radius:22px}.dialogHead h3{font-size:24px}}
+/* Metric-matched fallback (Arial scaled to Be Vietnam Pro) so the web-font swap barely moves text. */
+@font-face{font-family:"BVP Fallback";src:local("Arial"),local("Helvetica Neue"),local("Helvetica");size-adjust:108.4%;ascent-override:92.2%;descent-override:24.4%;line-gap-override:0%}
+:root{
+  --font:"Be Vietnam Pro","BVP Fallback",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --fontKo:"Pretendard Variable",Pretendard,"Noto Sans KR","Be Vietnam Pro",sans-serif;
+  --bg:#f7f9fb;--card:#fff;--raised:#fff;--soft:#f1f4f7;--line:#e6eaef;--lineSoft:rgba(17,24,39,.07);
+  --text:#111827;--muted:#64748b;--faint:#94a3b8;
+  --ink:#111827;--inkText:#fff;--blue:#2563eb;
+  --shadow:0 28px 70px -30px rgba(17,24,39,.22);--shadowSm:0 10px 30px -22px rgba(17,24,39,.35);
+  --modal:#fff;--backdrop:rgba(5,12,20,.42);
+}
+body.dark{
+  --bg:#08121b;--card:#0d1822;--raised:#101e29;--soft:#132230;--line:#1c2a36;--lineSoft:rgba(255,255,255,.07);
+  --text:#f6f8fa;--muted:#a8b4bf;--faint:#71808d;
+  --ink:#f6f8fa;--inkText:#0b1520;--blue:#8ab4ff;
+  --shadow:0 30px 80px -30px rgba(0,0,0,.65);--shadowSm:0 12px 32px -22px rgba(0,0,0,.7);
+  --modal:#0e1822;--backdrop:rgba(2,6,10,.55);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html.tmOpen{overflow:hidden}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-weight:400;font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;transition:background .2s,color .2s}
+:lang(ko){font-family:var(--fontKo)}
+a{color:inherit;text-decoration:none}
+button,select{font:inherit;color:inherit}
+img{display:block;max-width:100%}
+h1,h2,h3{margin:0;text-wrap:balance}
+p{margin:0;text-wrap:pretty}
+.wrap{width:min(1180px,calc(100% - 48px));margin:auto}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);line-height:1.5}
+
+/* nav */
+.nav{height:72px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line)}
+.brand{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.links{display:flex;gap:30px;margin:auto;font-size:14px;font-weight:500;color:var(--muted)}
+.links a:hover{color:var(--text)}
+.navR{display:flex;gap:10px;align-items:center;margin-left:auto}
+.ghost,.theme{border:1px solid var(--line);background:var(--card);border-radius:999px;height:40px;cursor:pointer}
+.ghost{padding:0 18px;display:inline-grid;place-items:center;font-size:14px;font-weight:600}
+.theme{width:40px;display:grid;place-items:center;color:var(--muted)}
+.theme svg{width:18px;height:18px}.theme .sun{display:none}body.dark .theme .sun{display:block}body.dark .theme .moon{display:none}
+
+/* hero */
+.hero{display:grid;grid-template-columns:.95fr 1.05fr;gap:60px;align-items:center;padding:72px 0 60px}
+h1{font-size:clamp(40px,5.2vw,64px);font-weight:700;line-height:1.07;letter-spacing:-.032em;margin:16px 0 22px}
+.lede{font-size:18px;line-height:1.65;color:var(--muted);max-width:540px}
+.cta{border:0;background:var(--ink);color:var(--inkText);border-radius:999px;padding:16px 24px;font-size:16px;font-weight:600;letter-spacing:-.005em;
+  display:inline-flex;align-items:center;gap:10px;cursor:pointer;margin-top:30px;box-shadow:0 14px 32px -14px rgba(17,24,39,.5);transition:transform .15s,box-shadow .15s}
+.cta:hover{transform:translateY(-1px);box-shadow:0 18px 36px -14px rgba(17,24,39,.55)}
+.cta svg{width:18px;height:18px;flex-shrink:0}
+body.dark .cta{box-shadow:0 14px 34px -16px rgba(0,0,0,.8)}
+.meta{display:flex;gap:8px 18px;flex-wrap:wrap;color:var(--muted);font-size:13px;font-weight:500;margin-top:18px}
+.meta span{display:inline-flex;align-items:center;gap:7px}.meta span+span::before{content:"";width:3px;height:3px;border-radius:50%;background:var(--faint)}
+.heroVisual{position:relative;border-radius:30px;overflow:hidden;box-shadow:var(--shadow);background:var(--card);min-height:420px}
+.heroVisual img{width:100%;height:100%;object-fit:cover;object-position:50% 64%;position:absolute;inset:0;transform:scale(1.06);transform-origin:50% 72%}
+.darkImg{display:none!important}body.dark .lightImg{display:none!important}body.dark .darkImg{display:block!important}
+
+/* benefits */
+.benefits{background:var(--card);border-block:1px solid var(--line)}
+.benefitGrid{display:grid;grid-template-columns:repeat(4,1fr)}
+.benefit{padding:24px 18px;display:flex;align-items:center;gap:12px}
+.benefit+.benefit{border-left:1px solid var(--line)}
+.ico{width:42px;height:42px;border-radius:13px;background:var(--soft);display:grid;place-items:center;flex-shrink:0;color:var(--text)}
+.ico svg{width:20px;height:20px}
+.benefit b{display:block;font-size:14.5px;font-weight:600;line-height:1.4}
+.benefit small{display:block;color:var(--muted);font-size:13px;line-height:1.45;margin-top:2px}
+
+/* sections */
+.section{padding:84px 0}
+.head{margin-bottom:32px}
+.head h2,.h2{font-size:clamp(28px,3.2vw,40px);font-weight:600;line-height:1.16;letter-spacing:-.025em;margin-top:10px}
+.head p{color:var(--muted);font-size:16px;line-height:1.6;margin-top:10px;max-width:560px}
+
+/* use cases: 2×2 small cards + a featured "phone" card */
+.useGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.use{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
+.useImg{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--soft)}
+.useImg>img,.useImg>picture>img{width:100%;height:100%;object-fit:cover}
+.use:not(.feature) .useImg>img{filter:saturate(.85)}
+.useText{padding:16px 18px 18px}
+.useText b{display:block;font-size:16px;font-weight:600;line-height:1.35}
+.useText p{font-size:14px;color:var(--muted);line-height:1.55;margin-top:5px}
+.feature{grid-column:3/5;grid-row:1/3}
+.feature .useText{padding:20px 22px 22px}.feature .useText b{font-size:19px}.feature .useText p{font-size:15px;max-width:460px}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+.cap{position:absolute;left:12px;right:12px;bottom:12px;background:rgba(8,14,20,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  color:#fff;padding:9px 12px;border-radius:12px;font-size:12px;line-height:1.45}
+.cap span{display:block;opacity:.8}.cap b{display:block;font-weight:600}
+.stageCap{position:absolute;left:21%;width:58%;top:54%;background:rgba(6,10,16,.8);color:#fff;border-radius:7px;padding:6px 10px;text-align:center;font-size:11px;line-height:1.4}
+.stageCap span{display:block;opacity:.75}.stageCap b{display:block;font-weight:600}
+/* app UI laid onto the real phone's screen (coordinates measured on the 3:2 photo) */
+.phoneScreen{position:absolute;left:33%;width:31.1%;top:16.9%;height:83.1%;container-type:inline-size;
+  background:linear-gradient(180deg,#132033,#0b141e 40%);color:#fff}
+/* cqw on the container itself would resolve against the viewport — spacing lives on the inner box */
+.psIn{height:100%;padding:5cqw 6cqw;display:flex;flex-direction:column;gap:4.5cqw}
+.psTop{display:flex;align-items:center;justify-content:space-between;font-size:6.2cqw;font-weight:600;opacity:.9}
+.psLive{display:inline-flex;align-items:center;gap:2.4cqw}.psLive i{width:3.2cqw;height:3.2cqw;border-radius:50%;background:#ff5a5f;box-shadow:0 0 0 1.4cqw rgba(255,90,95,.25)}
+.psCam{flex:0 0 auto;aspect-ratio:1.18;border-radius:6cqw;background:url(/meetflash-hero-light.webp) 100% 30%/190% auto no-repeat;filter:saturate(.9)}
+.psText{display:flex;flex-direction:column;gap:1.6cqw}
+.psText small{font-size:5cqw;font-weight:600;letter-spacing:.12em;opacity:.55}
+.psText span{font-size:7.6cqw;line-height:1.4}
+.psText b{font-size:8.4cqw;font-weight:600;line-height:1.35;margin-bottom:2cqw}
+
+/* reviews */
+.reviewRow{display:grid;grid-template-columns:1fr 1.25fr;gap:16px}
+.review,.listen{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px}
+.review h3,.listen h3{font-size:24px;font-weight:600;line-height:1.3;letter-spacing:-.02em;margin-top:12px}
+.review p,.listen p{color:var(--muted);line-height:1.65;font-size:15px;margin-top:10px}
+.rating{display:flex;align-items:baseline;gap:10px;margin-top:14px}.rating strong{font-size:44px;font-weight:700;letter-spacing:-.03em}
+.rating .stars{color:#d99c26;letter-spacing:2px}.rating small{color:var(--muted);font-size:13px}
+.feedback{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:10px 16px;font-size:14px;font-weight:600;margin-top:18px}
+.feedback:hover{border-color:var(--text)}
+
+/* final CTA */
+.final{background:#0b151e;color:#fff}
+body.dark .final{background:var(--raised);border-top:1px solid var(--line)}
+.finalIn{min-height:230px;display:flex;justify-content:space-between;align-items:center;gap:24px;padding:40px 0}
+.final .eyebrow{color:#9eb0bd}
+.final h2{font-size:clamp(28px,3.4vw,40px);font-weight:600;line-height:1.18;letter-spacing:-.025em;margin:10px 0 8px}
+.final p{color:#9eb0bd;font-size:15px}
+.final .cta{background:#fff;color:#0b151e;margin:0;box-shadow:none}
+
+/* ── Trial modal ── */
+.tm{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:24px;background:var(--backdrop);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);opacity:0;visibility:hidden;transition:opacity .22s,visibility 0s .22s}
+.tm.on{opacity:1;visibility:visible;transition:opacity .22s}
+.tmCard{position:relative;width:min(600px,100%);max-height:calc(100dvh - 48px);overflow:auto;display:flex;flex-direction:column;
+  background:var(--modal);border:1px solid var(--lineSoft);border-radius:26px;padding:26px 28px 22px;
+  box-shadow:0 50px 120px -40px rgba(5,12,20,.55),0 2px 8px rgba(5,12,20,.06);transform:translateY(10px) scale(.985);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.tm.on .tmCard{transform:none}
+.tmHead{display:flex;align-items:flex-start;gap:16px}
+.tmHead h3{font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.3}
+.tmHead p{font-size:14px;color:var(--muted);margin-top:4px;line-height:1.55}
+.tmX{margin-left:auto;flex-shrink:0;width:36px;height:36px;border-radius:50%;border:0;background:var(--soft);color:var(--muted);display:grid;place-items:center;cursor:pointer}
+.tmX:hover{color:var(--text)}.tmX svg{width:16px;height:16px}
+.tmStatus{display:flex;align-items:center;justify-content:space-between;margin-top:20px;font-size:13px;font-weight:500}
+.tmState{display:inline-flex;align-items:center;gap:8px}
+.tmState i{width:8px;height:8px;border-radius:50%;background:var(--faint)}
+.tm[data-state=listening] .tmState i{background:#ef4444;box-shadow:0 0 0 0 rgba(239,68,68,.45);animation:rec 1.6s infinite}
+.tm[data-state=done] .tmState i{background:#16a34a}
+@keyframes rec{70%{box-shadow:0 0 0 7px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
+.tmTimer{font-variant-numeric:tabular-nums;color:var(--muted);transition:color .3s}
+.tm.soon .tmTimer{color:var(--blue);font-weight:600}
+.tmStage{display:flex;flex-direction:column;align-items:center;gap:14px;margin:26px 0 20px}
+.tmMic{--lvl:0;position:relative;width:76px;height:76px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;
+  background:var(--soft);color:var(--text);transition:background .25s,color .25s}
+.tmMic svg{width:28px;height:28px;position:relative;z-index:1}
+.tmMic::before,.tmMic::after{content:"";position:absolute;inset:0;border-radius:50%;background:currentColor;opacity:0;pointer-events:none}
+.tm[data-state=requesting] .tmMic::before{animation:ring 1.9s ease-out infinite}
+.tm[data-state=requesting] .tmMic::after{animation:ring 1.9s ease-out .95s infinite}
+@keyframes ring{0%{transform:scale(1);opacity:.16}100%{transform:scale(1.75);opacity:0}}
+.tm[data-state=listening] .tmMic{background:var(--ink);color:var(--inkText)}
+.tm[data-state=listening] .tmMic::before{opacity:.12;background:var(--ink);transform:scale(calc(1 + var(--lvl) * .55));transition:transform .08s linear}
+.tmWave{width:min(420px,100%);height:52px;display:none}
+.tm[data-state=listening] .tmWave{display:block}
+.tmHint{font-size:14px;color:var(--muted);text-align:center;line-height:1.55;min-height:22px}
+.tm[data-state=listening] .tmHint{display:none}
+.tmMsg{text-align:center;display:none}
+.tmMsg b{display:block;font-size:17px;font-weight:600;line-height:1.4}
+.tmMsg p{font-size:14px;color:var(--muted);margin-top:4px;line-height:1.55}
+.tm[data-state=denied] .tmMsg,.tm[data-state=nomic] .tmMsg,.tm[data-state=busy] .tmMsg,.tm[data-state=unsupported] .tmMsg,.tm[data-state=limit] .tmMsg,.tm[data-state=done] .tmMsg.show{display:block}
+.tm[data-state=denied] .tmHint,.tm[data-state=nomic] .tmHint,.tm[data-state=busy] .tmHint,.tm[data-state=unsupported] .tmHint,.tm[data-state=limit] .tmHint,.tm[data-state=done] .tmHint{display:none}
+.tmMic .ic{display:none}.tm .tmMic .ic-mic{display:block}
+.tm[data-state=denied] .tmMic .ic-mic,.tm[data-state=nomic] .tmMic .ic-mic,.tm[data-state=busy] .tmMic .ic-mic,.tm[data-state=unsupported] .tmMic .ic-mic,.tm[data-state=limit] .tmMic .ic-mic,.tm[data-state=done] .tmMic .ic-mic{display:none}
+.tm[data-state=denied] .tmMic .ic-off,.tm[data-state=nomic] .tmMic .ic-off{display:block}
+.tm[data-state=busy] .tmMic .ic-alert,.tm[data-state=unsupported] .tmMic .ic-alert,.tm[data-state=limit] .tmMic .ic-alert{display:block}
+.tm[data-state=done] .tmMic .ic-check{display:block}
+.tm[data-state=denied] .tmMic,.tm[data-state=nomic] .tmMic,.tm[data-state=busy] .tmMic,.tm[data-state=unsupported] .tmMic,.tm[data-state=limit] .tmMic{width:56px;height:56px;cursor:default}
+.tm[data-state=done] .tmMic{width:56px;height:56px;color:#16a34a;cursor:default}
+.tmLang{display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:500}
+.tmPill{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:999px;background:var(--soft);color:var(--muted)}
+.tmArrow{color:var(--faint)}
+.tmSel{position:relative;display:inline-flex}
+.tmSel select{appearance:none;-webkit-appearance:none;height:36px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:0 34px 0 14px;font-weight:600;cursor:pointer;outline:none}
+.tmSel select:focus-visible{border-color:var(--blue)}
+.tmSel::after{content:"";position:absolute;right:14px;top:50%;width:7px;height:7px;border-right:1.6px solid var(--muted);border-bottom:1.6px solid var(--muted);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.tmText{margin-top:20px;padding-top:18px;border-top:1px solid var(--line);display:grid;gap:16px}
+.tm[data-state=requesting] .tmText,.tm[data-state=denied] .tmText,.tm[data-state=nomic] .tmText,.tm[data-state=unsupported] .tmText,.tm[data-state=busy] .tmText{display:none}
+.tm[data-state=limit] .tmText.empty{display:none}
+.tmBlock .lbl{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tmBlock .lbl em{font-style:normal;letter-spacing:.04em;text-transform:none;color:var(--faint);font-weight:500}
+.tmBlock p{margin-top:6px;font-size:16px;line-height:1.6;max-height:128px;overflow:auto;overscroll-behavior:contain}
+.tmBlock.tr .lbl{color:var(--blue)}
+.tmBlock.tr p{font-size:17px;font-weight:500}
+.tmBlock .ph{color:var(--faint);font-weight:400}
+.tmBlock .interim{color:var(--muted)}
+.typing{display:inline-flex;gap:3px;vertical-align:middle;margin-left:4px}
+.typing i{width:5px;height:5px;border-radius:50%;background:var(--faint);animation:dots 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dots{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.tmActions{display:none;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.tmActions.show{display:flex}
+.tmBtn{height:46px;padding:0 20px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:15px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.tmBtn.pri{background:var(--ink);color:var(--inkText);border-color:transparent}
+.tmNote{text-align:center;color:var(--faint);font-size:12px;margin-top:18px;text-wrap:balance}
+.tm[data-state=denied] .tmTimer,.tm[data-state=nomic] .tmTimer,.tm[data-state=busy] .tmTimer,.tm[data-state=unsupported] .tmTimer,.tm[data-state=limit] .tmTimer{visibility:hidden}
+.tm[data-state=denied] .tmLang,.tm[data-state=nomic] .tmLang,.tm[data-state=busy] .tmLang,.tm[data-state=unsupported] .tmLang,.tm[data-state=limit] .tmLang{display:none}
+
+@media(max-width:900px){
+  .links{display:none}
+  .hero{grid-template-columns:1fr;gap:32px;padding:44px 0 48px}
+  .heroVisual{min-height:380px}
+  .benefitGrid{grid-template-columns:1fr 1fr}
+  .benefit:nth-child(3),.benefit:nth-child(4){border-top:1px solid var(--line)}.benefit:nth-child(3){border-left:0}
+  .useGrid{grid-template-columns:1fr 1fr}
+  .feature{grid-column:1/-1;grid-row:auto;order:-1}
+  .reviewRow{grid-template-columns:1fr}
+}
+@media(max-width:580px){
+  .wrap{width:calc(100% - 32px)}
+  .nav{height:62px}.brand{font-size:18px}.ghost{height:38px;padding:0 15px}.theme{width:38px;height:38px}
+  .hero{padding:24px 0 36px;gap:26px}
+  .heroVisual{order:-1;min-height:300px;border-radius:22px}
+  h1{font-size:clamp(34px,10.4vw,44px);line-height:1.08;margin:12px 0 16px}
+  .lede{font-size:16px;line-height:1.6}
+  .cta{width:100%;justify-content:center;margin-top:24px;padding:16px 20px}
+  .meta{justify-content:center;font-size:12.5px;gap:6px 16px}.meta span+span::before{display:none}
+  .benefit{padding:16px 14px;gap:8px;flex-direction:column;align-items:flex-start}.ico{width:36px;height:36px;border-radius:11px}.ico svg{width:18px;height:18px}
+  .benefit b{font-size:14px}.benefit small{font-size:12px}
+  .section{padding:56px 0}.head{margin-bottom:22px}
+  .useGrid{gap:12px}
+  .use{border-radius:16px}
+  .useText{padding:12px 12px 14px}.useText b{font-size:14px}.useText p{font-size:12.5px;line-height:1.5}
+  .cap{left:8px;right:8px;bottom:8px;padding:6px 8px;font-size:10.5px;border-radius:9px}
+  .stageCap{left:8px;right:8px;width:auto;top:auto;bottom:8px;text-align:left;padding:6px 8px;font-size:10.5px;border-radius:9px;background:rgba(8,14,20,.72)}
+  .feature .useImg{aspect-ratio:4/5}
+  .feature .phoneScreen{left:18.1%;width:58.3%}
+  .feature .useText{padding:16px 16px 18px}.feature .useText b{font-size:17px}.feature .useText p{font-size:14px}
+  .review,.listen{padding:22px;border-radius:18px}.review h3,.listen h3{font-size:20px}.review p,.listen p{font-size:14px}
+  .finalIn{min-height:0;flex-direction:column;align-items:stretch;padding:44px 0 calc(40px + env(safe-area-inset-bottom))}
+  .final .cta{width:100%;justify-content:center}
+}
+/* Phones: the trial sheet fills the screen; mic sits low, in thumb reach. */
+@media(max-width:640px){
+  .tm{padding:0;place-items:stretch}
+  .tmCard{position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top));bottom:calc(12px + env(safe-area-inset-bottom));
+    width:auto;max-height:none;border-radius:24px;padding:20px 18px 16px}
+  .tmHead h3{font-size:20px}
+  .tmStatus{order:2;margin-top:16px}
+  .tmText{order:3;flex:1 1 auto;min-height:0;overflow:auto;align-content:start;margin-top:14px}
+  .tmBlock p{max-height:none}
+  .tmLang{order:4;margin-top:14px}
+  .tmStage{order:5;margin:18px 0 4px}
+  .tm[data-state=requesting] .tmStage,.tm[data-state=denied] .tmStage,.tm[data-state=nomic] .tmStage,.tm[data-state=busy] .tmStage,.tm[data-state=unsupported] .tmStage{margin:auto 0}
+  .tm[data-state=requesting] .tmLang,.tm[data-state=denied] .tmLang,.tm[data-state=nomic] .tmLang,.tm[data-state=busy] .tmLang,.tm[data-state=unsupported] .tmLang,.tm[data-state=limit] .tmLang{display:none}
+  .tmActions{order:6;margin-top:16px}.tmActions .tmBtn{flex:1 1 100%}
+  .tmNote{order:7;margin-top:12px}
+  .tmWave{height:44px}
+}
+@media(prefers-reduced-motion:reduce){.tmMic::before,.tmMic::after,.typing i,.tmState i{animation:none!important}}
 </style>
 </head>
 <body>
 <header class="wrap nav">
-  <a class="brand" href="#">Meetflash</a>
+  <a class="brand" href="/concept">Meetflash</a>
   <nav class="links"><a href="#features">Tính năng</a><a href="#use">Ứng dụng</a><a href="#reviews">Đánh giá</a><a href="/pricing">Giá</a></nav>
-  <div class="navR"><button class="theme" id="theme">☾</button><a class="ghost" href="/login">Đăng nhập</a></div>
+  <div class="navR">
+    <button class="theme" id="theme" aria-label="Đổi giao diện sáng/tối">
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+    <a class="ghost" href="/login">Đăng nhập</a>
+  </div>
 </header>
 
 <main>
 <section class="wrap hero">
   <div>
-    <div class="eyebrow">SPEAK FREELY · BE UNDERSTOOD</div>
+    <div class="eyebrow">Speak freely · Be understood</div>
     <h1>Ở bất cứ đâu,<br>hãy cứ nói.</h1>
-    <p>Flash Meet nghe và dịch ngay khi cuộc trò chuyện đang diễn ra — cho họp, video call, du lịch, học tập và giải trí.</p>
-    <button class="cta openTrial">🎙 Dùng thử ngay <span>→</span></button>
+    <p class="lede">Flash Meet nghe và dịch ngay khi cuộc trò chuyện đang diễn ra — cho họp, video call, du lịch, học tập và giải trí.</p>
+    <button class="cta openTrial" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+      Dùng thử ngay <span aria-hidden="true">→</span>
+    </button>
     <div class="meta"><span>60 giây / lượt</span><span>Không cần đăng nhập</span><span>Tối đa 5 lượt / ngày</span></div>
   </div>
   <div class="heroVisual">
-    <img class="lightImg" src="/meetflash-hero-light.webp" alt="Meetflash light mode">
-    <img class="darkImg" src="/meetflash-hero-dark.webp" alt="Meetflash dark mode">
+    <img class="lightImg" src="/meetflash-hero-light.webp" alt="Người phụ nữ nói tiếng Hàn, Meetflash dịch trực tiếp sang tiếng Anh">
+    <img class="darkImg" src="/meetflash-hero-dark.webp" alt="Người phụ nữ nói tiếng Hàn, Meetflash dịch trực tiếp sang tiếng Anh">
   </div>
 </section>
 
 <section class="benefits" id="features">
   <div class="wrap benefitGrid">
-    <div class="benefit"><div class="ico">◌</div><div><b>Hiểu ngay</b><small>Dịch khi đang nói</small></div></div>
-    <div class="benefit"><div class="ico">ϟ</div><div><b>Tiết kiệm thời gian</b><small>Không dịch lại</small></div></div>
-    <div class="benefit"><div class="ico">◎</div><div><b>Mở rộng cơ hội</b><small>Kết nối toàn cầu</small></div></div>
-    <div class="benefit"><div class="ico">♡</div><div><b>4.8 / 5</b><small>Đánh giá người dùng</small></div></div>
+    <div class="benefit"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14h4"/></svg></div><div><b>Hiểu ngay</b><small>Dịch khi đang nói</small></div></div>
+    <div class="benefit"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><div><b>Tiết kiệm thời gian</b><small>Không cần dịch lại</small></div></div>
+    <div class="benefit"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.6 3.5 5.4 3.5 8.5s-1.1 5.9-3.5 8.5c-2.4-2.6-3.5-5.4-3.5-8.5s1.1-5.9 3.5-8.5z"/></svg></div><div><b>Mở rộng cơ hội</b><small>Kết nối toàn cầu</small></div></div>
+    <div class="benefit"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.5-4.4-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.6-7.5 10-7.5 10z"/></svg></div><div><b>Được người dùng yêu thích</b><small>Đánh giá tích cực</small></div></div>
   </div>
 </section>
 
 <section class="wrap section" id="use">
-  <div class="head left"><div class="eyebrow">MỘT CÔNG CỤ · NHIỀU TÌNH HUỐNG</div><h2>Dùng lúc bạn thật sự cần.</h2></div>
+  <div class="head"><div class="eyebrow">Một công cụ · Nhiều tình huống</div><h2>Dùng lúc bạn thật sự cần.</h2></div>
   <div class="useGrid">
-    <article class="use"><div class="useImg" style="background-image:url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=82')"></div><div class="useText"><b>Họp đối tác quốc tế</b><p>Nói tự nhiên, hiểu nhau ngay.</p></div></article>
-    <article class="use"><div class="useImg" style="background-image:url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=800&q=82')"><div class="cap">Nice to meet you!<br><b>Rất vui được gặp bạn.</b></div></div><div class="useText"><b>Video call</b><p>Phụ đề song ngữ ngay trong cuộc gọi.</p></div></article>
-    <article class="use"><div class="useImg" style="background-image:url('https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=800&q=82')"><div class="cap">오늘 만나서 반갑습니다.<br><b>Rất vui được gặp bạn.</b></div></div><div class="useText"><b>Điện thoại trực tiếp</b><p>Cầm máy trước người nói và đọc phụ đề.</p></div></article>
-    <article class="use"><div class="useImg" style="background-image:url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=800&q=82')"><div class="cap">A more connected world<br><b>Một thế giới kết nối hơn</b></div></div><div class="useText"><b>Hội nghị & sự kiện</b><p>Song ngữ rõ ràng cho cả khán phòng.</p></div></article>
+    <article class="use">
+      <div class="useImg"><img loading="lazy" src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&h=600&q=78" alt="Nhóm đang họp quanh bàn với laptop"></div>
+      <div class="useText"><b>Họp đối tác quốc tế</b><p>Mỗi người nói tiếng của mình, hai bên vẫn hiểu nhau ngay.</p></div>
+    </article>
+    <article class="use">
+      <div class="useImg"><img loading="lazy" src="https://images.unsplash.com/photo-1752650733337-cb0189176fb9?auto=format&fit=crop&w=900&h=600&q=78" alt="Người phụ nữ vẫy tay chào trong một cuộc gọi video">
+        <div class="cap"><span lang="en">Nice to meet you!</span><b>Rất vui được gặp bạn.</b></div></div>
+      <div class="useText"><b>Video call</b><p>Phụ đề song ngữ hiện ngay trên cuộc gọi.</p></div>
+    </article>
+    <article class="use feature">
+      <div class="useImg">
+        <picture>
+          <source media="(max-width:580px)" srcset="https://images.unsplash.com/photo-1738052686450-8dd6d8150f67?auto=format&fit=crop&w=800&h=1000&q=80">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1738052686450-8dd6d8150f67?auto=format&fit=crop&w=1400&h=933&q=80" alt="Bàn tay cầm điện thoại hướng về người đang nói, màn hình hiện lời gốc và bản dịch">
+        </picture>
+        <div class="phoneScreen" aria-hidden="true"><div class="psIn">
+          <div class="psTop"><span class="psLive"><i></i>Đang nghe</span><span>00:12</span></div>
+          <div class="psCam"></div>
+          <div class="psText">
+            <small>NGHE ĐƯỢC</small><span lang="ko">오늘 만나서 반갑습니다.</span>
+            <small>BẢN DỊCH</small><b>Hôm nay rất vui được gặp bạn.</b>
+          </div>
+        </div></div>
+      </div>
+      <div class="useText"><span class="tag">Trực tiếp · Đối mặt</span><b>Cầm điện thoại trước người nói</b><p>Hướng điện thoại về phía người đối diện — lời gốc và bản dịch hiện ngay trên màn hình. Hợp cho du lịch, gặp gỡ và phỏng vấn.</p></div>
+    </article>
+    <article class="use">
+      <div class="useImg"><img loading="lazy" src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=900&h=600&q=78" alt="Diễn giả trên sân khấu hội nghị trước khán phòng">
+        <div class="stageCap"><span lang="en">A more connected world</span><b>Một thế giới kết nối hơn</b></div></div>
+      <div class="useText"><b>Hội nghị &amp; sự kiện lớn</b><p>Màn hình sân khấu hiện song ngữ cho cả khán phòng.</p></div>
+    </article>
+    <article class="use">
+      <div class="useImg"><img loading="lazy" src="https://images.unsplash.com/photo-1758521541409-256fa9e24fe4?auto=format&fit=crop&w=900&h=600&q=78" alt="Người phụ nữ xem phim trên laptop và cười">
+        <div class="cap"><span lang="en">I can't believe it's the final episode!</span><b>Không thể tin đây là tập cuối!</b></div></div>
+      <div class="useText"><b>Giải trí</b><p>Phim, video, webinar chưa có phụ đề — vẫn hiểu trọn.</p></div>
+    </article>
   </div>
 </section>
 
-<section class="wrap section reviewRow" id="reviews">
-  <div class="review"><div class="eyebrow">NGƯỜI DÙNG ĐÁNH GIÁ</div><div class="score">4.8 <span style="font-size:18px;color:var(--muted)">/ 5</span></div><div class="stars">★★★★★</div><p>Hàng trăm người dùng đánh giá tốt về tốc độ, độ chính xác và sự dễ dùng.</p></div>
-  <div class="listen"><div class="eyebrow">CHÚNG TÔI LUÔN LẮNG NGHE</div><h2 style="font-size:27px;letter-spacing:-.035em">Sản phẩm tốt hơn sau mỗi phản hồi.</h2><p>Cổng feedback riêng để người dùng góp ý trực tiếp về bản dịch, trải nghiệm và những gì cần cải thiện.</p><a class="feedback" href="mailto:feedback@transflash.app">Gửi góp ý →</a></div>
+<section class="wrap section reviewRow" id="reviews" style="padding-top:0">
+  <div class="review">
+    <div class="eyebrow">Người dùng đánh giá</div>
+    <h3>Được người dùng đánh giá tích cực</h3>
+    <div class="rating" id="rating" hidden></div>
+    <p>Người dùng phản hồi tốt về tốc độ, độ chính xác và sự dễ dùng — và mỗi góp ý đều giúp bản dịch tốt hơn.</p>
+  </div>
+  <div class="listen">
+    <div class="eyebrow">Chúng tôi luôn lắng nghe</div>
+    <h3>Sản phẩm tốt hơn sau mỗi phản hồi.</h3>
+    <p>Cổng feedback riêng để người dùng góp ý trực tiếp về bản dịch, trải nghiệm và những gì cần cải thiện.</p>
+    <a class="feedback" href="mailto:feedback@transflash.app">Gửi góp ý →</a>
+  </div>
 </section>
 
-<section class="final"><div class="wrap finalIn"><div><div class="eyebrow" style="color:#9eb0bd">MEETFLASH</div><h2>Bạn cứ nói. Phần còn lại để AI lo.</h2><p>Không cần học cách dùng trước.</p></div><button class="cta openTrial">🎙 Dùng thử ngay →</button></div></section>
+<section class="final"><div class="wrap finalIn">
+  <div><div class="eyebrow">Meetflash</div><h2>Bạn cứ nói. Phần còn lại để AI lo.</h2><p>Không cần học cách dùng trước.</p></div>
+  <button class="cta openTrial" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+    Dùng thử ngay <span aria-hidden="true">→</span>
+  </button>
+</div></section>
 </main>
 
-<div class="modal" id="modal" aria-hidden="true">
-  <div class="dialog">
-    <button class="close" id="close">×</button>
-    <div class="dialogHead"><div class="eyebrow">DÙNG THỬ NGAY TRÊN TRÌNH DUYỆT</div><h3>Nói thử. Bản dịch hiện ngay.</h3><p>Bấm micro, nói bình thường. Flash Meet tự nhận diện ngôn ngữ.</p></div>
-    <div class="controls"><span style="font-size:12px;color:var(--muted)">Auto detect</span><span>→</span><select id="target"><option value="Vietnamese">Tiếng Việt</option><option value="English">English</option><option value="Korean">한국어</option><option value="Japanese">日本語</option></select></div>
-    <div class="trialGrid">
-      <button class="mic" id="mic">●</button>
-      <div class="outs"><div class="out"><span>NGHE ĐƯỢC</span><p id="heard">Bấm micro và bắt đầu nói…</p></div><div class="out"><span>BẢN DỊCH</span><p id="translated">Bản dịch sẽ xuất hiện tại đây.</p></div></div>
+<div class="tm" id="trial" role="dialog" aria-modal="true" aria-labelledby="tmTitle" aria-hidden="true" data-state="requesting">
+  <div class="tmCard" id="tmCard">
+    <div class="tmHead">
+      <div><h3 id="tmTitle">Dùng thử dịch trực tiếp</h3><p>Nói bình thường. Flash Meet sẽ tự nhận diện và dịch.</p></div>
+      <button class="tmX" id="tmClose" type="button" aria-label="Đóng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
-    <div class="trialFoot"><div id="timer">00:00 / 01:00</div><div class="limit" id="limit">Tối đa 60 giây/lượt · 5 lượt/ngày · không cần đăng nhập</div></div>
+    <div class="tmStatus"><span class="tmState"><i></i><span id="tmStateText">Đang mở microphone…</span></span><span class="tmTimer" id="tmTimer">00:00 / 01:00</span></div>
+    <div class="tmStage">
+      <button class="tmMic" id="tmMic" type="button" aria-label="Microphone">
+        <svg class="ic ic-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+        <svg class="ic ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 9.3V6a3 3 0 0 0-5.7-1.3M9 9v2a3 3 0 0 0 5 2.2M5 11a7 7 0 0 0 11.5 5.4M19 11a7 7 0 0 1-.6 2.8M12 18v3M3 3l18 18"/></svg>
+        <svg class="ic ic-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/></svg>
+        <svg class="ic ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      </button>
+      <canvas class="tmWave" id="tmWave" aria-hidden="true"></canvas>
+      <p class="tmHint" id="tmHint">Cho phép microphone để bắt đầu dịch.</p>
+      <div class="tmMsg" id="tmMsg"><b id="tmMsgTitle"></b><p id="tmMsgDesc"></p></div>
+    </div>
+    <div class="tmLang">
+      <span class="tmPill">Tự nhận diện</span><span class="tmArrow" aria-hidden="true">→</span>
+      <label class="tmSel"><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Dịch sang</span>
+        <select id="tmTarget"><option value="Vietnamese">Tiếng Việt</option><option value="English">English</option><option value="Korean">한국어</option><option value="Japanese">日本語</option><option value="Chinese">中文</option></select>
+      </label>
+    </div>
+    <div class="tmText" id="tmText">
+      <div class="tmBlock"><div class="lbl">Nghe được<em id="tmSrcLang"></em></div><p id="tmHeard"></p></div>
+      <div class="tmBlock tr"><div class="lbl">Bản dịch<em id="tmToLang"></em></div><p id="tmTrans"></p></div>
+    </div>
+    <div class="tmActions" id="tmActions"></div>
+    <div class="tmNote" id="tmNote">60 giây / lượt · Tối đa 5 lượt / ngày · Không cần đăng nhập</div>
   </div>
 </div>
 
 <script>
-const body=document.body,theme=document.getElementById('theme'),modal=document.getElementById('modal');
-const mic=document.getElementById('mic'),heard=document.getElementById('heard'),translated=document.getElementById('translated'),timerEl=document.getElementById('timer'),limitEl=document.getElementById('limit'),target=document.getElementById('target');
-let recognition=null,timer=null,elapsed=0,running=false,context=[];
-function setTheme(d){body.classList.toggle('dark',d);theme.textContent=d?'☀':'☾';localStorage.setItem('mf_concept_theme',d?'dark':'light')}
-setTheme(localStorage.getItem('mf_concept_theme')==='dark');theme.onclick=()=>setTheme(!body.classList.contains('dark'));
-document.querySelectorAll('.openTrial').forEach(b=>b.onclick=()=>{modal.classList.add('on');modal.setAttribute('aria-hidden','false')});
-function closeModal(){stop(false);modal.classList.remove('on');modal.setAttribute('aria-hidden','true')}
-document.getElementById('close').onclick=closeModal;modal.onclick=e=>{if(e.target===modal)closeModal()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
-function usage(){const day=new Date().toISOString().slice(0,10);let x={day,count:0};try{x=JSON.parse(localStorage.getItem('mf_trial_uses')||'null')||x}catch{};if(x.day!==day)x={day,count:0};return x}
-function incUsage(){const x=usage();x.count++;localStorage.setItem('mf_trial_uses',JSON.stringify(x));return x}
-async function translate(src){if(!src.trim())return;translated.textContent='Đang dịch…';try{const r=await fetch('/api/translate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:target.value,src,context:context.slice(-3).join('\n')})});const d=await r.json();translated.textContent=r.ok?(d.translation||''):(d.error||'Không thể dịch lúc này.');if(r.ok){context.push(src+' → '+d.translation);if(context.length>6)context.shift()}}catch{translated.textContent='Mạng đang gián đoạn. Thử lại sau.'}}
-function stop(done=true){running=false;mic.classList.remove('live');if(timer){clearInterval(timer);timer=null}try{recognition&&recognition.stop()}catch{}recognition=null;if(done)limitEl.textContent='Đã kết thúc lượt thử. Bạn có thể thử lại nếu còn lượt hôm nay.'}
-function start(){
- if(running){stop();return}
- const u=usage();if(u.count>=5){limitEl.textContent='Bạn đã dùng đủ 5 lượt hôm nay. Đăng nhập để tiếp tục.';limitEl.classList.add('err');return}
- incUsage();limitEl.classList.remove('err');limitEl.textContent='Lượt thử đang chạy · tối đa 60 giây';heard.textContent='Đang nghe…';translated.textContent='Bản dịch sẽ xuất hiện tại đây.';elapsed=0;timerEl.textContent='00:00 / 01:00';running=true;mic.classList.add('live');
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){heard.textContent='Trình duyệt này chưa hỗ trợ Speech Recognition.';translated.textContent='Hãy thử Chrome hoặc Edge.';stop(false);return}
- recognition=new SR();recognition.lang=navigator.language||'ko-KR';recognition.continuous=true;recognition.interimResults=true;
- recognition.onresult=e=>{let fin='',inter='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript||'';if(e.results[i].isFinal)fin+=t;else inter+=t}const all=(fin||inter).trim();if(all)heard.textContent=all;if(fin.trim())translate(fin.trim())};
- recognition.onerror=e=>{heard.textContent='Không nghe được microphone. Hãy cho phép quyền micro rồi thử lại.';stop(false)};
- recognition.onend=()=>{if(running){try{recognition.start()}catch{}}};try{recognition.start()}catch{heard.textContent='Không thể mở microphone.';stop(false)}
- timer=setInterval(()=>{elapsed++;timerEl.textContent='00:'+String(elapsed).padStart(2,'0')+' / 01:00';if(elapsed>=60)stop()},1000)
+/* ── Theme ── */
+(() => {
+  const body = document.body, btn = document.getElementById('theme');
+  const set = (d) => { body.classList.toggle('dark', d); try { localStorage.setItem('mf_concept_theme', d ? 'dark' : 'light'); } catch (e) {} };
+  let saved = null; try { saved = localStorage.getItem('mf_concept_theme'); } catch (e) {}
+  set(saved === 'dark');
+  btn.onclick = () => set(!body.classList.contains('dark'));
+})();
+
+/* ── Social proof: only render a score from real data. Leave null until there is a verified source. ── */
+const RATING = null; // e.g. { score: 4.8, count: 132, source: "Chrome Web Store" }
+if (RATING) {
+  const el = document.getElementById('rating');
+  el.innerHTML = '<strong>' + RATING.score.toFixed(1) + '</strong><span class="stars">★★★★★</span><small>' + RATING.count + ' đánh giá · ' + RATING.source + '</small>';
+  el.hidden = false;
 }
-mic.onclick=start;
+
+/* ── Live-translation trial ──
+   One click: "Dùng thử ngay" opens the sheet AND requests the microphone inside the
+   same click handler (browsers only allow getUserMedia from a user gesture). Speech is
+   recognised by Soniox (auto language detection, streaming interim words) and every
+   finished phrase is translated through POST /api/translate { src, to, context }. */
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const tm = $('trial'), card = $('tmCard'), stateText = $('tmStateText'), timerEl = $('tmTimer'), hint = $('tmHint');
+  const msgBox = $('tmMsg'), msgT = $('tmMsgTitle'), msgD = $('tmMsgDesc'), actions = $('tmActions'), note = $('tmNote');
+  const heardEl = $('tmHeard'), transEl = $('tmTrans'), srcLangEl = $('tmSrcLang'), toLangEl = $('tmToLang'), textBox = $('tmText');
+  const target = $('tmTarget'), micBtn = $('tmMic'), canvas = $('tmWave');
+
+  const LIMIT = 5, TRIAL_SEC = 60, TRANSLATE_DEBOUNCE = 450;
+  const SONIOX_WS = 'wss://stt-rt.soniox.com/transcribe-websocket';
+  const LANG_NAME = { vi: 'Tiếng Việt', en: 'Tiếng Anh', ko: 'Tiếng Hàn', ja: 'Tiếng Nhật', zh: 'Tiếng Trung', fr: 'Tiếng Pháp', de: 'Tiếng Đức', es: 'Tiếng Tây Ban Nha', th: 'Tiếng Thái', id: 'Tiếng Indonesia', ru: 'Tiếng Nga' };
+  const TARGET_CODE = { Vietnamese: 'vi', English: 'en', Korean: 'ko', Japanese: 'ja', Chinese: 'zh' };
+  const TARGET_NAME = { Vietnamese: 'Tiếng Việt', English: 'Tiếng Anh', Korean: 'Tiếng Hàn', Japanese: 'Tiếng Nhật', Chinese: 'Tiếng Trung' };
+  const PH_HEARD = 'Hãy nói gì đó — tiếng Hàn, tiếng Anh, tiếng Việt…';
+  const PH_TRANS = 'Bản dịch sẽ hiện ở đây.';
+
+  let S = null;            // live session
+  let kept = null;         // last finished session's text (shown again in the "limit" state)
+  const allTracks = [];    // every mic track ever opened — lets the diagnostic below prove none stays live
+
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const fmt = (sec) => '00:' + String(sec).padStart(2, '0');
+  const today = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
+  function uses() { let x = null; try { x = JSON.parse(localStorage.getItem('mf_trial_uses') || 'null'); } catch (e) {} return x && x.day === today() ? x : { day: today(), count: 0 }; }
+  function addUse(n) { const x = uses(); x.count = Math.max(0, x.count + n); try { localStorage.setItem('mf_trial_uses', JSON.stringify(x)); } catch (e) {} }
+
+  // Default target follows the UI language (shared app key mr_lang, else <html lang>); the user's pick is remembered.
+  (() => {
+    let v = null; try { v = localStorage.getItem('mf_trial_target'); } catch (e) {}
+    if (!v || !TARGET_CODE[v]) {
+      let l = document.documentElement.lang || 'vi'; try { l = localStorage.getItem('mr_lang') || l; } catch (e) {}
+      v = { vi: 'Vietnamese', ko: 'Korean', en: 'English' }[l.slice(0, 2)] || 'Vietnamese';
+    }
+    target.value = v;
+  })();
+  // Speaking the target language itself would "translate" into the same text — fall back to English (or Vietnamese).
+  function targetFor(lang) {
+    const t = target.value, code = TARGET_CODE[t];
+    if (lang && code && lang.slice(0, 2) === code) return t === 'English' ? 'Vietnamese' : 'English';
+    return t;
+  }
+
+  /* ── view ── */
+  const STATES = {
+    requesting: { status: 'Đang mở microphone…', hint: 'Cho phép microphone để bắt đầu dịch.' },
+    listening: { status: 'Đang nghe', hint: '' },
+    done: { status: 'Dùng thử hoàn tất' },
+    limit: { status: 'Hết lượt thử hôm nay', title: 'Bạn đã dùng 5 lượt thử hôm nay.', desc: 'Đăng nhập để tiếp tục dùng Flash Meet.' },
+    denied: { status: 'Chưa có quyền microphone', title: 'Không thể dùng microphone', desc: 'Cho phép quyền microphone trong trình duyệt để thử dịch trực tiếp.' },
+    nomic: { status: 'Không thấy microphone', title: 'Không tìm thấy microphone', desc: 'Kết nối microphone rồi thử lại.' },
+    busy: { status: 'Tạm thời gián đoạn', title: 'Dùng thử đang bận', desc: 'Vui lòng thử lại sau ít phút.' },
+    unsupported: { status: 'Trình duyệt chưa hỗ trợ', title: 'Trình duyệt này chưa hỗ trợ', desc: 'Hãy mở trang bằng Chrome hoặc Edge để thử dịch trực tiếp.' },
+  };
+  function setState(st) {
+    const c = STATES[st];
+    tm.dataset.state = st;
+    stateText.textContent = c.status;
+    if (c.hint !== undefined) hint.textContent = c.hint;
+    msgT.textContent = c.title || ''; msgD.textContent = c.desc || '';
+    msgBox.classList.remove('show');
+    micBtn.setAttribute('aria-label', st === 'listening' ? 'Kết thúc lượt thử' : 'Microphone');
+    let html = '';
+    if (st === 'done') {
+      if (uses().count >= LIMIT) {
+        msgT.textContent = 'Bạn đã dùng 5 lượt thử hôm nay.'; msgD.textContent = ''; msgBox.classList.add('show');
+        html = '<a class="tmBtn pri" href="/login">Đăng nhập để tiếp tục</a>';
+      } else {
+        html = '<button class="tmBtn" type="button" data-act="retry">Thử lại</button><a class="tmBtn pri" href="/">Dùng Flash Meet đầy đủ →</a>';
+      }
+    } else if (st === 'limit') html = '<a class="tmBtn pri" href="/login">Đăng nhập để tiếp tục</a>';
+    else if (st === 'denied' || st === 'nomic' || st === 'busy') html = '<button class="tmBtn pri" type="button" data-act="retry">Thử lại</button>';
+    actions.innerHTML = html;
+    actions.classList.toggle('show', !!html);
+    note.hidden = st === 'done' || st === 'limit';
+    if (st !== 'listening') tm.classList.remove('soon');
+  }
+  actions.addEventListener('click', (e) => { const b = e.target.closest('[data-act="retry"]'); if (b) startTrial(); });
+
+  function renderText() {
+    const src = S || kept;
+    if (!src) { heardEl.innerHTML = '<span class="ph">' + PH_HEARD + '</span>'; transEl.innerHTML = '<span class="ph">' + PH_TRANS + '</span>'; srcLangEl.textContent = ''; toLangEl.textContent = ' · ' + TARGET_NAME[target.value]; textBox.classList.add('empty'); return; }
+    const segs = src.segs.concat(src.cur.src.trim() ? [src.cur] : []);
+    const interim = (src.interim || '').trim();
+    heardEl.innerHTML = segs.length || interim
+      ? segs.map((x) => esc(x.src.trim())).join(' ') + (interim ? ' <span class="interim">' + esc(interim) + '</span>' : '')
+      : '<span class="ph">' + PH_HEARD + '</span>';
+    const trs = segs.filter((x) => x.tr).map((x) => esc(x.tr));
+    const pending = segs.some((x) => x.pending);
+    const dots = pending ? '<span class="typing" aria-label="Đang dịch"><i></i><i></i><i></i></span>' : '';
+    transEl.innerHTML = trs.length ? trs.join(' ') + dots : (dots || '<span class="ph">' + PH_TRANS + '</span>');
+    const last = segs[segs.length - 1];
+    const lang = (src.cur.lang || src.cur.langI) || (last && last.lang);
+    srcLangEl.textContent = lang ? ' · ' + (LANG_NAME[lang.slice(0, 2)] || lang.toUpperCase()) : '';
+    toLangEl.textContent = ' · ' + TARGET_NAME[(last && last.to) || targetFor(lang)];
+    textBox.classList.toggle('empty', !segs.length && !interim);
+    heardEl.scrollTop = heardEl.scrollHeight; transEl.scrollTop = transEl.scrollHeight;
+  }
+
+  /* ── modal ── */
+  function openModal() {
+    if (tm.classList.contains('on')) return;
+    tm.classList.add('on'); tm.setAttribute('aria-hidden', 'false');
+    document.documentElement.classList.add('tmOpen');
+    setTimeout(() => $('tmClose').focus({ preventScroll: true }), 40);
+  }
+  function closeModal() {
+    if (S) { keep(S); hardStop(S); S = null; }
+    tm.classList.remove('on', 'soon'); tm.setAttribute('aria-hidden', 'true');
+    document.documentElement.classList.remove('tmOpen');
+  }
+  $('tmClose').onclick = closeModal;
+  tm.addEventListener('click', (e) => { if (e.target === tm) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && tm.classList.contains('on')) closeModal(); });
+  document.querySelectorAll('.openTrial').forEach((b) => b.addEventListener('click', startTrial));
+  micBtn.onclick = () => { if (S && tm.dataset.state === 'listening') finish(S); };
+  target.onchange = () => {
+    try { localStorage.setItem('mf_trial_target', target.value); } catch (e) {}
+    if (S) { S.segs.concat([S.cur]).slice(-6).forEach((x) => { x.trFor = null; translateSeg(S, x); }); }
+    renderText();
+  };
+
+  function newSeg() { return { src: '', lang: null, langI: null, tr: '', to: null, trFor: null, ver: 0, pending: false }; }
+  function keep(s) { if (s.segs.length || s.cur.src.trim()) kept = { segs: s.segs.concat(s.cur.src.trim() ? [s.cur] : []), cur: newSeg(), interim: '' }; }
+
+  /* ── session ── */
+  function startTrial() {
+    openModal();
+    if (S) { hardStop(S); S = null; }
+    if (uses().count >= LIMIT) { setState('limit'); renderText(); return; }
+    const md = navigator.mediaDevices;
+    if (!md || !md.getUserMedia || !window.MediaRecorder || !window.WebSocket) { setState('unsupported'); return; }
+
+    const s = S = { segs: [], cur: newSeg(), interim: '', queue: [], chain: Promise.resolve(), hist: [], lvl: 0 };
+    kept = null; renderText(); setState('requesting');
+    timerEl.textContent = '00:00 / 01:00';
+
+    // Still inside the click: create the AudioContext (so it isn't autoplay-suspended),
+    // start fetching a Soniox key in parallel, and ask for the microphone.
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) { try { s.ac = new AC(); } catch (e) {} }
+    s.tokenP = fetch('/api/soniox-token', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ transcribeOnly: true }) })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('token ' + r.status))))
+      .then((d) => { if (!d.api_key) throw new Error('no key'); return d.api_key; });
+    s.tokenP.catch(() => {});
+    let micP;
+    try { micP = md.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); }
+    catch (e) { micP = Promise.reject(e); }
+    micP.then((stream) => onMic(s, stream), (err) => onMicError(s, err));
+  }
+
+  function onMicError(s, err) {
+    if (s !== S) return;
+    hardStop(s); S = null;
+    setState(err && (err.name === 'NotFoundError' || err.name === 'OverconstrainedError') ? 'nomic' : 'denied');
+  }
+
+  function onMic(s, stream) {
+    stream.getTracks().forEach((t) => allTracks.push(t));
+    if (s !== S) { stream.getTracks().forEach((t) => t.stop()); return; } // sheet closed while the prompt was open
+    s.stream = stream;
+    addUse(1); s.counted = true;
+    setState('listening');
+    // The clock starts now — when the mic is really open, not at the click.
+    s.t0 = performance.now();
+    s.clock = setInterval(() => {
+      const sec = Math.min(TRIAL_SEC, Math.floor((performance.now() - s.t0) / 1000));
+      timerEl.textContent = fmt(sec) + ' / 01:00';
+      tm.classList.toggle('soon', TRIAL_SEC - sec <= 10);
+      if (sec >= TRIAL_SEC) finish(s);
+    }, 200);
+    startWave(s);
+    startRecorder(s);
+    connect(s);
+  }
+
+  function pickMime() {
+    const c = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+    if (window.MediaRecorder && MediaRecorder.isTypeSupported) for (const m of c) if (MediaRecorder.isTypeSupported(m)) return m;
+    return '';
+  }
+  // Recording starts immediately; chunks captured before the socket is ready are queued, so nothing said is lost.
+  function startRecorder(s) {
+    const mime = pickMime();
+    let rec;
+    try { rec = mime ? new MediaRecorder(s.stream, { mimeType: mime }) : new MediaRecorder(s.stream); } catch (e) { rec = new MediaRecorder(s.stream); }
+    s.rec = rec;
+    rec.ondataavailable = (e) => {
+      if (!e.data || !e.data.size) return;
+      s.chain = s.chain.then(() => e.data.arrayBuffer()).then((buf) => {
+        if (s.ws && s.open && s.ws.readyState === 1) s.ws.send(buf); else if (!s.ended) s.queue.push(buf);
+      }).catch(() => {});
+    };
+    rec.onstop = () => { s.chain.then(() => { try { if (s.ws && s.ws.readyState === 1) s.ws.send(''); } catch (e) {} }); }; // ask Soniox to flush the last words
+    rec.start(200);
+  }
+
+  async function connect(s) {
+    let key;
+    try { key = await s.tokenP; } catch (e) { return fail(s); }
+    if (s !== S || s.ended) return;
+    const ws = s.ws = new WebSocket(SONIOX_WS);
+    ws.onopen = () => {
+      if (s !== S || s.ended) { try { ws.close(); } catch (e) {} return; }
+      ws.send(JSON.stringify({
+        api_key: key, model: 'stt-rt-v4', audio_format: 'auto',
+        language_hints: ['vi', 'en', 'ko', 'ja', 'zh'],
+        enable_language_identification: true, enable_endpoint_detection: true,
+      }));
+      s.open = true;
+      s.queue.forEach((b) => ws.send(b)); s.queue.length = 0;
+    };
+    ws.onmessage = (ev) => onMessage(s, ev);
+    ws.onerror = () => { if (s === S && !s.ending && !s.ended) fail(s); };
+    ws.onclose = () => { s.open = false; if (s.onFinished) s.onFinished(); else if (s === S && !s.ending && !s.ended) fail(s); };
+  }
+
+  function onMessage(s, ev) {
+    let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
+    if (m.error_code) { if (!s.ending) fail(s); return; }
+    let interim = '', finalAdded = false;
+    for (const tk of m.tokens || []) {
+      const x = tk.text; if (x == null) continue;
+      if (x === '<end>') { commit(s); continue; }
+      if (tk.is_final) { s.cur.src += x; finalAdded = true; if (tk.language) s.cur.lang = tk.language; }
+      else { interim += x; if (tk.language) s.cur.langI = tk.language; }
+    }
+    s.interim = interim;
+    if (finalAdded) { clearTimeout(s.trT); s.trT = setTimeout(() => translateSeg(s, s.cur), TRANSLATE_DEBOUNCE); }
+    if (s === S) renderText();
+    if (m.finished && s.onFinished) s.onFinished();
+  }
+
+  function commit(s) {
+    clearTimeout(s.trT);
+    const seg = s.cur;
+    s.cur = newSeg();
+    if (seg.src.trim()) { s.segs.push(seg); translateSeg(s, seg); }
+  }
+
+  async function translateSeg(s, seg) {
+    const src = seg.src.trim();
+    if (!src || src === seg.trFor) return;
+    const to = targetFor(seg.lang || seg.langI);
+    if (seg.pending && seg.reqFor === src && seg.reqTo === to) return; // same phrase already in flight
+    const ver = ++seg.ver;
+    seg.pending = true; seg.reqFor = src; seg.reqTo = to; if (s === S) renderText();
+    const context = s.segs.filter((x) => x !== seg && x.tr).slice(-3).map((x) => x.src.trim() + ' → ' + x.tr).join('\n');
+    try {
+      const r = await fetch('/api/translate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ src, to, context }) });
+      const d = await r.json().catch(() => ({}));
+      if (ver !== seg.ver) return; // superseded by a newer request for this phrase
+      if (r.ok && d.translation) { seg.tr = d.translation; seg.trFor = src; seg.to = to; }
+    } catch (e) { /* keep the previous translation; the next phrase retries */ }
+    finally { if (ver === seg.ver) seg.pending = false; if (s === S) renderText(); }
+  }
+
+  // Graceful end (60 s or the user tapped the mic): stop the mic now, let Soniox flush, keep the text.
+  async function finish(s) {
+    if (s.ending || s.ended) return;
+    s.ending = true;
+    clearInterval(s.clock);
+    timerEl.textContent = fmt(Math.min(TRIAL_SEC, Math.round((performance.now() - s.t0) / 1000))) + ' / 01:00';
+    stopWave(s);
+    try { if (s.rec && s.rec.state !== 'inactive') s.rec.stop(); } catch (e) {}
+    stopTracks(s);
+    await Promise.race([new Promise((r) => { s.onFinished = r; }), new Promise((r) => setTimeout(r, 2500))]);
+    if (s !== S) return;
+    commit(s); s.interim = '';
+    try { s.ws && s.ws.close(); } catch (e) {}
+    closeAudio(s);
+    setState('done'); renderText();
+  }
+
+  function fail(s) {
+    if (s !== S) return;
+    const heardSomething = s.segs.length || s.cur.src.trim();
+    if (s.counted && !heardSomething) addUse(-1); // the service failed before anything was translated — don't burn a try
+    keep(s); hardStop(s); S = null;
+    if (heardSomething) { setState('done'); renderText(); } else setState('busy');
+  }
+
+  function stopTracks(s) { if (s.stream) s.stream.getTracks().forEach((t) => { try { t.stop(); } catch (e) {} }); }
+  function closeAudio(s) { if (s.ac && s.ac.state !== 'closed') { try { s.ac.close(); } catch (e) {} } }
+  function hardStop(s) {
+    s.ended = true;
+    clearTimeout(s.trT); clearInterval(s.clock);
+    stopWave(s);
+    if (s.rec) { s.rec.onstop = null; try { if (s.rec.state !== 'inactive') s.rec.stop(); } catch (e) {} }
+    stopTracks(s);
+    if (s.ws) { s.ws.onclose = s.ws.onerror = s.ws.onmessage = null; try { s.ws.close(); } catch (e) {} }
+    closeAudio(s);
+  }
+
+  /* ── waveform: a scrolling level history driven by the real mic signal ── */
+  const BARS = 44;
+  function startWave(s) {
+    if (!s.ac) return;
+    try {
+      if (s.ac.state === 'suspended') s.ac.resume();
+      const an = s.ac.createAnalyser(); an.fftSize = 1024; an.smoothingTimeConstant = 0.6;
+      s.ac.createMediaStreamSource(s.stream).connect(an);
+      const data = new Uint8Array(an.fftSize), g = canvas.getContext('2d');
+      s.hist = new Array(BARS).fill(0);
+      const color = getComputedStyle(card).getPropertyValue('--text').trim() || '#111827';
+      const draw = () => {
+        if (s.ended || s.ending) return;
+        s.raf = requestAnimationFrame(draw);
+        an.getByteTimeDomainData(data);
+        let sum = 0; for (let i = 0; i < data.length; i++) { const v = (data[i] - 128) / 128; sum += v * v; }
+        const lvl = Math.min(1, Math.sqrt(sum / data.length) * 5);
+        s.lvl = s.lvl * 0.7 + lvl * 0.3;
+        micBtn.style.setProperty('--lvl', s.lvl.toFixed(3));
+        s.frame = (s.frame || 0) + 1;
+        if (s.frame % 3 === 0) { s.hist.push(s.lvl); s.hist.shift(); }
+        const dpr = window.devicePixelRatio || 1, w = canvas.clientWidth, h = canvas.clientHeight;
+        if (!w || !h) return;
+        if (canvas.width !== Math.round(w * dpr)) { canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr); }
+        g.clearRect(0, 0, canvas.width, canvas.height);
+        g.fillStyle = color;
+        const gap = 3 * dpr, bw = (canvas.width - gap * (BARS - 1)) / BARS;
+        for (let i = 0; i < BARS; i++) {
+          const v = s.hist[i], bh = Math.max(3 * dpr, v * canvas.height * 0.95);
+          g.globalAlpha = 0.18 + 0.72 * (i / BARS);
+          const x = i * (bw + gap), y = (canvas.height - bh) / 2, r = Math.min(bw / 2, bh / 2);
+          g.beginPath();
+          if (g.roundRect) g.roundRect(x, y, bw, bh, r); else g.rect(x, y, bw, bh);
+          g.fill();
+        }
+        g.globalAlpha = 1;
+      };
+      draw();
+    } catch (e) { /* the waveform is decoration — the trial works without it */ }
+  }
+  function stopWave(s) { if (s.raf) cancelAnimationFrame(s.raf); s.raf = 0; micBtn.style.setProperty('--lvl', '0'); }
+
+  // Diagnostic for automated checks: proves the mic is released after closing.
+  window.__mfTrial = () => ({
+    state: tm.dataset.state, open: tm.classList.contains('on'), uses: uses().count,
+    liveTracks: allTracks.filter((t) => t.readyState === 'live').length,
+    ws: S && S.ws ? S.ws.readyState : null, audio: S && S.ac ? S.ac.state : null,
+    timer: timerEl.textContent, heard: heardEl.textContent, translated: transEl.textContent,
+  });
+  renderText();
+})();
 </script>
 </body>
 </html>
