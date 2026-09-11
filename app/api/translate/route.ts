@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 /**
  * POST /api/translate
- * Body: { to: string, src: string, context?: string }
+ * Body: { to: string, src: string, context?: string, fast?: boolean }
+ * fast → a lower-latency model for live, still-changing drafts (OPENAI_FAST_MODEL, default gpt-4o-mini).
  * Real-time interpreter for the live-translation feature.
  * Uses the server-side OPENAI_API_KEY. Returns: { translation: string }
  */
@@ -10,7 +11,7 @@ export async function POST(req: NextRequest) {
   const key = process.env.OPENAI_API_KEY;
   if (!key) return NextResponse.json({ error: "Server missing OPENAI_API_KEY" }, { status: 500 });
 
-  const { to, src, context = "" } = await req.json();
+  const { to, src, context = "", fast = false } = await req.json();
   if (!src) return NextResponse.json({ error: "Missing src" }, { status: 400 });
 
   const sys =
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "gpt-4o",
+      model: fast ? (process.env.OPENAI_FAST_MODEL || "gpt-4o-mini") : "gpt-4o",
       temperature: 0.3,
       messages: [
         { role: "system", content: sys },
