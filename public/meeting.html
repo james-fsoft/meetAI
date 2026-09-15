@@ -449,7 +449,7 @@ audio{width:100%;margin-top:16px;height:42px}
   body.recing .ai-head .ai-tog{display:none}
 }
 </style>
-</head>
+<script src="/glossary-context.js"></script></head>
 <body>
 <div class="top">
   <div class="top-r">
@@ -808,7 +808,7 @@ async function transcribeWhisper(){setProc(t('p_diar'),t('p_wait'));let ext='web
   const r=await fetch('/api/transcribe-openai',{method:'POST',body:fd});
   const d=await r.json();if(!r.ok)throw new Error(d.error||'HTTP '+r.status);return (d.text||'').trim();}
 async function summarize(){
-  try{const r=await fetch('/api/summarize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:curTr,system:t('sys'),stream:true})});
+  try{const r=await fetch('/api/summarize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:curTr,system:t('sys'),stream:true,glossary:(window.fmGlossary?window.fmGlossary.get().prompt:'')})});
     if(!r.ok){let m;try{m=(await r.json()).error;}catch(_){m='HTTP '+r.status;}throw new Error(m||'HTTP '+r.status);}
     if(r.body&&r.body.getReader){
       // Stream the summary in live so it fills character-by-character (no wait-then-dump lag).
@@ -861,7 +861,7 @@ async function resInsights(){const tx=curTr||'',ai=$('actionItems'),de=$('decisi
   if(!PAID){ai.innerHTML=aiPreview(t('ai_prev_actions'),t('ai_pro_task'));de.innerHTML=aiPreview(t('ai_prev_decisions'),'Pro');return;}
   if(tx.length<60){ai.innerHTML='<div class="ai-empty">—</div>';de.innerHTML='<div class="ai-empty">—</div>';return;}
   ai.innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';de.innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';
-  try{const r=await fetch('/api/insights',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,lang:aiOutLang()})});const d=await r.json();if(!r.ok)return;
+  try{const r=await fetch('/api/insights',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,lang:aiOutLang(),glossary:(window.fmGlossary?window.fmGlossary.get().prompt:'')})});const d=await r.json();if(!r.ok)return;
     ai.innerHTML=(d.actionItems&&d.actionItems.length)?d.actionItems.map(a=>'<div class="ai-item"><span class="ai-check"></span><span>'+(a.who?'<span class="who">'+esc(a.who)+'</span> — ':'')+esc(a.task)+'</span></div>').join(''):'<div class="ai-empty">—</div>';
     de.innerHTML=(d.decisions&&d.decisions.length)?d.decisions.map(s=>'<div class="ai-item"><span class="b">✓</span><span>'+esc(s)+'</span></div>').join(''):'<div class="ai-empty">—</div>';
   }catch(e){}}
@@ -925,7 +925,7 @@ function startAutosave(){if(autosaveInt)return;
   autosumInt=setInterval(autoSummarize,900000);}
 function stopAutosave(){if(autosaveInt){clearInterval(autosaveInt);autosaveInt=null;}if(autosumInt){clearInterval(autosumInt);autosumInt=null;}}
 async function autoSummarize(){const tx=curTr||'';if(autosumBusy||tx.trim().length<120)return;autosumBusy=true;
-  try{const r=await fetch('/api/summarize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,system:t('sys')})});
+  try{const r=await fetch('/api/summarize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,system:t('sys'),glossary:(window.fmGlossary?window.fmGlossary.get().prompt:'')})});
     const d=await r.json();if(r.ok&&d.summary){curSum=(d.summary||'').trim();save(true,{auto:true});toast(t('autosum_done'));}}catch(e){}finally{autosumBusy=false;}}
 function keepM(id){const list=JSON.parse(localStorage.getItem('mr_m')||'[]').map(m=>m.id===id?{...m,saved:true,auto:false}:m);
   localStorage.setItem('mr_m',JSON.stringify(list));renderHist();toast(t('hist_saved'));if(curId===id&&typeof updateKeepBtn==='function')updateKeepBtn();}
@@ -1100,6 +1100,7 @@ async function openWs(){
   let tok;const off=getWay()==='off';
   try{const r=await fetch('/api/soniox-token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcribeOnly:off})});const d=await r.json();if(!r.ok)throw new Error(d.error||'token error');tok=d.api_key;}
   catch(e){lvInfo('⚠ '+e.message);return;}
+  try{await window.fmGlossary.load();}catch(e){}
   if(!lvWantOn||!sx.stream)return;
   const ws=new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket');sx.ws=ws;
   ws.onopen=()=>{
@@ -1109,6 +1110,7 @@ async function openWs(){
     const cfg={api_key:tok,model:'stt-rt-v4',audio_format:'auto',
       language_hints:two?[$('lvA').value,$('lvB').value]:sxHints(),
       enable_speaker_diarization:true,enable_endpoint_detection:true};
+    try{const _g=window.fmGlossary&&window.fmGlossary.get();if(_g&&_g.context)cfg.context=_g.context;}catch(e){}
     // "off" = transcribe-only (no translation) → cheaper, so it's unlimited.
     if(!off)cfg.translation=two
       ?{type:'two_way',language_a:$('lvA').value,language_b:$('lvB').value}
@@ -1208,7 +1210,7 @@ function refreshInsights(){insLastLen=0;if($('sc-res')&&$('sc-res').classList.co
 function startInsights(){if(insTimer)return;insTimer=setInterval(runInsights,40000);setTimeout(runInsights,16000);}
 function stopInsights(){if(insTimer){clearInterval(insTimer);insTimer=null;}}
 async function runInsights(){const tx=curTr||'';if(insBusy||tx.length<60||tx.length===insLastLen)return;insBusy=true;insLastLen=tx.length;
-  try{const r=await fetch('/api/insights',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,summaryOnly:!PAID,lang:aiOutLang()})});
+  try{const r=await fetch('/api/insights',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,summaryOnly:!PAID,lang:aiOutLang(),glossary:(window.fmGlossary?window.fmGlossary.get().prompt:'')})});
     const d=await r.json();if(r.ok)renderInsights(d);}catch(e){}finally{insBusy=false;}}
 function aiList(id,items,fmt,empty){const el=$(id);if(!el)return;const html=(items&&items.length)?items.map(fmt).join(''):'<div class="ai-empty">'+(empty||'—')+'</div>';
   if(el.innerHTML!==html){el.innerHTML=html;const sec=el.closest('.ai-sec');if(sec){sec.classList.remove('ai-up');void sec.offsetWidth;sec.classList.add('ai-up');}}}

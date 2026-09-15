@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   if (!key) return NextResponse.json({ error: "Server missing OPENAI_API_KEY" }, { status: 500 });
 
   const body = await req.json().catch(() => ({}));
-  const { lang = "English", system } = body;
+  const { lang = "English", system, glossary = "" } = body;
   const wantStream = body.stream === true; // stream tokens so the UI fills in live (no "wait then dump" lag)
   // Cap the payload (a 3-hour transcript is huge); keep the most recent content.
   let transcript: string = typeof body.transcript === "string" ? body.transcript : "";
@@ -30,6 +30,9 @@ export async function POST(req: NextRequest) {
     `(Speaker 1, Speaker 2, …) — keep these exact labels. Write minutes in ${lang}, in Markdown ` +
     `with sections: ## Participants, ## Overview, ## Key points, ## Decisions, ## Action items, ## Open issues. ` +
     `Never invent anything not in the transcript.`;
+  const sysFull = sys + (typeof glossary === "string" && glossary.trim() ? `
+
+${glossary.slice(0, 6000)}` : "");
 
   try {
     const r = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -40,7 +43,7 @@ export async function POST(req: NextRequest) {
         temperature: 0.3,
         stream: wantStream,
         messages: [
-          { role: "system", content: sys },
+          { role: "system", content: sysFull },
           { role: "user", content: transcript },
         ],
       }),

@@ -14,6 +14,10 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const tx = (body.transcript || "").trim();
   const summaryOnly = !!body.summaryOnly; // free plan → cheaper, summary only
+  // The caller can pass their personal dictionary (lib/glossary.ts) so names keep their spelling.
+  const gloss = typeof body.glossary === "string" && body.glossary.trim() ? `
+
+${body.glossary.slice(0, 6000)}` : "";
   // Desired output language (e.g. "Vietnamese"). Empty → follow the transcript.
   const lang = typeof body.lang === "string" ? body.lang.trim() : "";
   if (tx.length < 60) return NextResponse.json({ summary: [], actionItems: [], decisions: [], risks: [] });
@@ -38,7 +42,7 @@ Each item is ONE short line. ${langRule} Never invent anything not in the transc
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "gpt-4o-mini", temperature: 0.2, response_format: { type: "json_object" },
-        messages: [{ role: "system", content: sys }, { role: "user", content: tx.slice(-9000) }],
+        messages: [{ role: "system", content: sys + gloss }, { role: "user", content: tx.slice(-9000) }],
       }),
     });
     const d = await r.json();
