@@ -174,7 +174,7 @@ h1 .hl{display:block;color:#0a55f5}
 .ph{background:#dfe7f3}
 .mOnly,.burger{display:none}
 
-/* ── all-use-cases gallery ── */
+/* ── all-use-cases gallery: whole photos at their own shape, text below ── */
 html.ucxOpen{overflow:hidden}
 .ucx{position:fixed;inset:0;z-index:90;overflow-y:auto;overscroll-behavior:contain;opacity:0;transition:opacity .35s ease;
   background:radial-gradient(ellipse 60% 50% at 18% 0%,rgba(40,110,255,.34),transparent 60%),radial-gradient(ellipse 50% 45% at 92% 18%,rgba(120,80,255,.22),transparent 60%),rgba(5,10,28,.95);
@@ -193,30 +193,37 @@ html.ucxOpen{overflow:hidden}
 .ucxChips button{height:calc(var(--u)*40);padding:0 calc(var(--u)*18);border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:rgba(235,241,255,.88);font-size:calc(var(--u)*14);font-weight:600;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
 .ucxChips button:hover{background:rgba(255,255,255,.13)}
 .ucxChips button.on{background:#fff;border-color:#fff;color:#0b1533}
-.ucxGrid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:calc(var(--u)*290);gap:calc(var(--u)*18);margin-top:calc(var(--u)*26)}
-.ucxCard{position:relative;border-radius:calc(var(--u)*20);overflow:hidden;isolation:isolate;background:#101a33;box-shadow:0 calc(var(--u)*20) calc(var(--u)*50) rgba(0,0,0,.35);opacity:0;transform:translateY(30px) scale(.97)}
+.ucxFeat{margin-top:calc(var(--u)*28)}
+.ucxFeat[hidden]{display:none}
+.ucxGrid{columns:3;column-gap:calc(var(--u)*20);margin-top:calc(var(--u)*20)}
+.ucxCard{display:inline-block;width:100%;margin:0 0 calc(var(--u)*20);vertical-align:top;border-radius:calc(var(--u)*20);overflow:hidden;border:1px solid rgba(255,255,255,.1);
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));box-shadow:0 calc(var(--u)*20) calc(var(--u)*50) rgba(0,0,0,.3);opacity:0;transform:translateY(30px) scale(.97);transition:border-color .3s,box-shadow .3s}
+.ucxCard:hover{border-color:rgba(140,180,255,.55);box-shadow:0 calc(var(--u)*24) calc(var(--u)*60) rgba(10,60,200,.32)}
 .ucxCard.in{animation:ucxIn .65s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 70ms)}
 @keyframes ucxIn{to{opacity:1;transform:none}}
-.ucxCard.feat{grid-column:span 2}
 .ucxCard[hidden]{display:none}
-.ucxCard img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.8,.2,1)}
-.ucxCard:hover img{transform:scale(1.07)}
-.ucxCard::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(5,10,28,.08) 12%,rgba(5,10,28,.62) 46%,rgba(5,10,28,.96) 76%)}
-.ucxCard::before{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit;border:1px solid rgba(255,255,255,.1);pointer-events:none;transition:border-color .3s,box-shadow .3s}
-.ucxCard:hover::before{border-color:rgba(140,180,255,.65);box-shadow:inset 0 0 0 1px rgba(140,180,255,.25)}
-.ucxBody{position:absolute;left:calc(var(--u)*22);right:calc(var(--u)*22);bottom:calc(var(--u)*20)}
-.ucxTag{display:inline-flex;align-items:center;gap:calc(var(--u)*8);height:calc(var(--u)*28);padding:0 calc(var(--u)*11) 0 calc(var(--u)*4);border-radius:999px;background:rgba(255,255,255,.15);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-size:calc(var(--u)*12);font-weight:600;color:#fff}
+.ucxCard.feat{display:grid;grid-template-columns:1.5fr 1fr;align-items:center;margin:0}
+.ucxMedia{position:relative;aspect-ratio:var(--ar);overflow:hidden;background:#0a1330}
+.ucxMedia img{position:absolute;inset:0;width:100%;height:100%}
+.ucxMedia .bg{object-fit:cover;filter:blur(22px) brightness(.55) saturate(1.2);transform:scale(1.2)}
+.ucxMedia .fg{object-fit:contain;transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.ucxCard:hover .ucxMedia .fg{transform:scale(1.035)}
+.ucxBody{padding:calc(var(--u)*18) calc(var(--u)*22) calc(var(--u)*22);color:#fff}
+.ucxCard.feat .ucxBody{padding:calc(var(--u)*34) calc(var(--u)*40)}
+.ucxTag{display:inline-flex;align-items:center;gap:calc(var(--u)*8);height:calc(var(--u)*28);padding:0 calc(var(--u)*11) 0 calc(var(--u)*4);border-radius:999px;background:rgba(255,255,255,.1);font-size:calc(var(--u)*12);font-weight:600;color:#dfe8ff}
 .ucxTag i{width:calc(var(--u)*22);height:calc(var(--u)*22);border-radius:50%;background:#fff;color:var(--blue);display:grid;place-items:center}
 .ucxTag svg{width:calc(var(--u)*13);height:calc(var(--u)*13)}
-.ucxBody h3{margin-top:calc(var(--u)*12);font-size:calc(var(--u)*21);line-height:1.25;font-weight:800;letter-spacing:-.02em;text-shadow:0 2px 14px rgba(0,0,0,.45)}
-.ucxCard.feat .ucxBody h3{font-size:calc(var(--u)*30)}
-.ucxBody p{margin-top:calc(var(--u)*6);max-width:calc(var(--u)*520);font-size:calc(var(--u)*14);line-height:1.5;color:rgba(236,241,255,.9);text-shadow:0 1px 10px rgba(0,0,0,.5)}
+.ucxBody h3{margin-top:calc(var(--u)*12);font-size:calc(var(--u)*21);line-height:1.25;font-weight:800;letter-spacing:-.02em}
+.ucxCard.feat .ucxBody h3{margin-top:calc(var(--u)*16);font-size:calc(var(--u)*34)}
+.ucxBody p{margin-top:calc(var(--u)*6);font-size:calc(var(--u)*14.5);line-height:1.55;color:rgba(225,233,255,.78)}
+.ucxCard.feat .ucxBody p{margin-top:calc(var(--u)*10);font-size:calc(var(--u)*16.5)}
 .ucxGo{display:inline-flex;align-items:center;gap:calc(var(--u)*8);margin-top:calc(var(--u)*14);height:calc(var(--u)*38);padding:0 calc(var(--u)*16);border-radius:999px;border:0;background:#fff;color:#0b1533;font-size:calc(var(--u)*13.5);font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
 .ucxGo:hover{transform:translateY(-1px);box-shadow:0 calc(var(--u)*10) calc(var(--u)*24) rgba(10,92,255,.35)}
-.ucxGo.ghost{background:rgba(255,255,255,.15);color:#fff;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-.ucxGo.ghost:hover{background:rgba(255,255,255,.26)}
+.ucxGo.ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.ucxGo.ghost:hover{background:rgba(255,255,255,.2)}
 .ucxGo svg{width:calc(var(--u)*15);height:calc(var(--u)*15)}
-@media(prefers-reduced-motion:reduce){.ucx,.ucxIn,.ucxCard img{transition:none}.ucxCard.in{animation:none;opacity:1;transform:none}}
+.ucxCard.feat .ucxGo{margin-top:calc(var(--u)*22);height:calc(var(--u)*44);padding:0 calc(var(--u)*20);font-size:calc(var(--u)*14.5)}
+@media(prefers-reduced-motion:reduce){.ucx,.ucxIn,.ucxMedia .fg{transition:none}.ucxCard.in{animation:none;opacity:1;transform:none}}
 
 /* ── Trial modal ── */
 .tm{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:24px;background:var(--backdrop);
@@ -466,7 +473,7 @@ html.ucxOpen{overflow:hidden}
 }
 @keyframes mwv{from{transform:scaleY(.45)}to{transform:scaleY(1)}}
 @media(prefers-reduced-motion:reduce){.mWave i{animation:none}}
-@media(max-width:1099px){ .ucxGrid{grid-template-columns:repeat(2,1fr)} }
+@media(max-width:1099px){ .ucxGrid{columns:2} .ucxCard.feat{display:block} }
 @media(max-width:767px){
   .ucxIn{width:auto;padding:calc(var(--mu)*66) calc(var(--mu)*18) calc(var(--mu)*40)}
   .ucxX{top:calc(var(--mu)*14);right:calc(var(--mu)*14);width:calc(var(--mu)*42);height:calc(var(--mu)*42)}
@@ -477,15 +484,15 @@ html.ucxOpen{overflow:hidden}
   .ucxChips{flex-wrap:nowrap;gap:calc(var(--mu)*8);margin:calc(var(--mu)*22) calc(calc(var(--mu)*18) * -1) 0;padding:0 calc(var(--mu)*18);overflow-x:auto;scrollbar-width:none}
   .ucxChips::-webkit-scrollbar{display:none}
   .ucxChips button{flex:0 0 auto;height:calc(var(--mu)*36);padding:0 calc(var(--mu)*15);font-size:calc(var(--mu)*14)}
-  .ucxGrid{grid-template-columns:1fr;grid-auto-rows:calc(var(--mu)*236);gap:calc(var(--mu)*14);margin-top:calc(var(--mu)*18)}
-  .ucxCard{border-radius:calc(var(--mu)*18)}
-  .ucxCard.feat{grid-column:auto}
-  .ucxBody{left:calc(var(--mu)*18);right:calc(var(--mu)*18);bottom:calc(var(--mu)*16)}
+  .ucxFeat{margin-top:calc(var(--mu)*18)}
+  .ucxGrid{columns:1;margin-top:calc(var(--mu)*14)}
+  .ucxCard{margin-bottom:calc(var(--mu)*14);border-radius:calc(var(--mu)*18)}
+  .ucxBody,.ucxCard.feat .ucxBody{padding:calc(var(--mu)*14) calc(var(--mu)*16) calc(var(--mu)*18)}
   .ucxTag{height:calc(var(--mu)*26);font-size:calc(var(--mu)*12)}
   .ucxTag i{width:calc(var(--mu)*20);height:calc(var(--mu)*20)}.ucxTag svg{width:calc(var(--mu)*12);height:calc(var(--mu)*12)}
-  .ucxBody h3,.ucxCard.feat .ucxBody h3{margin-top:calc(var(--mu)*10);font-size:calc(var(--mu)*21)}
-  .ucxBody p{font-size:calc(var(--mu)*14)}
-  .ucxGo{height:calc(var(--mu)*38);margin-top:calc(var(--mu)*12);padding:0 calc(var(--mu)*15);font-size:calc(var(--mu)*14)}
+  .ucxBody h3,.ucxCard.feat .ucxBody h3{margin-top:calc(var(--mu)*10);font-size:calc(var(--mu)*20)}
+  .ucxBody p,.ucxCard.feat .ucxBody p{margin-top:calc(var(--mu)*6);font-size:calc(var(--mu)*14)}
+  .ucxGo,.ucxCard.feat .ucxGo{height:calc(var(--mu)*38);margin-top:calc(var(--mu)*12);padding:0 calc(var(--mu)*15);font-size:calc(var(--mu)*14)}
   .ucxGo svg{width:calc(var(--mu)*15);height:calc(var(--mu)*15)}
   .mAll{display:inline-flex;align-items:center;gap:calc(var(--mu)*8);margin-top:calc(var(--mu)*16);height:calc(var(--mu)*42);padding:0 calc(var(--mu)*18);border-radius:999px;border:1px solid #d6e2f5;background:#fff;font-size:calc(var(--mu)*14.5);font-weight:600;color:var(--navy);cursor:pointer;box-shadow:0 calc(var(--mu)*6) calc(var(--mu)*16) rgba(20,40,90,.06)}
   .mAll svg{width:calc(var(--mu)*16);height:calc(var(--mu)*16);color:var(--blue)}
@@ -668,6 +675,7 @@ html.ucxOpen{overflow:hidden}
     <h2 id="ucxT">모든 상황에서 Flash Meet</h2>
     <p>상황을 골라 Flash Meet가 어떻게 돕는지 확인하거나, 지금 60초 동안 체험해 보세요.</p>
     <div class="ucxChips" id="ucxChips" role="tablist" aria-label="상황"></div>
+    <div class="ucxFeat" id="ucxFeat"></div>
     <div class="ucxGrid" id="ucxGrid"></div>
   </div>
 </div>
@@ -772,23 +780,29 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
   row.addEventListener("scroll", syncNav, { passive: true }); addEventListener("resize", syncNav); syncNav();
 
   // ── all use cases: an immersive gallery (filter chips, staggered cards); rendered now so the trial binds its buttons ──
-  const ucx = $("ucx"), ucxGrid = $("ucxGrid"), ucxChips = $("ucxChips");
-  const GAL = [...USE_CASES].sort((a, b) => (b.link ? 1 : 0) - (a.link ? 1 : 0));   // the case with a detail page leads
+  const ucx = $("ucx"), ucxGrid = $("ucxGrid"), ucxFeat = $("ucxFeat"), ucxChips = $("ucxChips");
+  // Gallery photos are the whole, uncropped originals; --ar keeps each card at the photo's own shape
+  // (very tall portraits sit in a 4:5 frame over a blurred copy of themselves instead of being cut).
+  const GAR = { conference: 1672 / 941, meeting: 1448 / 1086, videocall: 1672 / 941, daily: 941 / 1672, study: 1536 / 1024, movie: 1448 / 1086, training: 1672 / 941 };
   const GO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-  ucxGrid.innerHTML = GAL.map((u) => `<article class="ucxCard${u.link ? " feat" : ""}" data-tag="${escH(u.tag)}"><img loading="lazy" src="${u.img}" alt=""><div class="ucxBody"><span class="ucxTag"><i>${svg(u.icon)}</i>${escH(u.tag)}</span><h3>${escH(u.t)}</h3><p>${escH(u.d.replace(/\n/g, " "))}</p>` +
-    (u.link ? `<a class="ucxGo" href="${HOME}/${u.link}">자세히 보기 ${GO}</a>` : `<button class="ucxGo ghost openTrial" type="button">지금 체험하기 ${GO}</button>`) + `</div></article>`).join("");
-  ucxChips.innerHTML = `<button type="button" class="on" data-tag="">전체</button>` + [...new Set(GAL.map((u) => u.tag))].map((t) => `<button type="button" data-tag="${escH(t)}">${escH(t)}</button>`).join("");
-  $("ucCount").textContent = GAL.length;
+  const galCard = (u, feat) => {
+    const key = u.img.replace(/^.*\/uc-/, "").replace(/\.jpg$/, ""), src = `/concept/ucg-${key}.jpg`, ar = Math.max(GAR[key] || 1.5, 0.8).toFixed(3);
+    return `<article class="ucxCard${feat ? " feat" : ""}" data-tag="${escH(u.tag)}"><div class="ucxMedia" style="--ar:${ar}"><img class="bg" src="${src}" alt="" aria-hidden="true" loading="lazy"><img class="fg" src="${src}" alt="${escH(u.t)}" loading="lazy"></div>` +
+      `<div class="ucxBody"><span class="ucxTag"><i>${svg(u.icon)}</i>${escH(u.tag)}</span><h3>${escH(u.t)}</h3><p>${escH(u.d.replace(/\n/g, " "))}</p>` +
+      (u.link ? `<a class="ucxGo" href="${HOME}/${u.link}">자세히 보기 ${GO}</a>` : `<button class="ucxGo ghost openTrial" type="button">지금 체험하기 ${GO}</button>`) + `</div></article>`;
+  };
+  const FEAT = USE_CASES.filter((u) => u.link), REST = USE_CASES.filter((u) => !u.link);
+  ucxFeat.innerHTML = FEAT.map((u) => galCard(u, true)).join("");
+  ucxGrid.innerHTML = REST.map((u) => galCard(u, false)).join("");
+  ucxChips.innerHTML = `<button type="button" class="on" data-tag="">전체</button>` + [...new Set([...FEAT, ...REST].map((u) => u.tag))].map((t) => `<button type="button" data-tag="${escH(t)}">${escH(t)}</button>`).join("");
+  $("ucCount").textContent = USE_CASES.length;
   const reveal = (tag) => {
     let i = 0;
-    [...ucxGrid.children].forEach((c) => {
-      const show = !tag || c.dataset.tag === tag;
-      c.hidden = !show; c.classList.remove("in");
-      c.classList.toggle("feat", show && !tag && !!c.querySelector("a.ucxGo"));
-      if (show) c.style.setProperty("--i", i++);
-    });
+    const cards = [...ucxFeat.children, ...ucxGrid.children];
+    cards.forEach((c) => { const show = !tag || c.dataset.tag === tag; c.hidden = !show; c.classList.remove("in"); if (show) c.style.setProperty("--i", i++); });
+    ucxFeat.hidden = ![...ucxFeat.children].some((c) => !c.hidden);
     void ucxGrid.offsetWidth;   // restart the entrance animation
-    [...ucxGrid.children].forEach((c) => { if (!c.hidden) c.classList.add("in"); });
+    cards.forEach((c) => { if (!c.hidden) c.classList.add("in"); });
   };
   ucxChips.addEventListener("click", (e) => {
     const b = e.target.closest("button"); if (!b) return;
