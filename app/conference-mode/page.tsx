@@ -233,7 +233,7 @@ export default function ConferenceModePage() {
         ref={frameRef}
         src="/conference-pro.html"
         title="Flash Meet Conference Mode"
-        allow="microphone; clipboard-write; fullscreen"
+        allow="microphone; clipboard-write; fullscreen; display-capture"
         allowFullScreen
         className="host-frame"
       />
