@@ -647,7 +647,7 @@ const PROOF = {
 };
 const USE_CASES = [
   { img: "/concept/uc-meeting.jpg", tag: "업무", icon: "briefcase", t: "업무 회의", d: "언어를 넘어 소통하고,\n더 효율적으로 일하세요." },
-  { img: "/concept/uc-conference.jpg", tag: "컨퍼런스", icon: "users", t: "컨퍼런스, 대형 행사", d: "실시간 이중 언어\n자막을 제공합니다." },
+  { img: "/concept/uc-conference.jpg", tag: "컨퍼런스", link: "conference", icon: "users", t: "컨퍼런스, 대형 행사", d: "실시간 이중 언어\n자막을 제공합니다." },
   { img: "/concept/uc-videocall.jpg", tag: "영상 통화", icon: "video", t: "영상 통화", d: "세계 어디에 있든\n서로 이해할 수 있어요." },
   { img: "/concept/uc-daily.jpg", tag: "일상", icon: "chat", t: "일상 대화", d: "여행, 파트너 미팅,\n해외 친구와의 대화." },
   { img: "/concept/uc-study.jpg", tag: "학습", icon: "cap", t: "학습, 연구", d: "해외 강의와 영상을\n더 빠르게 이해하세요." },
@@ -682,8 +682,12 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
     : `<b>사용자들에게 좋은 평가를 받고 있어요</b><small>매일 무료 체험, 카드 등록 불필요</small>`;
 
   // use cases
+  // cards with a detail page link to it (under this language's home, taken from the logo link)
+  const HOME = document.querySelector(".logo").getAttribute("href");
+  const cardOpen = (u, cls) => (u.link ? `<a class="${cls}" href="${HOME}/${u.link}">` : `<article class="${cls}">`);
+  const cardClose = (u) => (u.link ? "</a>" : "</article>");
   $("ucRow").innerHTML = USE_CASES.map((u) =>
-    `<article class="ucCard ph"><img loading="lazy" src="${u.img}" alt="${escH(u.t)}"><div class="ucIn"><span class="ucIc">${svg(u.icon)}</span><b>${escH(u.t)}</b><p>${escH(u.d).replace(/\n/g, ' <br class="dk">')}</p></div></article>`).join("");
+    `${cardOpen(u, "ucCard ph")}<img loading="lazy" src="${u.img}" alt="${escH(u.t)}"><div class="ucIn"><span class="ucIc">${svg(u.icon)}</span><b>${escH(u.t)}</b><p>${escH(u.d).replace(/\n/g, ' <br class="dk">')}</p></div>${cardClose(u)}`).join("");
   const row = $("ucRow"), wrap = $("ucWrap");
   const step = () => (row.querySelector(".ucCard")?.getBoundingClientRect().width || 240) + 7;
   $("ucNext").onclick = () => row.scrollBy({ left: step() * 3 });
@@ -741,6 +745,21 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
   }));
   document.addEventListener("click", () => document.querySelectorAll(".dd.open").forEach((x) => x.classList.remove("open")));
 
+  // in-page anchors stay in this document (<base target="_top"> would open the bare HTML file), and the wrapper
+  // URL's #hash is honoured on load — phone mode has its own section ids
+  const ALT = { "#usecases": "#mUsecases", "#features": "#mFeatures" };
+  const goTo = (h, smooth) => {
+    let t = document.querySelector(h);
+    if (!t || !t.offsetParent) t = document.querySelector(ALT[h] || h);
+    if (t && t.offsetParent) t.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+  };
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a || a.getAttribute("href").length < 2) return;
+    e.preventDefault(); goTo(a.getAttribute("href"), true);
+  });
+  try { const h = window.top.location.hash; if (h.length > 1) setTimeout(() => goTo(h, false), 80); } catch (e) {}
+
   // intro video: plays in the trial-style sheet when a URL is configured, otherwise shows the use cases
   const openVideo = (e) => {
     if (e) e.preventDefault();
@@ -774,7 +793,7 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
   // use cases: chips + cover-flow (same data as desktop, grouped for the chips)
   const mCards = [1, 0, 6, 2, 3, 4, 5].map((i) => USE_CASES[i]);
   const cf = $("cf"), chipBox = $("mChips");
-  cf.innerHTML = mCards.map((u) => `<article class="cfCard"><div class="cfImg ph"><img loading="lazy" src="${u.img}" alt="${escH(u.t)}"></div><span class="cfIc">${svg(u.icon)}</span><b>${escH(u.t)}</b><p>${escH(u.d.replace(/\n/g, " "))}</p></article>`).join("");
+  cf.innerHTML = mCards.map((u) => `${cardOpen(u, "cfCard")}<div class="cfImg ph"><img loading="lazy" src="${u.img}" alt="${escH(u.t)}"></div><span class="cfIc">${svg(u.icon)}</span><b>${escH(u.t)}</b><p>${escH(u.d.replace(/\n/g, " "))}</p>${cardClose(u)}`).join("");
   chipBox.innerHTML = [...new Set(mCards.map((u) => u.tag))].map((t) => `<button type="button" role="tab">${escH(t)}</button>`).join("");
   $("cfDots").innerHTML = mCards.map((_, k) => `<button type="button" aria-label="카드 ${k + 1}"></button>`).join("");
   const cfCards = [...cf.children], chips = [...chipBox.children], cfDots = [...$("cfDots").children];

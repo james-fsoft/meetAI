@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>컨퍼런스·대형 행사 — Flash Meet</title>
+<meta name="description" content="컨퍼런스와 대형 행사를 위한 실시간 이중 언어 통역: 무대 화면, 플로팅 자막, Conference ID로 청중 참여, 행사 후 AI 요약.">
+<!-- Served inside the /concept/conference wrapper iframe: links navigate the whole window. -->
+<base target="_top">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+<style>
+@font-face{font-family:"BVP Fallback";src:local("Arial"),local("Helvetica Neue"),local("Helvetica");size-adjust:108.4%;ascent-override:92.2%;descent-override:24.4%;line-gap-override:0%}
+/* Desktop sizes are the pixel sizes on the 1672-px design, times --u; phones use px at 390 wide, times --mu. */
+:root{
+  --u:clamp(0.66px,calc(100vw / 1672),1.3px);--mu:1px;
+  --font:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Malgun Gothic","Be Vietnam Pro",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --fontKo:"Pretendard Variable",Pretendard,"Noto Sans KR","Be Vietnam Pro",sans-serif;
+  --navy:#0b1533;--body:#2c3653;--mutedTx:#5b6682;--blue:#0a5cff;--cta:#1766ff;--soft:#eef3fc;
+  /* tokens used by the trial popup */
+  --bg:#f7f9fb;--card:#fff;--raised:#fff;--soft2:#f1f4f8;--line:#e3e8f0;--lineSoft:rgba(17,24,39,.07);
+  --text:#111827;--muted:#64748b;--faint:#94a3b8;--ink:#0b1533;--inkText:#fff;
+  --modal:#fff;--backdrop:rgba(5,12,20,.42);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html.tmOpen{overflow:hidden}
+body{margin:0;font-family:var(--font);word-break:keep-all;color:var(--navy);background:#f7f9fd;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit;color:inherit}
+img{display:block;max-width:100%}
+h1,h2,h3,p,figure{margin:0}
+ul{margin:0;padding:0;list-style:none}
+svg{flex-shrink:0}
+.wrap{width:calc(var(--u)*1478);margin:0 auto;position:relative}
+.mOnly,.burger{display:none}
+.ph{background:#dfe7f3}
+
+/* ── nav ── */
+.nav{height:calc(var(--u)*53);position:relative;z-index:20;background:#fff;border-bottom:1px solid #eef1f6}
+.navIn{height:100%;display:flex;align-items:center}
+.logo{display:inline-flex;align-items:center;gap:calc(var(--u)*9);font-size:calc(var(--u)*19.5);font-weight:700;letter-spacing:-.02em;color:#0a0f24}
+.logo svg{width:calc(var(--u)*30);height:calc(var(--u)*30)}
+.menu{display:flex;align-items:center;gap:calc(var(--u)*29);margin-left:calc(var(--u)*52);font-size:calc(var(--u)*12.3);letter-spacing:-.01em;font-weight:500;color:#26304d}
+.menu>a,.dd>button{position:relative;display:inline-flex;align-items:center;gap:calc(var(--u)*7);height:calc(var(--u)*53);background:none;border:0;cursor:pointer;padding:0}
+.menu>a.on{color:var(--blue);font-weight:600}
+.menu>a.on::after{content:"";position:absolute;left:0;right:0;bottom:calc(var(--u)*12);height:calc(var(--u)*2);border-radius:2px;background:var(--blue)}
+.menu>a:hover,.dd>button:hover{color:var(--blue)}
+.chev{width:calc(var(--u)*10);height:calc(var(--u)*10)}
+.navR{margin-left:auto;display:flex;align-items:center;gap:calc(var(--u)*33);font-size:calc(var(--u)*12);letter-spacing:-.01em;font-weight:500;color:#26304d}
+.navR .globe{width:calc(var(--u)*17);height:calc(var(--u)*17)}
+.navR .login{font-weight:600}
+.navR a:hover{color:var(--blue)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:calc(var(--u)*12);border:0;border-radius:calc(var(--u)*5);cursor:pointer;font-weight:600;white-space:nowrap;transition:filter .15s,transform .15s}
+.btn:hover{filter:brightness(1.07)}.btn:active{transform:translateY(1px)}
+.btnSm{height:calc(var(--u)*36);width:calc(var(--u)*147);padding:0;font-size:calc(var(--u)*13.8);background:var(--cta);color:#fff}
+.dd{position:relative}
+.ddMenu{position:absolute;top:calc(100% - calc(var(--u)*6));left:50%;transform:translateX(-50%);min-width:calc(var(--u)*170);background:#fff;border:1px solid #e3e8f0;border-radius:calc(var(--u)*10);
+  box-shadow:0 calc(var(--u)*16) calc(var(--u)*40) rgba(15,30,70,.14);padding:calc(var(--u)*6);display:none;z-index:40}
+.dd.open .ddMenu{display:block}
+.ddMenu a{display:block;padding:calc(var(--u)*8) calc(var(--u)*12);border-radius:calc(var(--u)*7);font-size:calc(var(--u)*13);font-weight:500;color:#1b2540;white-space:nowrap}
+.ddMenu a:hover{background:#f1f5fb;color:var(--blue)}.ddMenu a.cur{color:var(--blue);font-weight:600}
+
+/* ── hero ── */
+.cHero{position:relative;height:calc(var(--u)*294);background:linear-gradient(90deg,#e8f1fd 0,#f4f8fe 30%,#f4f8fe 100%);overflow:hidden}
+.cHeroTx{position:relative;z-index:2;width:calc(var(--u)*600);padding-top:calc(var(--u)*64)}
+.eyebrow{font-size:calc(var(--u)*11);line-height:1.3;letter-spacing:.38em;font-weight:500;color:#3b4a6b;text-transform:uppercase}
+h1{margin-top:calc(var(--u)*11);font-size:calc(var(--u)*51.5);line-height:1.12;font-weight:800;letter-spacing:-.03em;color:var(--navy);white-space:nowrap}
+h1 .hl{color:#1a5cff}
+.sub{margin-top:calc(var(--u)*7);font-size:calc(var(--u)*15);line-height:1.45;color:#4a5570;letter-spacing:-.005em}
+.ctas{display:flex;gap:calc(var(--u)*13);margin-top:calc(var(--u)*20)}
+.btnPri{width:calc(var(--u)*216);height:calc(var(--u)*48);font-size:calc(var(--u)*14.5);background:var(--cta);color:#fff;box-shadow:0 calc(var(--u)*10) calc(var(--u)*22) rgba(23,102,255,.22)}
+.btnPri svg{width:calc(var(--u)*20);height:calc(var(--u)*20)}
+.btnGhost{width:calc(var(--u)*197);height:calc(var(--u)*48);font-size:calc(var(--u)*14);font-weight:600;background:#fff;color:var(--navy);border:calc(var(--u)*1.5) solid #c9d6ea}
+.btnGhost svg{width:calc(var(--u)*24);height:calc(var(--u)*24)}
+.cHeroVis{position:absolute;z-index:1;top:0;right:0;width:calc(var(--u)*1112);height:100%;background:linear-gradient(90deg,#0b1737,#050c20)}
+.cHeroVis img{position:absolute;left:0;top:0;width:80%;height:100%;object-fit:cover;-webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);mask-image:linear-gradient(90deg,#000 82%,transparent)}
+.cHeroVis::before{content:"";position:absolute;z-index:1;inset:0 auto 0 0;width:calc(var(--u)*200);background:linear-gradient(90deg,#f1f6fe,rgba(241,246,254,0))}
+.liveCard{position:absolute;z-index:2;right:calc(var(--u)*64);top:calc(var(--u)*45);width:calc(var(--u)*230);padding:calc(var(--u)*10) calc(var(--u)*12) calc(var(--u)*12);border-radius:calc(var(--u)*10);background:rgba(9,22,56,.84);border:1px solid rgba(118,160,255,.45);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;box-shadow:0 calc(var(--u)*14) calc(var(--u)*30) rgba(0,0,0,.35)}
+.lcTop{display:flex;align-items:center;gap:calc(var(--u)*8);font-size:calc(var(--u)*10.5)}
+.lcLive{display:inline-flex;align-items:center;gap:calc(var(--u)*5);font-size:calc(var(--u)*11.5);font-weight:600;color:#ff5d5d}
+.lcLive i{width:calc(var(--u)*7);height:calc(var(--u)*7);border-radius:50%;background:#ff4d4d;box-shadow:0 0 0 calc(var(--u)*3) rgba(255,77,77,.25)}
+.lcTime{color:#c9d6f0}
+.lcChips{margin-left:auto;display:flex;gap:calc(var(--u)*5)}
+.lc{display:inline-flex;align-items:center;gap:calc(var(--u)*3);height:calc(var(--u)*22);padding:0 calc(var(--u)*7);border-radius:calc(var(--u)*4);border:1px solid rgba(255,255,255,.28);font-size:calc(var(--u)*10.5);font-weight:600}
+.lc svg{width:calc(var(--u)*8);height:calc(var(--u)*8)}
+.lcLine{display:flex;gap:calc(var(--u)*9);margin-top:calc(var(--u)*10);font-size:calc(var(--u)*11.5);line-height:1.42;color:#eef3ff}
+.lcLine+.lcLine{padding-top:calc(var(--u)*9);border-top:1px solid rgba(255,255,255,.14)}
+.lcAv{width:calc(var(--u)*15);height:calc(var(--u)*15);border-radius:50%;background:#8fb4ff;margin-top:calc(var(--u)*2)}
+.lcSq{width:calc(var(--u)*13);height:calc(var(--u)*13);border-radius:calc(var(--u)*3);background:#4f86ff;margin-top:calc(var(--u)*3)}
+.lcWave{display:flex;justify-content:flex-end;align-items:center;gap:calc(var(--u)*2.5);height:calc(var(--u)*26);margin-top:calc(var(--u)*6)}
+.lcWave i{width:calc(var(--u)*2.5);border-radius:2px;background:#6ea0ff}
+
+/* ── feature band ── */
+.cFeats{background:#fff;border-bottom:1px solid #edf1f7}
+.cFeatsIn{height:calc(var(--u)*83);display:grid;grid-template-columns:repeat(5,1fr);align-items:center}
+.cFeat{display:flex;align-items:center;gap:calc(var(--u)*18);padding-left:calc(var(--u)*35)}
+.cFeat+.cFeat{border-left:1px solid #e3e9f2}
+.fi{width:calc(var(--u)*56);height:calc(var(--u)*56);border-radius:50%;background:var(--soft);display:grid;place-items:center;color:var(--blue)}
+.fi svg{width:calc(var(--u)*26);height:calc(var(--u)*26)}
+.cFeat b{display:block;font-size:calc(var(--u)*13);font-weight:700;color:var(--navy);letter-spacing:-.01em}
+.cFeat small{display:block;margin-top:calc(var(--u)*4);font-size:calc(var(--u)*12);color:#5b6682}
+
+/* ── display modes ── */
+.cFx{padding-top:calc(var(--u)*16)}
+.fxHead{position:relative}
+.fxHead h2{font-size:calc(var(--u)*28);}
+.stHead h2{font-size:calc(var(--u)*25);}
+.fxHead h2,.stHead h2{line-height:1.2;font-weight:800;letter-spacing:-.025em;color:var(--navy)}
+.fxMore{position:absolute;right:0;top:calc(var(--u)*8);display:inline-flex;align-items:center;gap:calc(var(--u)*8);font-size:calc(var(--u)*13.5);font-weight:500;color:var(--blue)}
+.fxMore svg{width:calc(var(--u)*16);height:calc(var(--u)*16)}
+.fxGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:calc(var(--u)*17);margin-top:calc(var(--u)*9)}
+.fxCard{display:block;background:#fff;border:1px solid #e6ecf4;border-radius:calc(var(--u)*6);overflow:hidden;box-shadow:0 calc(var(--u)*6) calc(var(--u)*18) rgba(20,40,90,.05);transition:box-shadow .2s,transform .2s}
+.fxCard:hover{box-shadow:0 calc(var(--u)*12) calc(var(--u)*28) rgba(20,40,90,.12);transform:translateY(-2px)}
+.fxMedia{position:relative;height:calc(var(--u)*162);overflow:hidden}
+.fxMedia>img{width:100%;height:100%;object-fit:cover}
+.fxBody{height:calc(var(--u)*63);display:flex;align-items:center;padding:0 calc(var(--u)*14) 0 calc(var(--u)*16)}
+.fxIc{width:calc(var(--u)*40);height:calc(var(--u)*40);border-radius:50%;background:var(--soft);display:grid;place-items:center;color:var(--blue);margin-right:calc(var(--u)*18)}
+.fxIc svg{width:calc(var(--u)*20);height:calc(var(--u)*20)}
+.fxTx{flex:1;min-width:0}
+.fxTx b{display:block;font-size:calc(var(--u)*14);font-weight:700;color:var(--navy);letter-spacing:-.01em}
+.fxTx small{display:block;margin-top:calc(var(--u)*3);font-size:calc(var(--u)*12);color:#5b6682}
+.fxGo{width:calc(var(--u)*36);height:calc(var(--u)*36);border-radius:50%;background:var(--soft);display:grid;place-items:center;color:var(--blue)}
+.fxGo svg{width:calc(var(--u)*16);height:calc(var(--u)*16)}
+/* mock-ups drawn over the card photos */
+.mkPop{position:absolute;left:30%;top:calc(var(--u)*18);width:calc(var(--u)*209);border-radius:calc(var(--u)*6);background:rgba(10,20,48,.9);border:1px solid rgba(255,255,255,.16);color:#fff;box-shadow:0 calc(var(--u)*10) calc(var(--u)*24) rgba(0,0,0,.35)}
+.mkHd{display:flex;align-items:center;gap:calc(var(--u)*6);padding:calc(var(--u)*7) calc(var(--u)*9);border-bottom:1px solid rgba(255,255,255,.12);font-size:calc(var(--u)*10.5);font-weight:600}
+.mkHd svg{width:calc(var(--u)*15);height:calc(var(--u)*15)}
+.mkHd .lcChips .lc{height:calc(var(--u)*18);font-size:calc(var(--u)*9.5);padding:0 calc(var(--u)*6)}
+.mkPop p{padding:calc(var(--u)*8) calc(var(--u)*12) 0;font-size:calc(var(--u)*12);line-height:1.4;color:#eef3ff}
+.mkPop p+p{margin-top:calc(var(--u)*7);padding-top:calc(var(--u)*7);padding-bottom:calc(var(--u)*10);border-top:1px solid rgba(255,255,255,.12);margin-inline:calc(var(--u)*12);padding-inline:0}
+.mkPhone{position:absolute;left:37%;top:calc(var(--u)*4);width:calc(var(--u)*106);height:calc(var(--u)*204);padding:calc(var(--u)*4);border-radius:calc(var(--u)*18);background:#10131c;box-shadow:0 calc(var(--u)*14) calc(var(--u)*30) rgba(0,0,0,.4);transform:rotate(-3deg)}
+.mkScr{height:100%;border-radius:calc(var(--u)*14);background:#fff;padding:calc(var(--u)*12) calc(var(--u)*8);text-align:center;color:var(--navy)}
+.mkBrand{display:flex;align-items:center;justify-content:center;gap:calc(var(--u)*4);font-size:calc(var(--u)*9);font-weight:700}
+.mkBrand svg{width:calc(var(--u)*13);height:calc(var(--u)*13)}
+.mkScr b{display:block;margin-top:calc(var(--u)*16);font-size:calc(var(--u)*9);font-weight:700}
+.mkIn{margin-top:calc(var(--u)*8);height:calc(var(--u)*22);border:1px solid #d5dde9;border-radius:calc(var(--u)*5);display:grid;place-items:center;font-size:calc(var(--u)*10);font-weight:600;letter-spacing:.04em}
+.mkBtn{margin-top:calc(var(--u)*8);height:calc(var(--u)*22);border-radius:calc(var(--u)*5);background:var(--cta);color:#fff;display:grid;place-items:center;font-size:calc(var(--u)*9.5);font-weight:600}
+.mkTab{position:absolute;left:9.5%;right:6%;top:calc(var(--u)*16);height:calc(var(--u)*170);border:calc(var(--u)*5) solid #1b1f2a;border-bottom:0;border-radius:calc(var(--u)*10) calc(var(--u)*10) 0 0;background:#f7f9fc;box-shadow:0 calc(var(--u)*14) calc(var(--u)*30) rgba(0,0,0,.3);display:grid;grid-template-columns:calc(var(--u)*78) 1fr;grid-template-rows:calc(var(--u)*24) 1fr}
+.mkTabHd{grid-column:1/-1;display:flex;align-items:center;gap:calc(var(--u)*5);padding:0 calc(var(--u)*8);font-size:calc(var(--u)*9);font-weight:700;border-bottom:1px solid #e8edf5;background:#fff}
+.mkTabHd svg{width:calc(var(--u)*12);height:calc(var(--u)*12)}
+.mkTabHd i{margin-left:auto;font-style:normal;color:#9aa4b8;letter-spacing:.1em}
+.mkSide{padding:calc(var(--u)*8) calc(var(--u)*6);display:flex;flex-direction:column;gap:calc(var(--u)*5);font-size:calc(var(--u)*8.5);color:#5b6682;border-right:1px solid #e8edf5;background:#fff}
+.mkSide span{display:flex;align-items:center;gap:calc(var(--u)*5);padding:calc(var(--u)*4) calc(var(--u)*5);border-radius:calc(var(--u)*4)}
+.mkSide span.on{background:var(--soft);color:var(--blue);font-weight:600}
+.mkSide svg{width:calc(var(--u)*10);height:calc(var(--u)*10)}
+.mkMain{padding:calc(var(--u)*8) calc(var(--u)*10)}
+.mkMainHd{display:flex;align-items:center;gap:calc(var(--u)*5);font-size:calc(var(--u)*9);font-weight:700}
+.mkMainHd .lcChips .lc{height:calc(var(--u)*15);font-size:calc(var(--u)*8);padding:0 calc(var(--u)*5);border-color:#d5dde9;color:#26304d}
+.mkRow{display:flex;gap:calc(var(--u)*6);margin-top:calc(var(--u)*7);padding:calc(var(--u)*6) calc(var(--u)*7);border-radius:calc(var(--u)*5);background:#fff;border:1px solid #e8edf5;font-size:calc(var(--u)*8.5);line-height:1.4;color:#26304d}
+.mkRow i{width:calc(var(--u)*9);height:calc(var(--u)*9);border-radius:calc(var(--u)*2);background:#c9d9fb;flex-shrink:0;margin-top:calc(var(--u)*2)}
+
+/* ── how it works ── */
+.cSteps{padding-top:calc(var(--u)*18)}
+.cStepsIn{display:grid;grid-template-columns:calc(var(--u)*309) calc(var(--u)*356) calc(var(--u)*394) 1fr;align-items:center;height:calc(var(--u)*50)}
+.st{position:relative;display:flex;align-items:center}
+.st:not(:last-child)::after{content:"";position:absolute;right:calc(var(--u)*52);top:50%;width:calc(var(--u)*9);height:calc(var(--u)*9);border-top:calc(var(--u)*2) solid #9aa7bd;border-right:calc(var(--u)*2) solid #9aa7bd;transform:translateY(-50%) rotate(45deg)}
+.stN{width:calc(var(--u)*50);height:calc(var(--u)*50);border-radius:50%;background:var(--cta);color:#fff;display:grid;place-items:center;font-size:calc(var(--u)*19);font-weight:700;box-shadow:0 calc(var(--u)*8) calc(var(--u)*18) rgba(23,102,255,.25)}
+.stI{width:calc(var(--u)*50);height:calc(var(--u)*50);border-radius:50%;background:var(--soft);display:grid;place-items:center;color:var(--blue);margin-left:calc(var(--u)*16)}
+.stI svg{width:calc(var(--u)*24);height:calc(var(--u)*24)}
+.st div{margin-left:calc(var(--u)*22)}
+.st b{display:block;font-size:calc(var(--u)*13);font-weight:700;color:var(--navy)}
+.st small{display:block;margin-top:calc(var(--u)*3);font-size:calc(var(--u)*11.5);color:#5b6682}
+
+/* ── closing CTA ── */
+.globeBg{background:
+  radial-gradient(ellipse 34% 95% at 50% 55%,rgba(255,255,255,.96),rgba(255,255,255,0) 72%),
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 100' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.75' stroke-width='1.2'%3E%3Cpath d='M0 92C260 10 560 6 800 38S1320 96 1600 14'/%3E%3Cpath d='M0 34C300 96 620 88 860 46S1380-4 1600 66'/%3E%3Cpath d='M120 100C420 20 700 30 980 76S1440 60 1600 0'/%3E%3Cpath d='M0 64C340 40 520 100 760 70S1200 8 1600 44'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='210' cy='50' r='3'/%3E%3Ccircle cx='430' cy='22' r='2.4'/%3E%3Ccircle cx='600' cy='72' r='2.6'/%3E%3Ccircle cx='1040' cy='62' r='2.6'/%3E%3Ccircle cx='1240' cy='30' r='3'/%3E%3Ccircle cx='1450' cy='58' r='2.4'/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat,
+  linear-gradient(180deg,#d9e7fb,#c3d8f6)}
+.cCta{margin-top:calc(var(--u)*26)}
+.cCtaIn{height:calc(var(--u)*88);display:flex;flex-direction:column;align-items:center;padding-top:calc(var(--u)*12);text-align:center}
+.cCta h3{font-size:calc(var(--u)*21.5);line-height:1.2;font-weight:800;letter-spacing:-.02em;color:var(--navy)}
+.btnCta{margin-top:calc(var(--u)*9);width:calc(var(--u)*197);height:calc(var(--u)*34);font-size:calc(var(--u)*13.8);background:var(--cta);color:#fff}
+.btnCta svg{width:calc(var(--u)*17);height:calc(var(--u)*17)}
+
+/* ── footer ── */
+.cFoot{background:#fff;border-top:1px solid #edf1f7}
+.fD{height:calc(var(--u)*45);display:flex;align-items:center}
+.fLogo{display:inline-flex;align-items:center;gap:calc(var(--u)*7);font-size:calc(var(--u)*14);font-weight:700;color:#0a0f24;letter-spacing:-.02em}
+.fLogo svg{width:calc(var(--u)*20);height:calc(var(--u)*20)}
+.fLinks{display:flex;gap:calc(var(--u)*30);margin-left:calc(var(--u)*62);font-size:calc(var(--u)*11);color:#3b4563}
+.fLinks a:hover{color:var(--blue)}
+.fD .dd{margin-left:auto}
+.fD .dd>button{height:auto;font-size:calc(var(--u)*11);color:#26304d}
+.fD .dd .globe{width:calc(var(--u)*14);height:calc(var(--u)*14)}
+.fD .ddMenu{top:auto;bottom:calc(100% + calc(var(--u)*6))}
+.copy{margin-left:calc(var(--u)*34);font-size:calc(var(--u)*9.5);color:#6b7489}
+
+/* ── Trial modal ── */
+.tm{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:24px;background:var(--backdrop);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);opacity:0;visibility:hidden;transition:opacity .22s,visibility 0s .22s}
+.tm.on{opacity:1;visibility:visible;transition:opacity .22s}
+.tmCard{position:relative;width:min(600px,100%);max-height:calc(100dvh - 48px);overflow:auto;display:flex;flex-direction:column;
+  background:var(--modal);border:1px solid var(--lineSoft);border-radius:26px;padding:26px 28px 22px;
+  box-shadow:0 50px 120px -40px rgba(5,12,20,.55),0 2px 8px rgba(5,12,20,.06);transform:translateY(10px) scale(.985);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.tm.on .tmCard{transform:none}
+.tmHead{display:flex;align-items:flex-start;gap:16px}
+.tmHead h3{font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.3}
+.tmHead p{font-size:14px;color:var(--muted);margin-top:4px;line-height:1.55}
+.tmX{margin-left:auto;flex-shrink:0;width:36px;height:36px;border-radius:50%;border:0;background:var(--soft);color:var(--muted);display:grid;place-items:center;cursor:pointer}
+.tmX:hover{color:var(--text)}.tmX svg{width:16px;height:16px}
+.tmStatus{display:flex;align-items:center;justify-content:space-between;margin-top:20px;font-size:13px;font-weight:500}
+.tmState{display:inline-flex;align-items:center;gap:8px}
+.tmState i{width:8px;height:8px;border-radius:50%;background:var(--faint)}
+.tm[data-state=listening] .tmState i{background:#ef4444;box-shadow:0 0 0 0 rgba(239,68,68,.45);animation:rec 1.6s infinite}
+.tm[data-state=done] .tmState i{background:#16a34a}
+@keyframes rec{70%{box-shadow:0 0 0 7px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
+.tmTimer{font-variant-numeric:tabular-nums;color:var(--muted);transition:color .3s}
+.tm.soon .tmTimer{color:var(--blue);font-weight:600}
+.tmStage{display:flex;flex-direction:column;align-items:center;gap:14px;margin:26px 0 20px}
+.tmMic{--lvl:0;position:relative;width:76px;height:76px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;
+  background:var(--soft);color:var(--text);transition:background .25s,color .25s}
+.tmMic svg{width:28px;height:28px;position:relative;z-index:1}
+.tmMic::before,.tmMic::after{content:"";position:absolute;inset:0;border-radius:50%;background:currentColor;opacity:0;pointer-events:none}
+.tm[data-state=requesting] .tmMic::before{animation:ring 1.9s ease-out infinite}
+.tm[data-state=requesting] .tmMic::after{animation:ring 1.9s ease-out .95s infinite}
+@keyframes ring{0%{transform:scale(1);opacity:.16}100%{transform:scale(1.75);opacity:0}}
+.tm[data-state=listening] .tmMic{background:var(--ink);color:var(--inkText)}
+.tm[data-state=listening] .tmMic::before{opacity:.12;background:var(--ink);transform:scale(calc(1 + var(--lvl) * .55));transition:transform .08s linear}
+.tmWave{width:min(420px,100%);height:52px;display:none}
+.tm[data-state=listening] .tmWave{display:block}
+.tmHint{font-size:14px;color:var(--muted);text-align:center;line-height:1.55;min-height:22px}
+.tm[data-state=listening] .tmHint{display:none}
+.tmMsg{text-align:center;display:none}
+.tmMsg b{display:block;font-size:17px;font-weight:600;line-height:1.4}
+.tmMsg p{font-size:14px;color:var(--muted);margin-top:4px;line-height:1.55}
+.tm[data-state=denied] .tmMsg,.tm[data-state=nomic] .tmMsg,.tm[data-state=busy] .tmMsg,.tm[data-state=unsupported] .tmMsg,.tm[data-state=limit] .tmMsg,.tm[data-state=done] .tmMsg.show{display:block}
+.tm[data-state=denied] .tmHint,.tm[data-state=nomic] .tmHint,.tm[data-state=busy] .tmHint,.tm[data-state=unsupported] .tmHint,.tm[data-state=limit] .tmHint,.tm[data-state=done] .tmHint{display:none}
+.tmMic .ic{display:none}.tm .tmMic .ic-mic{display:block}
+.tm[data-state=denied] .tmMic .ic-mic,.tm[data-state=nomic] .tmMic .ic-mic,.tm[data-state=busy] .tmMic .ic-mic,.tm[data-state=unsupported] .tmMic .ic-mic,.tm[data-state=limit] .tmMic .ic-mic,.tm[data-state=done] .tmMic .ic-mic{display:none}
+.tm[data-state=denied] .tmMic .ic-off,.tm[data-state=nomic] .tmMic .ic-off{display:block}
+.tm[data-state=busy] .tmMic .ic-alert,.tm[data-state=unsupported] .tmMic .ic-alert,.tm[data-state=limit] .tmMic .ic-alert{display:block}
+.tm[data-state=done] .tmMic .ic-check{display:block}
+.tm[data-state=denied] .tmMic,.tm[data-state=nomic] .tmMic,.tm[data-state=busy] .tmMic,.tm[data-state=unsupported] .tmMic,.tm[data-state=limit] .tmMic{width:56px;height:56px;cursor:default}
+.tm[data-state=done] .tmMic{width:56px;height:56px;color:#16a34a;cursor:default}
+.tmLang{display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:500}
+.tmPill{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:999px;background:var(--soft);color:var(--muted)}
+.tmArrow{color:var(--faint)}
+.tmSel{position:relative;display:inline-flex}
+.tmSel select{appearance:none;-webkit-appearance:none;height:36px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:0 34px 0 14px;font-weight:600;cursor:pointer;outline:none}
+.tmSel select:focus-visible{border-color:var(--blue)}
+.tmSel::after{content:"";position:absolute;right:14px;top:50%;width:7px;height:7px;border-right:1.6px solid var(--muted);border-bottom:1.6px solid var(--muted);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.tmText{margin-top:20px;padding-top:18px;border-top:1px solid var(--line);display:grid;gap:16px}
+.tm[data-state=requesting] .tmText,.tm[data-state=denied] .tmText,.tm[data-state=nomic] .tmText,.tm[data-state=unsupported] .tmText,.tm[data-state=busy] .tmText{display:none}
+.tm[data-state=limit] .tmText.empty{display:none}
+.tmBlock .lbl{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tmBlock .lbl em{font-style:normal;letter-spacing:.04em;text-transform:none;color:var(--faint);font-weight:500}
+.tmBlock p{margin-top:6px;font-size:16px;line-height:1.6;max-height:128px;overflow:auto;overscroll-behavior:contain}
+.tmBlock.tr .lbl{color:var(--blue)}
+.tmBlock.tr p{font-size:17px;font-weight:500}
+.tmBlock .ph{color:var(--faint);font-weight:400}
+.tmBlock .interim{color:var(--muted)}
+.typing{display:inline-flex;gap:3px;vertical-align:middle;margin-left:4px}
+.typing i{width:5px;height:5px;border-radius:50%;background:var(--faint);animation:dots 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dots{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.tmActions{display:none;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.tmActions.show{display:flex}
+.tmBtn{height:46px;padding:0 20px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:15px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.tmBtn.pri{background:var(--ink);color:var(--inkText);border-color:transparent}
+.tmNote{text-align:center;color:var(--faint);font-size:12px;margin-top:18px;text-wrap:balance}
+.tm[data-state=denied] .tmTimer,.tm[data-state=nomic] .tmTimer,.tm[data-state=busy] .tmTimer,.tm[data-state=unsupported] .tmTimer,.tm[data-state=limit] .tmTimer{visibility:hidden}
+.tm[data-state=denied] .tmLang,.tm[data-state=nomic] .tmLang,.tm[data-state=busy] .tmLang,.tm[data-state=unsupported] .tmLang,.tm[data-state=limit] .tmLang{display:none}
+
+
+
+/* ── phones & tablets: the mobile mock (two-phone design); M(n) = n px at 390 wide ── */
+@media(max-width:1099px){
+  :root{--mu:clamp(0.8px,calc(100vw / 440),1.05px);--u:calc(var(--mu) * .82)}
+  .dOnly{display:none!important}
+  .mOnly{display:revert}
+  [id]{scroll-margin-top:calc(var(--mu)*70)}
+  .wrap{width:auto;max-width:680px;padding-inline:calc(var(--mu)*18)}
+  .nav{position:sticky;top:0;height:calc(var(--mu)*58);background:rgba(255,255,255,.98)}
+  .navIn{padding-inline:calc(var(--mu)*18) calc(var(--mu)*8)}
+  .logo{gap:calc(var(--mu)*9);font-size:calc(var(--mu)*21);font-weight:800;letter-spacing:-.03em}
+  .logo svg{width:calc(var(--mu)*34);height:calc(var(--mu)*34)}
+  .menu,.navR{display:none}
+  .mLangDd{margin-left:auto}
+  .mLangDd>button{height:calc(var(--mu)*44);gap:calc(var(--mu)*5);font-size:calc(var(--mu)*15);font-weight:500;color:#26304d}
+  .mLangDd .globe{width:calc(var(--mu)*21);height:calc(var(--mu)*21)}
+  .mLangDd .chev{width:calc(var(--mu)*11);height:calc(var(--mu)*11)}
+  .mLangDd .ddMenu{left:auto;right:0;transform:none;top:100%;min-width:calc(var(--mu)*150)}
+  .mLangDd .ddMenu a{font-size:calc(var(--mu)*15);padding:calc(var(--mu)*10) calc(var(--mu)*12)}
+  .burger{display:grid;place-items:center;width:calc(var(--mu)*44);height:calc(var(--mu)*44);margin-left:calc(var(--mu)*6);background:none;border:0;color:#0b1533;cursor:pointer;padding:0}
+  .burger svg{width:calc(var(--mu)*25);height:calc(var(--mu)*25)}
+  .mMenu{position:absolute;left:0;right:0;top:100%;background:#fff;border-bottom:1px solid #e6ecf4;box-shadow:0 calc(var(--mu)*18) calc(var(--mu)*30) rgba(15,30,70,.12);padding:calc(var(--mu)*4) calc(var(--mu)*22) calc(var(--mu)*18)}
+  .mMenu nav a{display:block;padding:calc(var(--mu)*13) 0;font-size:calc(var(--mu)*17);font-weight:600;color:#0b1533;border-bottom:1px solid #f0f3f8}
+  .mMenu nav a.on{color:var(--cta)}
+  .mLangs{display:flex;gap:calc(var(--mu)*8);margin-top:calc(var(--mu)*14)}
+  .mLangs a{flex:1;text-align:center;padding:calc(var(--mu)*9) 0;border-radius:calc(var(--mu)*10);border:1px solid #dde5f0;font-size:calc(var(--mu)*14);font-weight:500;color:#2a3552}
+  .mLangs a.cur{border-color:var(--cta);color:var(--cta);background:#eef4ff}
+  .mMenu .btn{width:100%;height:calc(var(--mu)*46);margin-top:calc(var(--mu)*14);border-radius:calc(var(--mu)*8);background:var(--cta);color:#fff;font-size:calc(var(--mu)*16);gap:calc(var(--mu)*10)}
+  .mMenu .btn svg{width:calc(var(--mu)*18);height:calc(var(--mu)*18)}
+
+  .cHero{height:auto;background:#fff;overflow:visible}
+  .cHeroVis{position:relative;width:100%;height:calc(var(--mu)*300);background:#0b1737}
+  .cHeroVis img{width:100%;-webkit-mask-image:none;mask-image:none}
+  .cHeroVis::before,.liveCard{display:none}
+  .cHeroTx{width:auto;padding-top:calc(var(--mu)*18);padding-bottom:calc(var(--mu)*4)}
+  .crumb{display:flex;flex-wrap:wrap;align-items:center;gap:calc(var(--mu)*6);font-size:calc(var(--mu)*13.5);color:#5b6682}
+  .crumb svg{width:calc(var(--mu)*11);height:calc(var(--mu)*11);color:#9aa4b8}
+  .crumb span{color:#2c3653}
+  .ucPill{display:inline-flex;align-items:center;height:calc(var(--mu)*27);margin-top:calc(var(--mu)*12);padding:0 calc(var(--mu)*11);border-radius:999px;border:calc(var(--mu)*1.5) solid var(--cta);color:var(--cta);font-size:calc(var(--mu)*13.5);font-weight:600}
+  h1{margin-top:calc(var(--mu)*10);font-size:calc(var(--mu)*33);line-height:1.15;white-space:normal}
+  h1 .hl{color:var(--navy)}
+  .sub{margin-top:calc(var(--mu)*10);font-size:calc(var(--mu)*16);line-height:1.55;color:#3b4563}
+  .ctas{flex-direction:column;gap:calc(var(--mu)*10);margin-top:calc(var(--mu)*18)}
+  .btnPri,.btnGhost{width:100%;border-radius:calc(var(--mu)*7);box-shadow:none}
+  .btnPri{height:calc(var(--mu)*52);font-size:calc(var(--mu)*17.5);gap:calc(var(--mu)*14)}
+  .btnPri svg{width:calc(var(--mu)*22);height:calc(var(--mu)*22)}
+  .btnGhost{height:calc(var(--mu)*48);font-size:calc(var(--mu)*16.5);font-weight:700;border-width:1px;border-color:#d5dde9}
+  .btnGhost svg{width:calc(var(--mu)*26);height:calc(var(--mu)*26)}
+  .cHero .checks{display:flex;flex-wrap:wrap;gap:calc(var(--mu)*8) calc(var(--mu)*20);margin-top:calc(var(--mu)*16);padding-bottom:calc(var(--mu)*18);border-bottom:1px solid #e8edf4;font-size:calc(var(--mu)*14.5);color:#3b4563}
+  .checks li{display:flex;align-items:center;gap:calc(var(--mu)*8)}
+  .checks svg{width:calc(var(--mu)*19);height:calc(var(--mu)*19);color:var(--cta)}
+
+  .cFeats{background:#fff;border:0}
+  .cFeatsIn{height:auto;grid-template-columns:repeat(6,1fr)}
+  .cFeat{grid-column:span 2;flex-direction:column;justify-content:flex-start;gap:calc(var(--mu)*8);padding:calc(var(--mu)*16) calc(var(--mu)*2) calc(var(--mu)*14);text-align:center}
+  .cFeat:nth-child(4),.cFeat:nth-child(5){grid-column:span 3;border-top:1px solid #e8edf4}
+  .cFeat+.cFeat{border-left:1px solid #e8edf4}
+  .cFeat:nth-child(4){border-left:0}
+  .fi{width:auto;height:auto;background:none}
+  .fi svg{width:calc(var(--mu)*38);height:calc(var(--mu)*38)}
+  .cFeat .fl{display:block;font-size:calc(var(--mu)*12.8);font-weight:700;line-height:1.35;color:var(--navy);letter-spacing:-.01em}
+
+  .cMore{background:#fff;padding-bottom:calc(var(--mu)*18)}
+  .cQuote{margin-top:calc(var(--mu)*6);padding:calc(var(--mu)*18) calc(var(--mu)*18) calc(var(--mu)*20);border-radius:calc(var(--mu)*12);background:#eef4fd}
+  .cQuote blockquote{position:relative;margin:0;padding-left:calc(var(--mu)*52);font-size:calc(var(--mu)*15.5);line-height:1.55;color:#26304d}
+  .cQuote blockquote::before{content:"\201C";position:absolute;left:0;top:calc(var(--mu)*-14);font-size:calc(var(--mu)*64);line-height:1;font-weight:800;color:var(--cta)}
+  .qWho{display:flex;align-items:center;gap:calc(var(--mu)*14);margin-top:calc(var(--mu)*14);padding-left:calc(var(--mu)*4)}
+  .qAv{width:calc(var(--mu)*56);height:calc(var(--mu)*56);border-radius:50%;background:#fff;display:grid;place-items:center;overflow:hidden;box-shadow:0 calc(var(--mu)*4) calc(var(--mu)*12) rgba(20,40,90,.1)}
+  .qAv svg{width:calc(var(--mu)*32);height:calc(var(--mu)*32)}.qAv img{width:100%;height:100%;object-fit:cover}
+  .qWho b{display:block;font-size:calc(var(--mu)*15);font-weight:700}
+  .qWho small{display:block;margin-top:calc(var(--mu)*2);font-size:calc(var(--mu)*13);font-style:italic;color:#5b6682}
+  .qStars{display:flex;gap:calc(var(--mu)*2);margin-top:calc(var(--mu)*4);color:#f5a524}.qStars svg{width:calc(var(--mu)*16);height:calc(var(--mu)*16)}
+  .cBanner{position:relative;margin-top:calc(var(--mu)*18);height:calc(var(--mu)*182);border-radius:calc(var(--mu)*12);overflow:hidden}
+  .cBanner img{width:100%;height:100%;object-fit:cover}
+  .cBanner::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,12,28,.82),rgba(6,12,28,.35) 60%,rgba(6,12,28,.1)),linear-gradient(0deg,rgba(6,12,28,.55),rgba(6,12,28,0) 60%)}
+  .cBannerTx{position:absolute;z-index:1;left:calc(var(--mu)*16);right:calc(var(--mu)*16);bottom:calc(var(--mu)*16);color:#fff}
+  .cBannerTx b{display:block;font-size:calc(var(--mu)*18);line-height:1.3;font-weight:800;letter-spacing:-.01em}
+  .cBannerTx p{margin-top:calc(var(--mu)*6);font-size:calc(var(--mu)*13.5);line-height:1.4;color:#e6ecf7}
+
+  .cFx{padding-top:0;background:#fff}
+  .fxHead{margin-inline:calc(calc(var(--mu)*18) * -1);padding:calc(var(--mu)*22) calc(var(--mu)*18) calc(var(--mu)*14);background:linear-gradient(180deg,#eef3fb,#f6f9fe)}
+  .fxHead h2,.stHead h2{font-size:calc(var(--mu)*22);font-weight:800}
+  .fxHead p,.stHead p{margin-top:calc(var(--mu)*6);font-size:calc(var(--mu)*15);line-height:1.45;color:#5b6682}
+  .fxGrid{grid-template-columns:1fr;gap:calc(var(--mu)*14);margin-top:calc(var(--mu)*4);padding-bottom:calc(var(--mu)*18)}
+  .fxCard{border-radius:calc(var(--mu)*10)}
+  .fxMedia{height:calc(var(--mu)*135)}
+  .fxBody{height:auto;align-items:center;padding:calc(var(--mu)*12) calc(var(--mu)*12) calc(var(--mu)*14) calc(var(--mu)*14)}
+  .fxTx b{font-size:calc(var(--mu)*15)}
+  .fxTx small{margin-top:calc(var(--mu)*5);font-size:calc(var(--mu)*13.5);line-height:1.45;color:#5b6682}
+  .fxGo{width:calc(var(--mu)*32);height:calc(var(--mu)*32);margin-left:calc(var(--mu)*10);background:#fff;border:1px solid #dfe6f1}
+  .fxGo svg{width:calc(var(--mu)*15);height:calc(var(--mu)*15)}
+
+  .cSteps{padding-top:0;background:#fff}
+  .cStepsIn{height:auto;display:grid;grid-template-columns:repeat(3,1fr);align-items:start}
+  .stHead{grid-column:1/-1;margin-inline:calc(calc(var(--mu)*18) * -1);padding:calc(var(--mu)*20) calc(var(--mu)*18) calc(var(--mu)*14);background:linear-gradient(180deg,#eef3fb,#f6f9fe);margin-bottom:calc(var(--mu)*16)}
+  .st{flex-wrap:wrap;align-content:flex-start;padding:0 calc(var(--mu)*8)}
+  .st:first-of-type{padding-left:0}
+  .st+.st{border-left:1px solid #e8edf4}
+  .st:not(:last-child)::after{display:none}
+  .stN{width:calc(var(--mu)*25);height:calc(var(--mu)*25);font-size:calc(var(--mu)*13);box-shadow:none}
+  .stI{width:auto;height:auto;margin-left:calc(var(--mu)*10);background:none}
+  .stI svg{width:calc(var(--mu)*27);height:calc(var(--mu)*27)}
+  .st div{flex-basis:100%;margin:calc(var(--mu)*10) 0 0}
+  .st b{font-size:calc(var(--mu)*13);line-height:1.3}
+  .st small{margin-top:calc(var(--mu)*4);font-size:calc(var(--mu)*11.5);line-height:1.4}
+
+  .cCta{margin-top:0;padding:calc(var(--mu)*18) 0 calc(var(--mu)*20);background:#fff}
+  .cCta.globeBg{background:#fff}
+  .cCtaIn{height:auto;padding:calc(var(--mu)*18) calc(var(--mu)*14) calc(var(--mu)*14);border-radius:calc(var(--mu)*12);background:
+    radial-gradient(ellipse 60% 80% at 50% 45%,rgba(255,255,255,.9),rgba(255,255,255,0) 75%),linear-gradient(180deg,#e7f0fd,#dce9fb)}
+  .cCta h3{font-size:calc(var(--mu)*19)}
+  .cCtaIn>p{margin-top:calc(var(--mu)*6);font-size:calc(var(--mu)*13.5);line-height:1.45;color:#4a5570}
+  .btnCta{width:100%;height:calc(var(--mu)*48);margin-top:calc(var(--mu)*14);border-radius:calc(var(--mu)*7);font-size:calc(var(--mu)*16.5);gap:calc(var(--mu)*14)}
+  .btnCta svg{width:calc(var(--mu)*20);height:calc(var(--mu)*20)}
+  .cCtaIn .micro{margin-top:calc(var(--mu)*10);font-size:calc(var(--mu)*11.5);color:#5b6682}
+  .sep{margin-inline:calc(var(--mu)*4)}
+
+  .cFoot{border-top:0}
+  .fM{padding-block:calc(var(--mu)*14) calc(calc(var(--mu)*16) + env(safe-area-inset-bottom))}
+  .fMTop{display:flex;align-items:center}
+  .fM .fLogo{font-size:calc(var(--mu)*19);gap:calc(var(--mu)*8)}
+  .fM .fLogo svg{width:calc(var(--mu)*28);height:calc(var(--mu)*28)}
+  .fSoc{margin-left:auto;display:flex;gap:calc(var(--mu)*16);color:#0b1533}
+  .fSoc a,.fSoc span{display:grid;place-items:center}.fSoc svg{width:calc(var(--mu)*21);height:calc(var(--mu)*21)}
+  .fTag{margin-top:calc(var(--mu)*4);font-size:calc(var(--mu)*12);color:#5b6682}
+  .fMBot{display:flex;flex-wrap:wrap;align-items:center;gap:calc(var(--mu)*8) calc(var(--mu)*10);margin-top:calc(var(--mu)*12);padding-top:calc(var(--mu)*10);border-top:1px solid #edf1f7;font-size:calc(var(--mu)*11.5);color:#3b4563}
+  .fMBot i{font-style:normal;color:#c3cad8}
+  .fMBot .copy{margin-left:auto;font-size:calc(var(--mu)*10.5)}
+}
+@media(min-width:680px) and (max-width:1099px){ .cHeroVis{height:calc(var(--mu)*380)} }
+/* Phones: the trial sheet fills the screen; mic sits low, in thumb reach. */
+@media(max-width:640px){
+  .tm{padding:0;place-items:stretch}
+  .tmCard{position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top));bottom:calc(12px + env(safe-area-inset-bottom));
+    width:auto;max-height:none;border-radius:24px;padding:20px 18px 16px}
+  .tmHead h3{font-size:20px}
+  .tmStatus{order:2;margin-top:16px}
+  .tmText{order:3;flex:1 1 auto;min-height:0;overflow:auto;align-content:start;margin-top:14px}
+  .tmBlock p{max-height:none}
+  .tmLang{order:4;margin-top:14px}
+  .tmStage{order:5;margin:18px 0 4px}
+  .tm[data-state=requesting] .tmStage,.tm[data-state=denied] .tmStage,.tm[data-state=nomic] .tmStage,.tm[data-state=busy] .tmStage,.tm[data-state=unsupported] .tmStage{margin:auto 0}
+  .tm[data-state=requesting] .tmLang,.tm[data-state=denied] .tmLang,.tm[data-state=nomic] .tmLang,.tm[data-state=busy] .tmLang,.tm[data-state=unsupported] .tmLang,.tm[data-state=limit] .tmLang{display:none}
+  .tmActions{order:6;margin-top:16px}.tmActions .tmBtn{flex:1 1 100%}
+  .tmNote{order:7;margin-top:12px}
+  .tmWave{height:44px}
+  .tm[data-state=limit]:has(.tmText.empty) .tmStage{margin:auto 0}
+}
+@media(prefers-reduced-motion:reduce){.tmMic::before,.tmMic::after,.typing i,.tmState i{animation:none!important}}
+
+</style>
+</head>
+<body>
+<!-- Brand mark (same artwork as /logo.svg). Hidden by size, not display:none, so its gradient still paints in <use>. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs><linearGradient id="fmLogoBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#1f4fff"/></linearGradient></defs>
+  <symbol id="fmLogo" viewBox="0 0 512 512">
+    <rect width="512" height="512" rx="116" fill="url(#fmLogoBg)"/>
+    <path d="M150 112 H372 a66 66 0 0 1 66 66 V310 a66 66 0 0 1 -66 66 H262 l-82 70 v-70 H150 a66 66 0 0 1 -66 -66 V178 A66 66 0 0 1 150 112 Z" fill="#fff"/>
+    <g fill="#1f4fff"><rect x="168" y="232" width="30" height="52" rx="15"/><rect x="222" y="196" width="30" height="124" rx="15"/><rect x="276" y="172" width="30" height="172" rx="15"/><rect x="330" y="214" width="30" height="88" rx="15"/></g>
+  </symbol>
+  <symbol id="icChev" viewBox="0 0 12 12"><path d="M3 4.5 6 7.5l3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="icGlobe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.6 5.7 3.6 9s-1.1 6.3-3.6 9c-2.5-2.7-3.6-5.7-3.6-9S9.5 5.7 12 3z"/></g></symbol>
+  <symbol id="icArrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="icMic" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></g></symbol>
+  <symbol id="icDoc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2.5H6.5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V8z"/><path d="M14 2.5V8h5.5M8.5 12.5h7M8.5 16h7"/></g></symbol>
+</svg>
+
+<header class="nav">
+  <div class="wrap navIn">
+    <a class="logo" href="/concept/ko" aria-label="Flash Meet"><svg viewBox="0 0 512 512" aria-hidden="true"><use href="#fmLogo"/></svg><span>Flash Meet</span></a>
+    <nav class="menu" aria-label="주 메뉴">
+      <a href="/concept/ko">홈</a>
+      <a href="/concept/ko#features">기능</a>
+      <a class="on" href="/concept/ko#usecases">활용 사례</a>
+      <a href="/pricing">요금제</a>
+      <div class="dd"><button type="button" aria-haspopup="true">리소스 <svg class="chev"><use href="#icChev"/></svg></button>
+        <div class="ddMenu"><a href="/blog">블로그</a><a href="/extension">사용 가이드</a><a href="/pricing">자주 묻는 질문</a><a href="/extension">브라우저 확장 프로그램</a></div></div>
+    </nav>
+    <div class="navR">
+      <div class="dd lang"><button type="button" aria-haspopup="true"><svg class="globe"><use href="#icGlobe"/></svg>한국어 <svg class="chev"><use href="#icChev"/></svg></button>
+        <div class="ddMenu"><a hreflang="vi" href="/concept/conference">Tiếng Việt</a><a hreflang="en" href="/concept/en/conference">English</a><a class="cur" hreflang="ko" href="/concept/ko/conference">한국어</a></div></div>
+      <a class="login" href="/login">로그인</a>
+      <button class="btn btnSm openTrial" type="button">지금 체험하기</button>
+    </div>
+    <div class="dd mLangDd mOnly"><button type="button" aria-haspopup="true"><svg class="globe"><use href="#icGlobe"/></svg><span class="code">KO</span><svg class="chev"><use href="#icChev"/></svg></button>
+      <div class="ddMenu"><a hreflang="vi" href="/concept/conference">Tiếng Việt</a><a hreflang="en" href="/concept/en/conference">English</a><a class="cur" hreflang="ko" href="/concept/ko/conference">한국어</a></div></div>
+    <button class="burger" id="burger" type="button" aria-label="메뉴" aria-expanded="false" aria-controls="mMenu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button>
+  </div>
+  <div class="mMenu" id="mMenu" hidden>
+    <nav aria-label="메뉴"><a href="/concept/ko">홈</a><a href="/concept/ko#features">기능</a><a class="on" href="/concept/ko#usecases">활용 사례</a><a href="/pricing">요금제</a><a href="/blog">블로그</a><a href="/extension">사용 가이드</a><a href="/login">로그인</a></nav>
+    <div class="mLangs"><a hreflang="vi" href="/concept/conference">Tiếng Việt</a><a hreflang="en" href="/concept/en/conference">English</a><a class="cur" hreflang="ko" href="/concept/ko/conference">한국어</a></div>
+    <button class="btn openTrial" type="button">지금 체험하기 <svg><use href="#icArrow"/></svg></button>
+  </div>
+</header>
+
+<main>
+<section class="cHero">
+  <div class="cHeroVis">
+    <picture>
+      <source media="(max-width:1099px)" srcset="/concept/conf-hero-m.jpg">
+      <img src="/concept/conf-hero.jpg" alt="이중 언어 자막 화면이 있는 컨퍼런스 무대" width="1672" height="552">
+    </picture>
+    <div class="liveCard" aria-hidden="true">
+      <div class="lcTop"><span class="lcLive"><i></i>실시간</span><span class="lcTime">00:12:34</span><span class="lcChips"><span class="lc"><span class="lcV">KO</span><svg><use href="#icChev"/></svg></span><span class="lc">EN</span></span></div>
+      <div class="lcLine"><span class="lcAv"></span><span>우리는 함께 더 연결된<br>세상을 만들어 갑니다.</span></div>
+      <div class="lcLine"><span class="lcSq"></span><span>We are building<br>a more connected world.</span></div>
+      <div class="lcWave"><i style="height:calc(var(--u)*6)"></i><i style="height:calc(var(--u)*10)"></i><i style="height:calc(var(--u)*16)"></i><i style="height:calc(var(--u)*9)"></i><i style="height:calc(var(--u)*22)"></i><i style="height:calc(var(--u)*14)"></i><i style="height:calc(var(--u)*26)"></i><i style="height:calc(var(--u)*12)"></i><i style="height:calc(var(--u)*18)"></i><i style="height:calc(var(--u)*8)"></i><i style="height:calc(var(--u)*12)"></i><i style="height:calc(var(--u)*5)"></i></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="cHeroTx">
+      <nav class="crumb mOnly" aria-label="Breadcrumb"><a href="/concept/ko">홈</a><svg viewBox="0 0 12 12"><path d="M4.5 3 7.5 6l-3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><a href="/concept/ko#usecases">활용 사례</a><svg viewBox="0 0 12 12"><path d="M4.5 3 7.5 6l-3 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>컨퍼런스, 대형 행사</span></nav>
+      <span class="ucPill mOnly">활용 사례</span>
+      <p class="eyebrow dOnly">글로벌 연결</p>
+      <h1>컨퍼런스, <span class="hl">대형 행사</span></h1>
+      <p class="sub"><span class="dOnly">즉각적인 통역으로 언어의 장벽 없이 모두를 연결합니다.</span><span class="mOnly">실시간 이중 언어 통역으로 한 공간의 모든 사람을 언어의 장벽 없이 연결합니다.</span></p>
+      <div class="ctas">
+        <button class="btn btnPri openTrial" type="button"><svg><use href="#icMic"/></svg><span>지금 체험하기</span><svg class="mOnly"><use href="#icArrow"/></svg></button>
+        <button class="btn btnGhost" type="button" id="watchVideo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M10 8.3v7.4l6-3.7z" fill="currentColor"/></svg>영상 보기</button>
+      </div>
+      <ul class="checks mOnly">
+        <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m7.5 12.3 3 3 6-6.3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>로그인 불필요</li>
+        <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m7.5 12.3 3 3 6-6.3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>빠른 설정</li>
+        <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m7.5 12.3 3 3 6-6.3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>모든 규모의 행사에 적합</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="cFeats" aria-label="기능">
+  <div class="wrap cFeatsIn">
+    <div class="cFeat"><span class="fi"><svg viewBox="0 0 24 24"><use href="#icMic"/></svg></span><div><b class="dOnly">실시간 통역</b><small class="dOnly">빠르고 정확하게</small><span class="fl mOnly">실시간<br>통역</span></div></div>
+    <div class="cFeat"><span class="fi"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="3.4"/><circle cx="5.2" cy="9.6" r="2.5"/><circle cx="18.8" cy="9.6" r="2.5"/><path d="M5.8 19.5c.5-3.6 3-5.6 6.2-5.6s5.7 2 6.2 5.6zM.8 18.5c.3-2.4 1.8-3.8 3.8-3.9-.7 1-1.2 2.4-1.3 3.9zM23.2 18.5c-.3-2.4-1.8-3.8-3.8-3.9.7 1 1.2 2.4 1.3 3.9z"/></svg></span><div><b class="dOnly">2–3개 언어</b><small class="dOnly">베트남어 – 영어 – 한국어…</small><span class="fl mOnly">2~3개 언어<br>동시 지원</span></div></div>
+    <div class="cFeat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="11" rx="1.6"/><path d="M6 18.5h7"/><rect x="15.5" y="9" width="6" height="11" rx="1.4" fill="#fff"/><path d="M17.8 17.5h1.4"/></svg></span><div><b class="dOnly">Stage Window</b><small class="dOnly">유연한 화면 배치</small><span class="fl mOnly">Stage Window<br>다른 화면으로 이동</span></div></div>
+    <div class="cFeat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a4.5 4.5 0 0 0 6.4.2l2.8-2.8a4.5 4.5 0 0 0-6.4-6.4l-1.2 1.2"/><path d="M14 10a4.5 4.5 0 0 0-6.4-.2l-2.8 2.8a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2"/></svg></span><div><b class="dOnly">Conference ID</b><small class="dOnly">간편한 참여</small><span class="fl mOnly">청중용<br>Conference ID</span></div></div>
+    <div class="cFeat"><span class="fi"><svg viewBox="0 0 24 24"><use href="#icDoc"/></svg></span><div><b class="dOnly">AI 요약</b><small class="dOnly">시간 절약</small><span class="fl mOnly">행사 후<br>AI 요약</span></div></div>
+  </div>
+</section>
+
+<section class="cMore mOnly">
+  <div class="wrap">
+    <figure class="cQuote" id="cQuote">
+      <blockquote id="qText">발표자는 자신의 언어로 말하고, 청중은 대형 화면이나 휴대폰으로 번역을 바로 읽습니다.</blockquote>
+      <figcaption class="qWho"><span class="qAv" id="qAv"><svg viewBox="0 0 512 512"><use href="#fmLogo"/></svg></span><span><b id="qName">Flash Meet 팀</b><small id="qRole">Conference Mode</small><span class="qStars" id="qStars" hidden></span></span></figcaption>
+    </figure>
+    <div class="cBanner ph">
+      <img loading="lazy" src="/concept/conf-banner.jpg" alt="컨퍼런스 발표를 듣는 청중">
+      <div class="cBannerTx"><b>언어는 더 이상 큰 아이디어의 장벽이 아닙니다.</b><p>중요한 모든 행사에 Flash Meet가 함께합니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cFx" id="fx">
+  <div class="wrap">
+    <div class="fxHead">
+      <h2 class="dOnly">활용 모습</h2><h2 class="mOnly">실제 행사에서의 활용 모습</h2>
+      <p class="mOnly">대형 행사에서 Flash Meet가 어떻게 작동하는지 확인하세요.</p>
+      <a class="fxMore dOnly" href="/conference-mode">더 보기 <svg><use href="#icArrow"/></svg></a>
+    </div>
+    <div class="fxGrid">
+      <a class="fxCard" href="/conference-mode">
+        <div class="fxMedia ph"><img loading="lazy" src="/concept/conf-stage.jpg" alt="무대 위 발표자와 이중 언어 자막 화면"></div>
+        <div class="fxBody"><span class="fxIc dOnly"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12.5" rx="1.8"/><path d="M8 20h8M6.5 13h11"/></svg></span>
+          <div class="fxTx"><b><span class="dOnly">무대 화면</span><span class="mOnly">이중 언어 무대 화면</span></b><small><span class="dOnly">이중 언어 표시</span><span class="mOnly">대형 화면에 선명하고 전문적인 이중 언어 자막을 띄웁니다.</span></small></div>
+          <span class="fxGo"><svg><use href="#icArrow"/></svg></span></div>
+      </a>
+      <a class="fxCard" href="/conference-mode">
+        <div class="fxMedia ph"><img loading="lazy" src="/concept/conf-popup-bg.jpg" alt="">
+          <div class="mkPop" aria-hidden="true">
+            <div class="mkHd"><svg viewBox="0 0 512 512"><use href="#fmLogo"/></svg>Flash Meet<span class="lcChips"><span class="lc"><span class="lcV">KO</span><svg><use href="#icChev"/></svg></span><span class="lc">EN</span></span></div>
+            <p>우리는 더 연결된 세상을 만들고 있습니다.</p><p>We are building a more connected world.</p>
+          </div></div>
+        <div class="fxBody"><span class="fxIc dOnly"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4.5 4.5h15a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5h-8l-4.5 3.5v-3.5h-2.5A1.5 1.5 0 0 1 3 15V6a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M8 10.5h.01M12 10.5h.01M16 10.5h.01" stroke-width="2.6" stroke-linecap="round"/></svg></span>
+          <div class="fxTx"><b><span class="dOnly">플로팅 팝업</span><span class="mOnly">자유롭게 옮기는 플로팅 팝업</span></b><small><span class="dOnly">실시간 자막 표시</span><span class="mOnly">이중 언어 자막을 떠 있는 창으로 띄워 원하는 위치에 둘 수 있습니다.</span></small></div>
+          <span class="fxGo"><svg><use href="#icArrow"/></svg></span></div>
+      </a>
+      <a class="fxCard" href="/conference-mode">
+        <div class="fxMedia ph"><img loading="lazy" src="/concept/conf-phone-bg.jpg" alt="">
+          <div class="mkPhone" aria-hidden="true"><div class="mkScr"><span class="mkBrand"><svg viewBox="0 0 512 512"><use href="#fmLogo"/></svg>Flash Meet</span><b>행사 참여</b><span class="mkIn">FM2024</span><span class="mkBtn">참여</span></div></div></div>
+        <div class="fxBody"><span class="fxIc dOnly"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.2"/><path d="M10.5 18.5h3" stroke-linecap="round"/></svg></span>
+          <div class="fxTx"><b><span class="dOnly">휴대폰으로 보는 청중</span><span class="mOnly">휴대폰으로 참여하는 청중</span></b><small><span class="dOnly">간편한 참여</span><span class="mOnly">Conference ID만 입력하면 설치 없이 브라우저에서 바로 볼 수 있습니다.</span></small></div>
+          <span class="fxGo"><svg><use href="#icArrow"/></svg></span></div>
+      </a>
+      <a class="fxCard" href="/conference-mode">
+        <div class="fxMedia ph"><img loading="lazy" src="/concept/conf-script-bg.jpg" alt="">
+          <div class="mkTab" aria-hidden="true">
+            <div class="mkTabHd"><svg viewBox="0 0 512 512"><use href="#fmLogo"/></svg>Flash Meet<i>•••</i></div>
+            <div class="mkSide"><span class="on"><svg viewBox="0 0 24 24"><use href="#icDoc"/></svg>Script</span><span><svg viewBox="0 0 24 24"><use href="#icDoc"/></svg>요약</span><span><svg viewBox="0 0 24 24"><path d="M12 4v11m-4.5-4.5L12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>다운로드</span></div>
+            <div class="mkMain"><div class="mkMainHd">이중 언어 스크립트<span class="lcChips"><span class="lc"><span class="lcV">KO</span></span><span class="lc">EN</span></span></div>
+              <div class="mkRow"><i></i><span>우리는 더 연결된 세상을 만들고 있습니다.</span></div>
+              <div class="mkRow"><i></i><span>We are building a more connected world.</span></div></div>
+          </div></div>
+        <div class="fxBody"><span class="fxIc dOnly"><svg viewBox="0 0 24 24"><use href="#icDoc"/></svg></span>
+          <div class="fxTx"><b><span class="dOnly">스크립트 &amp; 요약</span><span class="mOnly">행사 후 스크립트 &amp; 번역</span></b><small><span class="dOnly">간편한 저장과 공유</span><span class="mOnly">전체 내용을 저장하고 AI 요약을 만들어 여러 언어로 내보낼 수 있습니다.</span></small></div>
+          <span class="fxGo"><svg><use href="#icArrow"/></svg></span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="cSteps">
+  <div class="wrap cStepsIn">
+    <div class="stHead"><h2>이용 방법</h2><p class="mOnly">간단한 3단계로 시작하세요.</p></div>
+    <div class="st"><span class="stN">1</span><span class="stI"><svg class="dOnly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 14a4.5 4.5 0 0 0 6.4.2l2.8-2.8a4.5 4.5 0 0 0-6.4-6.4l-1.2 1.2"/><path d="M14 10a4.5 4.5 0 0 0-6.4-.2l-2.8 2.8a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2"/></svg><svg class="mOnly" viewBox="0 0 24 24"><use href="#icDoc"/></svg></span>
+      <div><b><span class="dOnly">ID 만들기</span><span class="mOnly">행사 만들기</span></b><small><span class="dOnly">행사 설정</span><span class="mOnly">몇 분 만에 설정</span></small></div></div>
+    <div class="st"><span class="stN">2</span><span class="stI"><svg class="dOnly" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M10 8.3v7.4l6-3.7z" fill="currentColor"/></svg><svg class="mOnly" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="3.4"/><circle cx="5.2" cy="9.6" r="2.5"/><circle cx="18.8" cy="9.6" r="2.5"/><path d="M5.8 19.5c.5-3.6 3-5.6 6.2-5.6s5.7 2 6.2 5.6zM.8 18.5c.3-2.4 1.8-3.8 3.8-3.9-.7 1-1.2 2.4-1.3 3.9zM23.2 18.5c-.3-2.4-1.8-3.8-3.8-3.9.7 1 1.2 2.4 1.3 3.9z"/></svg></span>
+      <div><b><span class="dOnly">라이브 시작</span><span class="mOnly">청중 참여</span></b><small><span class="dOnly">이중 언어 통역</span><span class="mOnly">참석자에게 Conference ID 공유</span></small></div></div>
+    <div class="st"><span class="stN">3</span><span class="stI"><svg class="dOnly" viewBox="0 0 24 24"><use href="#icDoc"/></svg><svg class="mOnly" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="14" width="3.2" height="6" rx="1"/><rect x="10.4" y="9.5" width="3.2" height="10.5" rx="1"/><rect x="16.8" y="4" width="3.2" height="16" rx="1"/></svg></span>
+      <div><b><span class="dOnly">저장 &amp; 요약</span><span class="mOnly">통역 시작</span></b><small><span class="dOnly">AI 기록 받기</span><span class="mOnly">실시간 통역과 고급 기능</span></small></div></div>
+  </div>
+</section>
+
+<section class="cCta globeBg">
+  <div class="wrap cCtaIn">
+    <h3><span class="dOnly">언어의 한계 없는 행사, 준비되셨나요?</span><span class="mOnly">다음 행사를 준비하세요</span></h3>
+    <p class="mOnly">지금 Flash Meet를 경험하고 경계 없는 대화를 만들어 보세요.</p>
+    <button class="btn btnCta openTrial" type="button"><svg><use href="#icMic"/></svg><span class="dOnly">지금 체험하기</span><span class="mOnly">무료로 체험하기</span><svg class="mOnly"><use href="#icArrow"/></svg></button>
+    <p class="micro mOnly">로그인 불필요 <span class="sep">·</span> 60초 <span class="sep">·</span> 하루 5회</p>
+  </div>
+</section>
+</main>
+
+<footer class="cFoot">
+  <div class="wrap fD dOnly">
+    <a class="fLogo" href="/concept/ko"><svg viewBox="0 0 512 512" aria-hidden="true"><use href="#fmLogo"/></svg>Flash Meet</a>
+    <nav class="fLinks"><a href="/concept/ko">홈</a><a href="/concept/ko#features">기능</a><a href="/pricing">요금제</a><a href="/blog">리소스</a></nav>
+    <div class="dd"><button type="button" aria-haspopup="true"><svg class="globe"><use href="#icGlobe"/></svg>한국어 <svg class="chev"><use href="#icChev"/></svg></button>
+      <div class="ddMenu"><a hreflang="vi" href="/concept/conference">Tiếng Việt</a><a hreflang="en" href="/concept/en/conference">English</a><a class="cur" hreflang="ko" href="/concept/ko/conference">한국어</a></div></div>
+    <span class="copy">© <span class="yr">2026</span> Flash Meet. All rights reserved.</span>
+  </div>
+  <div class="wrap fM mOnly">
+    <div class="fMTop"><a class="fLogo" href="/concept/ko"><svg viewBox="0 0 512 512" aria-hidden="true"><use href="#fmLogo"/></svg>Flash Meet</a><span class="fSoc" id="fSoc"></span></div>
+    <p class="fTag">언어의 경계 없이 세상을 잇습니다.</p>
+    <div class="fMBot"><a href="/terms">이용약관</a><i>|</i><a href="/privacy">개인정보</a><i>|</i><a href="mailto:support@transflash.app">문의</a><span class="copy">© <span class="yr">2026</span> Flash Meet. 모든 권리 보유.</span></div>
+  </div>
+</footer>
+
+<div class="tm" id="trial" role="dialog" aria-modal="true" aria-labelledby="tmTitle" aria-hidden="true" data-state="requesting">
+  <div class="tmCard" id="tmCard">
+    <div class="tmHead">
+      <div><h3 id="tmTitle">실시간 번역 체험</h3><p>평소처럼 말하세요. Flash Meet가 언어를 인식해 번역합니다.</p></div>
+      <button class="tmX" id="tmClose" type="button" aria-label="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="tmStatus"><span class="tmState"><i></i><span id="tmStateText">마이크를 여는 중…</span></span><span class="tmTimer" id="tmTimer">00:00 / 01:00</span></div>
+    <div class="tmStage">
+      <button class="tmMic" id="tmMic" type="button" aria-label="마이크">
+        <svg class="ic ic-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+        <svg class="ic ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 9.3V6a3 3 0 0 0-5.7-1.3M9 9v2a3 3 0 0 0 5 2.2M5 11a7 7 0 0 0 11.5 5.4M19 11a7 7 0 0 1-.6 2.8M12 18v3M3 3l18 18"/></svg>
+        <svg class="ic ic-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/></svg>
+        <svg class="ic ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      </button>
+      <canvas class="tmWave" id="tmWave" aria-hidden="true"></canvas>
+      <p class="tmHint" id="tmHint">마이크를 허용하면 번역이 시작됩니다.</p>
+      <div class="tmMsg" id="tmMsg"><b id="tmMsgTitle"></b><p id="tmMsgDesc"></p></div>
+    </div>
+    <div class="tmLang">
+      <span class="tmPill">자동 감지</span><span class="tmArrow" aria-hidden="true">→</span>
+      <label class="tmSel"><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">번역 언어</span>
+        <select id="tmTarget"><option value="Vietnamese">Tiếng Việt</option><option value="English">English</option><option value="Korean">한국어</option><option value="Japanese">日本語</option><option value="Chinese">中文</option></select>
+      </label>
+    </div>
+    <div class="tmText" id="tmText">
+      <div class="tmBlock"><div class="lbl">인식된 말<em id="tmSrcLang"></em></div><p id="tmHeard"></p></div>
+      <div class="tmBlock tr"><div class="lbl">번역<em id="tmToLang"></em></div><p id="tmTrans"></p></div>
+    </div>
+    <div class="tmActions" id="tmActions"></div>
+    <div class="tmNote" id="tmNote">1회 60초 · 하루 최대 5회 · 로그인 불필요</div>
+  </div>
+</div>
+
+
+
+<script>
+/* ── Page config ──
+   PROOF.testimonial: shown in the phone quote card ONLY with a real, attributable quote; until then the card
+   carries a plain product statement from the team (no name, no stars). */
+const CONFIG = {
+  videoUrl: "",   // e.g. "https://www.youtube.com/embed/XXXX" — empty: "영상 보기" scrolls to the display modes
+  social: { linkedin: "", youtube: "" },
+};
+const PROOF = {
+  testimonial: null, // e.g. { q: "…", name: "…", role: "…", avatar: "/concept/avatar-1.jpg", stars: 5 }
+};
+const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+(() => {
+  const $ = (id) => document.getElementById(id);
+  document.querySelectorAll(".yr").forEach((e) => { e.textContent = new Date().getFullYear(); });
+
+  // dropdowns
+  document.querySelectorAll(".dd>button").forEach((b) => b.addEventListener("click", (e) => {
+    e.stopPropagation(); const dd = b.parentElement, was = dd.classList.contains("open");
+    document.querySelectorAll(".dd.open").forEach((x) => x.classList.remove("open")); if (!was) dd.classList.add("open");
+  }));
+  document.addEventListener("click", () => document.querySelectorAll(".dd.open").forEach((x) => x.classList.remove("open")));
+
+  // phone menu
+  const menu = $("mMenu"), burger = $("burger");
+  const LINES = burger.innerHTML, CLOSE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+  const setMenu = (open) => { menu.hidden = !open; burger.setAttribute("aria-expanded", String(open)); burger.innerHTML = open ? CLOSE : LINES; };
+  burger.addEventListener("click", (e) => { e.stopPropagation(); setMenu(menu.hidden); });
+  menu.addEventListener("click", (e) => { if (e.target.closest("a,button")) setMenu(false); });
+  document.addEventListener("click", (e) => { if (!menu.hidden && !e.target.closest("#mMenu")) setMenu(false); });
+  addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
+
+  // intro video: plays in an overlay when configured, otherwise shows the display modes
+  $("watchVideo").onclick = () => {
+    if (!CONFIG.videoUrl) { $("fx").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+    const ov = document.createElement("div");
+    ov.style.cssText = "position:fixed;inset:0;z-index:120;background:rgba(5,12,20,.6);display:grid;place-items:center;padding:20px";
+    ov.innerHTML = `<div style="width:min(960px,100%);aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000"><iframe src="${escH(CONFIG.videoUrl)}" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe></div>`;
+    ov.onclick = () => ov.remove(); document.body.appendChild(ov);
+  };
+
+  // real testimonial only when configured
+  const t = PROOF.testimonial;
+  if (t) {
+    $("qText").textContent = t.q; $("qName").textContent = t.name; $("qRole").textContent = t.role || "";
+    if (t.avatar) $("qAv").innerHTML = `<img src="${escH(t.avatar)}" alt="">`;
+    if (t.stars) { const st = $("qStars"); st.hidden = false; st.innerHTML = '<svg viewBox="0 0 24 24"><path d="m12 2.8 2.8 5.8 6.3.8-4.6 4.4 1.2 6.3L12 17.1 6.3 20.1l1.2-6.3L2.9 9.4l6.3-.8z" fill="currentColor"/></svg>'.repeat(t.stars); }
+  }
+
+  // social icons: links only when a real URL is configured
+  const SOC = {
+    linkedin: '<path d="M4.5 9h3v10.5h-3zM6 4a1.8 1.8 0 1 1 0 3.6A1.8 1.8 0 0 1 6 4zM10 9h2.9v1.5c.5-.9 1.7-1.8 3.4-1.8 3.3 0 3.9 2.1 3.9 4.9v5.9h-3v-5.2c0-1.3 0-2.9-1.8-2.9s-2.1 1.4-2.1 2.8v5.3H10z" fill="currentColor"/>',
+    youtube: '<path d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.6 2.6 0 0 0-1.8 1.8C2 8.8 2 12 2 12s0 3.2.4 4.8a2.6 2.6 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8z" fill="currentColor"/><path d="m10 15 5.2-3L10 9z" fill="#fff"/>',
+  };
+  $("fSoc").innerHTML = Object.keys(SOC).map((k) => {
+    const url = CONFIG.social[k], icon = `<svg viewBox="0 0 24 24" aria-hidden="true">${SOC[k]}</svg>`;
+    return url ? `<a href="${escH(url)}" aria-label="${k}" rel="noopener">${icon}</a>` : `<span aria-hidden="true">${icon}</span>`;
+  }).join("");
+})();
+
+/* ── Live-translation trial ──
+   One click: "지금 체험하기" opens the sheet AND requests the microphone inside the
+   same click handler (browsers only allow getUserMedia from a user gesture). Speech is
+   recognised by Soniox (auto language detection, streaming interim words) and every
+   finished phrase is translated through POST /api/translate { src, to, context }. */
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const tm = $('trial'), card = $('tmCard'), stateText = $('tmStateText'), timerEl = $('tmTimer'), hint = $('tmHint');
+  const msgBox = $('tmMsg'), msgT = $('tmMsgTitle'), msgD = $('tmMsgDesc'), actions = $('tmActions'), note = $('tmNote');
+  const heardEl = $('tmHeard'), transEl = $('tmTrans'), srcLangEl = $('tmSrcLang'), toLangEl = $('tmToLang'), textBox = $('tmText');
+  const target = $('tmTarget'), micBtn = $('tmMic'), canvas = $('tmWave');
+
+  const LIMIT = 5, TRIAL_SEC = 60, TRANSLATE_DEBOUNCE = 450;
+  const SONIOX_WS = 'wss://stt-rt.soniox.com/transcribe-websocket';
+  const LANG_NAME = { vi: '베트남어', en: '영어', ko: '한국어', ja: '일본어', zh: '중국어', fr: '프랑스어', de: '독일어', es: '스페인어', th: '태국어', id: '인도네시아어', ru: '러시아어' };
+  const TARGET_CODE = { Vietnamese: 'vi', English: 'en', Korean: 'ko', Japanese: 'ja', Chinese: 'zh' };
+  const TARGET_NAME = { Vietnamese: '베트남어', English: '영어', Korean: '한국어', Japanese: '일본어', Chinese: '중국어' };
+  const PH_HEARD = '한국어, 영어, 베트남어… 무엇이든 말해 보세요';
+  const PH_TRANS = '번역이 여기에 표시됩니다.';
+
+  let S = null;            // live session
+  let kept = null;         // last finished session's text (shown again in the "limit" state)
+  const allTracks = [];    // every mic track ever opened — lets the diagnostic below prove none stays live
+
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const fmt = (sec) => String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+  const today = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
+  function uses() { let x = null; try { x = JSON.parse(localStorage.getItem('mf_trial_uses') || 'null'); } catch (e) {} return x && x.day === today() ? x : { day: today(), count: 0 }; }
+  function addUse(n) { const x = uses(); x.count = Math.max(0, x.count + n); try { localStorage.setItem('mf_trial_uses', JSON.stringify(x)); } catch (e) {} }
+
+  // Default target follows the UI language (shared app key mr_lang, else <html lang>); the user's pick is remembered.
+  (() => {
+    let v = null; try { v = localStorage.getItem('mf_trial_target'); } catch (e) {}
+    if (!v || !TARGET_CODE[v]) {
+      let l = document.documentElement.lang || 'vi'; try { l = localStorage.getItem('mr_lang') || l; } catch (e) {}
+      v = { vi: 'Vietnamese', ko: 'Korean', en: 'English' }[l.slice(0, 2)] || 'Vietnamese';
+    }
+    target.value = v;
+  })();
+  // Speaking the target language itself would "translate" into the same text — fall back to English (or Vietnamese).
+  function targetFor(lang) {
+    const t = target.value, code = TARGET_CODE[t];
+    if (lang && code && lang.slice(0, 2) === code) return t === 'English' ? 'Vietnamese' : 'English';
+    return t;
+  }
+
+  /* ── view ── */
+  const STATES = {
+    requesting: { status: '마이크를 여는 중…', hint: '마이크를 허용하면 번역이 시작됩니다.' },
+    listening: { status: '듣는 중', hint: '' },
+    done: { status: '체험 완료' },
+    limit: { status: '오늘 체험 횟수 소진', title: '오늘 5회 체험을 모두 사용했어요.', desc: '로그인하고 Flash Meet를 계속 사용하세요.' },
+    denied: { status: '마이크 권한 없음', title: '마이크를 사용할 수 없어요', desc: '브라우저에서 마이크 권한을 허용하면 실시간 번역을 체험할 수 있어요.' },
+    nomic: { status: '마이크 없음', title: '마이크를 찾을 수 없어요', desc: '마이크를 연결한 뒤 다시 시도하세요.' },
+    busy: { status: '일시적으로 중단됨', title: '체험 서비스가 혼잡해요', desc: '잠시 후 다시 시도해 주세요.' },
+    unsupported: { status: '지원되지 않는 브라우저', title: '이 브라우저는 아직 지원되지 않아요', desc: 'Chrome 또는 Edge에서 열면 실시간 번역을 체험할 수 있어요.' },
+  };
+  function setState(st) {
+    const c = STATES[st];
+    tm.dataset.state = st;
+    stateText.textContent = c.status;
+    if (c.hint !== undefined) hint.textContent = c.hint;
+    msgT.textContent = c.title || ''; msgD.textContent = c.desc || '';
+    msgBox.classList.remove('show');
+    micBtn.setAttribute('aria-label', st === 'listening' ? '체험 종료' : '마이크');
+    let html = '';
+    if (st === 'done') {
+      if (uses().count >= LIMIT) {
+        msgT.textContent = '오늘 5회 체험을 모두 사용했어요.'; msgD.textContent = ''; msgBox.classList.add('show');
+        html = '<a class="tmBtn pri" href="/login">로그인하고 계속하기</a>';
+      } else {
+        html = '<button class="tmBtn" type="button" data-act="retry">다시 시도</button><a class="tmBtn pri" href="/">Flash Meet 전체 기능 사용 →</a>';
+      }
+    } else if (st === 'limit') html = '<a class="tmBtn pri" href="/login">로그인하고 계속하기</a>';
+    else if (st === 'denied' || st === 'nomic' || st === 'busy') html = '<button class="tmBtn pri" type="button" data-act="retry">다시 시도</button>';
+    actions.innerHTML = html;
+    actions.classList.toggle('show', !!html);
+    note.hidden = st === 'done' || st === 'limit';
+    if (st !== 'listening') tm.classList.remove('soon');
+  }
+  actions.addEventListener('click', (e) => { const b = e.target.closest('[data-act="retry"]'); if (b) startTrial(); });
+
+  function renderText() {
+    const src = S || kept;
+    if (!src) { heardEl.innerHTML = '<span class="ph">' + PH_HEARD + '</span>'; transEl.innerHTML = '<span class="ph">' + PH_TRANS + '</span>'; srcLangEl.textContent = ''; toLangEl.textContent = ' · ' + TARGET_NAME[target.value]; textBox.classList.add('empty'); return; }
+    const segs = src.segs.concat(src.cur.src.trim() ? [src.cur] : []);
+    const interim = (src.interim || '').trim();
+    heardEl.innerHTML = segs.length || interim
+      ? segs.map((x) => esc(x.src.trim())).join(' ') + (interim ? ' <span class="interim">' + esc(interim) + '</span>' : '')
+      : '<span class="ph">' + PH_HEARD + '</span>';
+    const trs = segs.filter((x) => x.tr).map((x) => esc(x.tr));
+    const pending = segs.some((x) => x.pending);
+    const dots = pending ? '<span class="typing" aria-label="번역 중"><i></i><i></i><i></i></span>' : '';
+    transEl.innerHTML = trs.length ? trs.join(' ') + dots : (dots || '<span class="ph">' + PH_TRANS + '</span>');
+    const last = segs[segs.length - 1];
+    const lang = (src.cur.lang || src.cur.langI) || (last && last.lang);
+    srcLangEl.textContent = lang ? ' · ' + (LANG_NAME[lang.slice(0, 2)] || lang.toUpperCase()) : '';
+    toLangEl.textContent = ' · ' + TARGET_NAME[(last && last.to) || targetFor(lang)];
+    textBox.classList.toggle('empty', !segs.length && !interim);
+    heardEl.scrollTop = heardEl.scrollHeight; transEl.scrollTop = transEl.scrollHeight;
+  }
+
+  /* ── modal ── */
+  function openModal() {
+    if (tm.classList.contains('on')) return;
+    tm.classList.add('on'); tm.setAttribute('aria-hidden', 'false');
+    document.documentElement.classList.add('tmOpen');
+    setTimeout(() => $('tmClose').focus({ preventScroll: true }), 40);
+  }
+  function closeModal() {
+    if (S) { keep(S); hardStop(S); S = null; }
+    tm.classList.remove('on', 'soon'); tm.setAttribute('aria-hidden', 'true');
+    document.documentElement.classList.remove('tmOpen');
+  }
+  $('tmClose').onclick = closeModal;
+  tm.addEventListener('click', (e) => { if (e.target === tm) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && tm.classList.contains('on')) closeModal(); });
+  document.querySelectorAll('.openTrial').forEach((b) => b.addEventListener('click', startTrial));
+  micBtn.onclick = () => { if (S && tm.dataset.state === 'listening') finish(S); };
+  target.onchange = () => {
+    try { localStorage.setItem('mf_trial_target', target.value); } catch (e) {}
+    if (S) { S.segs.concat([S.cur]).slice(-6).forEach((x) => { x.trFor = null; translateSeg(S, x); }); }
+    renderText();
+  };
+
+  function newSeg() { return { src: '', lang: null, langI: null, tr: '', to: null, trFor: null, ver: 0, pending: false }; }
+  function keep(s) { if (s.segs.length || s.cur.src.trim()) kept = { segs: s.segs.concat(s.cur.src.trim() ? [s.cur] : []), cur: newSeg(), interim: '' }; }
+
+  /* ── session ── */
+  function startTrial() {
+    openModal();
+    if (S) { hardStop(S); S = null; }
+    if (uses().count >= LIMIT) { setState('limit'); renderText(); return; }
+    const md = navigator.mediaDevices;
+    if (!md || !md.getUserMedia || !window.MediaRecorder || !window.WebSocket) { setState('unsupported'); return; }
+
+    const s = S = { segs: [], cur: newSeg(), interim: '', queue: [], chain: Promise.resolve(), hist: [], lvl: 0 };
+    kept = null; renderText(); setState('requesting');
+    timerEl.textContent = '00:00 / 01:00';
+
+    // Still inside the click: create the AudioContext (so it isn't autoplay-suspended),
+    // start fetching a Soniox key in parallel, and ask for the microphone.
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) { try { s.ac = new AC(); } catch (e) {} }
+    s.tokenP = fetch('/api/soniox-token', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ transcribeOnly: true }) })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('token ' + r.status))))
+      .then((d) => { if (!d.api_key) throw new Error('no key'); return d.api_key; });
+    s.tokenP.catch(() => {});
+    let micP;
+    try { micP = md.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); }
+    catch (e) { micP = Promise.reject(e); }
+    micP.then((stream) => onMic(s, stream), (err) => onMicError(s, err));
+  }
+
+  function onMicError(s, err) {
+    if (s !== S) return;
+    hardStop(s); S = null;
+    setState(err && (err.name === 'NotFoundError' || err.name === 'OverconstrainedError') ? 'nomic' : 'denied');
+  }
+
+  function onMic(s, stream) {
+    stream.getTracks().forEach((t) => allTracks.push(t));
+    if (s !== S) { stream.getTracks().forEach((t) => t.stop()); return; } // sheet closed while the prompt was open
+    s.stream = stream;
+    addUse(1); s.counted = true;
+    setState('listening');
+    // The clock starts now — when the mic is really open, not at the click.
+    s.t0 = performance.now();
+    s.clock = setInterval(() => {
+      const sec = Math.min(TRIAL_SEC, Math.floor((performance.now() - s.t0) / 1000));
+      timerEl.textContent = fmt(sec) + ' / 01:00';
+      tm.classList.toggle('soon', TRIAL_SEC - sec <= 10);
+      if (sec >= TRIAL_SEC) finish(s);
+    }, 200);
+    startWave(s);
+    startRecorder(s);
+    connect(s);
+  }
+
+  function pickMime() {
+    const c = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+    if (window.MediaRecorder && MediaRecorder.isTypeSupported) for (const m of c) if (MediaRecorder.isTypeSupported(m)) return m;
+    return '';
+  }
+  // Recording starts immediately; chunks captured before the socket is ready are queued, so nothing said is lost.
+  function startRecorder(s) {
+    const mime = pickMime();
+    let rec;
+    try { rec = mime ? new MediaRecorder(s.stream, { mimeType: mime }) : new MediaRecorder(s.stream); } catch (e) { rec = new MediaRecorder(s.stream); }
+    s.rec = rec;
+    rec.ondataavailable = (e) => {
+      if (!e.data || !e.data.size) return;
+      s.chain = s.chain.then(() => e.data.arrayBuffer()).then((buf) => {
+        if (s.ws && s.open && s.ws.readyState === 1) s.ws.send(buf); else if (!s.ended) s.queue.push(buf);
+      }).catch(() => {});
+    };
+    rec.onstop = () => { s.chain.then(() => { try { if (s.ws && s.ws.readyState === 1) s.ws.send(''); } catch (e) {} }); }; // ask Soniox to flush the last words
+    rec.start(200);
+  }
+
+  async function connect(s) {
+    let key;
+    try { key = await s.tokenP; } catch (e) { return fail(s); }
+    if (s !== S || s.ended) return;
+    const ws = s.ws = new WebSocket(SONIOX_WS);
+    ws.onopen = () => {
+      if (s !== S || s.ended) { try { ws.close(); } catch (e) {} return; }
+      ws.send(JSON.stringify({
+        api_key: key, model: 'stt-rt-v4', audio_format: 'auto',
+        language_hints: ['vi', 'en', 'ko', 'ja', 'zh'],
+        enable_language_identification: true, enable_endpoint_detection: true,
+      }));
+      s.open = true;
+      s.queue.forEach((b) => ws.send(b)); s.queue.length = 0;
+    };
+    ws.onmessage = (ev) => onMessage(s, ev);
+    ws.onerror = () => { if (s === S && !s.ending && !s.ended) fail(s); };
+    ws.onclose = () => { s.open = false; if (s.onFinished) s.onFinished(); else if (s === S && !s.ending && !s.ended) fail(s); };
+  }
+
+  function onMessage(s, ev) {
+    let m; try { m = JSON.parse(ev.data); } catch (e) { return; }
+    if (m.error_code) { if (!s.ending) fail(s); return; }
+    let interim = '', finalAdded = false;
+    for (const tk of m.tokens || []) {
+      const x = tk.text; if (x == null) continue;
+      if (x === '<end>') { commit(s); continue; }
+      if (tk.is_final) { s.cur.src += x; finalAdded = true; if (tk.language) s.cur.lang = tk.language; }
+      else { interim += x; if (tk.language) s.cur.langI = tk.language; }
+    }
+    s.interim = interim;
+    if (finalAdded) { clearTimeout(s.trT); s.trT = setTimeout(() => translateSeg(s, s.cur), TRANSLATE_DEBOUNCE); }
+    if (s === S) renderText();
+    if (m.finished && s.onFinished) s.onFinished();
+  }
+
+  function commit(s) {
+    clearTimeout(s.trT);
+    const seg = s.cur;
+    s.cur = newSeg();
+    if (seg.src.trim()) { s.segs.push(seg); translateSeg(s, seg); }
+  }
+
+  async function translateSeg(s, seg) {
+    const src = seg.src.trim();
+    if (!src || src === seg.trFor) return;
+    const to = targetFor(seg.lang || seg.langI);
+    if (seg.pending && seg.reqFor === src && seg.reqTo === to) return; // same phrase already in flight
+    const ver = ++seg.ver;
+    seg.pending = true; seg.reqFor = src; seg.reqTo = to; if (s === S) renderText();
+    const context = s.segs.filter((x) => x !== seg && x.tr).slice(-3).map((x) => x.src.trim() + ' → ' + x.tr).join('\n');
+    try {
+      const r = await fetch('/api/translate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ src, to, context }) });
+      const d = await r.json().catch(() => ({}));
+      if (ver !== seg.ver) return; // superseded by a newer request for this phrase
+      if (r.ok && d.translation) { seg.tr = d.translation; seg.trFor = src; seg.to = to; }
+    } catch (e) { /* keep the previous translation; the next phrase retries */ }
+    finally { if (ver === seg.ver) seg.pending = false; if (s === S) renderText(); }
+  }
+
+  // Graceful end (60 s or the user tapped the mic): stop the mic now, let Soniox flush, keep the text.
+  async function finish(s) {
+    if (s.ending || s.ended) return;
+    s.ending = true;
+    clearInterval(s.clock);
+    timerEl.textContent = fmt(Math.min(TRIAL_SEC, Math.round((performance.now() - s.t0) / 1000))) + ' / 01:00';
+    stopWave(s);
+    try { if (s.rec && s.rec.state !== 'inactive') s.rec.stop(); } catch (e) {}
+    stopTracks(s);
+    await Promise.race([new Promise((r) => { s.onFinished = r; }), new Promise((r) => setTimeout(r, 2500))]);
+    if (s !== S) return;
+    commit(s); s.interim = '';
+    try { s.ws && s.ws.close(); } catch (e) {}
+    closeAudio(s);
+    setState('done'); renderText();
+  }
+
+  function fail(s) {
+    if (s !== S) return;
+    const heardSomething = s.segs.length || s.cur.src.trim();
+    if (s.counted && !heardSomething) addUse(-1); // the service failed before anything was translated — don't burn a try
+    keep(s); hardStop(s); S = null;
+    if (heardSomething) { setState('done'); renderText(); } else setState('busy');
+  }
+
+  function stopTracks(s) { if (s.stream) s.stream.getTracks().forEach((t) => { try { t.stop(); } catch (e) {} }); }
+  function closeAudio(s) { if (s.ac && s.ac.state !== 'closed') { try { s.ac.close(); } catch (e) {} } }
+  function hardStop(s) {
+    s.ended = true;
+    clearTimeout(s.trT); clearInterval(s.clock);
+    stopWave(s);
+    if (s.rec) { s.rec.onstop = null; try { if (s.rec.state !== 'inactive') s.rec.stop(); } catch (e) {} }
+    stopTracks(s);
+    if (s.ws) { s.ws.onclose = s.ws.onerror = s.ws.onmessage = null; try { s.ws.close(); } catch (e) {} }
+    closeAudio(s);
+  }
+
+  /* ── waveform: a scrolling level history driven by the real mic signal ── */
+  const BARS = 44;
+  function startWave(s) {
+    if (!s.ac) return;
+    try {
+      if (s.ac.state === 'suspended') s.ac.resume();
+      const an = s.ac.createAnalyser(); an.fftSize = 1024; an.smoothingTimeConstant = 0.6;
+      s.ac.createMediaStreamSource(s.stream).connect(an);
+      const data = new Uint8Array(an.fftSize), g = canvas.getContext('2d');
+      s.hist = new Array(BARS).fill(0);
+      const color = getComputedStyle(card).getPropertyValue('--text').trim() || '#111827';
+      const draw = () => {
+        if (s.ended || s.ending) return;
+        s.raf = requestAnimationFrame(draw);
+        an.getByteTimeDomainData(data);
+        let sum = 0; for (let i = 0; i < data.length; i++) { const v = (data[i] - 128) / 128; sum += v * v; }
+        const lvl = Math.min(1, Math.sqrt(sum / data.length) * 5);
+        s.lvl = s.lvl * 0.7 + lvl * 0.3;
+        micBtn.style.setProperty('--lvl', s.lvl.toFixed(3));
+        s.frame = (s.frame || 0) + 1;
+        if (s.frame % 3 === 0) { s.hist.push(s.lvl); s.hist.shift(); }
+        const dpr = window.devicePixelRatio || 1, w = canvas.clientWidth, h = canvas.clientHeight;
+        if (!w || !h) return;
+        if (canvas.width !== Math.round(w * dpr)) { canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr); }
+        g.clearRect(0, 0, canvas.width, canvas.height);
+        g.fillStyle = color;
+        const gap = 3 * dpr, bw = (canvas.width - gap * (BARS - 1)) / BARS;
+        for (let i = 0; i < BARS; i++) {
+          const v = s.hist[i], bh = Math.max(3 * dpr, v * canvas.height * 0.95);
+          g.globalAlpha = 0.18 + 0.72 * (i / BARS);
+          const x = i * (bw + gap), y = (canvas.height - bh) / 2, r = Math.min(bw / 2, bh / 2);
+          g.beginPath();
+          if (g.roundRect) g.roundRect(x, y, bw, bh, r); else g.rect(x, y, bw, bh);
+          g.fill();
+        }
+        g.globalAlpha = 1;
+      };
+      draw();
+    } catch (e) { /* the waveform is decoration — the trial works without it */ }
+  }
+  function stopWave(s) { if (s.raf) cancelAnimationFrame(s.raf); s.raf = 0; micBtn.style.setProperty('--lvl', '0'); }
+
+  // Diagnostic for automated checks: proves the mic is released after closing.
+  window.__mfTrial = () => ({
+    state: tm.dataset.state, open: tm.classList.contains('on'), uses: uses().count,
+    liveTracks: allTracks.filter((t) => t.readyState === 'live').length,
+    ws: S && S.ws ? S.ws.readyState : null, audio: S && S.ac ? S.ac.state : null,
+    timer: timerEl.textContent, heard: heardEl.textContent, translated: transEl.textContent,
+  });
+  renderText();
+})();
+
+</script>
+</body>
+</html>
