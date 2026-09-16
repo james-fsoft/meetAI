@@ -450,8 +450,9 @@ audio{width:100%;margin-top:16px;height:42px}
 }
 
 /* ── phone app shell (Design …02_34_21) — desktop layout untouched ── */
-.mb-bar,.mb-status,.mb-title,.mb-meta,.mb-dock,.mb-cap,.mb-tabs,.mb-nsub{display:none}
+.mb-bar,.mb-status,.mb-title,.mb-meta,.mb-dock,.mb-cap,.mb-tabs,.mb-nsub,.mb-notes{display:none}
 @media(max-width:620px){
+  .mb-notes{display:flex}
   .mb-bar{display:flex;align-items:center;gap:9px;padding:calc(4px + env(safe-area-inset-top)) 0 9px}
   .mb-logo{width:30px;height:30px;border-radius:9px}
   .mb-brand{font-size:17px;font-weight:900;letter-spacing:-.03em}
@@ -506,6 +507,10 @@ audio{width:100%;margin-top:16px;height:42px}
   .ai-item{align-items:flex-start;gap:10px;padding:10px 11px;background:var(--card);border:1px solid var(--hair);border-radius:12px;margin-bottom:7px}
   .ai-body .ai-item:last-child{margin-bottom:0}
   .ai-body{padding:0;background:none;border:0}
+  .mb-notes{display:flex;align-items:flex-start;gap:10px;margin:2px 0 12px}
+  .mb-nic{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);font-size:15px}
+  .mb-notes b{display:block;font-size:19px;font-weight:900;letter-spacing:-.03em}
+  .mb-notes span{display:block;margin-top:2px;font-size:11.5px;font-weight:600;color:var(--grey);line-height:1.45}
   .ai-panel{min-width:0;max-width:100%}
   .mb-nsub{display:block;margin:-4px 0 10px;font-size:11.5px;font-weight:600;color:var(--grey);line-height:1.45}
   .mb-tabs{display:flex;gap:4px;background:var(--paper);border:1px solid var(--hair);border-radius:12px;padding:3px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;min-width:0;max-width:100%}
@@ -665,7 +670,7 @@ audio{width:100%;margin-top:16px;height:42px}
       </div>
       <p id="procMsg">Transcribing…</p><small id="procSub"></small>
     </div>
-    <div id="resBody" style="display:none">
+    <div id="resBody" style="display:none"><div class="mb-bar"><img class="mb-logo" src="/logo.svg" alt=""><b class="mb-brand">Flash Meet</b><span class="mb-sp"></span><span class="mb-people"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19"/><circle cx="10" cy="7.5" r="3.2"/></svg><span class="mb-people-n">0</span></span><button type="button" class="mb-ic mb-set" aria-label="Settings">⚙</button></div><div class="mb-notes"><span class="mb-nic">✦</span><div><b data-t="mb_notes">AI Meeting Notes</b><span data-t="mb_notes_sub">Biến mọi cuộc họp thành hành động rõ ràng</span></div></div>
       <div class="res-head">
         <div class="res-tabs">
           <button data-v="transcript" class="on" data-t="r_transcript">Transcript</button>
@@ -1322,7 +1327,7 @@ fetchUsage();renderUsage();
   function selText(sel){if(!sel||!sel.options)return '';var o=sel.options[sel.selectedIndex];if(!o)return '';
     var x=(o.textContent||'').trim(),c;while(x.length&&(c=x.codePointAt(0))>=0x1F000&&c<=0x1FAFF)x=x.slice(2).trim();return x}
   function speakers(){var seen={},n=0;document.querySelectorAll('#lvFeed .lv-av').forEach(function(a){var v=(a.textContent||'').trim();if(v&&!seen[v]){seen[v]=1;n++}});return n}
-  function syncPeople(){var n=speakers();['mbPeopleN','mbPeopleN2'].forEach(function(id){var e=el(id);if(e)e.textContent=String(n)});
+  function syncPeople(){var n=speakers();['mbPeopleN','mbPeopleN2'].forEach(function(id){var e=el(id);if(e)e.textContent=String(n)});document.querySelectorAll('.mb-people-n').forEach(function(e){e.textContent=String(n)});
     var w=el('mbPeopleWrap');if(w)w.style.opacity=n?'1':'.5'}
   function pair(){var on=document.querySelector('#lvWaySeg button.on'),w=on?on.dataset.w:'one';
     if(w==='two')return selText(el('lvA'))+' ⇄ '+selText(el('lvB'));
@@ -1360,7 +1365,7 @@ fetchUsage();renderUsage();
   function init(){
     var e;
     if((e=el('mbTitle')))e.onclick=rename;
-    if((e=el('mbSet')))e.onclick=function(){var b=el('setBtn');if(b)b.click()};
+    document.querySelectorAll('#mbSet,.mb-set').forEach(function(b){b.onclick=function(){var x=el('setBtn');if(x)x.click()}});
     if((e=el('mbPause')))e.onclick=function(){el('btnPause').click()};
     if((e=el('mbStop')))e.onclick=function(){document.body.classList.remove('mb-langopen');el('btnStop').click()};
     if((e=el('mbLang')))e.onclick=function(){document.body.classList.toggle('mb-langopen')};
