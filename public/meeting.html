@@ -470,7 +470,7 @@ audio{width:100%;margin-top:16px;height:42px}
   .mb-title{display:block;width:100%;text-align:left;border:0;background:none;font:inherit;font-size:20px;font-weight:900;letter-spacing:-.03em;color:var(--ink);padding:7px 0 1px;cursor:pointer}
   .mb-meta{display:block;font-size:12px;font-weight:600;color:var(--grey);margin-bottom:8px}
   body.recing .cap-top{display:none}
-  body.recing.mb-langopen .cap-top{display:block;position:fixed;left:10px;right:10px;bottom:calc(98px + env(safe-area-inset-bottom));z-index:41;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:12px;box-shadow:0 22px 50px -22px rgba(10,20,45,.45);max-height:52vh;overflow:auto}
+  body.recing.mb-langopen .cap-top{display:block;position:fixed;left:10px;right:10px;bottom:calc(98px + env(safe-area-inset-bottom));z-index:41;background:var(--paper);border:1px solid var(--hair);border-radius:16px;padding:12px;box-shadow:0 22px 50px -22px rgba(10,20,45,.45);max-height:52vh;overflow:auto}
   body.recing.mb-langopen .lv-seg{display:inline-flex}
   body.recing.mb-langopen #lvOneLangs,body.recing.mb-langopen #lvTwoLangs{display:flex}
   body.recing.mb-langopen #capRec,body.recing.mb-langopen #lvToggle,body.recing.mb-langopen .cap-meta .timer{display:none}
@@ -489,7 +489,7 @@ audio{width:100%;margin-top:16px;height:42px}
   .lv-lbl{font-size:10px;text-transform:none;letter-spacing:.02em;color:#6b7c9c}
   body.recing .app-card{padding-bottom:calc(106px + env(safe-area-inset-bottom))}
   body.recing .live-feed{min-height:auto}
-  body.recing .mb-dock{display:grid;grid-template-columns:1fr auto auto 1fr;align-items:end;gap:6px;position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 12px calc(9px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(14px);border-top:1px solid var(--hair)}
+  body.recing .mb-dock{display:grid;grid-template-columns:1fr auto auto 1fr;align-items:end;gap:6px;position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 12px calc(9px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(14px);border-top:1px solid var(--hair)}
   .mb-d{display:grid;justify-items:center;gap:3px;border:0;background:none;font:inherit;font-size:10.5px;font-weight:700;color:var(--grey);cursor:pointer;padding:2px}
   .mb-d svg{width:19px;height:19px}
   .mb-d em{font-style:normal;font-size:9.5px;color:var(--faint);max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -504,7 +504,7 @@ audio{width:100%;margin-top:16px;height:42px}
   body.recing .viz span{flex:1 1 auto;min-width:2px;max-width:5px}
   body.recing .rec-hint{display:none}
   body.recing .live-feed{background:none;border:0;box-shadow:none;padding:0}
-  .ai-item{align-items:flex-start;gap:10px;padding:10px 11px;background:var(--card);border:1px solid var(--hair);border-radius:12px;margin-bottom:7px}
+  .ai-item{align-items:flex-start;gap:10px;padding:10px 11px;background:var(--paper);border:1px solid var(--hair);border-radius:12px;margin-bottom:7px}
   .ai-body .ai-item:last-child{margin-bottom:0}
   .ai-body{padding:0;background:none;border:0}
   .mb-notes{display:flex;align-items:flex-start;gap:10px;margin:2px 0 12px;text-align:left}
@@ -528,6 +528,81 @@ audio{width:100%;margin-top:16px;height:42px}
 .ai-item.done .ai-txt{text-decoration:line-through;opacity:.55}
 .ai-item.done .ai-check{background:var(--acc);border-color:var(--acc);position:relative}
 .ai-item.done .ai-check::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:10px;font-weight:900}
+.sfx{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:20px;background:rgba(8,18,40,.44);backdrop-filter:blur(7px);animation:sfxIn .22s ease}
+.sfx[hidden]{display:none}
+.sfx-card{position:relative;width:min(420px,100%);background:var(--paper);border:1px solid var(--hair);border-radius:22px;padding:28px 24px 22px;text-align:center;box-shadow:0 30px 80px -30px rgba(10,25,60,.55);animation:sfxUp .34s cubic-bezier(.2,.8,.3,1)}
+.sfx-ring{width:76px;height:76px;margin:0 auto 14px}
+.sfx-ring svg{width:100%;height:100%;overflow:visible}
+.sfx-c{fill:none;stroke:var(--acc);stroke-width:3;stroke-dasharray:145;stroke-dashoffset:145;animation:sfxRing .55s ease forwards}
+.sfx-k{fill:none;stroke:var(--acc);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:36;stroke-dashoffset:36;animation:sfxTick .35s .45s ease forwards}
+.sfx-h{display:block;font-size:19px;font-weight:900;letter-spacing:-.03em}
+.sfx-meta{margin:7px 0 0;font-size:12.5px;font-weight:600;color:var(--grey);line-height:1.5}
+.sfx-state{margin:10px 0 0;font-size:12px;line-height:1.55;color:var(--grey);background:var(--paper);border:1px solid var(--hair);border-radius:12px;padding:9px 11px}
+.sfx-acts{display:flex;gap:8px;margin-top:16px}
+.sfx-acts .btn{flex:1;padding:11px;font-size:13.5px;text-decoration:none;display:grid;place-items:center}
+.sfx-go{background:var(--acc);color:#fff;border-color:var(--acc)}
+.sfx-spark{position:absolute;top:44px;left:50%;width:7px;height:7px;border-radius:50%;background:var(--acc);opacity:0;animation:sfxPop .9s .5s ease forwards}
+.sfx-spark.s1{--x:-74px;--y:-30px}.sfx-spark.s2{--x:74px;--y:-26px}.sfx-spark.s3{--x:-52px;--y:34px;background:#12a594}
+.sfx-spark.s4{--x:58px;--y:36px;background:#12a594}.sfx-spark.s5{--x:-14px;--y:-56px;background:#e5b000}.sfx-spark.s6{--x:24px;--y:-52px;background:#e5b000}
+@keyframes sfxIn{from{opacity:0}to{opacity:1}}
+@keyframes sfxUp{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes sfxRing{to{stroke-dashoffset:0}}
+@keyframes sfxTick{to{stroke-dashoffset:0}}
+@keyframes sfxPop{0%{opacity:0;transform:translate(0,0) scale(.4)}35%{opacity:1}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1)}}
+@media(prefers-reduced-motion:reduce){.sfx,.sfx-card,.sfx-c,.sfx-k,.sfx-spark{animation:none}.sfx-c,.sfx-k{stroke-dashoffset:0}.sfx-spark{display:none}}
+
+/* ── desktop meeting screen (design …03_2026) — the phone shell stays for small screens ── */
+.dk-info,.dk-head,.dk-stage{display:none}
+@keyframes dkPulse{0%,100%{opacity:1}50%{opacity:.35}}
+@media(min-width:981px){
+  .cap-top{text-align:left}
+  .cap-meta .timer{display:none}
+  .mb-bar,.mb-dock,.mb-notes,.mb-nsub{display:none}
+  .mb-status{display:flex;align-items:center;gap:10px;margin:2px 0 8px}
+  .mb-live{display:inline-flex;align-items:center;gap:6px;background:color-mix(in srgb,#e5484d 12%,transparent);color:#e5484d;border-radius:99px;padding:5px 10px;font-size:11.5px;font-weight:900}
+  .mb-live i{width:7px;height:7px;border-radius:50%;background:#e5484d;box-shadow:none;animation:dkPulse 1.6s infinite}
+  body:not(.rec-live) .mb-live{background:var(--soft);color:var(--grey)}
+  body:not(.rec-live) .mb-live i{background:var(--faint);animation:none}
+  .mb-timer{margin-left:auto;display:inline-flex;align-items:center;font-size:21px;font-weight:900;letter-spacing:-.02em;color:var(--ink);font-variant-numeric:tabular-nums}
+  .mb-timer svg{display:none}
+  .mb-title{display:block;width:100%;text-align:left;border:0;background:none;font:inherit;font-size:22px;font-weight:900;letter-spacing:-.035em;color:var(--ink);padding:0;cursor:pointer;line-height:1.2}
+  .mb-meta{display:block;font-size:12px;font-weight:600;color:var(--grey);margin:6px 0 10px}
+  .mb-cap{display:block;text-align:center;font-size:12px;font-weight:600;color:var(--grey);margin:4px 0 10px}
+  body:not(.rec-live) .mb-cap{visibility:hidden}
+  .viz{height:62px;gap:3px;width:100%;justify-content:space-between;margin:6px 0 2px}
+  .viz span{flex:1 1 auto;min-width:2px;max-width:5px;border-radius:99px}
+  .dk-info{display:block;margin-top:14px;background:var(--soft);border:1px solid var(--hair);border-radius:14px;padding:12px}
+  .dk-info-h{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;margin-bottom:8px}
+  .dk-info-h svg{width:15px;height:15px;color:var(--acc)}
+  .dk-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11.5px;color:var(--grey);font-weight:600;padding:3px 0}
+  .dk-row b{color:var(--ink);font-size:12px}
+  .dk-conn{display:flex;align-items:center;gap:7px;margin-top:8px;padding-top:8px;border-top:1px solid var(--hair);font-size:11.5px;font-weight:700;color:var(--grey)}
+  .dk-conn i{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+  .dk-conn.ok i{background:#12a594}
+  .dk-conn.wait i{background:#f59e0b}
+  .dk-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .dk-head b{font-size:15px;font-weight:900;letter-spacing:-.02em}
+  .dk-find{margin-left:auto;display:flex;align-items:center;gap:7px;background:var(--soft);border:1px solid var(--hair);border-radius:11px;padding:0 11px;min-width:230px}
+  .dk-find svg{width:14px;height:14px;color:var(--faint);flex:none}
+  .dk-find input{flex:1;min-width:0;border:0;background:none;outline:none;font:inherit;font-size:12.5px;padding:8px 0;color:var(--ink)}
+  .lv-av{display:flex;align-items:center;justify-content:center;white-space:nowrap;font-size:11.5px}
+  .lv-av[data-s]::before{content:"S"}
+  .lv-detect{display:inline-block;margin:-1px 0 7px;padding:3px 8px;font-size:10.5px;font-weight:700;color:var(--grey);background:var(--soft);border:1px solid var(--hair);border-radius:99px}
+  .lv-trans-row{margin:10px -14px -11px;padding:9px 14px 11px;border-top:1px solid var(--hair);background:color-mix(in srgb,var(--acc) 5%,var(--paper));border-radius:0 0 15px 15px}
+  .ai-panel .mb-tabs{display:flex;gap:4px;background:var(--soft);border:1px solid var(--hair);border-radius:12px;padding:3px;margin-bottom:12px;min-width:0;max-width:100%;overflow-x:auto;scrollbar-width:none}
+  .ai-panel .mb-tabs::-webkit-scrollbar{display:none}
+  .ai-panel .mb-tabs button{flex:1 1 auto;border:0;background:none;font:inherit;font-size:11.5px;font-weight:800;color:var(--grey);padding:8px 6px;border-radius:9px;cursor:pointer;white-space:nowrap}
+  .ai-panel .mb-tabs button.on{background:var(--acc);color:#fff}
+  .ai-panel[data-mb-tabs] .ai-sec{display:none}
+  .ai-panel[data-mb-tabs] .ai-sec.mb-on{display:block}
+  .ai-item{align-items:flex-start;gap:10px;padding:10px 11px;background:var(--paper);border:1px solid var(--hair);border-radius:12px;margin-bottom:7px}
+  .dk-stage{display:flex;align-items:center;gap:11px;margin-top:14px;padding:12px;border-radius:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 10%,var(--paper)),var(--paper));border:1px solid color-mix(in srgb,var(--acc) 22%,var(--hair));text-decoration:none}
+  .dk-stage:hover{border-color:var(--acc)}
+  .dk-stage-ic{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc)}
+  .dk-stage-ic svg{width:18px;height:18px}
+  .dk-stage-t b{display:block;font-size:12.5px;color:var(--ink)}
+  .dk-stage-t em{display:block;margin-top:2px;font-style:normal;font-size:11px;color:var(--grey);line-height:1.45}
+}
 </style>
 <script src="/glossary-context.js"></script></head>
 <body>
@@ -629,7 +704,7 @@ audio{width:100%;margin-top:16px;height:42px}
         <audio id="player" controls></audio>
       </div>
     </div>
-    <div class="cap-center">
+    <div class="dk-info" id="dkInfo"><div class="dk-info-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg><span data-t="dk_info">Thông tin cuộc họp</span></div><div class="dk-row"><span data-t="dk_when">Bắt đầu</span><b id="dkWhen">—</b></div><div class="dk-row"><span data-t="dk_len">Thời lượng</span><b id="dkLen">00:00</b></div><div class="dk-row"><span data-t="mb_speakers">người nói</span><b id="dkSpk">0</b></div><div class="dk-row"><span data-t="dk_mode">Chế độ</span><b id="dkMode">—</b></div><div class="dk-conn" id="dkConn"><i></i><span></span></div></div><div class="cap-center">
       <div class="ready-state" id="readyState">
         <div class="ready-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div>
         <div class="ready-h" data-t="ready_h">Ready to translate</div>
@@ -640,7 +715,7 @@ audio{width:100%;margin-top:16px;height:42px}
         </div>
         <p class="ready-help" data-t="ready_help">In Two-way mode, Vietnamese is translated to Korean and Korean to Vietnamese.</p>
       </div>
-      <div class="rec-hint" id="recHint" data-t="c_hint">Press record to start</div>
+      <div class="dk-head" id="dkHead"><b data-t="dk_live_tab">Cuộc trò chuyện trực tiếp</b><label class="dk-find"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><input id="dkFind" type="search" autocomplete="off"></label></div><div class="rec-hint" id="recHint" data-t="c_hint">Press record to start</div>
       <div class="live-feed" id="lvFeed" style="display:none"></div>
       <div class="live-interim" id="lvInterim" style="display:none"></div>
       <p class="note" id="diarNote" data-t="c_diar">👥 Voices are separated automatically (Speaker 1, 2, 3…).</p>
@@ -650,7 +725,7 @@ audio{width:100%;margin-top:16px;height:42px}
       <div class="ai-sec"><div class="ai-st" data-t="ai_summary">Summary</div><div class="ai-body" id="aiSummary"><div class="ai-empty" data-t="ai_wait">AI is listening…</div></div></div>
       <div class="ai-sec"><div class="ai-st" data-t="ai_actions">Action items</div><div class="ai-body" id="aiActions"><div class="ai-empty">—</div></div></div>
       <div class="ai-sec"><div class="ai-st" data-t="ai_decisions">Key decisions</div><div class="ai-body" id="aiDecisions"><div class="ai-empty">—</div></div></div>
-      <div class="ai-sec"><div class="ai-st" data-t="ai_risks">Risks &amp; follow-ups</div><div class="ai-body" id="aiRisks"><div class="ai-empty">—</div></div></div>
+      <div class="ai-sec"><div class="ai-st" data-t="ai_risks">Risks &amp; follow-ups</div><div class="ai-body" id="aiRisks"><div class="ai-empty">—</div></div></div><a class="dk-stage" id="dkStage" href="/conference-mode" target="_top"><span class="dk-stage-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span><span class="dk-stage-t"><b data-t="dk_stage">Chế độ Hội nghị</b><em data-t="dk_stage_sub">Mở phụ đề lớn trên màn hình thứ hai.</em></span></a>
     </aside>
    </div>
    <button class="ai-reopen" id="aiReopen" title="Show AI panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14 7-5 5 5 5"/></svg><span class="ai-reopen-t" data-t="ai_show">AI panel</span></button>
@@ -726,7 +801,7 @@ audio{width:100%;margin-top:16px;height:42px}
     </div>
   </div>
 </div>
-<div class="toast" id="toast"></div>
+<div class="sfx" id="savedFx" hidden><div class="sfx-card" role="dialog" aria-modal="true" aria-labelledby="sfxTitle"><span class="sfx-spark s1"></span><span class="sfx-spark s2"></span><span class="sfx-spark s3"></span><span class="sfx-spark s4"></span><span class="sfx-spark s5"></span><span class="sfx-spark s6"></span><div class="sfx-ring"><svg viewBox="0 0 52 52" aria-hidden="true"><circle class="sfx-c" cx="26" cy="26" r="23"/><path class="sfx-k" d="M15 26.5l7.5 7.5L37.5 19"/></svg></div><b id="sfxTitle" class="sfx-h"></b><p class="sfx-meta" id="sfxMeta"></p><p class="sfx-state" id="sfxState"></p><div class="sfx-acts"><a class="btn sfx-go" id="sfxOpen" href="/dashboard" target="_top"></a><button type="button" class="btn out" id="sfxClose"></button></div></div></div><div class="toast" id="toast"></div>
 <script>
 // Keys now live on the server (Vercel env vars). These placeholders keep the
 // existing "has a key?" guards happy so every feature stays enabled.
@@ -739,7 +814,7 @@ const I={
    c_diar:"👥 Voices are separated automatically (Speaker 1, 2, 3…).",
    p_upload:"Uploading audio…",p_diar:"Separating voices…",p_sum:"Writing the summary…",p_wait:"Your AI assistant is hard at work…",
    r_summary:"Summary",r_transcript:"Transcript",r_copy:"Copy",r_download:"Download",r_new:"+ New meeting",r_dl_live:"⬇ Download live translation",r_live:"Live translation",r_keep:"💾 Keep this meeting",r_keep_note:"Auto-deletes in 1 day unless you keep it.",hist_temp:"Temporary · auto-deletes in 1 day",hist_keep:"Keep",hist_saved:"Saved to history",autosum_done:"Auto-saved summary",cl_saving:"Saving to your meeting calendar…",cl_saved:"Saved to your meeting calendar",cl_fail:"Saved on this device — couldn't sync to your account",cl_open:"Open calendar",hist_cal:"Meeting calendar (all devices)",words:"words",
-   mb_owner:"Owner:",mb_due:"Due:",mb_live:"Live meeting",mb_paused:"Paused",mb_ready:"Ready to start",mb_speakers:"speakers",mb_lang:"Language",mb_rename:"Meeting name",mb_deflt:"Live meeting",mb_auto:"Auto detect",mb_listen:"Listening and translating live…",mb_notes:"AI Meeting Notes",mb_notes_sub:"Turns every meeting into clear actions",ai_title:"AI Meeting Intelligence",ai_summary:"Summary",ai_actions:"Action items",ai_decisions:"Decisions",ai_risks:"Risks & follow-ups",ai_wait:"AI is listening… The summary appears once there's enough content.",ai_prev_actions:"Action items are detected automatically after the meeting.",ai_prev_decisions:"Key decisions will be captured here.",ai_prev_risks:"AI flags risks, open points and follow-ups.",ai_pro_task:"Pro: export tasks & history",ai_listen:"AI Listening",ai_pro:"Pro — upgrade to unlock",ai_show:"AI panel",ai_lang_auto:"🌐 Auto",u_trial:"🎁 Free trial · {n} min left",u_unlim:"⏱ Unlimited",u_today:"Today",u_month:"Month",u_min:"m",
+   dk_info:"Meeting details",dk_when:"Started",dk_len:"Length",dk_mode:"Mode",dk_live_tab:"Live conversation",dk_find_ph:"Search in this conversation…",dk_stage:"Conference mode (stage windows)",dk_stage_sub:"Open large captions on a second screen for events and talks.",dk_conn_ok:"Connection steady",dk_conn_wait:"Reconnecting…",dk_conn_off:"Not listening",dk_refresh:"Refresh AI notes",sfx_title:"Saved to your meeting calendar",sfx_title_local:"Saved on this device",sfx_sync:"Syncing to your account…",sfx_synced:"Synced — open it any time in your calendar.",sfx_fail:"Couldn't sync; the meeting stays on this device.",sfx_anon:"Sign in to sync it to your calendar and read it on any device.",min_short:"min",sfx_close:"Close",sfx_signin:"Sign in",mb_owner:"Owner:",mb_due:"Due:",mb_live:"Live meeting",mb_paused:"Paused",mb_ready:"Ready to start",mb_speakers:"speakers",mb_lang:"Language",mb_rename:"Meeting name",mb_deflt:"Live meeting",mb_auto:"Auto detect",mb_listen:"Listening and translating live…",mb_notes:"AI Meeting Notes",mb_notes_sub:"Turns every meeting into clear actions",ai_title:"AI Meeting Intelligence",ai_summary:"Summary",ai_actions:"Action items",ai_decisions:"Decisions",ai_risks:"Risks & follow-ups",ai_wait:"AI is listening… The summary appears once there's enough content.",ai_prev_actions:"Action items are detected automatically after the meeting.",ai_prev_decisions:"Key decisions will be captured here.",ai_prev_risks:"AI flags risks, open points and follow-ups.",ai_pro_task:"Pro: export tasks & history",ai_listen:"AI Listening",ai_pro:"Pro — upgrade to unlock",ai_show:"AI panel",ai_lang_auto:"🌐 Auto",u_trial:"🎁 Free trial · {n} min left",u_unlim:"⏱ Unlimited",u_today:"Today",u_month:"Month",u_min:"m",
    ready_h:"Ready to translate your meeting",ready_sub:"Press start and Flash Meet will listen, detect the language and show the live translation.",ready_1:"✓ Transcribe",ready_2:"✓ Live translate",ready_3:"✓ Summarize",ready_4:"✓ Extract action items",ready_help:"In Two-way mode, Flash Meet detects each speaker's language and translates to the other in your chosen pair.",
    h_title:"History",open:"Open",empty:"No meetings yet",
    sp_title:"Rename speakers (optional)",sp_apply:"Apply",sp_ph:"Real name",sp_done:"Names applied",
@@ -755,7 +830,7 @@ const I={
    c_diar:"👥 Tự động tách giọng từng người (Speaker 1, 2, 3…).",
    p_upload:"Đang tải audio lên…",p_diar:"Đang tách giọng nói…",p_sum:"Đang viết tóm tắt…",p_wait:"Trợ lý AI đang chăm chỉ làm việc…",
    r_summary:"Tóm tắt",r_transcript:"Bản ghi",r_copy:"Copy",r_download:"Tải",r_new:"+ Cuộc họp mới",r_dl_live:"⬇ Tải bản dịch trực tiếp",r_live:"Bản dịch trực tiếp",r_keep:"💾 Lưu cuộc họp này",r_keep_note:"Không lưu sẽ tự xóa sau 1 ngày.",hist_temp:"Tạm · tự xóa sau 1 ngày",hist_keep:"Lưu",hist_saved:"Đã lưu vào lịch sử",autosum_done:"Đã tự lưu tóm tắt",cl_saving:"Đang lưu vào Lịch họp…",cl_saved:"Đã tự lưu vào Lịch họp",cl_fail:"Đã lưu trên thiết bị — chưa đồng bộ được lên tài khoản",cl_open:"Xem lịch",hist_cal:"Lịch họp (mọi thiết bị)",words:"từ",
-   mb_owner:"Phụ trách:",mb_due:"Hạn:",mb_live:"Đang họp trực tiếp",mb_paused:"Đang tạm dừng",mb_ready:"Sẵn sàng bắt đầu",mb_speakers:"người nói",mb_lang:"Ngôn ngữ",mb_rename:"Tên cuộc họp",mb_deflt:"Cuộc họp trực tiếp",mb_auto:"Tự động phát hiện",mb_listen:"Đang lắng nghe và dịch trực tiếp…",mb_notes:"AI Meeting Notes",mb_notes_sub:"Biến mọi cuộc họp thành hành động rõ ràng",ai_title:"AI Tổng hợp cuộc họp",ai_summary:"Tóm tắt",ai_actions:"Việc cần làm",ai_decisions:"Quyết định",ai_risks:"Rủi ro & theo dõi",ai_wait:"AI đang lắng nghe… Tóm tắt sẽ xuất hiện sau khi có đủ nội dung.",ai_prev_actions:"Các việc cần làm sẽ được tự động nhận diện sau cuộc họp.",ai_prev_decisions:"Các quyết định quan trọng sẽ được ghi lại tại đây.",ai_prev_risks:"AI sẽ phát hiện rủi ro, điểm chưa rõ và nội dung cần follow-up.",ai_pro_task:"Pro: xuất task & lưu lịch sử",ai_listen:"AI đang nghe",ai_pro:"Pro — nâng cấp để mở",ai_show:"Bảng AI",ai_lang_auto:"🌐 Tự động",u_trial:"🎁 Dùng thử còn {n} phút",u_unlim:"⏱ Không giới hạn",u_today:"Hôm nay",u_month:"Tháng",u_min:"p",
+   dk_info:"Thông tin cuộc họp",dk_when:"Bắt đầu",dk_len:"Thời lượng",dk_mode:"Chế độ",dk_live_tab:"Cuộc trò chuyện trực tiếp",dk_find_ph:"Tìm trong cuộc trò chuyện…",dk_stage:"Chế độ Hội nghị (Stage Mode)",dk_stage_sub:"Mở phụ đề lớn trên màn hình thứ hai cho sự kiện và hội nghị.",dk_conn_ok:"Kết nối ổn định",dk_conn_wait:"Đang kết nối lại…",dk_conn_off:"Chưa nghe",dk_refresh:"Cập nhật ghi chú AI",sfx_title:"Đã lưu vào Lịch họp",sfx_title_local:"Đã lưu trên thiết bị này",sfx_sync:"Đang đồng bộ lên tài khoản…",sfx_synced:"Đã đồng bộ — mở lại bất cứ lúc nào trong Lịch họp.",sfx_fail:"Chưa đồng bộ được, nội dung vẫn nằm trên máy này.",sfx_anon:"Đăng nhập để đồng bộ lên Lịch họp và xem trên mọi thiết bị.",min_short:"phút",sfx_close:"Đóng",sfx_signin:"Đăng nhập",mb_owner:"Phụ trách:",mb_due:"Hạn:",mb_live:"Đang họp trực tiếp",mb_paused:"Đang tạm dừng",mb_ready:"Sẵn sàng bắt đầu",mb_speakers:"người nói",mb_lang:"Ngôn ngữ",mb_rename:"Tên cuộc họp",mb_deflt:"Cuộc họp trực tiếp",mb_auto:"Tự động phát hiện",mb_listen:"Đang lắng nghe và dịch trực tiếp…",mb_notes:"AI Meeting Notes",mb_notes_sub:"Biến mọi cuộc họp thành hành động rõ ràng",ai_title:"AI Tổng hợp cuộc họp",ai_summary:"Tóm tắt",ai_actions:"Việc cần làm",ai_decisions:"Quyết định",ai_risks:"Rủi ro & theo dõi",ai_wait:"AI đang lắng nghe… Tóm tắt sẽ xuất hiện sau khi có đủ nội dung.",ai_prev_actions:"Các việc cần làm sẽ được tự động nhận diện sau cuộc họp.",ai_prev_decisions:"Các quyết định quan trọng sẽ được ghi lại tại đây.",ai_prev_risks:"AI sẽ phát hiện rủi ro, điểm chưa rõ và nội dung cần follow-up.",ai_pro_task:"Pro: xuất task & lưu lịch sử",ai_listen:"AI đang nghe",ai_pro:"Pro — nâng cấp để mở",ai_show:"Bảng AI",ai_lang_auto:"🌐 Tự động",u_trial:"🎁 Dùng thử còn {n} phút",u_unlim:"⏱ Không giới hạn",u_today:"Hôm nay",u_month:"Tháng",u_min:"p",
    ready_h:"Sẵn sàng dịch cuộc họp của bạn",ready_sub:"Bấm bắt đầu để Flash Meet nghe, nhận diện ngôn ngữ và hiển thị bản dịch trực tiếp.",ready_1:"✓ Ghi âm",ready_2:"✓ Dịch trực tiếp",ready_3:"✓ Tóm tắt",ready_4:"✓ Trích việc cần làm",ready_help:"Trong chế độ Song ngữ, Flash Meet tự nhận diện ngôn ngữ người nói và dịch sang ngôn ngữ còn lại trong cặp bạn chọn.",
    h_title:"Lịch sử",open:"Mở",empty:"Chưa có cuộc họp",
    sp_title:"Đổi tên người nói (tùy chọn)",sp_apply:"Áp dụng",sp_ph:"Tên thật",sp_done:"Đã áp dụng tên",
@@ -771,7 +846,7 @@ const I={
    c_diar:"👥 화자를 자동으로 분리합니다 (Speaker 1, 2, 3…).",
    p_upload:"오디오 업로드 중…",p_diar:"화자 분리 중…",p_sum:"요약 작성 중…",p_wait:"AI 비서가 열심히 작업 중…",
    r_summary:"요약",r_transcript:"전체 기록",r_copy:"복사",r_download:"다운로드",r_new:"+ 새 회의",r_dl_live:"⬇ 실시간 번역 다운로드",r_live:"실시간 번역",r_keep:"💾 이 회의 저장",r_keep_note:"저장하지 않으면 1일 후 자동 삭제됩니다.",hist_temp:"임시 · 1일 후 자동 삭제",hist_keep:"저장",hist_saved:"기록에 저장됨",autosum_done:"요약 자동 저장됨",cl_saving:"회의 캘린더에 저장 중…",cl_saved:"회의 캘린더에 자동 저장됨",cl_fail:"이 기기에 저장됨 — 계정 동기화 실패",cl_open:"캘린더 보기",hist_cal:"회의 캘린더 (모든 기기)",words:"단어",
-   mb_owner:"담당:",mb_due:"기한:",mb_live:"실시간 회의 중",mb_paused:"일시 중지됨",mb_ready:"시작 준비됨",mb_speakers:"명 발화",mb_lang:"언어",mb_rename:"회의 이름",mb_deflt:"실시간 회의",mb_auto:"자동 감지",mb_listen:"실시간으로 듣고 번역하는 중…",mb_notes:"AI 회의 노트",mb_notes_sub:"모든 회의를 명확한 실행으로",ai_title:"AI 회의 인텔리전스",ai_summary:"요약",ai_actions:"액션 아이템",ai_decisions:"결정",ai_risks:"리스크 & 후속",ai_wait:"AI가 듣고 있어요… 충분한 내용이 모이면 요약이 표시됩니다.",ai_prev_actions:"회의 후 액션 아이템이 자동으로 인식됩니다.",ai_prev_decisions:"주요 결정이 여기에 기록됩니다.",ai_prev_risks:"AI가 리스크·미해결 항목·후속 사항을 감지합니다.",ai_pro_task:"Pro: 작업 내보내기 & 기록",ai_listen:"AI 청취 중",ai_pro:"Pro — 업그레이드",ai_show:"AI 패널",ai_lang_auto:"🌐 자동",u_trial:"🎁 무료 체험 · {n}분 남음",u_unlim:"⏱ 무제한",u_today:"오늘",u_month:"월",u_min:"분",
+   dk_info:"회의 정보",dk_when:"시작",dk_len:"길이",dk_mode:"모드",dk_live_tab:"실시간 대화",dk_find_ph:"이 대화에서 검색…",dk_stage:"컨퍼런스 모드 (무대 화면)",dk_stage_sub:"행사와 발표를 위해 두 번째 화면에 큰 자막을 띄웁니다.",dk_conn_ok:"연결 안정적",dk_conn_wait:"다시 연결 중…",dk_conn_off:"대기 중",dk_refresh:"AI 노트 새로고침",sfx_title:"회의 캘린더에 저장됨",sfx_title_local:"이 기기에 저장됨",sfx_sync:"계정에 동기화하는 중…",sfx_synced:"동기화 완료 — 캘린더에서 언제든 열어 보세요.",sfx_fail:"동기화하지 못했습니다. 이 기기에 저장되어 있습니다.",sfx_anon:"로그인하면 캘린더에 동기화되어 모든 기기에서 볼 수 있습니다.",min_short:"분",sfx_close:"닫기",sfx_signin:"로그인",mb_owner:"담당:",mb_due:"기한:",mb_live:"실시간 회의 중",mb_paused:"일시 중지됨",mb_ready:"시작 준비됨",mb_speakers:"명 발화",mb_lang:"언어",mb_rename:"회의 이름",mb_deflt:"실시간 회의",mb_auto:"자동 감지",mb_listen:"실시간으로 듣고 번역하는 중…",mb_notes:"AI 회의 노트",mb_notes_sub:"모든 회의를 명확한 실행으로",ai_title:"AI 회의 인텔리전스",ai_summary:"요약",ai_actions:"액션 아이템",ai_decisions:"결정",ai_risks:"리스크 & 후속",ai_wait:"AI가 듣고 있어요… 충분한 내용이 모이면 요약이 표시됩니다.",ai_prev_actions:"회의 후 액션 아이템이 자동으로 인식됩니다.",ai_prev_decisions:"주요 결정이 여기에 기록됩니다.",ai_prev_risks:"AI가 리스크·미해결 항목·후속 사항을 감지합니다.",ai_pro_task:"Pro: 작업 내보내기 & 기록",ai_listen:"AI 청취 중",ai_pro:"Pro — 업그레이드",ai_show:"AI 패널",ai_lang_auto:"🌐 자동",u_trial:"🎁 무료 체험 · {n}분 남음",u_unlim:"⏱ 무제한",u_today:"오늘",u_month:"월",u_min:"분",
    ready_h:"회의를 번역할 준비가 되었습니다",ready_sub:"시작을 누르면 Flash Meet이 듣고, 언어를 감지해 실시간 번역을 표시합니다.",ready_1:"✓ 전사",ready_2:"✓ 실시간 번역",ready_3:"✓ 요약",ready_4:"✓ 액션 아이템 추출",ready_help:"양방향 모드에서는 각 화자의 언어를 감지해 선택한 쌍의 상대 언어로 번역합니다.",
    h_title:"기록",open:"열기",empty:"회의가 없습니다",
    sp_title:"화자 이름 변경 (선택)",sp_apply:"적용",sp_ph:"실명",sp_done:"이름이 적용됨",
@@ -971,7 +1046,7 @@ function save(update,opts){opts=opts||{};let list=JSON.parse(localStorage.getIte
   if(update&&curId&&list.some(m=>m.id===curId)){
     list=list.map(m=>{if(m.id!==curId)return m;const saved=opts.saved||m.saved||false;return {...m,...base,saved,auto:saved?false:(m.auto!==false)};});
   }else{curId=Date.now();const saved=!!opts.saved;list.unshift({id:curId,date:new Date().toLocaleString(),...base,saved,auto:saved?false:(opts.auto!==false)});}
-  localStorage.setItem('mr_m',JSON.stringify(list.slice(0,40)));renderHist();if(!opts.local)cloudQueue(curId);
+  localStorage.setItem('mr_m',JSON.stringify(list.slice(0,40)));renderHist();if(!opts.local)cloudQueue(curId);if(opts.saved&&window.__savedFx)window.__savedFx(curId);
   if(typeof updateKeepBtn==='function')updateKeepBtn();}
 // ── Cloud history (signed-in users): mirror each saved meeting to /api/meetings so it
 // shows up in the dashboard calendar on every device. Debounced; the periodic
@@ -989,7 +1064,7 @@ async function cloudFlush(){const ids=[...cloudPending];cloudPending.clear();
     localStorage.setItem('mr_m',JSON.stringify(JSON.parse(localStorage.getItem('mr_m')||'[]').map(m=>ids.includes(m.id)?{...m,cloud:1}:m)));
     if(ids.includes(curId)&&!cloudPending.has(curId))setCloud('saved');
   }catch(e){if(ids.includes(curId))setCloud('fail');}}
-function setCloud(s){const el=$('cloudNote');if(!el)return;if(!SIGNED||!s){el.style.display='none';return;}
+function setCloud(s){if(window.__sfxState)setTimeout(window.__sfxState,0);const el=$('cloudNote');if(!el)return;if(!SIGNED||!s){el.style.display='none';return;}
   el.className='cloud-note '+s;el.style.display='';
   el.innerHTML=s==='saving'?'<span class="cl-spin"></span>'+esc(t('cl_saving'))
     :s==='saved'?'✓ '+esc(t('cl_saved'))+' · <a href="/dashboard" target="_top">'+esc(t('cl_open'))+' →</a>'
@@ -1345,6 +1420,7 @@ fetchUsage();renderUsage();
     document.body.classList.toggle('mb-paused',st==='paused');
     if(st!=='recording'&&st!=='paused')document.body.classList.remove('mb-langopen');
     var lb=document.querySelector('#mbPause .mb-lb');if(lb)lb.textContent=t(st==='paused'?'c_resume':'c_pause')};
+  window.__mbSpeakers=speakers;
   window.__mbLang=function(){setTitle();syncMeta();if(typeof capState!=='undefined')window.__mbState(capState)};
   function tabs(panel){
     if(!panel||panel.dataset.mbTabs)return;
@@ -1379,11 +1455,11 @@ fetchUsage();renderUsage();
     if(fd&&window.MutationObserver)new MutationObserver(function(){syncPeople();syncMeta()}).observe(fd,{childList:true,subtree:true,characterData:true});
     document.querySelectorAll('.ai-panel').forEach(tabs);
     var viz=el('viz'),center=document.querySelector('#sc-cap .cap-center');
-    if(viz&&center&&mob()){
-      center.insertBefore(viz,center.firstChild);
+    if(viz)while(viz.children.length<26)viz.appendChild(document.createElement('span'));
+    if(viz&&center&&mob())center.insertBefore(viz,center.firstChild);
+    if(viz&&!el('mbCap')){
       var cap=document.createElement('p');cap.className='mb-cap';cap.id='mbCap';cap.dataset.t='mb_listen';cap.textContent=t('mb_listen');
-      center.insertBefore(cap,viz.nextSibling);
-      while(viz.children.length<26)viz.appendChild(document.createElement('span'));
+      viz.parentElement.insertBefore(cap,viz.nextSibling);
     }
     setTitle();syncPeople();syncMeta();
     window.__mbState(typeof capState!=='undefined'?capState:'idle')}
@@ -1407,6 +1483,91 @@ fetchUsage();renderUsage();
   ['aiActions','actionItems'].forEach(function(id){var el=document.getElementById(id);
     if(el&&window.MutationObserver)new MutationObserver(paint).observe(el,{childList:true,subtree:true})});
   paint();
+})();
+
+// ── End of a meeting: confirm, visibly, that the notes are in the meeting calendar ──
+(function(){
+  var shown={};
+  function el(id){return document.getElementById(id)}
+  function meetingById(id){try{return (JSON.parse(localStorage.getItem('mr_m')||'[]')||[]).filter(function(m){return m.id===id})[0]||null}catch(e){return null}}
+  function state(){
+    var signed=(typeof SIGNED!=='undefined'&&SIGNED), note=el('cloudNote'), cls=note?note.className:'';
+    var h=el('sfxTitle'), st=el('sfxState'), go=el('sfxOpen'), cl=el('sfxClose');
+    if(!h)return;
+    h.textContent=t(signed?'sfx_title':'sfx_title_local');
+    if(!signed){st.textContent=t('sfx_anon');go.textContent=t('sfx_signin');go.setAttribute('href','/login')}
+    else{go.textContent=t('cl_open');go.setAttribute('href','/dashboard');
+      st.textContent=cls.indexOf('fail')>=0?t('sfx_fail'):cls.indexOf('saved')>=0?t('sfx_synced'):t('sfx_sync')}
+    cl.textContent=t('sfx_close')}
+  window.__sfxState=state;
+  window.__savedFx=function(id){
+    if(!id||shown[id])return;shown[id]=1;
+    var m=meetingById(id)||{}, when=new Date(m.start||id), mins=m.dur?Math.round(m.dur/60):0;
+    var loc=(typeof L!=='undefined'&&L==='vi')?'vi-VN':(typeof L!=='undefined'&&L==='ko')?'ko-KR':'en-US';
+    var meta=[m.title||'',when.toLocaleString(loc,{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}),mins?mins+' '+t('min_short'):''].filter(Boolean).join(' · ');
+    var mt=el('sfxMeta');if(mt)mt.textContent=meta;
+    state();
+    var box=el('savedFx');if(!box)return;box.hidden=false;
+    var c=el('sfxClose');if(c)c.focus()};
+  function close(){var b=el('savedFx');if(b)b.hidden=true}
+  document.addEventListener('click',function(e){
+    if(e.target&&e.target.id==='sfxClose')close();
+    else if(e.target&&e.target.id==='savedFx')close()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});
+})();
+
+// ── Desktop rail: meeting details, connection state, and search inside the conversation ──
+(function(){
+  function el(id){return document.getElementById(id)}
+  function loc(){return (typeof L!=='undefined'&&L==='vi')?'vi-VN':(typeof L!=='undefined'&&L==='ko')?'ko-KR':'en-US'}
+  function mode(){var on=document.querySelector('#lvWaySeg button.on');return on?on.textContent.trim():'—'}
+  function sync(){
+    var w=el('dkWhen');
+    if(w)w.textContent=(typeof curStart!=='undefined'&&curStart)?new Date(curStart).toLocaleString(loc(),{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+    var l=el('dkLen'),tm=el('timer');if(l&&tm)l.textContent=tm.textContent||'00:00';
+    var sp=el('dkSpk');if(sp&&window.__mbSpeakers)sp.textContent=String(window.__mbSpeakers());
+    var m=el('dkMode');if(m)m.textContent=mode();
+    var c=el('dkConn');
+    if(c){
+      var rec=document.body.classList.contains('rec-live');
+      var open=!!(rec&&typeof sx!=='undefined'&&sx&&sx.ws&&sx.ws.readyState===1);
+      c.className='dk-conn '+(open?'ok':rec?'wait':'');
+      var sp2=c.querySelector('span');if(sp2)sp2.textContent=t(open?'dk_conn_ok':rec?'dk_conn_wait':'dk_conn_off')}}
+  function ph(){var f=el('dkFind');if(f)f.placeholder=t('dk_find_ph')}
+  var f=el('dkFind');
+  if(f)f.addEventListener('input',function(){
+    var q=(f.value||'').trim().toLowerCase();
+    document.querySelectorAll('#lvFeed .lv-msg').forEach(function(r){
+      r.style.display=(!q||(r.textContent||'').toLowerCase().indexOf(q)>=0)?'':'none'})});
+  // The status line, meeting name and details belong in the left rail on a desktop
+  // and in the page flow on a phone — move them instead of duplicating markup.
+  function place(){
+    var grid=document.querySelector('#sc-cap .cap-grid'),top=document.querySelector('#sc-cap .cap-top'),
+        meta=document.querySelector('#sc-cap .cap-meta'),center=document.querySelector('#sc-cap .cap-center'),
+        bar=document.querySelector('#sc-cap .mb-bar'),st=document.querySelector('#sc-cap .mb-status'),
+        ti=el('mbTitle'),mt=el('mbMeta'),info=el('dkInfo'),viz=el('viz'),cap=el('mbCap');
+    if(!grid||!top||!center||!st||!ti||!mt)return;
+    if(matchMedia('(min-width:981px)').matches){
+      if(st.parentElement!==top)top.insertBefore(st,top.firstChild);
+      if(ti.parentElement!==top)top.insertBefore(ti,st.nextSibling);
+      if(mt.parentElement!==top)top.insertBefore(mt,ti.nextSibling);
+      if(info&&info.parentElement!==top)top.appendChild(info);
+      if(viz&&meta&&viz.parentElement!==meta)meta.insertBefore(viz,meta.firstChild);
+    }else{
+      if(st.parentElement!==grid)grid.insertBefore(st,bar?bar.nextSibling:grid.firstChild);
+      if(ti.parentElement!==grid)grid.insertBefore(ti,st.nextSibling);
+      if(mt.parentElement!==grid)grid.insertBefore(mt,ti.nextSibling);
+      if(matchMedia('(max-width:620px)').matches&&viz&&viz.parentElement!==center)center.insertBefore(viz,center.firstChild);
+    }
+    if(cap&&viz&&viz.parentElement&&cap.previousElementSibling!==viz)viz.parentElement.insertBefore(cap,viz.nextSibling);
+  }
+  var rt=null;
+  addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(place,150)});
+  place();
+  var prev=window.__mbLang;
+  window.__dkLang=function(){ph();sync();place()};
+  window.__mbLang=function(){if(prev)prev();window.__dkLang()};
+  setInterval(sync,1000);ph();sync();
 })();
 </script>
 </body>
