@@ -480,7 +480,7 @@ audio{width:100%;margin-top:16px;height:42px}
   body:not(.rec-live) .mb-cap{visibility:hidden}
   .lv-msg{gap:10px;padding:6px 0}
   .lv-av{width:34px;height:34px;border-radius:12px;font-size:12.5px}
-  .lv-av::before{content:"S"}
+  .lv-av[data-s]::before{content:"S"}
   .lv-name{margin:4px 0 5px;font-size:12px}
   .lv-bubble{border-radius:14px;padding:11px 12px;border-color:#e6ecf7;box-shadow:0 8px 20px -16px rgba(12,30,70,.5)}
   .lv-orig{font-size:14px;color:var(--ink);line-height:1.5}
@@ -507,7 +507,8 @@ audio{width:100%;margin-top:16px;height:42px}
   .ai-item{align-items:flex-start;gap:10px;padding:10px 11px;background:var(--card);border:1px solid var(--hair);border-radius:12px;margin-bottom:7px}
   .ai-body .ai-item:last-child{margin-bottom:0}
   .ai-body{padding:0;background:none;border:0}
-  .mb-notes{display:flex;align-items:flex-start;gap:10px;margin:2px 0 12px}
+  .mb-notes{display:flex;align-items:flex-start;gap:10px;margin:2px 0 12px;text-align:left}
+  .mb-notes>div{flex:1;min-width:0;text-align:left}
   .mb-nic{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);font-size:15px}
   .mb-notes b{display:block;font-size:19px;font-weight:900;letter-spacing:-.03em}
   .mb-notes span{display:block;margin-top:2px;font-size:11.5px;font-weight:600;color:var(--grey);line-height:1.45}
@@ -1326,7 +1327,7 @@ fetchUsage();renderUsage();
   function mob(){return matchMedia('(max-width:620px)').matches}
   function selText(sel){if(!sel||!sel.options)return '';var o=sel.options[sel.selectedIndex];if(!o)return '';
     var x=(o.textContent||'').trim(),c;while(x.length&&(c=x.codePointAt(0))>=0x1F000&&c<=0x1FAFF)x=x.slice(2).trim();return x}
-  function speakers(){var seen={},n=0;document.querySelectorAll('#lvFeed .lv-av').forEach(function(a){var v=(a.textContent||'').trim();if(v&&!seen[v]){seen[v]=1;n++}});return n}
+  function speakers(){var seen={},n=0;document.querySelectorAll('#lvFeed .lv-av').forEach(function(a){var v=(a.textContent||'').trim();if(v&&/^[0-9]+$/.test(v)&&!seen[v]){seen[v]=1;n++}});return n}
   function syncPeople(){var n=speakers();['mbPeopleN','mbPeopleN2'].forEach(function(id){var e=el(id);if(e)e.textContent=String(n)});document.querySelectorAll('.mb-people-n').forEach(function(e){e.textContent=String(n)});
     var w=el('mbPeopleWrap');if(w)w.style.opacity=n?'1':'.5'}
   function pair(){var on=document.querySelector('#lvWaySeg button.on'),w=on?on.dataset.w:'one';
