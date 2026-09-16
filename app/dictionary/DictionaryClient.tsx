@@ -35,7 +35,7 @@ const KIND_ICON: Record<Kind, string> = { person: "👤", company: "🏢", produ
 const LANG_NAME: Record<string, string> = { vi: "Tiếng Việt", en: "English", ko: "한국어" };
 
 type Dict = {
-  navHistory: string; navConference: string; navAccount: string; navNew: string;
+  navHistory: string; navConference: string; navAccount: string; navProfile: string; navNew: string;
   sideTitle: string; sideSub: string; entries: (n: number) => string; inUse: (n: number) => string;
   title: string; sub: string; guide: string; guideHide: string;
   g1t: string; g1d: string; g2t: string; g2d: string; g3t: string; g3d: string;
@@ -62,7 +62,7 @@ type Dict = {
 };
 
 const VI: Dict = {
-  navHistory: "Lịch sử cuộc họp", navConference: "Conference mode", navAccount: "Tài khoản", navNew: "+ Cuộc họp mới",
+  navHistory: "Lịch sử cuộc họp", navConference: "Conference mode", navAccount: "Tài khoản", navProfile: "Trang cá nhân", navNew: "+ Cuộc họp mới",
   sideTitle: "Từ điển chuyên ngành", sideSub: "Quản lý thuật ngữ, tên riêng và cách viết ưu tiên cho cuộc họp.",
   entries: (n) => `${n} mục trong từ điển`, inUse: (n) => `${n} mục đang dùng`,
   title: "Từ điển chuyên ngành & tên riêng",
@@ -112,7 +112,7 @@ const VI: Dict = {
 };
 
 const EN: Dict = {
-  navHistory: "Meeting history", navConference: "Conference mode", navAccount: "Account", navNew: "+ New meeting",
+  navHistory: "Meeting history", navConference: "Conference mode", navAccount: "Account", navProfile: "Profile", navNew: "+ New meeting",
   sideTitle: "Dictionary", sideSub: "Manage terms, proper nouns and the spelling you prefer.",
   entries: (n) => `${n} entries`, inUse: (n) => `${n} in use`,
   title: "Dictionary: terms & proper nouns",
@@ -162,7 +162,7 @@ const EN: Dict = {
 };
 
 const KO: Dict = {
-  navHistory: "회의 기록", navConference: "컨퍼런스 모드", navAccount: "계정", navNew: "+ 새 회의",
+  navHistory: "회의 기록", navConference: "컨퍼런스 모드", navAccount: "계정", navProfile: "프로필", navNew: "+ 새 회의",
   sideTitle: "전문 용어 사전", sideSub: "용어, 고유명사, 선호 표기를 관리합니다.",
   entries: (n) => `${n}개 항목`, inUse: (n) => `${n}개 사용 중`,
   title: "전문 용어 & 고유명사 사전",
@@ -534,6 +534,7 @@ export default function DictionaryClient() {
       <header className="gl-bar">
         <Link href="/" className="gl-brand"><img src="/logo.svg" alt="" width={26} height={26} />Flash Meet</Link>
         <div className="gl-sp" />
+        <Link href="/profile" className="gl-link">{t.navProfile}</Link>
         <Link href="/dashboard" className="gl-link">{t.navHistory}</Link>
         <Link href="/conference-mode" className="gl-link">{t.navConference}</Link>
         <Link href="/account" className="gl-link gl-hide-sm">{t.navAccount}</Link>
@@ -559,6 +560,7 @@ export default function DictionaryClient() {
           </div>
 
           <nav className="gl-nav">
+            <Link href="/profile" className="gl-nav-i"><span>🙂</span>{t.navProfile}</Link>
             <Link href="/dashboard" className="gl-nav-i"><span>🗓</span>{t.navHistory}</Link>
             <Link href="/conference-mode" className="gl-nav-i"><span>▣</span>{t.navConference}</Link>
             <span className="gl-nav-i on"><span>📚</span>{t.sideTitle}</span>

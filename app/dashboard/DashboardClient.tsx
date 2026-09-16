@@ -23,7 +23,7 @@ const HOUR_PX = 48;
 const COLORS = ["#1f6bff", "#0b8043", "#8e24aa", "#f4511e", "#039be5", "#d81b60", "#33b679", "#e4a400"];
 
 const T: Record<Lang, {
-  title: string; sub: string; newM: string; account: string; dict: string; today: string;
+  title: string; sub: string; newM: string; account: string; dict: string; profile: string; today: string;
   month: string; week: string; list: string; stats: (n: number, d: string) => string; more: (n: number) => string;
   empty: string; emptyDay: string; loading: string; err: string; retry: string; missing: string;
   local: (n: number) => string; sync: string; syncing: string;
@@ -33,7 +33,7 @@ const T: Record<Lang, {
 }> = {
   en: {
     title: "Meeting calendar", sub: "Every meeting you end is summarized and saved here automatically.",
-    newM: "+ New meeting", account: "Account", dict: "Dictionary", today: "Today", month: "Month", week: "Week", list: "List",
+    newM: "+ New meeting", account: "Account", dict: "Dictionary", profile: "Profile", today: "Today", month: "Month", week: "Week", list: "List",
     stats: (n, d) => `${n} meeting${n === 1 ? "" : "s"} · ${d}`, more: (n) => `+${n} more`,
     empty: "No meetings in this period.", emptyDay: "No meetings on this day.", loading: "Loading…",
     err: "Couldn't load your meetings.", retry: "Retry",
@@ -46,7 +46,7 @@ const T: Record<Lang, {
   },
   vi: {
     title: "Lịch họp", sub: "Mỗi cuộc họp khi bấm Kết thúc sẽ được tự tóm tắt và lưu vào đây.",
-    newM: "+ Cuộc họp mới", account: "Tài khoản", dict: "Từ điển", today: "Hôm nay", month: "Tháng", week: "Tuần", list: "Danh sách",
+    newM: "+ Cuộc họp mới", account: "Tài khoản", dict: "Từ điển", profile: "Trang cá nhân", today: "Hôm nay", month: "Tháng", week: "Tuần", list: "Danh sách",
     stats: (n, d) => `${n} cuộc họp · ${d}`, more: (n) => `+${n} nữa`,
     empty: "Chưa có cuộc họp nào trong khoảng này.", emptyDay: "Không có cuộc họp nào trong ngày.", loading: "Đang tải…",
     err: "Không tải được danh sách cuộc họp.", retry: "Thử lại",
@@ -59,7 +59,7 @@ const T: Record<Lang, {
   },
   ko: {
     title: "회의 캘린더", sub: "종료한 모든 회의가 자동으로 요약되어 여기에 저장됩니다.",
-    newM: "+ 새 회의", account: "계정", dict: "사전", today: "오늘", month: "월", week: "주", list: "목록",
+    newM: "+ 새 회의", account: "계정", dict: "사전", profile: "프로필", today: "오늘", month: "월", week: "주", list: "목록",
     stats: (n, d) => `회의 ${n}개 · ${d}`, more: (n) => `+${n}개 더`,
     empty: "이 기간에 회의가 없습니다.", emptyDay: "이 날에는 회의가 없습니다.", loading: "불러오는 중…",
     err: "회의를 불러오지 못했습니다.", retry: "다시 시도",
@@ -413,6 +413,7 @@ export default function DashboardClient({ email }: { email: string }) {
           <span className="db-brand-t">Flash Meet</span>
         </Link>
         <span className="db-sp" />
+        <Link href="/profile" className="db-link">🙂 {t.profile}</Link>
         <Link href="/dictionary" className="db-link">📚 {t.dict}</Link>
         <LangSwitch lang={lang} onChange={setLang} />
         <Link href="/account" className="db-link acct" title={email}>👤 {t.account}</Link>
