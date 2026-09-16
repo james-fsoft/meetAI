@@ -135,12 +135,25 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
     setSigningOut(false);
   }
 
+  // The meeting page tells us when a meeting is running; the top bar steps aside so
+  // the live screen can use the whole window (the design's full-bleed layout).
+  const [rec, setRec] = useState(false);
+  useEffect(() => {
+    const onMsg = (e: MessageEvent) => {
+      if (e.origin !== window.location.origin) return;
+      const d = e.data as { fm?: string; on?: boolean } | null;
+      if (d && d.fm === "rec") setRec(!!d.on);
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, []);
+
   const iframeSrc = signedIn
     ? `/meeting.html?v=70&signed=1&plan=${encodeURIComponent(plan)}`
     : "/meeting.html?v=70";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    <div className={rec ? "fm-app fm-rec" : "fm-app"} style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <style dangerouslySetInnerHTML={{ __html: BAR_CSS }} />
       <div className="fm-bar">
         <a href="/" className="fm-brand">
@@ -227,6 +240,7 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
 
 // Responsive top bar — classes so media queries actually apply (inline styles can't).
 const BAR_CSS = `
+.fm-rec .fm-bar{display:none}
 .fm-bar{display:flex;align-items:center;gap:10px;padding:8px 16px;background:#fff;border-bottom:1px solid #e3e8f2;font-family:'Inter',system-ui,sans-serif;font-size:13px;color:#5b6b8c}
 .fm-brand{display:inline-flex;align-items:center;gap:8px;font-weight:900;font-size:15.5px;color:#0a1124;letter-spacing:-.03em;text-decoration:none;white-space:nowrap;flex-shrink:0}
 .fm-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
