@@ -32,8 +32,8 @@ ${body.glossary.slice(0, 6000)}` : "";
 Reply ONLY as compact JSON: {"summary": string[]} — 2-4 very short bullet points of what is being discussed. ${langRule} Never invent anything. If nothing yet, use an empty array.`
     : `You are an AI meeting assistant analysing a LIVE, possibly multilingual transcript labelled by speaker (Speaker 1, 2, …).
 Extract meeting intelligence so far. Reply ONLY as compact JSON with this exact shape:
-{"summary": string[], "actionItems": [{"who": string, "task": string}], "decisions": string[], "risks": string[]}
-Rules: summary = 2-4 very short bullet points of what is being discussed. actionItems = tasks someone must do (who = speaker label or name, task = short). decisions = concrete decisions made. risks = open issues / blockers / things to follow up.
+{"summary": string[], "actionItems": [{"who": string, "task": string, "due": string}], "decisions": string[], "risks": string[]}
+Rules: summary = 2-4 very short bullet points of what is being discussed. actionItems = tasks someone must do (who = speaker label or name, task = short, due = the deadline ONLY if the meeting states one, written exactly as said; empty string otherwise). decisions = concrete decisions made. risks = open issues / blockers / things to follow up.
 Each item is ONE short line. ${langRule} Never invent anything not in the transcript. If a category has nothing yet, use an empty array.`;
 
   try {

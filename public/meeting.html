@@ -448,6 +448,80 @@ audio{width:100%;margin-top:16px;height:42px}
   body.recing.ai-hidden .ai-reopen{display:none}
   body.recing .ai-head .ai-tog{display:none}
 }
+
+/* ── phone app shell (Design …02_34_21) — desktop layout untouched ── */
+.mb-bar,.mb-status,.mb-title,.mb-meta,.mb-dock,.mb-cap,.mb-tabs,.mb-nsub{display:none}
+@media(max-width:620px){
+  .mb-bar{display:flex;align-items:center;gap:9px;padding:calc(4px + env(safe-area-inset-top)) 0 9px}
+  .mb-logo{width:30px;height:30px;border-radius:9px}
+  .mb-brand{font-size:17px;font-weight:900;letter-spacing:-.03em}
+  .mb-sp{flex:1}
+  .mb-people{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:800;color:var(--grey);background:var(--paper);border:1px solid var(--hair);border-radius:99px;padding:5px 10px}
+  .mb-people svg{width:14px;height:14px}
+  .mb-ic{width:34px;height:34px;display:grid;place-items:center;font-size:15px;border:1px solid var(--hair);background:var(--paper);border-radius:11px;color:var(--grey);cursor:pointer}
+  .mb-status{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .mb-live{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--ink)}
+  .mb-live i{width:9px;height:9px;border-radius:50%;background:#12a594;box-shadow:0 0 0 4px color-mix(in srgb,#12a594 16%,transparent)}
+  body.mb-paused .mb-live i{background:#f59e0b;box-shadow:0 0 0 4px color-mix(in srgb,#f59e0b 16%,transparent)}
+  body:not(.recing) .mb-live i{background:#9aa6bd;box-shadow:none}
+  .mb-timer{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:800;color:var(--grey);font-variant-numeric:tabular-nums}
+  .mb-timer svg{width:14px;height:14px}
+  .mb-title{display:block;width:100%;text-align:left;border:0;background:none;font:inherit;font-size:20px;font-weight:900;letter-spacing:-.03em;color:var(--ink);padding:7px 0 1px;cursor:pointer}
+  .mb-meta{display:block;font-size:12px;font-weight:600;color:var(--grey);margin-bottom:8px}
+  body.recing .cap-top{display:none}
+  body.recing.mb-langopen .cap-top{display:block;position:fixed;left:10px;right:10px;bottom:calc(98px + env(safe-area-inset-bottom));z-index:41;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:12px;box-shadow:0 22px 50px -22px rgba(10,20,45,.45);max-height:52vh;overflow:auto}
+  body.recing.mb-langopen .lv-seg{display:inline-flex}
+  body.recing.mb-langopen #lvOneLangs,body.recing.mb-langopen #lvTwoLangs{display:flex}
+  body.recing.mb-langopen #capRec,body.recing.mb-langopen #lvToggle,body.recing.mb-langopen .cap-meta .timer{display:none}
+  body.recing .viz{display:flex!important;height:56px;gap:3px;margin:2px 0 4px}
+  body.recing .viz span{width:3px;border-radius:99px;opacity:.9}
+  .mb-cap{display:block;text-align:center;font-size:12px;font-weight:600;color:var(--grey);margin:0 0 10px}
+  body:not(.rec-live) .mb-cap{visibility:hidden}
+  .lv-msg{gap:10px;padding:6px 0}
+  .lv-av{width:34px;height:34px;border-radius:12px;font-size:12.5px}
+  .lv-av::before{content:"S"}
+  .lv-name{margin:4px 0 5px;font-size:12px}
+  .lv-bubble{border-radius:14px;padding:11px 12px;border-color:#e6ecf7;box-shadow:0 8px 20px -16px rgba(12,30,70,.5)}
+  .lv-orig{font-size:14px;color:var(--ink);line-height:1.5}
+  .lv-trans-row{margin:10px -12px -11px;padding:9px 12px 11px;border-top:1px solid #e9eefb;background:#f3f7ff;border-radius:0 0 14px 14px}
+  .lv-trans{font-size:14px;font-weight:600}
+  .lv-lbl{font-size:10px;text-transform:none;letter-spacing:.02em;color:#6b7c9c}
+  body.recing .app-card{padding-bottom:calc(106px + env(safe-area-inset-bottom))}
+  body.recing .live-feed{min-height:auto}
+  body.recing .mb-dock{display:grid;grid-template-columns:1fr auto auto 1fr;align-items:end;gap:6px;position:fixed;left:0;right:0;bottom:0;z-index:40;padding:9px 12px calc(9px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(14px);border-top:1px solid var(--hair)}
+  .mb-d{display:grid;justify-items:center;gap:3px;border:0;background:none;font:inherit;font-size:10.5px;font-weight:700;color:var(--grey);cursor:pointer;padding:2px}
+  .mb-d svg{width:19px;height:19px}
+  .mb-d em{font-style:normal;font-size:9.5px;color:var(--faint);max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #mbPeopleN2{font-size:14px;font-weight:900;color:var(--ink)}
+  .mb-circ{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:15px;box-shadow:0 10px 22px -10px rgba(12,30,70,.55)}
+  .mb-blue{background:var(--acc)}
+  .mb-red{background:#e5484d}
+  .mb-main .mb-lb{font-size:11px;font-weight:800;color:var(--ink)}
+  .lv-av{display:flex;align-items:center;justify-content:center;white-space:nowrap;font-size:11.5px;letter-spacing:-.02em}
+  .lv-detect{display:inline-block;margin:-1px 0 7px;padding:3px 8px;font-size:10.5px;font-weight:700;color:#5b6b8c;background:var(--paper);border:1px solid var(--hair);border-radius:99px}
+  body.recing .viz{width:100%;gap:2px;justify-content:space-between}
+  body.recing .viz span{flex:1 1 auto;min-width:2px;max-width:5px}
+  body.recing .rec-hint{display:none}
+  body.recing .live-feed{background:none;border:0;box-shadow:none;padding:0}
+  .ai-item{align-items:flex-start;gap:10px;padding:10px 11px;background:var(--card);border:1px solid var(--hair);border-radius:12px;margin-bottom:7px}
+  .ai-body .ai-item:last-child{margin-bottom:0}
+  .ai-body{padding:0;background:none;border:0}
+  .ai-panel{min-width:0;max-width:100%}
+  .mb-nsub{display:block;margin:-4px 0 10px;font-size:11.5px;font-weight:600;color:var(--grey);line-height:1.45}
+  .mb-tabs{display:flex;gap:4px;background:var(--paper);border:1px solid var(--hair);border-radius:12px;padding:3px;margin-bottom:10px;overflow-x:auto;scrollbar-width:none;min-width:0;max-width:100%}
+  .mb-tabs::-webkit-scrollbar{display:none}
+  .mb-tabs button{flex:0 0 auto;border:0;background:none;font:inherit;font-size:11.5px;font-weight:800;color:var(--grey);padding:8px 11px;border-radius:9px;cursor:pointer;white-space:nowrap}
+  .mb-tabs button.on{background:var(--acc);color:#fff}
+  .ai-panel[data-mb-tabs] .ai-sec{display:none}
+  .ai-panel[data-mb-tabs] .ai-sec.mb-on{display:block}
+}
+.ai-txt{display:block}
+.ai-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.ai-meta .who,.ai-meta .due{font-size:10.5px;font-weight:700;color:#5b6b8c;background:var(--paper);border:1px solid var(--hair);border-radius:99px;padding:2px 8px}
+.ai-check{cursor:pointer}
+.ai-item.done .ai-txt{text-decoration:line-through;opacity:.55}
+.ai-item.done .ai-check{background:var(--acc);border-color:var(--acc);position:relative}
+.ai-item.done .ai-check::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:10px;font-weight:900}
 </style>
 <script src="/glossary-context.js"></script></head>
 <body>
@@ -498,8 +572,8 @@ audio{width:100%;margin-top:16px;height:42px}
     </div>
   </div>
 
-  <div class="screen" id="sc-cap">
-   <div class="app-card cap-grid">
+  <div class="screen" id="sc-cap"><div class="mb-dock" id="mbDock"><button type="button" class="mb-d" id="mbLang"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.6 5.7 3.6 9s-1.1 6.3-3.6 9c-2.5-2.7-3.6-5.7-3.6-9S9.5 5.7 12 3z"/></svg><span data-t="mb_lang">Ngôn ngữ</span><em id="mbLangSub"></em></button><button type="button" class="mb-d mb-main" id="mbPause"><span class="mb-circ mb-blue">&#10073;&#10073;</span><span class="mb-lb" data-t="c_pause">Tạm dừng</span></button><button type="button" class="mb-d mb-main" id="mbStop"><span class="mb-circ mb-red">&#9632;</span><span class="mb-lb" data-t="c_stop">Kết thúc</span></button><button type="button" class="mb-d" id="mbPeople2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19"/><circle cx="10" cy="7.5" r="3.2"/><path d="M20 19v-1.4a3.5 3.5 0 0 0-2.6-3.4"/></svg><span id="mbPeopleN2">0</span><em data-t="mb_speakers">người nói</em></button></div>
+   <div class="app-card cap-grid"><div class="mb-bar"><img class="mb-logo" src="/logo.svg" alt=""><b class="mb-brand">Flash Meet</b><span class="mb-sp"></span><span class="mb-people" id="mbPeopleWrap" title=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19"/><circle cx="10" cy="7.5" r="3.2"/><path d="M20 19v-1.4a3.5 3.5 0 0 0-2.6-3.4M15.5 4.7a3.2 3.2 0 0 1 0 5.9"/></svg><span id="mbPeopleN">0</span></span><button type="button" class="mb-ic" id="mbSet" aria-label="Settings">⚙</button></div><div class="mb-status"><span class="mb-live"><i></i><span id="mbState"></span></span><span class="mb-timer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9.5V13l2.5 1.5M9 2h6"/></svg><span id="mbTimer">00:00</span></span></div><button type="button" class="mb-title" id="mbTitle"></button><div class="mb-meta" id="mbMeta"></div>
     <div class="cap-top">
       <div class="cap-meta">
         <div class="viz" id="viz"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
@@ -659,7 +733,7 @@ const I={
    c_diar:"👥 Voices are separated automatically (Speaker 1, 2, 3…).",
    p_upload:"Uploading audio…",p_diar:"Separating voices…",p_sum:"Writing the summary…",p_wait:"Your AI assistant is hard at work…",
    r_summary:"Summary",r_transcript:"Transcript",r_copy:"Copy",r_download:"Download",r_new:"+ New meeting",r_dl_live:"⬇ Download live translation",r_live:"Live translation",r_keep:"💾 Keep this meeting",r_keep_note:"Auto-deletes in 1 day unless you keep it.",hist_temp:"Temporary · auto-deletes in 1 day",hist_keep:"Keep",hist_saved:"Saved to history",autosum_done:"Auto-saved summary",cl_saving:"Saving to your meeting calendar…",cl_saved:"Saved to your meeting calendar",cl_fail:"Saved on this device — couldn't sync to your account",cl_open:"Open calendar",hist_cal:"Meeting calendar (all devices)",words:"words",
-   ai_title:"AI Meeting Intelligence",ai_summary:"Summary",ai_actions:"Action items",ai_decisions:"Decisions",ai_risks:"Risks & follow-ups",ai_wait:"AI is listening… The summary appears once there's enough content.",ai_prev_actions:"Action items are detected automatically after the meeting.",ai_prev_decisions:"Key decisions will be captured here.",ai_prev_risks:"AI flags risks, open points and follow-ups.",ai_pro_task:"Pro: export tasks & history",ai_listen:"AI Listening",ai_pro:"Pro — upgrade to unlock",ai_show:"AI panel",ai_lang_auto:"🌐 Auto",u_trial:"🎁 Free trial · {n} min left",u_unlim:"⏱ Unlimited",u_today:"Today",u_month:"Month",u_min:"m",
+   mb_owner:"Owner:",mb_due:"Due:",mb_live:"Live meeting",mb_paused:"Paused",mb_ready:"Ready to start",mb_speakers:"speakers",mb_lang:"Language",mb_rename:"Meeting name",mb_deflt:"Live meeting",mb_auto:"Auto detect",mb_listen:"Listening and translating live…",mb_notes:"AI Meeting Notes",mb_notes_sub:"Turns every meeting into clear actions",ai_title:"AI Meeting Intelligence",ai_summary:"Summary",ai_actions:"Action items",ai_decisions:"Decisions",ai_risks:"Risks & follow-ups",ai_wait:"AI is listening… The summary appears once there's enough content.",ai_prev_actions:"Action items are detected automatically after the meeting.",ai_prev_decisions:"Key decisions will be captured here.",ai_prev_risks:"AI flags risks, open points and follow-ups.",ai_pro_task:"Pro: export tasks & history",ai_listen:"AI Listening",ai_pro:"Pro — upgrade to unlock",ai_show:"AI panel",ai_lang_auto:"🌐 Auto",u_trial:"🎁 Free trial · {n} min left",u_unlim:"⏱ Unlimited",u_today:"Today",u_month:"Month",u_min:"m",
    ready_h:"Ready to translate your meeting",ready_sub:"Press start and Flash Meet will listen, detect the language and show the live translation.",ready_1:"✓ Transcribe",ready_2:"✓ Live translate",ready_3:"✓ Summarize",ready_4:"✓ Extract action items",ready_help:"In Two-way mode, Flash Meet detects each speaker's language and translates to the other in your chosen pair.",
    h_title:"History",open:"Open",empty:"No meetings yet",
    sp_title:"Rename speakers (optional)",sp_apply:"Apply",sp_ph:"Real name",sp_done:"Names applied",
@@ -675,7 +749,7 @@ const I={
    c_diar:"👥 Tự động tách giọng từng người (Speaker 1, 2, 3…).",
    p_upload:"Đang tải audio lên…",p_diar:"Đang tách giọng nói…",p_sum:"Đang viết tóm tắt…",p_wait:"Trợ lý AI đang chăm chỉ làm việc…",
    r_summary:"Tóm tắt",r_transcript:"Bản ghi",r_copy:"Copy",r_download:"Tải",r_new:"+ Cuộc họp mới",r_dl_live:"⬇ Tải bản dịch trực tiếp",r_live:"Bản dịch trực tiếp",r_keep:"💾 Lưu cuộc họp này",r_keep_note:"Không lưu sẽ tự xóa sau 1 ngày.",hist_temp:"Tạm · tự xóa sau 1 ngày",hist_keep:"Lưu",hist_saved:"Đã lưu vào lịch sử",autosum_done:"Đã tự lưu tóm tắt",cl_saving:"Đang lưu vào Lịch họp…",cl_saved:"Đã tự lưu vào Lịch họp",cl_fail:"Đã lưu trên thiết bị — chưa đồng bộ được lên tài khoản",cl_open:"Xem lịch",hist_cal:"Lịch họp (mọi thiết bị)",words:"từ",
-   ai_title:"AI Tổng hợp cuộc họp",ai_summary:"Tóm tắt",ai_actions:"Việc cần làm",ai_decisions:"Quyết định",ai_risks:"Rủi ro & theo dõi",ai_wait:"AI đang lắng nghe… Tóm tắt sẽ xuất hiện sau khi có đủ nội dung.",ai_prev_actions:"Các việc cần làm sẽ được tự động nhận diện sau cuộc họp.",ai_prev_decisions:"Các quyết định quan trọng sẽ được ghi lại tại đây.",ai_prev_risks:"AI sẽ phát hiện rủi ro, điểm chưa rõ và nội dung cần follow-up.",ai_pro_task:"Pro: xuất task & lưu lịch sử",ai_listen:"AI đang nghe",ai_pro:"Pro — nâng cấp để mở",ai_show:"Bảng AI",ai_lang_auto:"🌐 Tự động",u_trial:"🎁 Dùng thử còn {n} phút",u_unlim:"⏱ Không giới hạn",u_today:"Hôm nay",u_month:"Tháng",u_min:"p",
+   mb_owner:"Phụ trách:",mb_due:"Hạn:",mb_live:"Đang họp trực tiếp",mb_paused:"Đang tạm dừng",mb_ready:"Sẵn sàng bắt đầu",mb_speakers:"người nói",mb_lang:"Ngôn ngữ",mb_rename:"Tên cuộc họp",mb_deflt:"Cuộc họp trực tiếp",mb_auto:"Tự động phát hiện",mb_listen:"Đang lắng nghe và dịch trực tiếp…",mb_notes:"AI Meeting Notes",mb_notes_sub:"Biến mọi cuộc họp thành hành động rõ ràng",ai_title:"AI Tổng hợp cuộc họp",ai_summary:"Tóm tắt",ai_actions:"Việc cần làm",ai_decisions:"Quyết định",ai_risks:"Rủi ro & theo dõi",ai_wait:"AI đang lắng nghe… Tóm tắt sẽ xuất hiện sau khi có đủ nội dung.",ai_prev_actions:"Các việc cần làm sẽ được tự động nhận diện sau cuộc họp.",ai_prev_decisions:"Các quyết định quan trọng sẽ được ghi lại tại đây.",ai_prev_risks:"AI sẽ phát hiện rủi ro, điểm chưa rõ và nội dung cần follow-up.",ai_pro_task:"Pro: xuất task & lưu lịch sử",ai_listen:"AI đang nghe",ai_pro:"Pro — nâng cấp để mở",ai_show:"Bảng AI",ai_lang_auto:"🌐 Tự động",u_trial:"🎁 Dùng thử còn {n} phút",u_unlim:"⏱ Không giới hạn",u_today:"Hôm nay",u_month:"Tháng",u_min:"p",
    ready_h:"Sẵn sàng dịch cuộc họp của bạn",ready_sub:"Bấm bắt đầu để Flash Meet nghe, nhận diện ngôn ngữ và hiển thị bản dịch trực tiếp.",ready_1:"✓ Ghi âm",ready_2:"✓ Dịch trực tiếp",ready_3:"✓ Tóm tắt",ready_4:"✓ Trích việc cần làm",ready_help:"Trong chế độ Song ngữ, Flash Meet tự nhận diện ngôn ngữ người nói và dịch sang ngôn ngữ còn lại trong cặp bạn chọn.",
    h_title:"Lịch sử",open:"Mở",empty:"Chưa có cuộc họp",
    sp_title:"Đổi tên người nói (tùy chọn)",sp_apply:"Áp dụng",sp_ph:"Tên thật",sp_done:"Đã áp dụng tên",
@@ -691,7 +765,7 @@ const I={
    c_diar:"👥 화자를 자동으로 분리합니다 (Speaker 1, 2, 3…).",
    p_upload:"오디오 업로드 중…",p_diar:"화자 분리 중…",p_sum:"요약 작성 중…",p_wait:"AI 비서가 열심히 작업 중…",
    r_summary:"요약",r_transcript:"전체 기록",r_copy:"복사",r_download:"다운로드",r_new:"+ 새 회의",r_dl_live:"⬇ 실시간 번역 다운로드",r_live:"실시간 번역",r_keep:"💾 이 회의 저장",r_keep_note:"저장하지 않으면 1일 후 자동 삭제됩니다.",hist_temp:"임시 · 1일 후 자동 삭제",hist_keep:"저장",hist_saved:"기록에 저장됨",autosum_done:"요약 자동 저장됨",cl_saving:"회의 캘린더에 저장 중…",cl_saved:"회의 캘린더에 자동 저장됨",cl_fail:"이 기기에 저장됨 — 계정 동기화 실패",cl_open:"캘린더 보기",hist_cal:"회의 캘린더 (모든 기기)",words:"단어",
-   ai_title:"AI 회의 인텔리전스",ai_summary:"요약",ai_actions:"액션 아이템",ai_decisions:"결정",ai_risks:"리스크 & 후속",ai_wait:"AI가 듣고 있어요… 충분한 내용이 모이면 요약이 표시됩니다.",ai_prev_actions:"회의 후 액션 아이템이 자동으로 인식됩니다.",ai_prev_decisions:"주요 결정이 여기에 기록됩니다.",ai_prev_risks:"AI가 리스크·미해결 항목·후속 사항을 감지합니다.",ai_pro_task:"Pro: 작업 내보내기 & 기록",ai_listen:"AI 청취 중",ai_pro:"Pro — 업그레이드",ai_show:"AI 패널",ai_lang_auto:"🌐 자동",u_trial:"🎁 무료 체험 · {n}분 남음",u_unlim:"⏱ 무제한",u_today:"오늘",u_month:"월",u_min:"분",
+   mb_owner:"담당:",mb_due:"기한:",mb_live:"실시간 회의 중",mb_paused:"일시 중지됨",mb_ready:"시작 준비됨",mb_speakers:"명 발화",mb_lang:"언어",mb_rename:"회의 이름",mb_deflt:"실시간 회의",mb_auto:"자동 감지",mb_listen:"실시간으로 듣고 번역하는 중…",mb_notes:"AI 회의 노트",mb_notes_sub:"모든 회의를 명확한 실행으로",ai_title:"AI 회의 인텔리전스",ai_summary:"요약",ai_actions:"액션 아이템",ai_decisions:"결정",ai_risks:"리스크 & 후속",ai_wait:"AI가 듣고 있어요… 충분한 내용이 모이면 요약이 표시됩니다.",ai_prev_actions:"회의 후 액션 아이템이 자동으로 인식됩니다.",ai_prev_decisions:"주요 결정이 여기에 기록됩니다.",ai_prev_risks:"AI가 리스크·미해결 항목·후속 사항을 감지합니다.",ai_pro_task:"Pro: 작업 내보내기 & 기록",ai_listen:"AI 청취 중",ai_pro:"Pro — 업그레이드",ai_show:"AI 패널",ai_lang_auto:"🌐 자동",u_trial:"🎁 무료 체험 · {n}분 남음",u_unlim:"⏱ 무제한",u_today:"오늘",u_month:"월",u_min:"분",
    ready_h:"회의를 번역할 준비가 되었습니다",ready_sub:"시작을 누르면 Flash Meet이 듣고, 언어를 감지해 실시간 번역을 표시합니다.",ready_1:"✓ 전사",ready_2:"✓ 실시간 번역",ready_3:"✓ 요약",ready_4:"✓ 액션 아이템 추출",ready_help:"양방향 모드에서는 각 화자의 언어를 감지해 선택한 쌍의 상대 언어로 번역합니다.",
    h_title:"기록",open:"열기",empty:"회의가 없습니다",
    sp_title:"화자 이름 변경 (선택)",sp_apply:"적용",sp_ph:"실명",sp_done:"이름이 적용됨",
@@ -706,7 +780,7 @@ const $=id=>document.getElementById(id);
 const t=k=>I[L][k]||k;
 // Start-button label: the 3-min trial pitch is for anonymous visitors only.
 const recLabel=()=>(typeof SIGNED!=='undefined'&&SIGNED)?t('c_record_in'):t('c_record');
-function applyLang(){document.documentElement.lang=L;
+function applyLang(){document.documentElement.lang=L;setTimeout(function(){if(window.__mbLang)window.__mbLang()},0);
   document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));
   document.querySelectorAll('#lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===L));
   // Signed-in users aren't on the 3-minute anonymous trial → drop the trial wording.
@@ -739,10 +813,10 @@ function refreshDyn(){
 function startViz(stream){try{actx=new(window.AudioContext||window.webkitAudioContext)();
   analyser=actx.createAnalyser();analyser.fftSize=64;actx.createMediaStreamSource(stream).connect(analyser);
   const bars=$('viz').children,d=new Uint8Array(analyser.frequencyBinCount);
-  const draw=()=>{analyser.getByteFrequencyData(d);for(let i=0;i<bars.length;i++)bars[i].style.height=Math.max(6,(d[i*2]||0)/255*40)+'px';raf=requestAnimationFrame(draw);};draw();}catch(e){}}
+  const draw=()=>{analyser.getByteFrequencyData(d);const H=Math.max(20,($('viz').clientHeight||44)-6),n=Math.max(1,bars.length-1);for(let i=0;i<bars.length;i++){const c=(bars.length-1)/2,k=c?Math.abs(i-c)/c:0;const bi=Math.min(d.length-1,Math.round(k*(d.length-1)));bars[i].style.height=Math.max(4,(d[bi]||0)/255*H)+'px';}raf=requestAnimationFrame(draw);};draw();}catch(e){}}
 function stopViz(){if(raf)cancelAnimationFrame(raf);[...$('viz').children].forEach(b=>b.style.height='6px');if(actx){actx.close().catch(()=>{});actx=null;}}
 async function buildStream(){const mic=await navigator.mediaDevices.getUserMedia({audio:true});extra=[mic];return mic;}
-function setCap(s){capState=s;$('capIdle').style.display=s==='idle'?'':'none';$('capRec').style.display=(s==='recording'||s==='paused')?'':'none';$('capReady').style.display=s==='ready'?'':'none';document.body.classList.toggle('recing',s==='recording'||s==='paused');document.body.classList.toggle('rec-live',s==='recording');if(s==='recording')startInsights();else stopInsights();if($('readyState'))$('readyState').style.display=s==='idle'?'':'none';if($('recHint'))$('recHint').style.display=s==='idle'?'none':'';if($('lvInterim')&&s!=='recording')$('lvInterim').style.display='none';refreshDyn();}
+function setCap(s){capState=s;if(window.__mbState)window.__mbState(s);$('capIdle').style.display=s==='idle'?'':'none';$('capRec').style.display=(s==='recording'||s==='paused')?'':'none';$('capReady').style.display=s==='ready'?'':'none';document.body.classList.toggle('recing',s==='recording'||s==='paused');document.body.classList.toggle('rec-live',s==='recording');if(s==='recording')startInsights();else stopInsights();if($('readyState'))$('readyState').style.display=s==='idle'?'':'none';if($('recHint'))$('recHint').style.display=s==='idle'?'none':'';if($('lvInterim')&&s!=='recording')$('lvInterim').style.display='none';refreshDyn();}
 $('btnRec').onclick=async()=>{
   if(!gateStart())return;
   const b=$('btnRec');b.classList.add('loading');b.innerHTML='<span class="btn-spin"></span>'+t('c_opening');
@@ -862,7 +936,7 @@ async function resInsights(){const tx=curTr||'',ai=$('actionItems'),de=$('decisi
   if(tx.length<60){ai.innerHTML='<div class="ai-empty">—</div>';de.innerHTML='<div class="ai-empty">—</div>';return;}
   ai.innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';de.innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';
   try{const r=await fetch('/api/insights',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,lang:aiOutLang(),glossary:(window.fmGlossary?window.fmGlossary.get().prompt:'')})});const d=await r.json();if(!r.ok)return;
-    ai.innerHTML=(d.actionItems&&d.actionItems.length)?d.actionItems.map(a=>'<div class="ai-item"><span class="ai-check"></span><span>'+(a.who?'<span class="who">'+esc(a.who)+'</span> — ':'')+esc(a.task)+'</span></div>').join(''):'<div class="ai-empty">—</div>';
+    ai.innerHTML=(d.actionItems&&d.actionItems.length)?d.actionItems.map(a=>'<div class="ai-item"><span class="ai-check"></span><span class="ai-txt">'+esc(a.task)+aiMeta(a)+'</span></div>').join(''):'<div class="ai-empty">—</div>';
     de.innerHTML=(d.decisions&&d.decisions.length)?d.decisions.map(s=>'<div class="ai-item"><span class="b">✓</span><span>'+esc(s)+'</span></div>').join(''):'<div class="ai-empty">—</div>';
   }catch(e){}}
 // Build a meaningful download filename: "<meeting title> - <content> - <date>.<ext>".
@@ -887,7 +961,7 @@ $('btnKeep').onclick=()=>{save(true,{saved:true});toast(t('hist_saved'));updateK
 function save(update,opts){opts=opts||{};let list=JSON.parse(localStorage.getItem('mr_m')||'[]');
   const tt=(curSum.match(/##.*\n+(.+)/)||[])[1]||(curTr.split('\n')[0])||t('deflt');
   const title=tt.replace(/[*_#•-]/g,'').replace(/^Speaker \d+:\s*/,'').trim().slice(0,52)||t('deflt');
-  const ts=Date.now(),base={title,transcript:curTr,summary:curSum,live:lvAll,ts};if(curStart)base.start=curStart;if(curDur)base.dur=curDur;
+  const _mn=(window.__mbName&&window.__mbName())||'';const ts=Date.now(),base={title:_mn||title,transcript:curTr,summary:curSum,live:lvAll,ts};if(curStart)base.start=curStart;if(curDur)base.dur=curDur;
   if(update&&curId&&list.some(m=>m.id===curId)){
     list=list.map(m=>{if(m.id!==curId)return m;const saved=opts.saved||m.saved||false;return {...m,...base,saved,auto:saved?false:(m.auto!==false)};});
   }else{curId=Date.now();const saved=!!opts.saved;list.unshift({id:curId,date:new Date().toLocaleString(),...base,saved,auto:saved?false:(opts.auto!==false)});}
@@ -1214,10 +1288,11 @@ async function runInsights(){const tx=curTr||'';if(insBusy||tx.length<60||tx.len
     const d=await r.json();if(r.ok)renderInsights(d);}catch(e){}finally{insBusy=false;}}
 function aiList(id,items,fmt,empty){const el=$(id);if(!el)return;const html=(items&&items.length)?items.map(fmt).join(''):'<div class="ai-empty">'+(empty||'—')+'</div>';
   if(el.innerHTML!==html){el.innerHTML=html;const sec=el.closest('.ai-sec');if(sec){sec.classList.remove('ai-up');void sec.offsetWidth;sec.classList.add('ai-up');}}}
+function aiMeta(a){var m='';if(a&&a.who)m+='<span class="who">'+t('mb_owner')+' '+esc(a.who)+'</span>';if(a&&a.due)m+='<span class="due">'+t('mb_due')+' '+esc(a.due)+'</span>';return m?'<span class="ai-meta">'+m+'</span>':''}
 function renderInsights(d){
   aiList('aiSummary',d.summary,s=>'<div class="ai-item"><span class="b">•</span><span>'+esc(s)+'</span></div>',t('ai_wait'));
   if(!PAID)return; // free: summary only; other sections stay Pro-locked
-  aiList('aiActions',d.actionItems,a=>'<div class="ai-item"><span class="ai-check"></span><span>'+(a.who?'<span class="who">'+esc(a.who)+'</span> — ':'')+esc(a.task)+'</span></div>');
+  aiList('aiActions',d.actionItems,a=>'<div class="ai-item"><span class="ai-check"></span><span class="ai-txt">'+esc(a.task)+aiMeta(a)+'</span></div>');
   aiList('aiDecisions',d.decisions,s=>'<div class="ai-item"><span class="b">✓</span><span>'+esc(s)+'</span></div>');
   aiList('aiRisks',d.risks,s=>'<div class="ai-item"><span class="b">!</span><span>'+esc(s)+'</span></div>');}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -1236,6 +1311,97 @@ const _lvon=localStorage.getItem('mr_lvon')!=='0';$('lvOn').checked=_lvon;$('lvT
 if(localStorage.getItem('mr_lvto'))$('lvTo').value=localStorage.getItem('mr_lvto');
 purgeDrafts();applyLang();
 fetchUsage();renderUsage();
+
+// ── Phone shell (<=620px): app bar, live status, meeting name, bottom dock, AI note tabs ──
+(function(){
+  var NAME_KEY='mr_meet_name', mbName='';
+  try{mbName=localStorage.getItem(NAME_KEY)||''}catch(e){}
+  window.__mbName=function(){return mbName};
+  function el(id){return document.getElementById(id)}
+  function mob(){return matchMedia('(max-width:620px)').matches}
+  function selText(sel){if(!sel||!sel.options)return '';var o=sel.options[sel.selectedIndex];if(!o)return '';
+    var x=(o.textContent||'').trim(),c;while(x.length&&(c=x.codePointAt(0))>=0x1F000&&c<=0x1FAFF)x=x.slice(2).trim();return x}
+  function speakers(){var seen={},n=0;document.querySelectorAll('#lvFeed .lv-av').forEach(function(a){var v=(a.textContent||'').trim();if(v&&!seen[v]){seen[v]=1;n++}});return n}
+  function syncPeople(){var n=speakers();['mbPeopleN','mbPeopleN2'].forEach(function(id){var e=el(id);if(e)e.textContent=String(n)});
+    var w=el('mbPeopleWrap');if(w)w.style.opacity=n?'1':'.5'}
+  function pair(){var on=document.querySelector('#lvWaySeg button.on'),w=on?on.dataset.w:'one';
+    if(w==='two')return selText(el('lvA'))+' ⇄ '+selText(el('lvB'));
+    if(w==='off')return t('lv_off');
+    return t('mb_auto')+' → '+selText(el('lvTo'))}
+  function syncMeta(){var p=pair(),n=speakers(),m=el('mbMeta');
+    if(m)m.textContent=(n?n+' '+t('mb_speakers')+' · ':'')+p;
+    var sub=el('mbLangSub');if(sub)sub.textContent=p}
+  function setTitle(){var e=el('mbTitle');if(e)e.textContent=mbName||t('mb_deflt')}
+  function rename(){var v=prompt(t('mb_rename'),mbName||t('mb_deflt'));if(v===null)return;
+    mbName=(v||'').trim().slice(0,80);try{localStorage.setItem(NAME_KEY,mbName)}catch(e){}setTitle()}
+  window.__mbState=function(st){var e=el('mbState');
+    if(e)e.textContent=st==='recording'?t('mb_live'):st==='paused'?t('mb_paused'):t('mb_ready');
+    document.body.classList.toggle('mb-paused',st==='paused');
+    if(st!=='recording'&&st!=='paused')document.body.classList.remove('mb-langopen');
+    var lb=document.querySelector('#mbPause .mb-lb');if(lb)lb.textContent=t(st==='paused'?'c_resume':'c_pause')};
+  window.__mbLang=function(){setTitle();syncMeta();if(typeof capState!=='undefined')window.__mbState(capState)};
+  function tabs(panel){
+    if(!panel||panel.dataset.mbTabs)return;
+    var secs=[].slice.call(panel.querySelectorAll('.ai-sec'));if(secs.length<2)return;
+    var bar=document.createElement('div');bar.className='mb-tabs';
+    var keys=['ai_summary','ai_actions','ai_decisions','ai_risks'];
+    secs.forEach(function(sec,i){var b=document.createElement('button');b.type='button';
+      if(keys[i])b.dataset.t=keys[i];
+      var st=sec.querySelector('.ai-st');b.textContent=st?st.textContent:String(i+1);
+      b.onclick=function(){secs.forEach(function(x,j){x.classList.toggle('mb-on',j===i)});
+        [].slice.call(bar.children).forEach(function(x,j){x.classList.toggle('on',j===i)})};
+      bar.appendChild(b)});
+    var head=panel.querySelector('.ai-head');
+    if(head&&!panel.querySelector('.mb-nsub')){var sb=document.createElement('p');sb.className='mb-nsub';sb.dataset.t='mb_notes_sub';sb.textContent=t('mb_notes_sub');head.insertAdjacentElement('afterend',sb)}
+    panel.insertBefore(bar,secs[0]);
+    secs.forEach(function(x,j){x.classList.toggle('mb-on',j===0)});
+    bar.children[0].classList.add('on');
+    panel.dataset.mbTabs='1'}
+  function init(){
+    var e;
+    if((e=el('mbTitle')))e.onclick=rename;
+    if((e=el('mbSet')))e.onclick=function(){var b=el('setBtn');if(b)b.click()};
+    if((e=el('mbPause')))e.onclick=function(){el('btnPause').click()};
+    if((e=el('mbStop')))e.onclick=function(){document.body.classList.remove('mb-langopen');el('btnStop').click()};
+    if((e=el('mbLang')))e.onclick=function(){document.body.classList.toggle('mb-langopen')};
+    if((e=el('mbPeople2')))e.onclick=function(){var f=el('lvFeed');if(f)f.scrollIntoView({block:'end',behavior:'smooth'})};
+    ['lvTo','lvA','lvB'].forEach(function(id){var s2=el(id);if(s2)s2.addEventListener('change',syncMeta)});
+    document.querySelectorAll('#lvWaySeg button').forEach(function(b){b.addEventListener('click',function(){setTimeout(syncMeta,0)})});
+    var tm=el('timer');
+    if(tm&&window.MutationObserver)new MutationObserver(function(){var m=el('mbTimer');if(m)m.textContent=tm.textContent}).observe(tm,{childList:true,characterData:true,subtree:true});
+    var fd=el('lvFeed');
+    if(fd&&window.MutationObserver)new MutationObserver(function(){syncPeople();syncMeta()}).observe(fd,{childList:true,subtree:true,characterData:true});
+    document.querySelectorAll('.ai-panel').forEach(tabs);
+    var viz=el('viz'),center=document.querySelector('#sc-cap .cap-center');
+    if(viz&&center&&mob()){
+      center.insertBefore(viz,center.firstChild);
+      var cap=document.createElement('p');cap.className='mb-cap';cap.id='mbCap';cap.dataset.t='mb_listen';cap.textContent=t('mb_listen');
+      center.insertBefore(cap,viz.nextSibling);
+      while(viz.children.length<26)viz.appendChild(document.createElement('span'));
+    }
+    setTitle();syncPeople();syncMeta();
+    window.__mbState(typeof capState!=='undefined'?capState:'idle')}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+
+// Action items can be ticked off; the state stays on this device.
+(function(){
+  var K='mr_task_done';
+  function list(){try{var a=JSON.parse(localStorage.getItem(K)||'[]');return Array.isArray(a)?a:[]}catch(e){return []}}
+  function key(it){var e=it.querySelector('.ai-txt')||it;return (e.textContent||'').trim().slice(0,160)}
+  function paint(){var d=list();document.querySelectorAll('.ai-item').forEach(function(it){
+    if(!it.querySelector('.ai-check'))return;it.classList.toggle('done',d.indexOf(key(it))>=0)})}
+  document.addEventListener('click',function(e){
+    var c=e.target&&e.target.closest?e.target.closest('.ai-check'):null;if(!c)return;
+    var it=c.closest('.ai-item');if(!it)return;
+    var k=key(it),d=list(),i=d.indexOf(k);
+    if(i>=0)d.splice(i,1);else d.push(k);
+    try{localStorage.setItem(K,JSON.stringify(d.slice(-300)))}catch(e2){}
+    paint()});
+  ['aiActions','actionItems'].forEach(function(id){var el=document.getElementById(id);
+    if(el&&window.MutationObserver)new MutationObserver(paint).observe(el,{childList:true,subtree:true})});
+  paint();
+})();
 </script>
 </body>
 </html>
