@@ -366,7 +366,10 @@ async function stopAudio(){clearTimeout(bcTimer);bcTimer=null;clearInterval(sxWa
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}}
 // Pause keeps the conference (and its ID, transcript and viewers) alive; only listening stops.
 async function pauseListen(){if(!running)return;running=false;paused=true;lockConfig(false);await stopAudio();
-  $('status').classList.remove('live');setStatus('paused');syncStart();render();snapshotSoon();broadcast('state',publicLiveState());toast(t('st_paused'))}
+  $('status').classList.remove('live');setStatus('paused');syncStart();
+  // Freeze the panels as they are - re-rendering would wipe the captions and look like a reset.
+  document.querySelectorAll('#panels .panel').forEach(p=>{p.classList.remove('running');const l=p.querySelector('.plive');if(l)l.textContent='● '+t('st_paused')});
+  snapshotSoon();broadcast('state',publicLiveState());toast(t('st_paused'))}
 async function finish(makeSummary=true){if(!running&&!makeSummary)return;running=false;paused=false;lockConfig(false);clearTimeout(bcTimer);bcTimer=null;clearInterval(sxWatch);
   // let every stream flush its last words (≤1.5 s) before closing
   await Promise.all(SX.map(s=>new Promise(res=>{s.closing=true;s.onFinished=res;setTimeout(res,1500);try{if(s.rec&&s.rec.state!=='inactive'){s.rec.onstop=()=>s.chain.then(()=>{try{if(s.ws&&s.ws.readyState===1)s.ws.send('')}catch{}});s.rec.stop()}else res()}catch{res()}})));
