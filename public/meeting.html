@@ -1407,6 +1407,10 @@ function showGate(kind){if(document.getElementById('gateOv'))return;
   document.getElementById('gateBtn').onclick=()=>{if(D.u)goTop(D.u);else ov.remove();};
   document.getElementById('gateClose').onclick=e=>{e.preventDefault();ov.remove();};}
 let sxStopping=false,sxOpenAt=0,sxFails=0,sxLastTrans=0,sxLastOrig=0,sxWatch=null;
+// Each socket carries the generation it was opened in. Changing the translation mode
+// mid-meeting closes one socket and opens another; without this the old socket's
+// close handler would stop the new recorder and reconnect a second stream.
+let sxGen=0;
 // Watchdog: sometimes Soniox keeps sending the ORIGINAL text but the translation
 // stream silently stalls (no <close>), so the page shows source-only until a
 // manual stop/resume. Detect "audio flowing but no translation for 18s" and
@@ -1436,11 +1440,12 @@ async function startLive(){
 }
 // Opens (or re-opens) the Soniox socket, reusing the existing mic stream.
 async function openWs(){
+  const gen=++sxGen;
   let tok;const off=getWay()==='off';
   try{const r=await fetch('/api/soniox-token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcribeOnly:off})});const d=await r.json();if(!r.ok)throw new Error(d.error||'token error');tok=d.api_key;}
   catch(e){lvInfo('⚠ '+e.message);return;}
   try{await window.fmGlossary.load();}catch(e){}
-  if(!lvWantOn||!sx.stream)return;
+  if(!lvWantOn||!sx.stream||gen!==sxGen)return;
   const ws=new WebSocket('wss://stt-rt.soniox.com/transcribe-websocket');sx.ws=ws;
   ws.onopen=()=>{
     const _li=$('lvInterim');if(_li.dataset.conn){delete _li.dataset.conn;setInterim('');}
@@ -1470,7 +1475,9 @@ async function openWs(){
     if(m.finished)sxFinalize();};
   ws.onerror=()=>{if(lvWantOn&&!sxStopping)lvInfo('⚠ '+t('lv_net'));};
   ws.onclose=()=>{
-    sx.ws=null;sxStopWatch();
+    if(sx.ws===ws)sx.ws=null;
+    if(gen!==sxGen)return; // a newer socket already took over
+    sxStopWatch();
     if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
     sxFinalize();
     const lasted=sxOpenAt?Date.now()-sxOpenAt:0;sxOpenAt=0;
@@ -1524,7 +1531,7 @@ function feedScroll(row){if(row&&row.scrollIntoView)row.scrollIntoView({behavior
 function keepInView(el){const r=el.getBoundingClientRect(),vh=window.innerHeight||document.documentElement.clientHeight;
   if(r.bottom>vh-80||r.top<64)el.scrollIntoView({block:'center'});}
 function sxStop(){
-  sxStopping=true;trialStop();trStop();sxStopWatch();
+  sxStopping=true;sxGen++;trialStop();trStop();sxStopWatch();
   if(sx.rec&&sx.rec.state!=='inactive'){try{sx.rec.stop();}catch(e){}}sx.rec=null;
   if(sx.ws){try{if(sx.ws.readyState===1)sx.ws.send('');sx.ws.close();}catch(e){}}sx.ws=null;
   if(sx.stream){sx.stream.getTracks().forEach(t=>t.stop());sx.stream=null;}
