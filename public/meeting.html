@@ -790,8 +790,14 @@ body:not(.recing) .dk-listen{background:color-mix(in srgb,var(--acc) 5%,var(--pa
 /* ── Result screen after a meeting: two columns on desktop, one tab at a time on phones ── */
 #sc-res{text-align:left}
 @media(min-width:981px){.screen#sc-res{max-width:1240px}}
-.rs-top{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:14px;margin-bottom:18px}
-.rs-back{grid-column:1/-1;justify-self:start;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--hair);background:var(--paper);border-radius:11px;padding:8px 14px;font:inherit;font-size:13px;font-weight:800;color:var(--grey);cursor:pointer;transition:.14s}
+.rs-top{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"back quick quick" "id acts more";align-items:center;gap:14px;margin-bottom:18px}
+.rs-quick{grid-area:quick;justify-self:end;display:flex;gap:9px}
+.rs-id{grid-area:id}
+.rs-acts{grid-area:acts}
+.rs-more-w{grid-area:more}
+.btn-rs.sm{padding:8px 13px;font-size:12.5px;border-radius:11px}
+.btn-rs.sm svg{width:15px;height:15px}
+.rs-back{grid-area:back;justify-self:start;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--hair);background:var(--paper);border-radius:11px;padding:8px 14px;font:inherit;font-size:13px;font-weight:800;color:var(--grey);cursor:pointer;transition:.14s}
 .rs-back svg{width:16px;height:16px}
 .rs-back:hover{color:var(--acc);border-color:var(--acc)}
 .rs-id{display:flex;align-items:center;gap:16px;min-width:0}
@@ -885,6 +891,7 @@ body:not(.recing) .dk-listen{background:color-mix(in srgb,var(--acc) 5%,var(--pa
   /* one row: back arrow, meeting, menu — then the actions underneath */
   .rs-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"back id more" "acts acts acts";align-items:center;gap:10px;margin-bottom:14px}
   .rs-back{grid-area:back;justify-self:start;padding:8px 10px}
+  .rs-quick{display:none}
   .rs-back span{display:none}
   .rs-id{grid-area:id;gap:10px;align-items:center}
   .rs-idt{order:1;flex:1 1 auto;min-width:0}
@@ -1074,6 +1081,10 @@ body:not(.recing) .dk-listen{background:color-mix(in srgb,var(--acc) 5%,var(--pa
     <div id="resBody" style="display:none"><div class="mb-bar"><img class="mb-logo" src="/logo.svg" alt=""><b class="mb-brand">Flash Meet</b><span class="mb-sp"></span><span class="mb-people"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19"/><circle cx="10" cy="7.5" r="3.2"/></svg><span class="mb-people-n">0</span></span><button type="button" class="mb-ic mb-set" aria-label="Settings">⚙</button></div>
       <div class="rs-top">
         <button type="button" class="rs-back" id="rsBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg><span data-t="r_back">Quay lại</span></button>
+        <div class="rs-quick">
+          <button type="button" class="btn-rs sm" id="btnNewTop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span data-t="r_new2">Cuộc họp mới</span></button>
+          <button type="button" class="btn-rs sm" id="btnHistTop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 4v4h4"/><path d="M12 7v5l3 2"/></svg><span data-t="r_hist">Xem lịch sử</span></button>
+        </div>
         <div class="rs-id">
           <div class="rs-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19"/><circle cx="10" cy="7.5" r="3.2"/><path d="M20 19v-1.4a3.5 3.5 0 0 0-2.6-3.4M15.5 4.7a3.2 3.2 0 0 1 0 5.9"/></svg></div>
           <div class="rs-idt">
@@ -2077,6 +2088,8 @@ function resMenu(open){var m=$('rsMenu'),b=$('rsMore');if(!m)return;
 if($('rsFind'))$('rsFind').addEventListener('input',trFilter);
 if($('rsBack'))$('rsBack').onclick=function(){resMenu(false);show('sc-cap');};
 if($('btnHist2'))$('btnHist2').onclick=function(){$('overlay').classList.add('on');};
+if($('btnHistTop'))$('btnHistTop').onclick=function(){$('overlay').classList.add('on');};
+if($('btnNewTop'))$('btnNewTop').onclick=function(){$('btnNew').click();};
 if($('rsMore'))$('rsMore').onclick=function(ev){ev.stopPropagation();resMenu($('rsMenu').style.display==='none');};
 document.addEventListener('click',function(ev){var m=$('rsMenu');if(!m||m.style.display==='none')return;
   if(!ev.target.closest('.rs-more-w'))resMenu(false);});
