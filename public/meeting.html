@@ -786,6 +786,143 @@ body:not(.recing) .cap-meta>.usage-badge{order:0;flex:0 0 auto;align-self:center
 body:not(.recing) .cta-go::before{content:"✨";margin-right:9px}
 body:not(.recing) .app-card{background:linear-gradient(180deg,var(--paper),color-mix(in srgb,var(--acc) 3%,var(--paper)));box-shadow:0 24px 60px -34px rgba(16,36,80,.45)}
 body:not(.recing) .dk-listen{background:color-mix(in srgb,var(--acc) 5%,var(--paper));border-color:color-mix(in srgb,var(--acc) 16%,var(--hair))}
+
+/* ── Result screen after a meeting: two columns on desktop, one tab at a time on phones ── */
+#sc-res{text-align:left}
+@media(min-width:981px){.screen#sc-res{max-width:1240px}}
+.rs-top{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:14px;margin-bottom:18px}
+.rs-back{grid-column:1/-1;justify-self:start;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--hair);background:var(--paper);border-radius:11px;padding:8px 14px;font:inherit;font-size:13px;font-weight:800;color:var(--grey);cursor:pointer;transition:.14s}
+.rs-back svg{width:16px;height:16px}
+.rs-back:hover{color:var(--acc);border-color:var(--acc)}
+.rs-id{display:flex;align-items:center;gap:16px;min-width:0}
+.rs-ico{width:76px;height:76px;flex:0 0 76px;border-radius:20px;display:grid;place-items:center;color:var(--acc);background:linear-gradient(140deg,color-mix(in srgb,var(--acc) 17%,var(--paper)),color-mix(in srgb,var(--acc) 6%,var(--paper)))}
+.rs-ico svg{width:38px;height:38px}
+.rs-idt{min-width:0}
+.rs-title{margin:0;font-size:26px;font-weight:900;letter-spacing:-.03em;color:var(--ink);line-height:1.2}
+.rs-meta{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:8px;font-size:13px;font-weight:700;color:var(--grey)}
+.rs-when{display:inline-flex;align-items:center;gap:7px}
+.rs-when svg{width:15px;height:15px;color:var(--faint)}
+.rs-sep{color:var(--faint)}
+.rs-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid color-mix(in srgb,var(--acc) 22%,var(--hair));background:color-mix(in srgb,var(--acc) 8%,var(--paper));color:var(--acc);border-radius:99px;padding:4px 11px;font-size:12.5px;font-weight:800}
+.rs-chip svg{width:14px;height:14px}
+.rs-meta2{margin-top:6px;font-size:12.5px;font-weight:600;color:var(--faint)}
+.rs-acts{display:flex;align-items:center;gap:10px}
+.btn-rs{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--hair);background:var(--paper);color:var(--ink);border-radius:12px;padding:11px 16px;font:inherit;font-size:13.5px;font-weight:800;cursor:pointer;white-space:nowrap;transition:.14s}
+.btn-rs svg{width:17px;height:17px;color:var(--grey);flex:0 0 auto}
+.btn-rs:hover{border-color:var(--acc);color:var(--acc)}
+.btn-rs:hover svg{color:var(--acc)}
+.btn-rs.prim{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 14px 28px -16px rgba(31,107,255,.9)}
+.btn-rs.prim svg{color:#fff}
+.btn-rs.prim:hover{background:#1a5ee0;border-color:#1a5ee0;color:#fff}
+.rs-more-w{position:relative}
+.rs-more{width:40px;height:40px;border-radius:50%;border:1px solid var(--hair);background:var(--paper);color:var(--grey);cursor:pointer;display:grid;place-items:center;transition:.14s}
+.rs-more svg{width:20px;height:20px}
+.rs-more:hover{color:var(--acc);border-color:var(--acc)}
+.rs-menu{position:absolute;right:0;top:46px;z-index:30;background:var(--paper);border:1px solid var(--hair);border-radius:14px;padding:6px;min-width:212px;box-shadow:0 22px 46px -24px rgba(10,20,45,.5)}
+.rs-menu button{display:block;width:100%;text-align:left;border:0;background:none;font:inherit;font-size:13px;font-weight:800;color:var(--ink);padding:10px 12px;border-radius:9px;cursor:pointer}
+.rs-menu button:hover{background:color-mix(in srgb,var(--acc) 8%,var(--paper));color:var(--acc)}
+.res-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.res-tabs{display:flex;gap:6px;border:1px solid var(--hair);border-radius:15px;padding:5px;background:var(--paper);overflow:auto;max-width:100%;scrollbar-width:none}
+.res-tabs::-webkit-scrollbar{display:none}
+.res-tabs button{display:inline-flex;align-items:center;gap:8px;border:0;background:none;border-radius:11px;padding:10px 18px;font:inherit;font-size:13.5px;font-weight:800;color:var(--grey);cursor:pointer;white-space:nowrap;transition:.14s}
+.res-tabs button svg{width:16px;height:16px}
+.res-tabs button:hover{color:var(--ink)}
+.res-tabs button.on{background:var(--acc);color:#fff;box-shadow:0 10px 20px -12px rgba(31,107,255,.9)}
+.rs-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:start}
+@media(min-width:981px){.rs-cols{grid-template-columns:minmax(0,1fr) 420px;gap:22px}}
+.rs-card{background:var(--paper);border:1px solid var(--hair);border-radius:20px;padding:20px 22px;box-shadow:0 20px 44px -34px rgba(16,36,80,.5)}
+.rs-card-h{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.rs-card-ic{width:40px;height:40px;flex:0 0 40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--acc) 10%,var(--paper));color:var(--acc)}
+.rs-card-ic svg{width:21px;height:21px}
+.rs-card-h b{font-size:17px;font-weight:900;letter-spacing:-.02em}
+.rs-find{margin-left:auto;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--hair);border-radius:11px;padding:8px 12px;background:var(--paper);min-width:0}
+.rs-find svg{width:15px;height:15px;color:var(--faint);flex:0 0 auto}
+.rs-find input{border:0;background:none;outline:none;font:inherit;font-size:13px;color:var(--ink);width:186px;max-width:100%;min-width:0}
+.rs-find:focus-within{border-color:var(--acc)}
+#transcript{border:0;padding:0;background:none;font-size:14px;max-height:none;box-shadow:none}
+.tr-turn{display:flex;gap:12px;align-items:flex-start;padding:11px 0;margin:0}
+.tr-turn+.tr-turn{border-top:1px solid color-mix(in srgb,var(--hair) 55%,transparent)}
+.tr-av{flex:0 0 34px;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:12.5px;font-weight:900;color:#fff;background:var(--acc)}
+.tr-av.c1{background:#1f6bff}.tr-av.c2{background:#8b5cf6}.tr-av.c3{background:#0ea5a5}.tr-av.c4{background:#f59e0b}.tr-av.c5{background:#ec4899}.tr-av.c6{background:#22c55e}
+.tr-b{min-width:0;flex:1}
+.tr-h{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.tr-turn .sp{font-family:inherit;font-size:11.5px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:var(--acc);background:color-mix(in srgb,var(--acc) 9%,var(--paper));border-radius:7px;padding:3px 8px;margin:0}
+.tr-t{font-size:11.5px;font-weight:700;color:var(--faint);font-variant-numeric:tabular-nums}
+.tr-turn .tx{display:block;font-size:14.5px;line-height:1.55;color:var(--ink)}
+.tr-turn .tr-tl{margin-top:8px;background:color-mix(in srgb,var(--hair) 38%,var(--paper));border-radius:12px;padding:10px 13px;color:var(--grey);font-weight:600;font-size:13.5px}
+.tr-hit{background:#fde68a;color:#7c2d12;border-radius:4px}
+.rs-nomatch{font-size:13px;font-weight:700;color:var(--faint);padding:10px 2px;margin:0}
+.rs-ai{border:1px solid var(--hair);border-radius:20px;padding:18px 20px;background:var(--paper)}
+.rs-ai+.rs-ai{margin-top:16px}
+.rs-ai-h{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.rs-ai-h b{font-size:16px;font-weight:900;letter-spacing:-.02em;flex:1;min-width:0}
+.rs-ai-ic{width:34px;height:34px;flex:0 0 34px;border-radius:11px;display:grid;place-items:center;color:#fff}
+.rs-ai-ic svg{width:18px;height:18px}
+.rs-ai-chip{font-size:11px;font-weight:800;color:var(--acc);background:color-mix(in srgb,var(--acc) 10%,var(--paper));border:1px solid color-mix(in srgb,var(--acc) 18%,var(--hair));border-radius:99px;padding:4px 9px;white-space:nowrap}
+.a-sum{background:linear-gradient(180deg,color-mix(in srgb,#1f6bff 6%,var(--paper)),var(--paper));border-color:color-mix(in srgb,#1f6bff 16%,var(--hair))}
+.a-sum .rs-ai-ic{background:#1f6bff}
+.a-act{background:linear-gradient(180deg,color-mix(in srgb,#12a594 7%,var(--paper)),var(--paper));border-color:color-mix(in srgb,#12a594 18%,var(--hair))}
+.a-act .rs-ai-ic{background:#12a594}
+.a-act .rs-ai-chip{color:#0f766e;background:color-mix(in srgb,#12a594 10%,var(--paper));border-color:color-mix(in srgb,#12a594 20%,var(--hair))}
+.a-dec{background:linear-gradient(180deg,color-mix(in srgb,#f59e0b 8%,var(--paper)),var(--paper));border-color:color-mix(in srgb,#f59e0b 22%,var(--hair))}
+.a-dec .rs-ai-ic{background:#f59e0b}
+.a-dec .rs-ai-chip{color:#b45309;background:color-mix(in srgb,#f59e0b 12%,var(--paper));border-color:color-mix(in srgb,#f59e0b 26%,var(--hair))}
+.rs-ai .out{border:0;padding:0;background:none;font-size:13.5px;line-height:1.65;max-height:none;box-shadow:none}
+#actionItems .ai-item,#decisions .ai-item{background:none;border:0;border-radius:0;margin:0}
+#actionItems .ai-item{display:flex;gap:11px;align-items:flex-start;padding:8px 0;font-size:13.5px;color:var(--ink)}
+.ai-n{flex:0 0 26px;width:26px;height:26px;border-radius:9px;display:grid;place-items:center;font-size:12px;font-weight:900;color:#0f766e;background:color-mix(in srgb,#12a594 15%,var(--paper))}
+#decisions .ai-item{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:13.5px;color:var(--ink)}
+.ai-dot{flex:0 0 7px;width:7px;height:7px;border-radius:50%;background:#f59e0b;margin-top:8px}
+.spbox{margin-top:16px;border:1px solid var(--hair);border-radius:16px;padding:14px 18px;background:var(--paper)}
+.spbox summary{font-size:13.5px;font-weight:800;color:var(--grey)}
+.spbox summary .sp-ic{width:18px;height:18px;color:var(--faint)}
+.spbox summary .arr{margin-left:auto}
+/* phones and small laptops: the tabs really switch sections, one at a time */
+@media(max-width:980px){
+  /* one row: back arrow, meeting, menu — then the actions underneath */
+  .rs-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"back id more" "acts acts acts";align-items:center;gap:10px;margin-bottom:14px}
+  .rs-back{grid-area:back;justify-self:start;padding:8px 10px}
+  .rs-back span{display:none}
+  .rs-id{grid-area:id;gap:10px;align-items:center}
+  .rs-idt{order:1;flex:1 1 auto;min-width:0}
+  .rs-ico{order:2;width:52px;height:52px;flex-basis:52px;border-radius:15px}
+  .rs-ico svg{width:26px;height:26px}
+  .rs-more-w{grid-area:more}
+  .rs-acts{grid-area:acts;display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .btn-rs{padding:11px 10px;font-size:13px}
+  .btn-rs.prim{grid-column:1/-1}
+  .rs-title{font-size:21px}
+  .rs-meta{margin-top:6px;font-size:12.5px;gap:7px}
+  .res-head{margin-bottom:12px}
+  .res-head .wc{display:none}
+  .res-tabs{width:100%;border-radius:14px}
+  .res-tabs button{padding:9px 14px;font-size:13px}
+  .rs-card{padding:15px 15px 18px;border-radius:18px}
+  .rs-card-h{gap:10px;margin-bottom:10px}
+  .rs-card-ic{width:34px;height:34px;flex-basis:34px;border-radius:10px}
+  .rs-card-h b{font-size:15.5px}
+  .rs-find{margin-left:0;flex:1 1 100%;order:3}
+  .rs-find input{width:100%}
+  .rs-ai{padding:15px 16px;border-radius:18px}
+  .rs-ai-h b{font-size:15px}
+  .tr-turn .tx{font-size:14px}
+}
+@media(max-width:620px){
+  .res-tabs{gap:2px;padding:4px;border-radius:13px}
+  .res-tabs button{padding:8px 7px;font-size:11.5px;gap:5px;border-radius:10px}
+  .res-tabs button svg{width:14px;height:14px}
+  .rs-title{font-size:19px}
+  .rs-meta{font-size:12px}
+  .rs-more{width:36px;height:36px}
+  .rs-sep{display:none}
+}
+@media(max-width:400px){
+  .res-tabs button{padding:8px 5px;font-size:11px;gap:4px}
+  .res-tabs button svg{width:13px;height:13px}
+  .rs-meta{gap:6px}
+  .rs-chip{padding:3px 9px;font-size:11.5px}
+  .btn-rs{font-size:12.5px;gap:6px}
+}
 </style>
 <script src="/glossary-context.js"></script></head>
 <body>
@@ -930,31 +1067,78 @@ body:not(.recing) .dk-listen{background:color-mix(in srgb,var(--acc) 5%,var(--pa
       </div>
       <p id="procMsg">Transcribing…</p><small id="procSub"></small>
     </div>
-    <div id="resBody" style="display:none"><div class="mb-bar"><img class="mb-logo" src="/logo.svg" alt=""><b class="mb-brand">Flash Meet</b><span class="mb-sp"></span><span class="mb-people"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19"/><circle cx="10" cy="7.5" r="3.2"/></svg><span class="mb-people-n">0</span></span><button type="button" class="mb-ic mb-set" aria-label="Settings">⚙</button></div><div class="mb-notes"><span class="mb-nic">✦</span><div><b data-t="mb_notes">AI Meeting Notes</b><span data-t="mb_notes_sub">Biến mọi cuộc họp thành hành động rõ ràng</span></div></div>
+    <div id="resBody" style="display:none"><div class="mb-bar"><img class="mb-logo" src="/logo.svg" alt=""><b class="mb-brand">Flash Meet</b><span class="mb-sp"></span><span class="mb-people"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19"/><circle cx="10" cy="7.5" r="3.2"/></svg><span class="mb-people-n">0</span></span><button type="button" class="mb-ic mb-set" aria-label="Settings">⚙</button></div>
+      <div class="rs-top">
+        <button type="button" class="rs-back" id="rsBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg><span data-t="r_back">Quay lại</span></button>
+        <div class="rs-id">
+          <div class="rs-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19"/><circle cx="10" cy="7.5" r="3.2"/><path d="M20 19v-1.4a3.5 3.5 0 0 0-2.6-3.4M15.5 4.7a3.2 3.2 0 0 1 0 5.9"/></svg></div>
+          <div class="rs-idt">
+            <h2 class="rs-title" id="rsTitle">Cuộc họp trực tiếp</h2>
+            <div class="rs-meta">
+              <span class="rs-when"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg><span id="rsWhen"></span></span>
+              <span class="rs-sep" id="rsSep">·</span>
+              <span class="rs-chip" id="rsLang" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.3 5.3 3.3 8.5s-1 6.1-3.3 8.5c-2.3-2.4-3.3-5.3-3.3-8.5S9.7 5.9 12 3.5z"/></svg><span id="rsLangT"></span></span>
+            </div>
+            <div class="rs-meta2" id="rsMeta2"></div>
+          </div>
+        </div>
+        <div class="rs-acts">
+          <button type="button" class="btn-rs" id="btnCopy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5.5 15H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v.5"/></svg><span class="lb">Copy</span></button>
+          <button type="button" class="btn-rs" id="btnDl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10"/><polyline points="7.5 10 12 14.5 16.5 10"/><path d="M4.5 18.5h15"/></svg><span class="lb">Tải</span></button>
+          <button type="button" class="btn-rs prim" id="btnDlLive" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3.5H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5z"/><path d="M14 3.5V9h5"/></svg><span data-t="r_dl_live2">Tải bản dịch trực tiếp</span></button>
+        </div>
+        <div class="rs-more-w">
+          <button type="button" class="rs-more" id="rsMore" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></svg></button>
+          <div class="rs-menu" id="rsMenu" style="display:none">
+            <button type="button" id="btnNew" data-t="r_new">+ Cuộc họp mới</button>
+            <button type="button" id="btnKeep" data-t="r_keep" style="display:none">Giữ cuộc họp này</button>
+          </div>
+        </div>
+      </div>
       <div class="res-head">
         <div class="res-tabs">
-          <button data-v="transcript" class="on" data-t="r_transcript">Transcript</button>
-          <button data-v="summary" data-t="r_summary">Summary</button>
-          <button data-v="actions" data-t="ai_actions">Action items</button>
-          <button data-v="decisions" data-t="ai_decisions">Decisions</button>
+          <button type="button" data-v="transcript" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3.5H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5z"/><path d="M14 3.5V9h5M8.5 13h7M8.5 16.5h4.5"/></svg><span data-t="r_transcript">Bản ghi</span></button>
+          <button type="button" data-v="summary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v17M3.5 12h17M6 6l12 12M18 6L6 18"/></svg><span data-t="r_summary">Tóm tắt</span></button>
+          <button type="button" data-v="actions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><polyline points="8.5 12.5 11 15 15.5 9.5"/></svg><span data-t="ai_actions">Việc cần làm</span></button>
+          <button type="button" data-v="decisions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 3.6 10.8c-.5.4-.8 1-.8 1.6H9.2c0-.6-.3-1.2-.8-1.6A6 6 0 0 1 12 3z"/></svg><span data-t="ai_decisions">Quyết định</span></button>
         </div>
         <span class="wc" id="wc"></span>
       </div>
-      <div class="out" id="transcript"></div>
-      <div class="out" id="summary" style="display:none"></div>
-      <div class="out ai-out" id="actionItems" style="display:none"></div>
-      <div class="out ai-out" id="decisions" style="display:none"></div>
-      <div class="dual" style="margin-top:18px"><button class="btn out" id="btnCopy">Copy</button><button class="btn out" id="btnDl">⬇ Download</button></div>
-      <button class="btn out" id="btnDlLive" data-t="r_dl_live" style="margin-top:10px;display:none">⬇ Live translation</button>
       <p class="cloud-note" id="cloudNote" style="display:none"></p>
-      <button class="btn" id="btnKeep" data-t="r_keep" style="margin-top:12px;display:none">💾 Keep this meeting</button>
+      <div class="rs-cols">
+        <div class="rs-main">
+          <section class="rs-card" id="rsTrCard">
+            <div class="rs-card-h">
+              <span class="rs-card-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3.5H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.5z"/><path d="M14 3.5V9h5M8.5 13h7M8.5 16.5h4.5"/></svg></span>
+              <b data-t="r_tr_title">Bản ghi cuộc họp</b>
+              <label class="rs-find"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg><input id="rsFind" type="text" data-tp="r_find_ph" placeholder="Tìm trong nội dung…"></label>
+            </div>
+            <div class="out" id="transcript"></div>
+            <p class="rs-nomatch" id="rsNoMatch" data-t="r_nomatch" style="display:none">Không tìm thấy</p>
+          </section>
+          <details class="spbox" id="spbox">
+            <summary><svg class="sp-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19"/><circle cx="10" cy="7.5" r="3.2"/><path d="M20 19v-1.4a3.5 3.5 0 0 0-2.6-3.4"/></svg><span data-t="sp_title">Đổi tên người nói (tùy chọn)</span><span class="arr">▶</span></summary>
+            <div class="sp-rows" id="spRows"></div>
+            <button class="sp-apply" id="spApply" data-t="sp_apply">Áp dụng</button>
+          </details>
+        </div>
+        <aside class="rs-rail">
+          <section class="rs-ai a-sum" id="rsSum">
+            <div class="rs-ai-h"><span class="rs-ai-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v17M3.5 12h17M6 6l12 12M18 6L6 18"/></svg></span><b data-t="r_sum_title">Tóm tắt cuộc họp</b><span class="rs-ai-chip" data-t="r_by_ai">Tạo bởi AI</span></div>
+            <div class="out" id="summary"></div>
+          </section>
+          <section class="rs-ai a-act" id="rsAct">
+            <div class="rs-ai-h"><span class="rs-ai-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><polyline points="8.5 12.5 11 15 15.5 9.5"/></svg></span><b data-t="ai_actions">Việc cần làm</b><span class="rs-ai-chip" data-t="r_by_ai">Tạo bởi AI</span></div>
+            <div class="out ai-out" id="actionItems"></div>
+          </section>
+          <section class="rs-ai a-dec" id="rsDec">
+            <div class="rs-ai-h"><span class="rs-ai-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 3.6 10.8c-.5.4-.8 1-.8 1.6H9.2c0-.6-.3-1.2-.8-1.6A6 6 0 0 1 12 3z"/></svg></span><b data-t="ai_decisions">Quyết định</b><span class="rs-ai-chip" data-t="r_by_ai">Tạo bởi AI</span></div>
+            <div class="out ai-out" id="decisions"></div>
+          </section>
+        </aside>
+      </div>
       <p class="keep-note" id="keepNote" data-t="r_keep_note" style="display:none">Auto-deletes in 1 day unless you keep it.</p>
-      <button class="btn out" id="btnNew" data-t="r_new" style="margin-top:10px">+ New meeting</button>
-      <details class="spbox" id="spbox">
-        <summary><span class="arr">▶</span><span data-t="sp_title">Rename speakers (optional)</span></summary>
-        <div class="sp-rows" id="spRows"></div>
-        <button class="sp-apply" id="spApply" data-t="sp_apply">Apply</button>
-      </details>
+
     </div>
   </div>
 
@@ -997,8 +1181,8 @@ const I={
    c_recording:"LIVE · Translating live",c_paused:"Paused",c_ready:"Ready",lv_auto:"Auto",lv_fast:"⚡ Fast",lv_multi:"🌐 Multi",
    c_diar:"👥 Voices are separated automatically (Speaker 1, 2, 3…).",
    p_upload:"Uploading audio…",p_diar:"Separating voices…",p_sum:"Writing the summary…",p_wait:"Your AI assistant is hard at work…",
-   r_summary:"Summary",r_transcript:"Transcript",r_copy:"Copy",r_download:"Download",r_new:"+ New meeting",r_dl_live:"⬇ Download live translation",r_live:"Live translation",r_keep:"💾 Keep this meeting",r_keep_note:"Auto-deletes in 1 day unless you keep it.",hist_temp:"Temporary · auto-deletes in 1 day",hist_keep:"Keep",hist_saved:"Saved to history",autosum_done:"Auto-saved summary",cl_saving:"Saving to your meeting calendar…",cl_saved:"Saved to your meeting calendar",cl_fail:"Saved on this device — couldn't sync to your account",cl_open:"Open calendar",hist_cal:"Meeting calendar (all devices)",words:"words",
-   dk_info:"Meeting details",dk_when:"Started",dk_len:"Length",dk_mode:"Mode",dk_live_tab:"Live conversation",dk_find_ph:"Search in this conversation…",dk_stage:"Conference mode (stage windows)",dk_stage_sub:"Open large captions on a second screen for events and talks.",dk_conn_ok:"Connection steady",dk_conn_wait:"Reconnecting…",dk_conn_off:"Not listening",dk_updated:"Updated",dk_refresh:"Refresh AI notes",sfx_title:"Saved to your meeting calendar",sfx_title_local:"Saved on this device",sfx_sync:"Syncing to your account…",sfx_synced:"Synced — open it any time in your calendar.",sfx_fail:"Couldn't sync; the meeting stays on this device.",sfx_anon:"Sign in to sync it to your calendar and read it on any device.",min_short:"min",sfx_close:"Close",sfx_signin:"Sign in",mb_owner:"Owner:",mb_due:"Due:",mb_live:"Live meeting",mb_paused:"Paused",mb_ready:"Ready to start",mb_speakers:"speakers",mb_lang:"Language",mb_done:"Done",mb_rename:"Meeting name",mb_deflt:"Live meeting",mb_auto:"Auto detect",mb_listen:"Listening and translating live…",mb_notes:"AI Meeting Notes",mb_notes_sub:"Turns every meeting into clear actions",ai_title:"AI Meeting Intelligence",ai_summary:"Summary",ai_actions:"Action items",ai_decisions:"Decisions",ai_risks:"Risks & follow-ups",ai_wait:"AI is listening… The summary appears once there's enough content.",ai_prev_actions:"Action items are detected automatically after the meeting.",ai_prev_decisions:"Key decisions will be captured here.",ai_prev_risks:"AI flags risks, open points and follow-ups.",ai_pro_task:"Pro: export tasks & history",ai_listen:"AI Listening",ai_pro:"Pro — upgrade to unlock",ai_show:"AI panel",ai_lang_auto:"🌐 Auto",u_trial:"🎁 Free trial · {n} min left",u_unlim:"⏱ Unlimited",u_today:"Today",u_month:"Month",u_min:"m",
+   r_summary:"Summary",r_transcript:"Transcript",r_copy:"Copy",r_download:"Download",r_new:"+ New meeting",r_dl_live:"⬇ Download live translation",r_dl_live2:"Download live translation",r_live:"Live translation",r_keep:"💾 Keep this meeting",r_keep_note:"Auto-deletes in 1 day unless you keep it.",hist_temp:"Temporary · auto-deletes in 1 day",hist_keep:"Keep",hist_saved:"Saved to history",autosum_done:"Auto-saved summary",cl_saving:"Saving to your meeting calendar…",cl_saved:"Saved to your meeting calendar",cl_fail:"Saved on this device — couldn't sync to your account",cl_open:"Open calendar",hist_cal:"Meeting calendar (all devices)",words:"words",
+   dk_info:"Meeting details",dk_when:"Started",dk_len:"Length",dk_mode:"Mode",dk_live_tab:"Live conversation",dk_find_ph:"Search in this conversation…",dk_stage:"Conference mode (stage windows)",dk_stage_sub:"Open large captions on a second screen for events and talks.",dk_conn_ok:"Connection steady",dk_conn_wait:"Reconnecting…",dk_conn_off:"Not listening",dk_updated:"Updated",dk_refresh:"Refresh AI notes",sfx_title:"Saved to your meeting calendar",sfx_title_local:"Saved on this device",sfx_sync:"Syncing to your account…",sfx_synced:"Synced — open it any time in your calendar.",sfx_fail:"Couldn't sync; the meeting stays on this device.",sfx_anon:"Sign in to sync it to your calendar and read it on any device.",min_short:"min",sfx_close:"Close",sfx_signin:"Sign in",mb_owner:"Owner:",mb_due:"Due:",mb_live:"Live meeting",mb_paused:"Paused",mb_ready:"Ready to start",mb_speakers:"speakers",mb_lang:"Language",mb_done:"Done",r_back:"Back",r_tr_title:"Meeting transcript",r_find_ph:"Search in this transcript…",r_sum_title:"Meeting summary",r_by_ai:"Made by AI",r_people:"participants",r_more:"More",r_nomatch:"No match",mb_rename:"Meeting name",mb_deflt:"Live meeting",mb_auto:"Auto detect",mb_listen:"Listening and translating live…",mb_notes:"AI Meeting Notes",mb_notes_sub:"Turns every meeting into clear actions",ai_title:"AI Meeting Intelligence",ai_summary:"Summary",ai_actions:"Action items",ai_decisions:"Decisions",ai_risks:"Risks & follow-ups",ai_wait:"AI is listening… The summary appears once there's enough content.",ai_prev_actions:"Action items are detected automatically after the meeting.",ai_prev_decisions:"Key decisions will be captured here.",ai_prev_risks:"AI flags risks, open points and follow-ups.",ai_pro_task:"Pro: export tasks & history",ai_listen:"AI Listening",ai_pro:"Pro — upgrade to unlock",ai_show:"AI panel",ai_lang_auto:"🌐 Auto",u_trial:"🎁 Free trial · {n} min left",u_unlim:"⏱ Unlimited",u_today:"Today",u_month:"Month",u_min:"m",
    ready_h:"Ready to translate your meeting",ready_sub:"Press start and Flash Meet will listen, detect the language and show the live translation.",ready_1:"✓ Transcribe",ready_2:"✓ Live translate",ready_3:"✓ Summarize",ready_4:"✓ Extract action items",ready_help:"In Two-way mode, Flash Meet detects each speaker's language and translates to the other in your chosen pair.",
    h_title:"History",open:"Open",empty:"No meetings yet",
    sp_title:"Rename speakers (optional)",sp_apply:"Apply",sp_ph:"Real name",sp_done:"Names applied",
@@ -1013,8 +1197,8 @@ const I={
    c_recording:"LIVE · Đang dịch trực tiếp",c_paused:"Đã tạm dừng",c_ready:"Sẵn sàng",lv_auto:"Tự động",lv_fast:"⚡ Nhanh",lv_multi:"🌐 Đa ngữ",
    c_diar:"👥 Tự động tách giọng từng người (Speaker 1, 2, 3…).",
    p_upload:"Đang tải audio lên…",p_diar:"Đang tách giọng nói…",p_sum:"Đang viết tóm tắt…",p_wait:"Trợ lý AI đang chăm chỉ làm việc…",
-   r_summary:"Tóm tắt",r_transcript:"Bản ghi",r_copy:"Copy",r_download:"Tải",r_new:"+ Cuộc họp mới",r_dl_live:"⬇ Tải bản dịch trực tiếp",r_live:"Bản dịch trực tiếp",r_keep:"💾 Lưu cuộc họp này",r_keep_note:"Không lưu sẽ tự xóa sau 1 ngày.",hist_temp:"Tạm · tự xóa sau 1 ngày",hist_keep:"Lưu",hist_saved:"Đã lưu vào lịch sử",autosum_done:"Đã tự lưu tóm tắt",cl_saving:"Đang lưu vào Lịch họp…",cl_saved:"Đã tự lưu vào Lịch họp",cl_fail:"Đã lưu trên thiết bị — chưa đồng bộ được lên tài khoản",cl_open:"Xem lịch",hist_cal:"Lịch họp (mọi thiết bị)",words:"từ",
-   dk_info:"Thông tin cuộc họp",dk_when:"Bắt đầu",dk_len:"Thời lượng",dk_mode:"Chế độ",dk_live_tab:"Cuộc trò chuyện trực tiếp",dk_find_ph:"Tìm trong cuộc trò chuyện…",dk_stage:"Chế độ Hội nghị (Stage Mode)",dk_stage_sub:"Mở phụ đề lớn trên màn hình thứ hai cho sự kiện và hội nghị.",dk_conn_ok:"Kết nối ổn định",dk_conn_wait:"Đang kết nối lại…",dk_conn_off:"Chưa nghe",dk_updated:"Cập nhật lúc",dk_refresh:"Cập nhật ghi chú AI",sfx_title:"Đã lưu vào Lịch họp",sfx_title_local:"Đã lưu trên thiết bị này",sfx_sync:"Đang đồng bộ lên tài khoản…",sfx_synced:"Đã đồng bộ — mở lại bất cứ lúc nào trong Lịch họp.",sfx_fail:"Chưa đồng bộ được, nội dung vẫn nằm trên máy này.",sfx_anon:"Đăng nhập để đồng bộ lên Lịch họp và xem trên mọi thiết bị.",min_short:"phút",sfx_close:"Đóng",sfx_signin:"Đăng nhập",mb_owner:"Phụ trách:",mb_due:"Hạn:",mb_live:"Đang họp trực tiếp",mb_paused:"Đang tạm dừng",mb_ready:"Sẵn sàng bắt đầu",mb_speakers:"người nói",mb_lang:"Ngôn ngữ",mb_done:"Xong",mb_rename:"Tên cuộc họp",mb_deflt:"Cuộc họp trực tiếp",mb_auto:"Tự động phát hiện",mb_listen:"Đang lắng nghe và dịch trực tiếp…",mb_notes:"AI Meeting Notes",mb_notes_sub:"Biến mọi cuộc họp thành hành động rõ ràng",ai_title:"AI Tổng hợp cuộc họp",ai_summary:"Tóm tắt",ai_actions:"Việc cần làm",ai_decisions:"Quyết định",ai_risks:"Rủi ro & theo dõi",ai_wait:"AI đang lắng nghe… Tóm tắt sẽ xuất hiện sau khi có đủ nội dung.",ai_prev_actions:"Các việc cần làm sẽ được tự động nhận diện sau cuộc họp.",ai_prev_decisions:"Các quyết định quan trọng sẽ được ghi lại tại đây.",ai_prev_risks:"AI sẽ phát hiện rủi ro, điểm chưa rõ và nội dung cần follow-up.",ai_pro_task:"Pro: xuất task & lưu lịch sử",ai_listen:"AI đang nghe",ai_pro:"Pro — nâng cấp để mở",ai_show:"Bảng AI",ai_lang_auto:"🌐 Tự động",u_trial:"🎁 Dùng thử còn {n} phút",u_unlim:"⏱ Không giới hạn",u_today:"Hôm nay",u_month:"Tháng",u_min:"p",
+   r_summary:"Tóm tắt",r_transcript:"Bản ghi",r_copy:"Copy",r_download:"Tải",r_new:"+ Cuộc họp mới",r_dl_live:"⬇ Tải bản dịch trực tiếp",r_dl_live2:"Tải bản dịch trực tiếp",r_live:"Bản dịch trực tiếp",r_keep:"💾 Lưu cuộc họp này",r_keep_note:"Không lưu sẽ tự xóa sau 1 ngày.",hist_temp:"Tạm · tự xóa sau 1 ngày",hist_keep:"Lưu",hist_saved:"Đã lưu vào lịch sử",autosum_done:"Đã tự lưu tóm tắt",cl_saving:"Đang lưu vào Lịch họp…",cl_saved:"Đã tự lưu vào Lịch họp",cl_fail:"Đã lưu trên thiết bị — chưa đồng bộ được lên tài khoản",cl_open:"Xem lịch",hist_cal:"Lịch họp (mọi thiết bị)",words:"từ",
+   dk_info:"Thông tin cuộc họp",dk_when:"Bắt đầu",dk_len:"Thời lượng",dk_mode:"Chế độ",dk_live_tab:"Cuộc trò chuyện trực tiếp",dk_find_ph:"Tìm trong cuộc trò chuyện…",dk_stage:"Chế độ Hội nghị (Stage Mode)",dk_stage_sub:"Mở phụ đề lớn trên màn hình thứ hai cho sự kiện và hội nghị.",dk_conn_ok:"Kết nối ổn định",dk_conn_wait:"Đang kết nối lại…",dk_conn_off:"Chưa nghe",dk_updated:"Cập nhật lúc",dk_refresh:"Cập nhật ghi chú AI",sfx_title:"Đã lưu vào Lịch họp",sfx_title_local:"Đã lưu trên thiết bị này",sfx_sync:"Đang đồng bộ lên tài khoản…",sfx_synced:"Đã đồng bộ — mở lại bất cứ lúc nào trong Lịch họp.",sfx_fail:"Chưa đồng bộ được, nội dung vẫn nằm trên máy này.",sfx_anon:"Đăng nhập để đồng bộ lên Lịch họp và xem trên mọi thiết bị.",min_short:"phút",sfx_close:"Đóng",sfx_signin:"Đăng nhập",mb_owner:"Phụ trách:",mb_due:"Hạn:",mb_live:"Đang họp trực tiếp",mb_paused:"Đang tạm dừng",mb_ready:"Sẵn sàng bắt đầu",mb_speakers:"người nói",mb_lang:"Ngôn ngữ",mb_done:"Xong",r_back:"Quay lại",r_tr_title:"Bản ghi cuộc họp",r_find_ph:"Tìm trong nội dung…",r_sum_title:"Tóm tắt cuộc họp",r_by_ai:"Tạo bởi AI",r_people:"người tham gia",r_more:"Thêm",r_nomatch:"Không tìm thấy",mb_rename:"Tên cuộc họp",mb_deflt:"Cuộc họp trực tiếp",mb_auto:"Tự động phát hiện",mb_listen:"Đang lắng nghe và dịch trực tiếp…",mb_notes:"AI Meeting Notes",mb_notes_sub:"Biến mọi cuộc họp thành hành động rõ ràng",ai_title:"AI Tổng hợp cuộc họp",ai_summary:"Tóm tắt",ai_actions:"Việc cần làm",ai_decisions:"Quyết định",ai_risks:"Rủi ro & theo dõi",ai_wait:"AI đang lắng nghe… Tóm tắt sẽ xuất hiện sau khi có đủ nội dung.",ai_prev_actions:"Các việc cần làm sẽ được tự động nhận diện sau cuộc họp.",ai_prev_decisions:"Các quyết định quan trọng sẽ được ghi lại tại đây.",ai_prev_risks:"AI sẽ phát hiện rủi ro, điểm chưa rõ và nội dung cần follow-up.",ai_pro_task:"Pro: xuất task & lưu lịch sử",ai_listen:"AI đang nghe",ai_pro:"Pro — nâng cấp để mở",ai_show:"Bảng AI",ai_lang_auto:"🌐 Tự động",u_trial:"🎁 Dùng thử còn {n} phút",u_unlim:"⏱ Không giới hạn",u_today:"Hôm nay",u_month:"Tháng",u_min:"p",
    ready_h:"Sẵn sàng dịch cuộc họp của bạn",ready_sub:"Bấm bắt đầu để Flash Meet nghe, nhận diện ngôn ngữ và hiển thị bản dịch trực tiếp.",ready_1:"✓ Ghi âm",ready_2:"✓ Dịch trực tiếp",ready_3:"✓ Tóm tắt",ready_4:"✓ Trích việc cần làm",ready_help:"Trong chế độ Song ngữ, Flash Meet tự nhận diện ngôn ngữ người nói và dịch sang ngôn ngữ còn lại trong cặp bạn chọn.",
    h_title:"Lịch sử",open:"Mở",empty:"Chưa có cuộc họp",
    sp_title:"Đổi tên người nói (tùy chọn)",sp_apply:"Áp dụng",sp_ph:"Tên thật",sp_done:"Đã áp dụng tên",
@@ -1029,8 +1213,8 @@ const I={
    c_recording:"LIVE · 실시간 번역 중",c_paused:"일시정지됨",c_ready:"준비됨",lv_auto:"자동",lv_fast:"⚡ 빠름",lv_multi:"🌐 다국어",
    c_diar:"👥 화자를 자동으로 분리합니다 (Speaker 1, 2, 3…).",
    p_upload:"오디오 업로드 중…",p_diar:"화자 분리 중…",p_sum:"요약 작성 중…",p_wait:"AI 비서가 열심히 작업 중…",
-   r_summary:"요약",r_transcript:"전체 기록",r_copy:"복사",r_download:"다운로드",r_new:"+ 새 회의",r_dl_live:"⬇ 실시간 번역 다운로드",r_live:"실시간 번역",r_keep:"💾 이 회의 저장",r_keep_note:"저장하지 않으면 1일 후 자동 삭제됩니다.",hist_temp:"임시 · 1일 후 자동 삭제",hist_keep:"저장",hist_saved:"기록에 저장됨",autosum_done:"요약 자동 저장됨",cl_saving:"회의 캘린더에 저장 중…",cl_saved:"회의 캘린더에 자동 저장됨",cl_fail:"이 기기에 저장됨 — 계정 동기화 실패",cl_open:"캘린더 보기",hist_cal:"회의 캘린더 (모든 기기)",words:"단어",
-   dk_info:"회의 정보",dk_when:"시작",dk_len:"길이",dk_mode:"모드",dk_live_tab:"실시간 대화",dk_find_ph:"이 대화에서 검색…",dk_stage:"컨퍼런스 모드 (무대 화면)",dk_stage_sub:"행사와 발표를 위해 두 번째 화면에 큰 자막을 띄웁니다.",dk_conn_ok:"연결 안정적",dk_conn_wait:"다시 연결 중…",dk_conn_off:"대기 중",dk_updated:"업데이트",dk_refresh:"AI 노트 새로고침",sfx_title:"회의 캘린더에 저장됨",sfx_title_local:"이 기기에 저장됨",sfx_sync:"계정에 동기화하는 중…",sfx_synced:"동기화 완료 — 캘린더에서 언제든 열어 보세요.",sfx_fail:"동기화하지 못했습니다. 이 기기에 저장되어 있습니다.",sfx_anon:"로그인하면 캘린더에 동기화되어 모든 기기에서 볼 수 있습니다.",min_short:"분",sfx_close:"닫기",sfx_signin:"로그인",mb_owner:"담당:",mb_due:"기한:",mb_live:"실시간 회의 중",mb_paused:"일시 중지됨",mb_ready:"시작 준비됨",mb_speakers:"명 발화",mb_lang:"언어",mb_done:"완료",mb_rename:"회의 이름",mb_deflt:"실시간 회의",mb_auto:"자동 감지",mb_listen:"실시간으로 듣고 번역하는 중…",mb_notes:"AI 회의 노트",mb_notes_sub:"모든 회의를 명확한 실행으로",ai_title:"AI 회의 인텔리전스",ai_summary:"요약",ai_actions:"액션 아이템",ai_decisions:"결정",ai_risks:"리스크 & 후속",ai_wait:"AI가 듣고 있어요… 충분한 내용이 모이면 요약이 표시됩니다.",ai_prev_actions:"회의 후 액션 아이템이 자동으로 인식됩니다.",ai_prev_decisions:"주요 결정이 여기에 기록됩니다.",ai_prev_risks:"AI가 리스크·미해결 항목·후속 사항을 감지합니다.",ai_pro_task:"Pro: 작업 내보내기 & 기록",ai_listen:"AI 청취 중",ai_pro:"Pro — 업그레이드",ai_show:"AI 패널",ai_lang_auto:"🌐 자동",u_trial:"🎁 무료 체험 · {n}분 남음",u_unlim:"⏱ 무제한",u_today:"오늘",u_month:"월",u_min:"분",
+   r_summary:"요약",r_transcript:"전체 기록",r_copy:"복사",r_download:"다운로드",r_new:"+ 새 회의",r_dl_live:"⬇ 실시간 번역 다운로드",r_dl_live2:"실시간 번역 다운로드",r_live:"실시간 번역",r_keep:"💾 이 회의 저장",r_keep_note:"저장하지 않으면 1일 후 자동 삭제됩니다.",hist_temp:"임시 · 1일 후 자동 삭제",hist_keep:"저장",hist_saved:"기록에 저장됨",autosum_done:"요약 자동 저장됨",cl_saving:"회의 캘린더에 저장 중…",cl_saved:"회의 캘린더에 자동 저장됨",cl_fail:"이 기기에 저장됨 — 계정 동기화 실패",cl_open:"캘린더 보기",hist_cal:"회의 캘린더 (모든 기기)",words:"단어",
+   dk_info:"회의 정보",dk_when:"시작",dk_len:"길이",dk_mode:"모드",dk_live_tab:"실시간 대화",dk_find_ph:"이 대화에서 검색…",dk_stage:"컨퍼런스 모드 (무대 화면)",dk_stage_sub:"행사와 발표를 위해 두 번째 화면에 큰 자막을 띄웁니다.",dk_conn_ok:"연결 안정적",dk_conn_wait:"다시 연결 중…",dk_conn_off:"대기 중",dk_updated:"업데이트",dk_refresh:"AI 노트 새로고침",sfx_title:"회의 캘린더에 저장됨",sfx_title_local:"이 기기에 저장됨",sfx_sync:"계정에 동기화하는 중…",sfx_synced:"동기화 완료 — 캘린더에서 언제든 열어 보세요.",sfx_fail:"동기화하지 못했습니다. 이 기기에 저장되어 있습니다.",sfx_anon:"로그인하면 캘린더에 동기화되어 모든 기기에서 볼 수 있습니다.",min_short:"분",sfx_close:"닫기",sfx_signin:"로그인",mb_owner:"담당:",mb_due:"기한:",mb_live:"실시간 회의 중",mb_paused:"일시 중지됨",mb_ready:"시작 준비됨",mb_speakers:"명 발화",mb_lang:"언어",mb_done:"완료",r_back:"뒤로",r_tr_title:"회의 기록",r_find_ph:"기록에서 검색…",r_sum_title:"회의 요약",r_by_ai:"AI 생성",r_people:"명 참여",r_more:"더보기",r_nomatch:"결과 없음",mb_rename:"회의 이름",mb_deflt:"실시간 회의",mb_auto:"자동 감지",mb_listen:"실시간으로 듣고 번역하는 중…",mb_notes:"AI 회의 노트",mb_notes_sub:"모든 회의를 명확한 실행으로",ai_title:"AI 회의 인텔리전스",ai_summary:"요약",ai_actions:"액션 아이템",ai_decisions:"결정",ai_risks:"리스크 & 후속",ai_wait:"AI가 듣고 있어요… 충분한 내용이 모이면 요약이 표시됩니다.",ai_prev_actions:"회의 후 액션 아이템이 자동으로 인식됩니다.",ai_prev_decisions:"주요 결정이 여기에 기록됩니다.",ai_prev_risks:"AI가 리스크·미해결 항목·후속 사항을 감지합니다.",ai_pro_task:"Pro: 작업 내보내기 & 기록",ai_listen:"AI 청취 중",ai_pro:"Pro — 업그레이드",ai_show:"AI 패널",ai_lang_auto:"🌐 자동",u_trial:"🎁 무료 체험 · {n}분 남음",u_unlim:"⏱ 무제한",u_today:"오늘",u_month:"월",u_min:"분",
    ready_h:"회의를 번역할 준비가 되었습니다",ready_sub:"시작을 누르면 Flash Meet이 듣고, 언어를 감지해 실시간 번역을 표시합니다.",ready_1:"✓ 전사",ready_2:"✓ 실시간 번역",ready_3:"✓ 요약",ready_4:"✓ 액션 아이템 추출",ready_help:"양방향 모드에서는 각 화자의 언어를 감지해 선택한 쌍의 상대 언어로 번역합니다.",
    h_title:"기록",open:"열기",empty:"회의가 없습니다",
    sp_title:"화자 이름 변경 (선택)",sp_apply:"적용",sp_ph:"실명",sp_done:"이름이 적용됨",
@@ -1047,6 +1231,7 @@ const t=k=>I[L][k]||k;
 const recLabel=()=>(typeof SIGNED!=='undefined'&&SIGNED)?t('c_record_in'):t('c_record');
 function applyLang(){document.documentElement.lang=L;setTimeout(function(){if(window.__mbLang)window.__mbLang()},0);
   document.querySelectorAll('[data-t]').forEach(el=>el.textContent=t(el.dataset.t));
+  document.querySelectorAll('[data-tp]').forEach(el=>el.placeholder=t(el.dataset.tp));
   document.querySelectorAll('#lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===L));
   // Signed-in users aren't on the 3-minute anonymous trial → drop the trial wording.
   if(typeof SIGNED!=='undefined'&&SIGNED){const _gc=document.querySelector('#goApp [data-t="hero_cta"]');if(_gc)_gc.textContent=t('hero_cta_in');}
@@ -1160,24 +1345,31 @@ async function summarize(){
 function renderResult(){$('resProc').style.display='none';$('resBody').style.display='';
   $('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=lvAll.length?fmtTrLive():fmtTr(curTr);
   $('wc').textContent=curTr.split(/\s+/).filter(Boolean).length+' '+t('words');
-  $('btnDlLive').style.display=lvAll.length?'':'none';buildSpeakers();resInsights();setView(curSum?'summary':'transcript');updateKeepBtn();}
+  $('btnDlLive').style.display=lvAll.length?'':'none';buildSpeakers();resInsights();fillResHead();setView('transcript');updateKeepBtn();
+  var _f=$('rsFind');if(_f){_f.value='';trFilter();}}
 function spkLabel(spk){return spk!=null?(spkNames['Speaker '+spk]||'Speaker '+spk):'';}
+function trRow(lb,spk,ms,src,tgt){
+  const n=parseInt(spk,10);const c=isNaN(n)?1:((Math.abs(n)-1)%6)+1;
+  const av=`<div class="tr-av c${c}">${isNaN(n)?'S':'S'+n}</div>`;
+  const head=(lb||ms!=null)?`<div class="tr-h">${lb?`<span class="sp">${esc(lb)}</span>`:''}${ms!=null?`<span class="tr-t">${msClock(ms)}</span>`:''}</div>`:'';
+  const o=src?`<span class="tx">${esc(src)}</span>`:'';
+  const tl=tgt?`<span class="tx tr-tl">${esc(tgt)}</span>`:'';
+  return `<div class="tr-turn">${av}<div class="tr-b">${head}${o}${tl}</div></div>`;}
 // Transcript with BOTH the original and the translation per turn (from the live data).
-function fmtTrLive(){return lvAll.map(p=>{
-    const lb=spkLabel(p.spk),sp=lb?`<span class="sp">${esc(lb)}</span>`:'';
-    const o=p.src?`<span class="tx">${esc(p.src)}</span>`:'';
-    const tl=p.tgt?`<span class="tx tr-tl">${esc(p.tgt)}</span>`:'';
-    return `<div class="tr-turn">${sp}${o}${tl}</div>`;}).join('');}
+function fmtTrLive(){return lvAll.map(p=>trRow(spkLabel(p.spk),p.spk,(p.ms==null?null:p.ms),p.src,p.tgt)).join('');}
 // Plain-text transcript (original + translation) for Copy / Download.
 function trText(){return lvAll.length
-  ? lvAll.map(p=>{const lb=spkLabel(p.spk);return (lb?lb+'\n':'')+(p.src||'')+(p.tgt?'\n→ '+p.tgt:'');}).join('\n\n')
+  ? lvAll.map(p=>{const lb=spkLabel(p.spk);return (lb?lb+String.fromCharCode(10):'')+(p.src||'')+(p.tgt?String.fromCharCode(10)+'-> '+p.tgt:'');}).join(String.fromCharCode(10)+String.fromCharCode(10))
   : curTr;}
-function fmtTr(text){if(!text)return'';return text.split('\n').filter(Boolean).map(line=>{
-    const m=line.match(/^(.{1,40}?):\s*(.*)$/);
-    if(m)return `<div class="tr-turn"><span class="sp">${esc(m[1])}</span><span class="tx">${esc(m[2])}</span></div>`;
-    return `<div class="tr-turn"><span class="tx">${esc(line)}</span></div>`;}).join('');}
+// A saved (text-only) transcript: "Speaker 2: text" lines.
+function fmtTr(text){if(!text)return'';return text.split(String.fromCharCode(10)).filter(Boolean).map(function(line){
+    const i=line.indexOf(': ');
+    if(i>0&&i<=40){const lb=line.slice(0,i);let d='';
+      for(let k=lb.length-1;k>=0;k--){const ch=lb.charAt(k);if(ch>='0'&&ch<='9')d=ch+d;else if(d)break;else break;}
+      return trRow(lb,d||null,null,line.slice(i+2),'');}
+    return trRow('',null,null,line,'');}).join('');}
 function buildSpeakers(){const labels=[...new Set((curTr.match(/Speaker \d+/g)||[]))].sort((a,b)=>parseInt(a.slice(8))-parseInt(b.slice(8)));
-  const box=$('spbox'),rows=$('spRows');if(labels.length<1){box.style.display='none';rows.innerHTML='';return;}box.style.display='';
+  const box=$('spbox'),rows=$('spRows');if(labels.length<1){box.style.display='none';box.dataset.off='1';rows.innerHTML='';return;}box.style.display='';box.dataset.off='';
   rows.innerHTML=labels.map(l=>`<div class="sprow"><span class="lab">${l}</span><input data-label="${l}" placeholder="${t('sp_ph')}"></div>`).join('');}
 $('spApply').onclick=()=>{let changed=false;
   $('spRows').querySelectorAll('input').forEach(inp=>{const name=inp.value.trim();if(!name)return;
@@ -1185,24 +1377,28 @@ $('spApply').onclick=()=>{let changed=false;
     const re=new RegExp(inp.dataset.label.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g');curSum=curSum.replace(re,name);curTr=curTr.replace(re,name);changed=true;});
   if(!changed)return;$('summary').innerHTML=md(curSum||'—');$('transcript').innerHTML=lvAll.length?fmtTrLive():fmtTr(curTr);buildSpeakers();save(true);toast(t('sp_done'));};
 function viewName(){return view==='summary'?t('r_summary'):view==='actions'?t('ai_actions'):view==='decisions'?t('ai_decisions'):t('r_transcript');}
-function setView(v){view=v;
+function setView(v,userTap){view=v;
   document.querySelectorAll('.res-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
-  $('summary').style.display=v==='summary'?'':'none';
-  $('transcript').style.display=v==='transcript'?'':'none';
-  $('actionItems').style.display=v==='actions'?'':'none';
-  $('decisions').style.display=v==='decisions'?'':'none';
+  // Phones show one section at a time; on a wide screen every card is on screen
+  // already, so a tab simply brings its card into view.
+  var map={transcript:$('rsTrCard'),summary:$('rsSum'),actions:$('rsAct'),decisions:$('rsDec')},m=resMobile();
+  Object.keys(map).forEach(function(k){var el=map[k];if(el)el.style.display=(m&&k!==v)?'none':'';});
+  var sp=$('spbox');if(sp)sp.style.display=(sp.dataset.off==='1'||(m&&v!=='transcript'))?'none':'';
+  if(!m&&userTap&&map[v]&&map[v].scrollIntoView)map[v].scrollIntoView({behavior:'smooth',block:'nearest'});
   // Spell out exactly what Copy/Download act on (the current tab).
-  if($('btnDl'))$('btnDl').textContent='⬇ '+t('r_download')+' '+viewName();
-  if($('btnCopy'))$('btnCopy').textContent=t('r_copy')+' '+viewName();}
-document.querySelectorAll('.res-tabs button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
+  var cl=document.querySelector('#btnCopy .lb'),dl=document.querySelector('#btnDl .lb');
+  var narrow=window.matchMedia('(max-width:620px)').matches;
+  if(cl)cl.textContent=narrow?t('r_copy'):t('r_copy')+' '+viewName();
+  if(dl)dl.textContent=narrow?t('r_download'):t('r_download')+' '+viewName();}
+document.querySelectorAll('.res-tabs button').forEach(b=>b.onclick=()=>setView(b.dataset.v,true));
 // Populate Action Items + Decisions tabs from the full transcript after a meeting.
 async function resInsights(){const tx=curTr||'',ai=$('actionItems'),de=$('decisions');if(!ai||!de)return;
   if(!PAID){ai.innerHTML=aiPreview(t('ai_prev_actions'),t('ai_pro_task'));de.innerHTML=aiPreview(t('ai_prev_decisions'),'Pro');return;}
   if(tx.length<60){ai.innerHTML='<div class="ai-empty">—</div>';de.innerHTML='<div class="ai-empty">—</div>';return;}
   ai.innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';de.innerHTML='<div class="ai-empty">'+t('ai_wait')+'</div>';
   try{const r=await fetch('/api/insights',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({transcript:tx,lang:aiOutLang(),glossary:(window.fmGlossary?window.fmGlossary.get().prompt:'')})});const d=await r.json();if(!r.ok)return;
-    ai.innerHTML=(d.actionItems&&d.actionItems.length)?d.actionItems.map(a=>'<div class="ai-item"><span class="ai-check"></span><span class="ai-txt">'+esc(a.task)+aiMeta(a)+'</span></div>').join(''):'<div class="ai-empty">—</div>';
-    de.innerHTML=(d.decisions&&d.decisions.length)?d.decisions.map(s=>'<div class="ai-item"><span class="b">✓</span><span>'+esc(s)+'</span></div>').join(''):'<div class="ai-empty">—</div>';
+    ai.innerHTML=(d.actionItems&&d.actionItems.length)?d.actionItems.map((a,i)=>'<div class="ai-item"><span class="ai-n">'+(i+1)+'</span><span class="ai-txt">'+esc(a.task)+aiMeta(a)+'</span></div>').join(''):'<div class="ai-empty">—</div>';
+    de.innerHTML=(d.decisions&&d.decisions.length)?d.decisions.map(s=>'<div class="ai-item"><span class="ai-dot"></span><span>'+esc(s)+'</span></div>').join(''):'<div class="ai-empty">—</div>';
   }catch(e){}}
 // Build a meaningful download filename: "<meeting title> - <content> - <date>.<ext>".
 function meetingTitle(){const tt=(curSum.match(/##.*\n+(.+)/)||[])[1]||(curTr.split('\n').find(l=>l.trim()))||t('deflt');return tt.replace(/[#*>_`~\[\]()]/g,'').trim().slice(0,50);}
@@ -1210,7 +1406,7 @@ function safeName(s){return(s||'').replace(/[\\/:*?"<>|\n\r\t]+/g,' ').replace(/
 function dateStamp(){const n=new Date(),p=x=>String(x).padStart(2,'0');return n.getFullYear()+'-'+p(n.getMonth()+1)+'-'+p(n.getDate());}
 function fileName(suf,ext){return safeName(meetingTitle()+' - '+suf+' - '+dateStamp())+'.'+ext;}
 function dlBlob(txt,name){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+txt],{type:'text/plain;charset=utf-8'}));a.download=name;a.click();}
-function listText(id){const el=$(id);if(!el)return'';const items=[...el.querySelectorAll('.ai-item')];return items.length?items.map(it=>'• '+(it.innerText||'').replace(/\s+/g,' ').trim()).join('\n'):(el.innerText||'').trim();}
+function listText(id){const el=$(id);if(!el)return'';const items=[...el.querySelectorAll('.ai-item')];return items.length?items.map(it=>'• '+(((it.querySelector('.ai-txt')||it.lastElementChild||it).innerText)||'').replace(/\s+/g,' ').trim()).join('\n'):(el.innerText||'').trim();}
 function viewData(){
   if(view==='summary')return{txt:curSum,suf:t('r_summary'),ext:'md'};
   if(view==='actions')return{txt:listText('actionItems'),suf:t('ai_actions'),ext:'txt'};
@@ -1523,7 +1719,7 @@ function sxRender(oI,tI){const o=(sx.segOrig+(oI||'')).trim(),tr=(sx.segTrans+(t
 function sxFinalize(){const o=sx.segOrig.trim(),tr=sx.segTrans.trim(),spk=sx.segSpk;
   if(sx.curRow){if(!o&&!tr){sx.curRow.remove();}else{lvFillMeta(sx.curRow,o,tr);feedScroll(sx.curRow);}}
   if(o)curTr+=(curTr?'\n':'')+(spk!=null?'Speaker '+spk+': ':'')+o;
-  if(o||tr)lvAll.push({src:o,tgt:tr,spk,lang:sx.segLang,tlang:sx.segTgt});
+  if(o||tr)lvAll.push({src:o,tgt:tr,spk,lang:sx.segLang,tlang:sx.segTgt,ms:curStart?Date.now()-curStart:null});
   sx.segOrig='';sx.segTrans='';sx.segSpk=null;sx.segLang=null;sx.segTgt=null;sx.curRow=null;setInterim('');}
 // Smoothly center a finished/new line (teleprompter feel).
 function feedScroll(row){if(row&&row.scrollIntoView)row.scrollIntoView({behavior:'smooth',block:'center'});}
@@ -1829,6 +2025,51 @@ fetchUsage();renderUsage();
   window.__mbState=function(st){if(prev)prev(st);setTimeout(auto,0)};
   auto();
 })();
+// ── Result screen: header facts, transcript search, back button and the ... menu ──
+function msClock(ms){var s=Math.max(0,Math.round(ms/1000));return ('0'+Math.floor(s/60)).slice(-2)+':'+('0'+(s%60)).slice(-2);}
+function resLocale(){return L==='ko'?'ko-KR':L==='en'?'en-US':'vi-VN';}
+function resSpeakers(){var set={};lvAll.forEach(function(p){if(p.spk!=null)set[p.spk]=1;});
+  var n=Object.keys(set).length;
+  if(!n)n=[...new Set((curTr.match(/Speaker \d+/g)||[]))].length;
+  return n;}
+function resSrcLangs(){var set={};lvAll.forEach(function(p){if(p.lang)set[p.lang]=1;});return Object.keys(set);}
+function resTgtLang(){for(var i=lvAll.length-1;i>=0;i--){if(lvAll[i].tlang)return lvAll[i].tlang;}return '';}
+function fillResHead(){
+  var e=$('rsTitle');if(e)e.textContent=(localStorage.getItem('mr_meet_name')||'').trim()||t('mb_deflt');
+  var when=$('rsWhen');
+  if(when){var d=new Date(curStart||Date.now());
+    var narrow=window.matchMedia('(max-width:620px)').matches;
+    try{when.textContent=d.toLocaleDateString(resLocale(),narrow?{day:'2-digit',month:'2-digit',year:'numeric'}:{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'})+' '+d.toLocaleTimeString(resLocale(),{hour:'2-digit',minute:'2-digit'});}
+    catch(err){when.textContent=d.toLocaleString();}}
+  var tg=resTgtLang(),chip=$('rsLang'),sep=$('rsSep');
+  if(chip){if(tg){$('rsLangT').textContent=LANG_NAME[tg]||tg;chip.style.display='';if(sep)sep.style.display='';}
+    else{chip.style.display='none';if(sep)sep.style.display='none';}}
+  var m2=$('rsMeta2');
+  if(m2){var src=resSrcLangs().map(function(c){return LANG_NAME[c]||c;}),n=resSpeakers();
+    var left=src.length&&src.length<4?src.join(' · '):t('mb_auto');
+    m2.textContent=left+(n?' · '+n+' '+t('r_people'):'');}}
+function resHl(el,q){var txt=el.getAttribute('data-raw');
+  if(txt===null){txt=el.textContent;el.setAttribute('data-raw',txt);}
+  if(!q){el.textContent=txt;return false;}
+  var low=txt.toLowerCase(),i=low.indexOf(q),out='',pos=0,found=false;
+  while(i>=0){found=true;out+=esc(txt.slice(pos,i))+'<span class="tr-hit">'+esc(txt.substr(i,q.length))+'</span>';pos=i+q.length;i=low.indexOf(q,pos);}
+  out+=esc(txt.slice(pos));el.innerHTML=out;return found;}
+function trFilter(){var inp=$('rsFind');if(!inp)return;
+  var q=(inp.value||'').trim().toLowerCase(),rows=$('transcript').querySelectorAll('.tr-turn'),hits=0;
+  rows.forEach(function(r){var found=false;
+    r.querySelectorAll('.tx').forEach(function(x){if(resHl(x,q))found=true;});
+    if(!q){r.style.display='';hits++;return;}
+    r.style.display=found?'':'none';if(found)hits++;});
+  var nm=$('rsNoMatch');if(nm)nm.style.display=(q&&!hits)?'':'none';}
+function resMobile(){return window.matchMedia('(max-width:980px)').matches;}
+function resMenu(open){var m=$('rsMenu'),b=$('rsMore');if(!m)return;
+  m.style.display=open?'':'none';if(b)b.setAttribute('aria-expanded',open?'true':'false');}
+if($('rsFind'))$('rsFind').addEventListener('input',trFilter);
+if($('rsBack'))$('rsBack').onclick=function(){resMenu(false);show('sc-cap');};
+if($('rsMore'))$('rsMore').onclick=function(ev){ev.stopPropagation();resMenu($('rsMenu').style.display==='none');};
+document.addEventListener('click',function(ev){var m=$('rsMenu');if(!m||m.style.display==='none')return;
+  if(!ev.target.closest('.rs-more-w'))resMenu(false);});
+addEventListener('resize',function(){if($('sc-res')&&$('sc-res').classList.contains('on'))setView(view);});
 </script>
 </body>
 </html>
