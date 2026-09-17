@@ -650,10 +650,124 @@ audio{width:100%;margin-top:16px;height:42px}
   .ai-head .dk-refresh:hover{color:var(--acc);border-color:var(--acc)}
   .dk-updated{display:block;margin:-4px 0 10px;font-size:10.5px;font-weight:700;color:var(--faint)}
 }
+
+/* ── soft background pattern ── */
+.fx-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.fx-bg svg{position:absolute;display:block}
+.fx-b1{width:min(62vw,780px);aspect-ratio:1;left:-16vw;top:-20vh}
+.fx-b2{width:min(52vw,640px);aspect-ratio:1;right:-13vw;top:18vh}
+.fx-w{left:0;bottom:0;width:100%;height:min(32vh,300px)}
+.top,.stage,.foot{position:relative;z-index:1}
+body.mono .fx-bg{display:none}
+.dk-fold{margin-left:auto;width:22px;height:22px;border:0;background:var(--soft);border-radius:7px;color:var(--grey);cursor:pointer;font-size:14px;line-height:1}
+.dk-info.folded .dk-row,.dk-info.folded .dk-conn{display:none}
+/* ── before a meeting starts: one compact column, no scrolling on a small laptop ── */
+body:not(.recing) .ai-panel,body:not(.recing) .ai-reopen{display:none}
+body:not(.recing) #sc-cap{max-width:560px}
+body:not(.recing) .app-card{padding:16px 18px 18px;border-radius:22px}
+body:not(.recing) .cap-top{position:static;border:0;padding:0;background:transparent;box-shadow:none;max-height:none;overflow:visible;margin:0}
+body:not(.recing) .mb-status{display:flex;align-items:center;gap:10px;margin:0 0 2px}
+body:not(.recing) .mb-live{display:inline-flex;align-items:center;gap:6px;background:var(--soft);color:var(--grey);border-radius:99px;padding:5px 10px;font-size:11.5px;font-weight:800}
+body:not(.recing) .mb-timer{margin-left:auto;display:inline-flex;font-size:20px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
+body:not(.recing) .mb-timer svg{display:none}
+body:not(.recing) .mb-title{display:block;width:100%;text-align:left;border:0;background:none;font:inherit;font-size:21px;font-weight:900;letter-spacing:-.035em;color:var(--ink);padding:0;cursor:pointer}
+body:not(.recing) .mb-meta{display:block;font-size:12px;font-weight:600;color:var(--grey);margin:4px 0 10px}
+body:not(.recing) .viz{height:26px;width:100%;gap:3px;justify-content:space-between;margin:0 0 10px}
+body:not(.recing) .viz span{flex:1 1 auto;min-width:2px;max-width:4px;border-radius:99px;opacity:.45}
+body:not(.recing) .usage-badge{margin:0 0 10px}
+body:not(.recing) #lvToggle{margin:0 0 10px}
+body:not(.recing) .lv-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:none;border:0;padding:0;width:100%;margin:0 0 10px}
+body:not(.recing) .lv-seg button{border:1.5px solid var(--hair);background:var(--paper);border-radius:12px;padding:10px 6px;font-size:12.5px;color:var(--grey)}
+body:not(.recing) .lv-seg button.on{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 10%,var(--paper));color:var(--acc);box-shadow:none}
+body:not(.recing) .lv-langs{justify-content:flex-start;gap:8px;margin:0 0 6px}
+body:not(.recing) .lvto-sel{border:1.5px solid var(--hair);border-radius:11px;padding:8px 10px;font-weight:700}
+body:not(.recing) .lv-help{max-width:none;text-align:left;margin:0 0 12px}
+body:not(.recing) .cta-go{width:100%;background:linear-gradient(135deg,#4a8bff,#1f6bff 55%,#1a5ee0);border-radius:14px;font-size:15.5px;padding:14px;box-shadow:0 14px 30px -14px rgba(31,107,255,.75)}
+body:not(.recing) .cta-micro{font-size:11.5px;margin-top:8px}
+body:not(.recing) .upload-link{font-size:12.5px;margin-top:8px}
+body:not(.recing) .upload-rule{font-size:10.5px;margin-top:4px;color:var(--faint)}
+body:not(.recing) .dk-info{margin-top:12px}
+body:not(.recing) .ready-state{padding:16px 14px;border-radius:16px;margin-top:12px}
+body:not(.recing) .ready-h{font-size:16px}
+body:not(.recing) .ready-sub{font-size:12px;margin:4px 0 10px}
+body:not(.recing) .ready-help{font-size:11px;margin-top:10px}
+body:not(.recing) .dk-head{margin:14px 0 8px}
+body:not(.recing) .dk-listen{margin-top:0}
+body:not(.recing) #diarNote{margin-top:8px;font-size:11px}
+@media(max-height:820px){
+  body:not(.recing) .ready-sub,body:not(.recing) .ready-help,body:not(.recing) .upload-rule,body:not(.recing) .lv-help,body:not(.recing) #diarNote{display:none}
+  body:not(.recing) .ready-state{padding:12px;margin-top:10px}
+  body:not(.recing) .ready-ic{width:36px;height:36px;margin-bottom:6px}
+  body:not(.recing) .mb-title{font-size:19px}
+  body:not(.recing) .cta-go{padding:12px;font-size:15px}
+  body:not(.recing) .app-card{padding:14px 16px 14px}
+}
+
+/* the app screens are a window of their own — the marketing footer belongs to the landing page */
+body.on-cap .foot{display:none}
+body.on-cap:not(.recing) .stage{padding:22px 16px}
+body.on-cap:not(.recing) #recHint{display:none}
+body:not(.recing) .cap-meta .usage-badge{position:relative;top:-2px;margin:0 0 0 auto}
+body:not(.recing) #lvToggle{display:flex;align-items:center;gap:8px;margin:0 0 10px}
+@media(max-height:860px){
+  body.on-cap:not(.recing) .stage{padding:14px 14px}
+  body:not(.recing) .app-card{padding:14px 16px 14px}
+  body:not(.recing) .mb-meta{margin:3px 0 8px}
+  body:not(.recing) .viz{height:22px;margin-bottom:8px}
+  body:not(.recing) .lv-seg button{padding:9px 6px}
+  body:not(.recing) .ready-state{padding:11px 12px;margin-top:10px}
+  body:not(.recing) .ready-h{font-size:15px}
+  body:not(.recing) .ready-list span{font-size:11.5px;padding:4px 9px}
+  body:not(.recing) .dk-listen{padding:9px 12px}
+}
+@media(max-height:860px){
+  body:not(.recing) .dk-head,body:not(.recing) .cta-micro{display:none}
+  body:not(.recing) .mb-title{font-size:18px}
+  body:not(.recing) .mb-timer{font-size:18px}
+  body:not(.recing) .cta-go{padding:11px;font-size:14.5px}
+  body:not(.recing) .dk-info{margin-top:10px}
+}
+
+/* quota badge, live toggle and target language share one row before a meeting */
+body:not(.recing) .cap-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+body:not(.recing) .cap-meta>.timer{display:none}
+body:not(.recing) .cap-meta>.viz,body:not(.recing) .cap-meta>.lv-seg,body:not(.recing) .cap-meta>.lv-help{flex:0 0 100%}
+body:not(.recing) .cap-meta>.usage-badge{order:1;margin:0}
+body:not(.recing) .cap-meta>#lvToggle{order:2;margin:0}
+body:not(.recing) .cap-meta>.lv-langs{order:3;margin:0 0 0 auto}
+body:not(.recing) .cap-meta>.lv-seg{order:4;margin:2px 0 0}
+body:not(.recing) .cap-meta>.lv-help{order:5;margin:0}
+body.on-cap:not(.recing) .top{padding:6px 18px}
+body:not(.recing) .dk-listen{padding:9px 12px}
+@media(max-height:860px){
+  body:not(.recing) .ready-ic{display:none}
+  body:not(.recing) .ready-state{padding:10px 12px}
+  body:not(.recing) .ready-list{gap:6px}
+  body:not(.recing) .upload-link{margin-top:6px}
+}
+/* phones: the same compact idle screen, whatever the window height */
+@media(max-width:620px){
+  body:not(.recing) .ready-sub,body:not(.recing) .ready-help,body:not(.recing) .upload-rule,body:not(.recing) .lv-help,body:not(.recing) #diarNote,body:not(.recing) .cta-micro{display:none}
+  body:not(.recing) .ready-ic{display:none}
+  body:not(.recing) .ready-state{padding:11px 12px;margin-top:10px}
+  body:not(.recing) .ready-h{font-size:15px}
+  body:not(.recing) .mb-cap{display:none}
+  body:not(.recing) .app-card{padding:12px 14px 14px}
+  body:not(.recing) .cap-meta>.lv-langs{margin-left:0}
+  body:not(.recing) .app-card,body:not(.recing) .cap-top,body:not(.recing) .cap-center{text-align:left}
+  body:not(.recing) .ready-state{text-align:center}
+}
+
+/* idle polish: waveform and quota badge share a line, sparkle on the main button, softer card */
+body:not(.recing) .cap-meta>.viz{flex:1 1 auto;min-width:160px;margin:0}
+body:not(.recing) .cap-meta>.usage-badge{order:0;flex:0 0 auto;align-self:center}
+body:not(.recing) .cta-go::before{content:"✨";margin-right:9px}
+body:not(.recing) .app-card{background:linear-gradient(180deg,var(--paper),color-mix(in srgb,var(--acc) 3%,var(--paper)));box-shadow:0 24px 60px -34px rgba(16,36,80,.45)}
+body:not(.recing) .dk-listen{background:color-mix(in srgb,var(--acc) 5%,var(--paper));border-color:color-mix(in srgb,var(--acc) 16%,var(--hair))}
 </style>
 <script src="/glossary-context.js"></script></head>
 <body>
-<div class="top">
+<div class="fx-bg" aria-hidden="true"><svg class="fx-b1" viewBox="0 0 600 600"><circle cx="300" cy="300" r="300" fill="url(#fxg1)"/><defs><radialGradient id="fxg1"><stop offset="0" stop-color="#1f6bff" stop-opacity=".16"/><stop offset="1" stop-color="#1f6bff" stop-opacity="0"/></radialGradient></defs></svg><svg class="fx-b2" viewBox="0 0 600 600"><circle cx="300" cy="300" r="300" fill="url(#fxg2)"/><defs><radialGradient id="fxg2"><stop offset="0" stop-color="#12a594" stop-opacity=".12"/><stop offset="1" stop-color="#12a594" stop-opacity="0"/></radialGradient></defs></svg><svg class="fx-w" viewBox="0 0 1440 320" preserveAspectRatio="none"><path d="M0 220c180-70 320 40 520 10s300-120 460-90 300 130 460 96V320H0z" fill="#1f6bff" opacity=".05"/><path d="M0 260c200-60 340 30 540 6s280-96 440-70 280 104 460 74V320H0z" fill="#1f6bff" opacity=".04"/></svg></div><div class="top">
   <div class="top-r">
     <button class="hist-btn" id="setBtn" title="Settings" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -751,7 +865,7 @@ audio{width:100%;margin-top:16px;height:42px}
         <audio id="player" controls></audio>
       </div>
     </div>
-    <div class="dk-info" id="dkInfo"><div class="dk-info-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg><span data-t="dk_info">Thông tin cuộc họp</span></div><div class="dk-row"><span data-t="dk_when">Bắt đầu</span><b id="dkWhen">—</b></div><div class="dk-row"><span data-t="dk_len">Thời lượng</span><b id="dkLen">00:00</b></div><div class="dk-row"><span data-t="mb_speakers">người nói</span><b id="dkSpk">0</b></div><div class="dk-row"><span data-t="dk_mode">Chế độ</span><b id="dkMode">—</b></div><div class="dk-conn" id="dkConn"><i></i><span></span></div></div><div class="cap-center">
+    <div class="dk-info" id="dkInfo"><div class="dk-info-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg><span data-t="dk_info">Thông tin cuộc họp</span><button type="button" class="dk-fold" id="dkFold" aria-label="Thông tin cuộc họp">−</button></div><div class="dk-row"><span data-t="dk_when">Bắt đầu</span><b id="dkWhen">—</b></div><div class="dk-row"><span data-t="dk_len">Thời lượng</span><b id="dkLen">00:00</b></div><div class="dk-row"><span data-t="mb_speakers">người nói</span><b id="dkSpk">0</b></div><div class="dk-row"><span data-t="dk_mode">Chế độ</span><b id="dkMode">—</b></div><div class="dk-conn" id="dkConn"><i></i><span></span></div></div><div class="cap-center">
       <div class="ready-state" id="readyState">
         <div class="ready-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div>
         <div class="ready-h" data-t="ready_h">Ready to translate</div>
@@ -919,7 +1033,7 @@ function applyLang(){document.documentElement.lang=L;setTimeout(function(){if(wi
   refreshDyn();renderHist();}
 $('lang').onclick=e=>{const b=e.target.closest('button');if(!b)return;L=b.dataset.l;localStorage.setItem('mr_lang',L);applyLang();
   if(!localStorage.getItem('mr_ailang')&&typeof refreshInsights==='function')refreshInsights();};
-function show(sc){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(sc).classList.add('on');}
+function show(sc){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(sc).classList.add('on');document.body.classList.toggle('on-cap',sc==='sc-cap');document.body.classList.toggle('on-hero',sc==='sc-hero');}
 $('goApp').onclick=()=>show('sc-cap');
 
 let mediaRecorder,chunks=[],audioBlob=null,audioStream=null,extra=[];
@@ -1620,7 +1734,11 @@ fetchUsage();renderUsage();
       if(st.parentElement!==grid)grid.insertBefore(st,bar?bar.nextSibling:grid.firstChild);
       if(ti.parentElement!==grid)grid.insertBefore(ti,st.nextSibling);
       if(mt.parentElement!==grid)grid.insertBefore(mt,ti.nextSibling);
-      if(matchMedia('(max-width:620px)').matches&&viz&&viz.parentElement!==center)center.insertBefore(viz,center.firstChild);
+      var meta2=document.querySelector('#sc-cap .cap-meta');
+      if(matchMedia('(max-width:620px)').matches&&viz){
+        if(recing&&viz.parentElement!==center)center.insertBefore(viz,center.firstChild);
+        else if(!recing&&meta2&&viz.parentElement!==meta2)meta2.insertBefore(viz,meta2.firstChild);
+      }
     }
     if(cap&&viz&&viz.parentElement&&cap.previousElementSibling!==viz)viz.parentElement.insertBefore(cap,viz.nextSibling);
   }
@@ -1662,6 +1780,23 @@ fetchUsage();renderUsage();
   var prevLang=window.__dkLang;
   window.__dkLang=function(){if(prevLang)prevLang();listen()};
   setInterval(listen,1000);listen();
+})();
+
+// ── Idle screen: fold the (still empty) meeting details on short screens ──
+(function(){
+  function el(id){return document.getElementById(id)}
+  function fold(on){var i=el('dkInfo'),b=el('dkFold');if(!i)return;
+    i.classList.toggle('folded',!!on);if(b)b.textContent=on?'+':'−'}
+  var b=el('dkFold');
+  if(b)b.onclick=function(){fold(!el('dkInfo').classList.contains('folded'))};
+  function auto(){
+    if(document.body.classList.contains('recing'))return fold(false);
+    fold(innerHeight<820);
+  }
+  addEventListener('resize',auto);
+  var prev=window.__mbState;
+  window.__mbState=function(st){if(prev)prev(st);setTimeout(auto,0)};
+  auto();
 })();
 </script>
 </body>
