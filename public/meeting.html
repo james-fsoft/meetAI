@@ -758,6 +758,15 @@ body:not(.recing) .dk-listen{padding:9px 12px}
   body:not(.recing) .ready-state{text-align:center}
 }
 
+/* medium windows (861-1150px tall) used to scroll: trim what is empty before a meeting */
+body:not(.recing) .dk-head{display:none}
+@media(max-height:1150px){
+  body.on-cap:not(.recing) .stage{padding:16px 16px}
+  body:not(.recing) .ready-ic{width:44px;height:44px;margin-bottom:8px}
+  body:not(.recing) .ready-state{padding:13px 14px}
+  body:not(.recing) .upload-rule{display:none}
+}
+
 /* idle polish: waveform and quota badge share a line, sparkle on the main button, softer card */
 body:not(.recing) .cap-meta>.viz{flex:1 1 auto;min-width:160px;margin:0}
 body:not(.recing) .cap-meta>.usage-badge{order:0;flex:0 0 auto;align-self:center}
@@ -1782,7 +1791,7 @@ fetchUsage();renderUsage();
   setInterval(listen,1000);listen();
 })();
 
-// ── Idle screen: fold the (still empty) meeting details on short screens ──
+// ── Idle screen: the meeting details are still empty, so keep them folded until recording ──
 (function(){
   function el(id){return document.getElementById(id)}
   function fold(on){var i=el('dkInfo'),b=el('dkFold');if(!i)return;
@@ -1791,7 +1800,7 @@ fetchUsage();renderUsage();
   if(b)b.onclick=function(){fold(!el('dkInfo').classList.contains('folded'))};
   function auto(){
     if(document.body.classList.contains('recing'))return fold(false);
-    fold(innerHeight<820);
+    fold(true);
   }
   addEventListener('resize',auto);
   var prev=window.__mbState;
