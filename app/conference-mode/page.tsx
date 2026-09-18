@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useLang, type Lang } from "../../lib/use-lang";
 
 const LANGS = [
@@ -224,6 +224,13 @@ export default function ConferenceModePage() {
     if (!w) say("popBlocked");
   }
 
+  // Links from the website carry the display mode (?mode=pip, ?pick=1) - hand them to the host page.
+  const [frameSrc, setFrameSrc] = useState("/conference-pro.html");
+  useEffect(() => {
+    const q = window.location.search;
+    if (q && q.length > 1) setFrameSrc("/conference-pro.html" + q);
+  }, []);
+
   const messageText = message ? t[message.k].replace("{n}", String(message.n ?? "")) : "";
 
   return (
@@ -231,9 +238,9 @@ export default function ConferenceModePage() {
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <iframe
         ref={frameRef}
-        src="/conference-pro.html"
+        src={frameSrc}
         title="Flash Meet Conference Mode"
-        allow="microphone; clipboard-write; fullscreen; display-capture; captured-surface-control"
+        allow="microphone; clipboard-write; fullscreen; display-capture; captured-surface-control; picture-in-picture"
         allowFullScreen
         className="host-frame"
       />
