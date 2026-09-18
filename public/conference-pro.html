@@ -439,7 +439,7 @@ const PIP=!!window.documentPictureInPicture,CAP_CSS='*{box-sizing:border-box}htm
  +'@keyframes lp{50%{opacity:.35}}'
  +'.dir{opacity:.72;letter-spacing:.14em}'
  +'.brand{margin-left:auto;display:inline-flex;align-items:center;gap:7px;opacity:.72;letter-spacing:.02em;text-transform:none;font-weight:700}.brand svg{width:15px;height:15px}'
- +'#cap{display:grid;gap:4px;min-height:0}#cap.cols{grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:18px}#cap.qron{padding-right:96px}'
+ +'#cap{display:grid;gap:4px;min-height:0}#cap.pair{grid-template-rows:auto minmax(0,1fr)}#cap.cols{grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:18px}#cap.qron{padding-right:96px}'
  +'.ln{display:flex;flex-direction:column;min-width:0;min-height:0;gap:1px;background:none;padding:0}'
  +'.ln b{flex:none;font-size:clamp(9px,1.4vh,11px);letter-spacing:.1em;color:var(--a);font-weight:800;text-shadow:var(--csh,none);display:none}'
  +'#cap.cols .ln b,#cap.multi .ln b{display:block}'
@@ -551,10 +551,19 @@ function capTrim(tx,p,full){
   if(best<0){p.textContent=full;p.dataset.cut='1';return false}
   let cut=best;const sp=full.indexOf(' ',cut);if(sp>=0&&sp-cut<14)cut=sp+1;
   p.textContent=full.slice(cut);p.dataset.cut=cut>0?'1':'';return true}
-function fitCapText(tx,p,full){
+function fitCapText(tx,p,full,grow){
   p.style.fontSize='';
   if(!full){p.textContent='';p.dataset.cut='';return}
-  if(capTrim(tx,p,full))return;
+  if(capTrim(tx,p,full)){
+    if(!grow)return;
+    const H=tx.clientHeight,base=parseFloat(capWin.getComputedStyle(p).fontSize)||20;
+    if(p.scrollHeight>H*.8||H<40)return;
+    let lo=base,hi=base*2.6;
+    for(let k=0;k<6;k++){const mid=(lo+hi)/2;p.style.fontSize=mid+'px';
+      if(p.scrollHeight<=H-2&&p.textContent===full)lo=mid;else hi=mid}
+    p.style.fontSize=Math.floor(lo)+'px';
+    if(p.scrollHeight>H-2)p.style.fontSize=Math.floor(lo*.92)+'px';
+    return}
   for(let i=0;i<4;i++){const cs=parseFloat(capWin.getComputedStyle(p).fontSize)||20;
     if(cs<=13)break;
     p.style.fontSize=Math.max(12,Math.round(cs*.8))+'px';
@@ -562,14 +571,14 @@ function fitCapText(tx,p,full){
 function syncCaps(force){if(!capOpen())return;const d=capWin.document,box=d.getElementById('cap');if(!box)return;d.title='Flash Meet · '+t('capTitle');d.documentElement.lang=UI;box.className=capPos;d.body.style.setProperty('--fs',capFs);
   const c=d.querySelectorAll('.ctl button');if(c.length===4){c[0].title=t('tipFsDown');c[1].title=t('tipFsUp');c[2].textContent=capPos==='right'?'▤':'▥';c[2].title=t(capPos==='right'?'capPosBottom':'capPosRight');c[3].title=t('capClose')}
   const ls=langs();if(force||box.children.length!==ls.length)box.innerHTML=ls.map(x=>`<section class="ln" style="--a:${x.a}"><b></b><div class="tx"><p></p></div></section>`).join('');
-  box.className=(capPos==='bottom'&&ls.length>2?'cols ':'')+(ls.length>2?'multi ':'')+(capQrOn()?'qron':'');
+  box.className=(capPos==='bottom'&&ls.length>2?'cols ':'')+(ls.length>2?'multi ':'')+(ls.length===2&&capPos!=='right'?'pair ':'')+(capQrOn()?'qron':'');
   const hd=d.getElementById('capHd');if(hd)hd.classList.toggle('off',!running);
   const dir=d.getElementById('capDir');if(dir)dir.textContent=ls.length>1?ls.map(x=>x.c.toUpperCase()).join(' → '):'';
   capDrawQR(d);
   ls.forEach((x,i)=>{const src=$('cu'+(i+1)),sec=box.children[i];if(!sec)return;sec.style.setProperty('--a',x.a);
     sec.className='ln '+(i===0&&ls.length>1&&capPos!=='right'?'src':'main');sec.querySelector('b').textContent=x.f+'  '+x.n;const p=sec.querySelector('p'),em=!src||src.classList.contains('empty'),v=em?t('capWait'):src.textContent;
     const tx=sec.querySelector('.tx');
-    if(p.dataset.full!==v||force){p.dataset.full=v;fitCapText(tx,p,v)}
+    if(p.dataset.full!==v||force){p.dataset.full=v;fitCapText(tx,p,v,!sec.classList.contains('src'))}
     p.classList.toggle('empty',em)})}
 function closeCaps(){if(capOpen()){try{capWin.close()}catch(e){}}capWin=null;syncCapUI()}
 function setCapFs(k){capFs=Math.round(Math.max(.5,Math.min(2.5,capFs*k))*100)/100;store('fm_conf_capfs',capFs);syncCaps()}
