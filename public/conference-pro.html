@@ -446,6 +446,9 @@ const CSC=!!(window.CaptureController&&CaptureController.prototype&&'forwardWhee
 function stored(k,d){try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}}
 function store(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,String(v))}catch(e){}}
 let paused=false;let fsMap={},pick='stage',shareStream=null,slides=[],slideI=0,slideTotal=0,slideJob=0,pdfBusy=false,capCtl=null,shareSurf='',scrollOn=false,hintOn=false,hintT=0,idleT=0,autoFs=false,fsTimer=0,panelPos=stored('fm_conf_pos','')==='bottom'?'bottom':'right';try{fsMap=JSON.parse(stored('fm_conf_fs','{}'))||{}}catch(e){}
+const URLQ=new URLSearchParams(location.search);
+const URLMODE=URLQ.get('mode');
+if(URLMODE)try{localStorage.setItem('fm_conf_mode',URLMODE)}catch(e){}
 layout=MODES[stored('fm_conf_mode','')]?stored('fm_conf_mode',''):'grid';{const c=Number(stored('fm_conf_count',''));if(c===2||c===3)count=c}
 function modeSaved(){return !!MODES[stored('fm_conf_mode','')]}
 function hasStage(){return layout==='stage'||layout==='ppt'||layout==='present'}
@@ -809,4 +812,6 @@ function bindModes(){document.querySelectorAll('.mOpt').forEach(b=>{b.onclick=()
 $('pipImg').onchange=e=>{pickCapImage(e.target.files&&e.target.files[0]);e.target.value=''};
 $('qrBtn').onclick=toggleQR;$('dockQr').onclick=toggleQR;$('joinX').onclick=()=>{store('fm_conf_qr','0');syncJoin()};
 $('theme').onclick=()=>document.body.classList.toggle('dark');$('full').onclick=async()=>{try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch{}};$('exitOverlay').onclick=()=>setBare(false);$('drawer').onclick=e=>{if(e.target===$('drawer'))$('drawer').classList.remove('on')};$('sharebox').onclick=e=>{if(e.target===$('sharebox'))$('sharebox').classList.remove('on')};window.addEventListener('beforeunload',()=>{if(running){try{saveSnapshot(false)}catch{}}});bindUX();bindModes();bindSetup();applyLang(true);initConference();syncSetup();
+if(URLMODE&&MODES[URLMODE])applyMode(URLMODE,true);
+if(URLQ.get('pick')==='1')setTimeout(openModes,200);
 </script></body></html>
