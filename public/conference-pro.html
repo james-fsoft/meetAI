@@ -739,7 +739,7 @@ function syncCapUI(){const open=capOpen(),show=layout==='pip'||open;$('pipBar').
   $('pipClose').textContent=t('capClose');$('pipClose').hidden=!open;
   fillCapSelects();['pipBg','pipAlign','pipSize','pipSlim','pipOrient','pipGrad'].forEach(id=>{const e=$(id);if(e)e.disabled=!open});syncCaps()}
 function markPick(){document.querySelectorAll('.mOpt').forEach(b=>{const on=b.dataset.mode===pick;b.classList.toggle('on',on);b.setAttribute('aria-checked',String(on))})}
-let newFlow=false;
+let newFlow=false;let tryFlow=false;
 function showNewId(){const el=$('mNewId');if(!el)return;el.hidden=!(newFlow&&conference);if(!el.hidden)el.textContent=t('newIdIs',conference.id)}
 function openModes(){pick=modeSaved()?layout:'stage';markPick();showNewId();$('modes').hidden=false;setTimeout(()=>$('mApply').focus(),30)}
 function closeModes(){$('modes').hidden=true;if(!modeSaved())store('fm_conf_mode',layout);
@@ -749,7 +749,7 @@ function doApply(){const m=pick;const fromNew=newFlow;newFlow=false;$('modes').h
   if(MODES[m]&&MODES[m].pip)openCaps();applyMode(m,true);
   // A brand new conference: show its ID and start listening straight away (this click is the user gesture the mic needs).
   if(fromNew&&conference){openShare();toast(t('newStarted',conference.id));if(!running)begin()}
-  else toast(t('applied',t('m_'+m)))}
+  else{toast(t('applied',t('m_'+m)));if(tryFlow){tryFlow=false;if(!running)begin()}}}
 // Centre stage (stage / slides modes): an editable title card, a shared screen (e.g. the PowerPoint window) or slide images.
 let autoBared=false;
 function syncStgHow(){const h=$('stgHow');if(!h)return;
@@ -813,5 +813,5 @@ $('pipImg').onchange=e=>{pickCapImage(e.target.files&&e.target.files[0]);e.targe
 $('qrBtn').onclick=toggleQR;$('dockQr').onclick=toggleQR;$('joinX').onclick=()=>{store('fm_conf_qr','0');syncJoin()};
 $('theme').onclick=()=>document.body.classList.toggle('dark');$('full').onclick=async()=>{try{document.fullscreenElement?await document.exitFullscreen():await document.documentElement.requestFullscreen()}catch{}};$('exitOverlay').onclick=()=>setBare(false);$('drawer').onclick=e=>{if(e.target===$('drawer'))$('drawer').classList.remove('on')};$('sharebox').onclick=e=>{if(e.target===$('sharebox'))$('sharebox').classList.remove('on')};window.addEventListener('beforeunload',()=>{if(running){try{saveSnapshot(false)}catch{}}});bindUX();bindModes();bindSetup();applyLang(true);initConference();syncSetup();
 if(URLMODE&&MODES[URLMODE])applyMode(URLMODE,true);
-if(URLQ.get('pick')==='1')setTimeout(openModes,200);
+if(URLQ.get('pick')==='1'){tryFlow=true;setTimeout(openModes,200)}
 </script></body></html>
