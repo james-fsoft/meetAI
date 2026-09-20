@@ -148,9 +148,14 @@ export default function MeetingApp({ email, plan = "free", admin = false }: { em
     return () => window.removeEventListener("message", onMsg);
   }, []);
 
+  const [deep, setDeep] = useState("");
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("app") === "1") setDeep("&app=1");
+  }, []);
   const iframeSrc = signedIn
-    ? `/meeting.html?v=70&signed=1&plan=${encodeURIComponent(plan)}`
-    : "/meeting.html?v=70";
+    ? `/meeting.html?v=70&signed=1&plan=${encodeURIComponent(plan)}${deep}`
+    : `/meeting.html?v=70${deep}`;
 
   return (
     <div className={rec ? "fm-app fm-rec" : "fm-app"} style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
