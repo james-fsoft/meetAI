@@ -203,3 +203,43 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     chrome.runtime.sendMessage({ ...msg, from: "bg" }).catch(() => {});
   }
 });
+
+// ── The web app may talk to the extension ────────────────────────────────────
+// meet.transflash.app can ask whether the extension is installed, hand over the languages the
+// user already chose there, and ask it to start on the tab in front of them. Chrome only lets an
+// extension capture a tab it has been invoked on, so "capture" answers honestly when it cannot.
+chrome.runtime.onMessageExternal.addListener((msg, sender, sendResponse) => {
+  if (!msg || typeof msg !== "object") return;
+  if (msg.type === "ping") {
+    sendResponse({ ok: true, version: chrome.runtime.getManifest().version, running: !!active.running });
+    return;
+  }
+  if (msg.type === "config") {
+    if (msg.lang) active.lang = msg.lang;
+    if (msg.langB) active.langB = msg.langB;
+    if (msg.way) active.way = msg.way;
+    chrome.storage.local.set({ lang: active.lang, langB: active.langB, way: active.way }).catch(() => {});
+    sendResponse({ ok: true, lang: active.lang, langB: active.langB, way: active.way });
+    return;
+  }
+  if (msg.type === "capture") {
+    // The page asking is itself a tab, and its own sound is not what the user wants translated.
+    // Take the tab they were on just before (YouTube, Meet, Zoom), newest first.
+    chrome.tabs.query({}).then((all) => {
+      const here = sender && sender.tab ? sender.tab.id : -1;
+      // Without the "tabs" permission most urls come back empty - that is fine, an unnamed tab is
+      // still a candidate; the ones we can read just rank higher.
+      const app = /meet\.transflash\.app/;
+      const bad = /^(chrome|edge|about|devtools|chrome-extension):/;
+      const cands = (all || []).filter((x) => x.id !== here && !bad.test(x.url || "") && !app.test(x.url || ""));
+      const score = (x) => (/^https?:/.test(x.url || "") ? 2 : 0) + (x.active ? 1 : 0);
+      cands.sort((a, b) => score(b) - score(a) || (b.lastAccessed || 0) - (a.lastAccessed || 0));
+      const tab = cands[0];
+      if (!tab) { sendResponse({ ok: false, reason: "no-tab" }); return; }
+      startCapture(msg.lang || active.lang, false, msg.source || "tab", msg.way || active.way, msg.langB || active.langB, tab.id, !!msg.panel)
+        .then(() => sendResponse({ ok: true, tabId: tab.id }))
+        .catch((e) => sendResponse({ ok: false, reason: "needs-click", error: String((e && e.message) || e) }));
+    }).catch((e) => sendResponse({ ok: false, reason: "error", error: String((e && e.message) || e) }));
+    return true;
+  }
+});
