@@ -1531,6 +1531,9 @@ async function micPlusSystem(){
     const ctx=new AC(),dest=ctx.createMediaStreamDestination();
     ctx.createMediaStreamSource(mic).connect(dest);
     ctx.createMediaStreamSource(new MediaStream(at)).connect(dest);
+    // A context created this late can start suspended - a suspended mixer feeds the recogniser silence.
+    try{await ctx.resume()}catch(e){}
+    if(ctx.state!=='running'){try{ctx.close()}catch(e){}try{disp.getTracks().forEach(t=>t.stop())}catch(e){}toast(t('sys_noaudio'),6000);return mic}
     sysMic=mic;sysDisp=disp;sysCtx=ctx;
     at[0].addEventListener('ended',()=>toast(t('sys_ended'),4200));
     toast(t('sys_on'),3600);
