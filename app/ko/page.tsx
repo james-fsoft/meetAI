@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import LandingHeader from "../LandingHeader";
-import LandingContent from "../LandingContent";
-import { landingFaq } from "@/lib/landing-data";
+import ConceptFrame from "../ConceptFrame";
 
 const LANGUAGES = { en: "/", vi: "/vi", ko: "/ko", "x-default": "/" };
 
@@ -19,11 +17,5 @@ export const metadata: Metadata = {
 };
 
 export default function KoLanding() {
-  return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(landingFaq("ko")) }} />
-      <LandingHeader lang="ko" />
-      <LandingContent lang="ko" />
-    </>
-  );
+  return <ConceptFrame src="/concept-ko.html" title="Flash Meet — 실시간 회의 번역" />;
 }

@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Flash Meet",
     description:
       "Translate meetings live with bilingual subtitles and get automatic AI summaries, action items and minutes. Works with Google Meet, Zoom, Teams and YouTube.",
-    start_url: "/?utm_source=pwa",
+    start_url: "/?app=1&utm_source=pwa",
     scope: "/",
     display: "standalone",
     orientation: "portrait",

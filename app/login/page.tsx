@@ -39,7 +39,7 @@ export default function Login() {
       const supabase = createClient();
       // Preserve where the user came from (e.g. the referral flow) so we can send
       // them back there after login instead of dropping them on the home page.
-      const next = new URLSearchParams(location.search).get("next") || "/";
+      const next = new URLSearchParams(location.search).get("next") || "/?app=1";
       const cb = `${location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",

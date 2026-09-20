@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ConceptFrame from "./ConceptFrame";
 import MeetingApp from "./MeetingApp";
 import { createClient, supabaseConfigured } from "@/lib/supabase-server";
 import { isAdmin } from "@/lib/supabase-admin";
@@ -13,7 +14,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function Home() {
+/**
+ * "/" is the landing page; "/?app=1" is the meeting app itself — every button
+ * that opens the app (and the /meeting and /app redirects) carries that flag.
+ */
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: { app?: string };
+}) {
+  if (searchParams?.app !== "1") {
+    return <ConceptFrame src="/concept-en.html" title="Flash Meet — live meeting translation" />;
+  }
+
   let email = "";
   let plan = "free";
   let admin = false;
