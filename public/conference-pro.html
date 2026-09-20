@@ -612,9 +612,15 @@ async function openCaps(){if(capOpen()){try{capWin.focus()}catch(e){}return}cons
   if(!w){const p=capPlace(z);w=window.open('','fm-captions',`popup=yes,width=${z.w},height=${z.h},left=${p.x},top=${p.y}`);if(!w){toast(t('capBlocked'),5000);return}}
   capWin=w;buildCaps();w.addEventListener('pagehide',()=>{if(capWin===w){capWin=null;syncCapUI()}});
   // dragging the window edge (or a size preset) changes how much text fits - lay it out again
-  let rT=0;w.addEventListener('resize',()=>{clearTimeout(rT);rT=setTimeout(()=>{if(capOpen())syncCaps(true)},120)});
+  let rT=0;w.addEventListener('resize',()=>{clearTimeout(rT);rT=setTimeout(()=>{if(capOpen())syncCaps(true);capCapHint()},120)});
   ensureDeckObserver();
   syncCapUI()}
+let capCapSaid=false;
+// Dragging a floating window stops short of the screen edge because Chrome caps it near 82%.
+// Say so the moment the user hits that wall, and name the size that does cover the screen.
+function capCapHint(){if(!capIsPip||capCapSaid||!capOpen())return;
+  const W=screen.availWidth||1440,H=screen.availHeight||900;
+  if(capWin.outerWidth>=W*.78||capWin.outerHeight>=H*.78){capCapSaid=true;toast(t('capMaxHint'),8000)}}
 function buildCaps(){const d=capWin.document;d.head.innerHTML='<meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700&family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet"><style>'+CAP_CSS+'</style>';
   d.body.innerHTML='<div class="card"><div class="hd" id="capHd"><span class="live"><i></i>LIVE</span><span class="dir" id="capDir"></span>'
     +'<span class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12v2M8 8v10M12 5v14M16 9v7M20 12v2"/></svg>Flash Meet</span></div>'
