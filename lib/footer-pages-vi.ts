@@ -74,53 +74,71 @@ export const PAGES_VI: Record<string, PageDef> = {
 
   "use-cases": {
     eyebrow: "SẢN PHẨM · USE CASE",
-    title: "Một công cụ, nhiều tình huống giao tiếp đa ngôn ngữ",
+    title: "Bảy tình huống Flash Meet được dùng nhiều nhất",
     lead:
-      "Flash Meet phù hợp khi vấn đề chính không phải là thiếu một nền tảng họp mới, mà là mọi người cần hiểu nhau nhanh hơn trên công cụ đang dùng.",
+      "Cùng một công cụ, nhiều kiểu trò chuyện. Chọn tình huống gần với bạn nhất để biết nên bắt đầu ở đâu.",
     actions: [
       { label: "Dùng thử ngay", href: "/?app=1", primary: true },
       { label: "Xem tính năng", href: "/features" },
     ],
     sections: [
       {
-        title: "Công việc hàng ngày",
+        title: "Chọn tình huống của bạn",
         cards: [
           {
-            title: "Họp Việt – Hàn – Anh",
-            text: "Theo dõi phụ đề song ngữ trong cuộc họp dự án, trao đổi khách hàng hoặc họp nội bộ có nhiều ngôn ngữ.",
+            title: "Họp công việc",
+            text: "Phụ đề song ngữ trong họp dự án, trao đổi với khách hàng hay họp nội bộ; sau cuộc họp có transcript, tóm tắt và việc cần làm.",
+            img: "/concept/uc-meeting.jpg",
+            href: "/?app=1",
+            cta: "Mở ứng dụng",
           },
           {
-            title: "Sales & chăm sóc khách hàng",
-            text: "Giảm thời gian phải dừng lại giải thích, đồng thời giữ lại transcript và tóm tắt để follow-up chính xác hơn.",
-          },
-          {
-            title: "Project sync & bàn giao",
-            text: "Giúp PM, kỹ thuật và khách hàng cùng nhìn thấy nội dung chính, quyết định và action items sau buổi họp.",
-          },
-        ],
-      },
-      {
-        title: "Nội dung & sự kiện",
-        cards: [
-          {
-            title: "Hội nghị / thuyết trình",
-            text: "Đặt bản dịch trực tiếp trên màn chiếu hoặc cửa sổ phụ đề riêng, phù hợp cho phòng họp và sân khấu.",
+            title: "Hội nghị, sự kiện lớn",
+            text: "Phụ đề lớn trên màn chiếu, khung nổi đè lên slide và mã QR để khán giả đọc bản dịch trên điện thoại.",
+            img: "/concept/uc-conference.jpg",
             href: "/conference-mode",
-            cta: "Xem Conference Mode",
+            cta: "Mở chế độ hội nghị",
           },
           {
-            title: "Webinar & training",
-            text: "Dịch âm thanh từ trình duyệt để theo dõi webinar, khóa học, video đào tạo hoặc nội dung chuyên môn.",
+            title: "Cuộc gọi video",
+            text: "Google Meet, Zoom, Teams chạy trong trình duyệt — tiện ích nghe thẳng tiếng của tab và hiện phụ đề ngay trên trang.",
+            img: "/concept/uc-videocall.jpg",
             href: "/extension",
-            cta: "Cài tiện ích",
+            cta: "Xem tiện ích",
           },
           {
-            title: "Video nước ngoài",
-            text: "Tạo phụ đề dịch trực tiếp cho nội dung trên trình duyệt mà không cần chờ file phụ đề có sẵn.",
+            title: "Giao tiếp hàng ngày",
+            text: "Du lịch, gặp đối tác hay bạn bè quốc tế: đặt máy giữa bàn, micro nghe cả hai phía và dịch qua lại.",
+            img: "/concept/uc-daily.jpg",
+            href: "/guide",
+            cta: "Xem hướng dẫn",
+          },
+          {
+            title: "Học tập, nghiên cứu",
+            text: "Bài giảng, hội thảo, video chuyên ngành tiếng nước ngoài — đọc phụ đề dịch ngay trong lúc xem.",
+            img: "/concept/uc-study.jpg",
+            href: "/extension",
+            cta: "Xem tiện ích",
+          },
+          {
+            title: "Xem video, phim",
+            text: "Nội dung không có phụ đề sẵn vẫn dịch được, vì tiện ích nghe thẳng âm thanh của tab.",
+            img: "/concept/uc-movie.jpg",
+            href: "/extension",
+            cta: "Xem tiện ích",
+          },
+          {
+            title: "Thuyết trình, đào tạo",
+            text: "Khán giả quốc tế theo kịp từng ý: phụ đề trên màn chiếu hoặc khung nổi trên slide của bạn.",
+            img: "/concept/uc-training.jpg",
+            href: "/conference-mode",
+            cta: "Mở chế độ hội nghị",
           },
         ],
       },
     ],
+    note:
+      "Không thấy tình huống của bạn? Nguyên tắc chung: tiếng trong trình duyệt thì dùng tiện ích, nói trực tiếp thì dùng micro của ứng dụng, chiếu cho cả phòng thì dùng chế độ hội nghị.",
   },
 
   apps: {

@@ -74,53 +74,71 @@ export const PAGES_KO: Record<string, PageDef> = {
 
   "use-cases": {
     eyebrow: "제품 · 활용 사례",
-    title: "하나의 도구, 여러 다국어 상황",
+    title: "Flash Meet이 가장 많이 쓰이는 일곱 가지 상황",
     lead:
-      "새로운 회의 플랫폼이 없어서가 아니라, 지금 쓰는 도구 위에서 서로 더 빨리 이해해야 할 때 Flash Meet이 맞습니다.",
+      "도구는 하나, 대화는 여러 가지. 지금 상황과 가장 가까운 것을 골라 어디서 시작할지 확인하세요.",
     actions: [
       { label: "지금 사용해 보기", href: "/?app=1", primary: true },
       { label: "기능 보기", href: "/features" },
     ],
     sections: [
       {
-        title: "일상 업무",
+        title: "상황을 고르세요",
         cards: [
           {
-            title: "베트남어·한국어·영어 회의",
-            text: "프로젝트 회의, 고객 미팅, 여러 언어가 오가는 내부 회의에서 이중 언어 자막을 따라갑니다.",
+            title: "업무 회의",
+            text: "프로젝트 회의, 고객 미팅, 내부 회의에서 이중 언어 자막을 보고, 끝나면 기록·요약·액션 아이템을 받습니다.",
+            img: "/concept/uc-meeting.jpg",
+            href: "/?app=1",
+            cta: "앱 열기",
           },
           {
-            title: "영업 & 고객 지원",
-            text: "설명하려고 멈추는 시간을 줄이고, 기록과 요약을 남겨 후속 대응을 더 정확하게 합니다.",
-          },
-          {
-            title: "프로젝트 싱크 & 인수인계",
-            text: "PM, 개발, 고객이 회의 후 같은 핵심 내용과 결정, 액션 아이템을 보게 합니다.",
-          },
-        ],
-      },
-      {
-        title: "콘텐츠 & 행사",
-        cards: [
-          {
-            title: "컨퍼런스 / 발표",
-            text: "실시간 번역을 발표 화면이나 별도 자막 창에 올립니다. 회의실과 무대 모두에 맞습니다.",
+            title: "컨퍼런스·대형 행사",
+            text: "발표 화면의 큰 자막, 슬라이드 위에 뜨는 자막 창, 그리고 청중이 휴대폰으로 읽을 수 있는 QR 코드.",
+            img: "/concept/uc-conference.jpg",
             href: "/conference-mode",
-            cta: "컨퍼런스 모드 보기",
+            cta: "컨퍼런스 모드 열기",
           },
           {
-            title: "웨비나 & 교육",
-            text: "브라우저 소리를 번역해 웨비나, 강의, 교육 영상, 전문 콘텐츠를 따라갑니다.",
+            title: "화상 통화",
+            text: "Google Meet·Zoom·Teams는 브라우저에서 실행됩니다 — 확장 프로그램이 그 탭의 소리를 듣고 페이지 위에 자막을 띄웁니다.",
+            img: "/concept/uc-videocall.jpg",
             href: "/extension",
-            cta: "확장 프로그램 설치",
+            cta: "확장 프로그램 보기",
           },
           {
-            title: "외국어 영상",
-            text: "자막 파일을 기다릴 필요 없이, 브라우저에서 재생되는 내용에 실시간 번역 자막을 만듭니다.",
+            title: "일상 대화",
+            text: "여행, 해외 파트너나 친구와의 만남: 기기를 가운데 두면 마이크가 양쪽을 모두 듣고 번역합니다.",
+            img: "/concept/uc-daily.jpg",
+            href: "/guide",
+            cta: "가이드 보기",
+          },
+          {
+            title: "학습·연구",
+            text: "외국어 강의, 세미나, 전문 영상 — 보면서 바로 번역 자막을 읽습니다.",
+            img: "/concept/uc-study.jpg",
+            href: "/extension",
+            cta: "확장 프로그램 보기",
+          },
+          {
+            title: "영상·영화",
+            text: "자막이 없는 콘텐츠도 됩니다. 확장 프로그램이 탭의 소리를 직접 듣기 때문입니다.",
+            img: "/concept/uc-movie.jpg",
+            href: "/extension",
+            cta: "확장 프로그램 보기",
+          },
+          {
+            title: "발표·교육",
+            text: "해외 청중도 요점을 놓치지 않습니다: 프로젝터 자막 또는 슬라이드 위 자막 창.",
+            img: "/concept/uc-training.jpg",
+            href: "/conference-mode",
+            cta: "컨퍼런스 모드 열기",
           },
         ],
       },
     ],
+    note:
+      "목록에 없나요? 기준은 간단합니다. 브라우저에서 나는 소리는 확장 프로그램, 같은 공간의 대화는 앱의 마이크, 회의실 전체에 보여 줄 때는 컨퍼런스 모드.",
   },
 
   apps: {

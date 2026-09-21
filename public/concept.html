@@ -100,7 +100,7 @@ h1 .hl{display:block;color:#0a55f5}
 .ucHead{position:relative;text-align:center}
 .ucHead h2{font-size:calc(var(--u)*28);font-weight:700;letter-spacing:-.015em;color:var(--navy)}
 .ucHead p{margin-top:calc(var(--u)*8);font-size:calc(var(--u)*15);color:#404b67}
-.ucMore{position:absolute;right:0;bottom:calc(var(--u)*0);display:inline-flex;align-items:center;gap:calc(var(--u)*12);height:calc(var(--u)*42);padding:0 calc(var(--u)*6) 0 calc(var(--u)*18);border-radius:999px;border:1px solid #d6e2f5;background:#fff;font-size:calc(var(--u)*13.5);font-weight:600;color:var(--navy);cursor:pointer;box-shadow:0 calc(var(--u)*6) calc(var(--u)*18) rgba(20,40,90,.06);transition:box-shadow .2s,transform .2s,border-color .2s}
+.ucMore{text-decoration:none;position:absolute;right:0;bottom:calc(var(--u)*0);display:inline-flex;align-items:center;gap:calc(var(--u)*12);height:calc(var(--u)*42);padding:0 calc(var(--u)*6) 0 calc(var(--u)*18);border-radius:999px;border:1px solid #d6e2f5;background:#fff;font-size:calc(var(--u)*13.5);font-weight:600;color:var(--navy);cursor:pointer;box-shadow:0 calc(var(--u)*6) calc(var(--u)*18) rgba(20,40,90,.06);transition:box-shadow .2s,transform .2s,border-color .2s}
 .ucMore:hover{border-color:var(--blue);box-shadow:0 calc(var(--u)*10) calc(var(--u)*26) rgba(10,92,255,.16);transform:translateY(-1px)}
 .ucMore .cnt{display:inline-flex;align-items:center;gap:calc(var(--u)*5);height:calc(var(--u)*30);padding:0 calc(var(--u)*11);border-radius:999px;background:var(--blue);color:#fff;font-size:calc(var(--u)*12.5);font-weight:700}
 .ucMore svg{width:calc(var(--u)*14);height:calc(var(--u)*14)}
@@ -493,7 +493,7 @@ html.ucxOpen{overflow:hidden}
   .ucxBody p,.ucxCard.ucxHero .ucxBody p{margin-top:calc(var(--mu)*6);font-size:calc(var(--mu)*14)}
   .ucxGo,.ucxCard.ucxHero .ucxGo{height:calc(var(--mu)*38);margin-top:calc(var(--mu)*12);padding:0 calc(var(--mu)*15);font-size:calc(var(--mu)*14)}
   .ucxGo svg{width:calc(var(--mu)*15);height:calc(var(--mu)*15)}
-  .mAll{display:inline-flex;align-items:center;gap:calc(var(--mu)*8);margin-top:calc(var(--mu)*16);height:calc(var(--mu)*42);padding:0 calc(var(--mu)*18);border-radius:999px;border:1px solid #d6e2f5;background:#fff;font-size:calc(var(--mu)*14.5);font-weight:600;color:var(--navy);cursor:pointer;box-shadow:0 calc(var(--mu)*6) calc(var(--mu)*16) rgba(20,40,90,.06)}
+  .mAll{text-decoration:none;display:inline-flex;align-items:center;gap:calc(var(--mu)*8);margin-top:calc(var(--mu)*16);height:calc(var(--mu)*42);padding:0 calc(var(--mu)*18);border-radius:999px;border:1px solid #d6e2f5;background:#fff;font-size:calc(var(--mu)*14.5);font-weight:600;color:var(--navy);cursor:pointer;box-shadow:0 calc(var(--mu)*6) calc(var(--mu)*16) rgba(20,40,90,.06)}
   .mAll svg{width:calc(var(--mu)*16);height:calc(var(--mu)*16);color:var(--blue)}
 }
 /* Phones: the trial sheet fills the screen; mic sits low, in thumb reach. */
@@ -618,7 +618,7 @@ html.ucxOpen{overflow:hidden}
   <div class="ucHead">
     <h2>Dùng lúc bạn thật sự cần</h2>
     <p>Flash Meet đồng hành cùng bạn trong mọi tình huống.</p>
-    <button class="ucMore" type="button" id="ucMore"><span>Khám phá tất cả use case</span><span class="cnt"><b id="ucCount">7</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+    <a class="ucMore" href="/use-cases" id="ucMore"><span>Khám phá tất cả use case</span><span class="cnt"><b id="ucCount">7</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
   </div>
   <div class="ucRowWrap" id="ucWrap">
     <button class="ucNav ucPrev" type="button" id="ucPrev" aria-label="Trước"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
@@ -639,7 +639,7 @@ html.ucxOpen{overflow:hidden}
   <div class="cf" id="cf"></div>
   <div class="cfDots" id="cfDots"></div>
   <div class="cfHint"><button type="button" id="cfPrev" aria-label="Trước"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>Vuốt để khám phá thêm<button type="button" id="cfNext" aria-label="Tiếp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
-  <button class="mAll" type="button" id="mAll">Khám phá tất cả use case <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+  <a class="mAll" href="/use-cases" id="mAll">Khám phá tất cả use case <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
 </section>
 <section class="mOnly mCards">
   <div class="mProof" id="mProof"></div>
@@ -771,7 +771,7 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
   // use cases
   // cards with a detail page link to it (under this language's home, taken from the logo link)
   const HOME = document.querySelector(".logo").getAttribute("href");
-  const cardOpen = (u, cls) => (u.link ? `<a class="${cls}" href="${HOME}/${u.link}">` : `<article class="${cls}">`);
+  const cardOpen = (u, cls) => (u.link ? `<a class="${cls}" href="${HOME}/${u.link}">` : `<article class="${cls}" data-uc="${escH(u.tag)}" tabindex="0" role="button">`);
   const cardClose = (u) => (u.link ? "</a>" : "</article>");
   $("ucRow").innerHTML = USE_CASES.map((u) =>
     `${cardOpen(u, "ucCard ph")}<img loading="lazy" src="${u.img}" alt="${escH(u.t)}"><div class="ucIn"><span class="ucIc">${svg(u.icon)}</span><b>${escH(u.t)}</b><p>${escH(u.d).replace(/\n/g, ' <br class="dk">')}</p></div>${cardClose(u)}`).join("");
@@ -815,16 +815,22 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
     [...ucxChips.children].forEach((x) => x.classList.toggle("on", x === b)); reveal(b.dataset.tag);
   });
   let ucxBack = null;
-  const openUcx = () => {
+  const openUcx = (tag) => {
     ucxBack = document.activeElement; ucx.hidden = false; ucx.scrollTop = 0; document.documentElement.classList.add("ucxOpen");
-    [...ucxChips.children].forEach((x, k) => x.classList.toggle("on", k === 0)); reveal("");
+    const pick = tag ? [...ucxChips.children].find((x) => x.dataset.tag === tag) : null;
+    [...ucxChips.children].forEach((x, k) => x.classList.toggle("on", pick ? x === pick : k === 0));
+    reveal(pick ? tag : "");
     requestAnimationFrame(() => ucx.classList.add("on")); setTimeout(() => $("ucxX").focus({ preventScroll: true }), 60);
   };
   const closeUcx = () => {
     ucx.classList.remove("on"); document.documentElement.classList.remove("ucxOpen");
     setTimeout(() => { ucx.hidden = true; }, 320); if (ucxBack) ucxBack.focus({ preventScroll: true });
   };
-  $("ucMore").onclick = openUcx; $("mAll").onclick = openUcx; $("ucxX").onclick = closeUcx;
+  $("ucxX").onclick = closeUcx;
+  // clicking a use-case card opens the gallery already filtered to that theme
+  const cardOpener = (e) => { const c = e.target.closest("[data-uc]"); if (c) openUcx(c.dataset.uc); };
+  document.addEventListener("click", cardOpener);
+  document.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.closest("[data-uc]")) { e.preventDefault(); cardOpener(e); } });
   ucx.addEventListener("click", (e) => { if (e.target === ucx || e.target.closest(".ucxGo")) closeUcx(); });
   addEventListener("keydown", (e) => { if (e.key === "Escape" && !ucx.hidden) closeUcx(); });
 

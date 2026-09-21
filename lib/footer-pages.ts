@@ -8,6 +8,8 @@ export type Card = {
   href?: string;
   cta?: string;
   badge?: string;
+  /** Optional photo above the card, e.g. the use-case pictures from the landing page. */
+  img?: string;
 };
 
 export type Section = {

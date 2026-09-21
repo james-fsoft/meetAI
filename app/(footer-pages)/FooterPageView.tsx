@@ -177,7 +177,8 @@ export default function FooterPageView({ lang, slug }: { lang: FpLang; slug: str
               {section.cards && (
                 <div className="fp-card-grid">
                   {section.cards.map((card) => (
-                    <article className="fp-card" key={card.title}>
+                    <article className={card.img ? "fp-card fp-card-photo" : "fp-card"} key={card.title}>
+                      {card.img && <img className="fp-card-img" src={card.img} alt="" loading="lazy" />}
                       {card.badge && <div className="fp-badge">{card.badge}</div>}
                       <h3>{card.title}</h3>
                       <p>{card.text}</p>
@@ -319,6 +320,12 @@ linear-gradient(180deg,#fbfdff,#fff)}
   .fp-lang{text-align:left}
 }
 
+/* use-case style cards: a photo on top, the text below */
+.fp-card-photo{padding:0;overflow:hidden;display:flex;flex-direction:column}
+.fp-card-img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;background:#e9eff8}
+.fp-card-photo h3{margin:16px 20px 8px}
+.fp-card-photo p{margin:0 20px}
+.fp-card-photo .fp-card-link{margin:14px 20px 18px}
 .fp-lang{margin-top:24px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:flex-end;font-size:12px;font-weight:700;color:#34425e}
 .fp-lang a{color:#63708a;text-decoration:none;padding:3px 9px;border-radius:14px;border:1px solid transparent;transition:.14s}
 .fp-lang a:hover{color:var(--fp-blue);border-color:#d7e2f5}

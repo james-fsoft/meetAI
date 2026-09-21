@@ -74,53 +74,71 @@ export const PAGES_EN: Record<string, PageDef> = {
 
   "use-cases": {
     eyebrow: "PRODUCT · USE CASES",
-    title: "One tool, many multilingual conversations",
+    title: "The seven situations Flash Meet is used for most",
     lead:
-      "Flash Meet fits when the problem is not a missing meeting platform, but people needing to understand each other faster on the tools they already use.",
+      "One tool, many kinds of conversation. Pick the one closest to yours to see where to start.",
     actions: [
       { label: "Try it now", href: "/?app=1", primary: true },
       { label: "See the features", href: "/features" },
     ],
     sections: [
       {
-        title: "Everyday work",
+        title: "Pick your situation",
         cards: [
           {
-            title: "Vietnamese – Korean – English meetings",
-            text: "Follow bilingual captions through a project meeting, a customer call or an internal session that runs in several languages.",
+            title: "Work meetings",
+            text: "Bilingual captions through a project meeting, a customer call or an internal session; afterwards you get the transcript, a summary and the action items.",
+            img: "/concept/uc-meeting.jpg",
+            href: "/?app=1",
+            cta: "Open the app",
           },
           {
-            title: "Sales & customer care",
-            text: "Spend less time stopping to explain, and keep the transcript and summary for a more accurate follow-up.",
-          },
-          {
-            title: "Project syncs & handovers",
-            text: "Lets the PM, the engineers and the customer see the same key points, decisions and action items afterwards.",
-          },
-        ],
-      },
-      {
-        title: "Content & events",
-        cards: [
-          {
-            title: "Conferences & talks",
-            text: "Put the live translation on the projected screen or in its own caption window — for meeting rooms and for the stage.",
+            title: "Conferences & events",
+            text: "Large captions on the projected screen, a floating panel over your slides, and a QR code so the audience can read the translation on their phones.",
+            img: "/concept/uc-conference.jpg",
             href: "/conference-mode",
-            cta: "See Conference Mode",
+            cta: "Open Conference Mode",
           },
           {
-            title: "Webinars & training",
-            text: "Translate browser audio to follow a webinar, a course, training footage or specialist content.",
+            title: "Video calls",
+            text: "Google Meet, Zoom and Teams run in the browser — the extension listens to that tab and puts the captions right on the page.",
+            img: "/concept/uc-videocall.jpg",
             href: "/extension",
-            cta: "Install the extension",
+            cta: "See the extension",
           },
           {
-            title: "Video in another language",
-            text: "Create live translated captions for what plays in the browser instead of waiting for a subtitle file.",
+            title: "Everyday conversation",
+            text: "Travelling, meeting a partner or friends from abroad: put the device between you and the microphone hears both sides.",
+            img: "/concept/uc-daily.jpg",
+            href: "/guide",
+            cta: "Read the guide",
+          },
+          {
+            title: "Study & research",
+            text: "Lectures, seminars and specialist video in another language — read the translation while you watch.",
+            img: "/concept/uc-study.jpg",
+            href: "/extension",
+            cta: "See the extension",
+          },
+          {
+            title: "Video & films",
+            text: "Content without subtitles still works, because the extension listens to the tab’s own audio.",
+            img: "/concept/uc-movie.jpg",
+            href: "/extension",
+            cta: "See the extension",
+          },
+          {
+            title: "Talks & training",
+            text: "An international audience follows every point: captions on the projector or floating over your slides.",
+            img: "/concept/uc-training.jpg",
+            href: "/conference-mode",
+            cta: "Open Conference Mode",
           },
         ],
       },
     ],
+    note:
+      "Not on the list? The rule of thumb: sound in the browser → the extension; people in the room → the app’s microphone; a whole room watching → Conference Mode.",
   },
 
   apps: {
