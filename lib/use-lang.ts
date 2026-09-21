@@ -17,7 +17,13 @@ export function useLang(): [Lang, (l: Lang) => void] {
       const v = localStorage.getItem("mr_lang");
       setLang(v === "vi" || v === "ko" ? v : "en");
     };
-    read();
+    // A link can state the language it was followed in (?lang=vi); it wins and is remembered,
+    // so arriving from a Vietnamese page never drops the reader into English.
+    const q = new URLSearchParams(window.location.search).get("lang");
+    if (q === "vi" || q === "ko" || q === "en") {
+      try { localStorage.setItem("mr_lang", q); } catch {}
+      setLang(q);
+    } else read();
     const onStorage = (e: StorageEvent) => { if (e.key === "mr_lang") read(); };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
