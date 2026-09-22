@@ -146,6 +146,58 @@ const DAY = 86400000;
 const minutes = (sec: number) => Math.max(0, Math.round(sec / 60));
 const dayKey = (ms: number) => { const d = new Date(ms); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
 
+
+/** Phone-only screen (the desktop layout above is untouched). */
+type MDict = {
+  title: string; minutes: string; of: string; left: (p: number) => string; unlimited: string;
+  topUp: string; planDetail: string; planWord: string;
+  rHistory: string; rDict: string; rBilling: string; rConf: string; rHelp: string; signOut: string;
+  recent: string; seeAll: string; empty: string; min: string;
+  tabHome: string; tabHistory: string; tabTopUp: string; tabMe: string; navAria: string;
+};
+const M: Record<Lang, MDict> = {
+  vi: {
+    title: "My Page", minutes: "Phút còn lại", of: "phút", left: (p) => `Còn ${p}%`, unlimited: "Không giới hạn",
+    topUp: "Nạp tiền / Nâng cấp", planDetail: "Xem chi tiết gói", planWord: "Gói",
+    rHistory: "Lịch sử cuộc họp & ghi chú", rDict: "Từ điển chuyên ngành", rBilling: "Gói & thanh toán",
+    rConf: "Chế độ hội nghị", rHelp: "Trợ giúp & Liên hệ", signOut: "Đăng xuất",
+    recent: "Ghi chú gần đây", seeAll: "Xem tất cả", empty: "Chưa có cuộc họp nào được lưu.", min: "phút",
+    tabHome: "Trang chủ", tabHistory: "Lịch sử", tabTopUp: "Nạp tiền", tabMe: "My Page", navAria: "Thanh điều hướng",
+  },
+  en: {
+    title: "My Page", minutes: "Minutes left", of: "minutes", left: (p) => `${p}% left`, unlimited: "Unlimited",
+    topUp: "Top up / Upgrade", planDetail: "Plan details", planWord: "Plan",
+    rHistory: "Meetings & notes", rDict: "Dictionary", rBilling: "Plan & billing",
+    rConf: "Conference mode", rHelp: "Help & contact", signOut: "Sign out",
+    recent: "Recent notes", seeAll: "See all", empty: "No saved meetings yet.", min: "min",
+    tabHome: "Home", tabHistory: "History", tabTopUp: "Top up", tabMe: "My Page", navAria: "Navigation bar",
+  },
+  ko: {
+    title: "My Page", minutes: "남은 시간", of: "분", left: (p) => `${p}% 남음`, unlimited: "무제한",
+    topUp: "충전 / 업그레이드", planDetail: "요금제 상세", planWord: "요금제",
+    rHistory: "회의 & 노트 기록", rDict: "전문 용어 사전", rBilling: "요금제 & 결제",
+    rConf: "컨퍼런스 모드", rHelp: "도움말 & 문의", signOut: "로그아웃",
+    recent: "최근 노트", seeAll: "전체 보기", empty: "저장된 회의가 아직 없습니다.", min: "분",
+    tabHome: "홈", tabHistory: "기록", tabTopUp: "충전", tabMe: "My Page", navAria: "내비게이션 바",
+  },
+};
+
+const MI = {
+  note: <path d="M6 2.8h8.5L19 7.4V21a.8.8 0 0 1-.8.8H6a.8.8 0 0 1-.8-.8V3.6A.8.8 0 0 1 6 2.8zM14 2.8v5h5M8.6 12.5h7M8.6 16h4.6" />,
+  book: <path d="M4.5 4.2A1.4 1.4 0 0 1 5.9 2.8H19v16.4H5.9a1.4 1.4 0 0 0-1.4 1.4zM19 15.6H5.9" />,
+  card: <path d="M2.6 7.2a2 2 0 0 1 2-2h14.8a2 2 0 0 1 2 2v9.6a2 2 0 0 1-2 2H4.6a2 2 0 0 1-2-2zM2.6 10.4h18.8" />,
+  stage: <path d="M3.4 4.2h17.2v10H3.4zM12 14.2v4.2M7.6 21.2 12 18.4l4.4 2.8" />,
+  help: <path d="M12 21.2a9.2 9.2 0 1 0 0-18.4 9.2 9.2 0 0 0 0 18.4zM9.6 9.4a2.5 2.5 0 1 1 3.3 2.4c-.6.2-.9.8-.9 1.4v.6M12 17.2h.01" />,
+  out: <path d="M9.4 3.4H5.6a1.6 1.6 0 0 0-1.6 1.6v14a1.6 1.6 0 0 0 1.6 1.6h3.8M15.4 16.2 19.6 12l-4.2-4.2M19.6 12H9.4" />,
+  clock: <path d="M12 3.2a8.8 8.8 0 1 1 0 17.6 8.8 8.8 0 0 1 0-17.6zM12 6.8V12l3.4 2" />,
+  home: <path d="m3.4 10.6 8.6-7 8.6 7v9.6a1.4 1.4 0 0 1-1.4 1.4H4.8a1.4 1.4 0 0 1-1.4-1.4z" />,
+  user: <path d="M12 11.8a3.6 3.6 0 1 0 0-7.2 3.6 3.6 0 0 0 0 7.2zM4.8 20.2c.6-4 3.5-6.2 7.2-6.2s6.6 2.2 7.2 6.2" />,
+  chev: <path d="m9 6 6 6-6 6" />,
+};
+const mIcon = (d: React.ReactNode, cls = "") => (
+  <svg className={cls} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>
+);
+
 export default function ProfileClient({ email, name, avatar, since, usage }:
   { email: string; name: string; avatar: string; since: string; usage: Usage }) {
   const [lang, setLang] = useLang();
@@ -205,6 +257,20 @@ export default function ProfileClient({ email, name, avatar, since, usage }:
         }
       })
       .catch(() => {});
+  }, []);
+
+  const m = M[lang] || M.en;
+  // Minutes shown are this month's remainder when the plan caps the month, else today's.
+  const mBand = usage.month.limit != null ? usage.month : usage.day;
+  const mTotal = mBand.limit != null ? Math.round(mBand.limit / 60) : 0;
+  const mLeft = mBand.remain != null ? Math.max(0, Math.round(mBand.remain / 60)) : 0;
+  const mPct = mTotal > 0 ? Math.max(0, Math.min(100, Math.round((mLeft / mTotal) * 100))) : 0;
+  const mSignOut = useCallback(async () => {
+    try {
+      const { createClient } = await import("@/lib/supabase-browser");
+      await createClient().auth.signOut();
+    } catch {}
+    location.href = "/";
   }, []);
 
   // One list: cloud meetings plus the ones still only on this device.
@@ -297,6 +363,84 @@ export default function ProfileClient({ email, name, avatar, since, usage }:
   return (
     <div className="pf">
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
+
+      <div className="pf-m">
+        <header className="pfm-bar">
+          <Link href="/" className="pf-brand" aria-label="Flash Meet">
+            <svg viewBox="0 0 100 100" width="26" height="26" aria-hidden="true">
+              <path d="M22 8 H78 a16 16 0 0 1 16 16 V60 a16 16 0 0 1 -16 16 H50 l-20 18 v-18 H22 a16 16 0 0 1 -16 -16 V24 A16 16 0 0 1 22 8 Z" fill={BLUE} />
+              <g fill="#fff"><rect x="26" y="38" width="7.5" height="12" rx="3.75" /><rect x="39" y="29" width="7.5" height="30" rx="3.75" /><rect x="52" y="22" width="7.5" height="44" rx="3.75" /><rect x="65" y="32" width="7.5" height="24" rx="3.75" /></g>
+            </svg>
+            <span>Flash Meet</span>
+          </Link>
+          <LangSwitch lang={lang} onChange={setLang} />
+        </header>
+
+        <h1 className="pfm-title">{m.title}</h1>
+
+        <section className="pfm-who">
+          {avatar
+            ? <img className="pfm-ava" src={avatar} alt="" />
+            : <span className="pfm-ava pfm-ava-l">{(name || email || "?").trim().charAt(0).toUpperCase()}</span>}
+          <div className="pfm-id">
+            <b>{name || email.split("@")[0]}</b>
+            <small>{email}</small>
+            <span className="pfm-plan">{PLAN_LABEL[usage.plan] || usage.plan}</span>
+          </div>
+        </section>
+
+        <section className="pfm-credit">
+          <span className="pfm-cIc">{mIcon(MI.clock)}</span>
+          <div className="pfm-cTx">
+            <div className="pfm-cTop"><small>{m.minutes}</small><span className="pfm-cPlan">{m.planWord} {PLAN_LABEL[usage.plan] || usage.plan}</span></div>
+            {usage.unlimited
+              ? <b className="pfm-cBig">{m.unlimited}</b>
+              : <><b className="pfm-cBig">{mLeft}<i> {m.of}</i></b>{mTotal > 0 && <span className="pfm-cOf">/ {mTotal} {m.of}</span>}</>}
+            {!usage.unlimited && mTotal > 0 && (
+              <div className="pfm-bar"><i style={{ width: `${mPct}%` }} /><em>{m.left(mPct)}</em></div>
+            )}
+          </div>
+        </section>
+
+        <div className="pfm-acts">
+          <Link href="/pricing" className="pfm-act pri">{m.topUp}{mIcon(MI.chev, "pfm-chev")}</Link>
+          <Link href="/account" className="pfm-act">{m.planDetail}{mIcon(MI.chev, "pfm-chev")}</Link>
+        </div>
+
+        <nav className="pfm-list" aria-label={m.title}>
+          <Link href="/dashboard"><span className="pfm-lIc g">{mIcon(MI.note)}</span>{m.rHistory}{mIcon(MI.chev, "pfm-chev")}</Link>
+          <Link href="/dictionary"><span className="pfm-lIc b">{mIcon(MI.book)}</span>{m.rDict}{mIcon(MI.chev, "pfm-chev")}</Link>
+          <Link href="/account"><span className="pfm-lIc s">{mIcon(MI.card)}</span>{m.rBilling}{mIcon(MI.chev, "pfm-chev")}</Link>
+          <Link href="/conference-mode"><span className="pfm-lIc p">{mIcon(MI.stage)}</span>{m.rConf}{mIcon(MI.chev, "pfm-chev")}</Link>
+          <Link href="/contact"><span className="pfm-lIc o">{mIcon(MI.help)}</span>{m.rHelp}{mIcon(MI.chev, "pfm-chev")}</Link>
+        </nav>
+
+        <button type="button" className="pfm-out" onClick={mSignOut}>
+          <span className="pfm-lIc r">{mIcon(MI.out)}</span>{m.signOut}{mIcon(MI.chev, "pfm-chev")}
+        </button>
+
+        <section className="pfm-recent">
+          <header><b>{m.recent}</b><Link href="/dashboard">{m.seeAll}</Link></header>
+          {all.slice(0, 3).map((x) => (
+            <Link key={x.key} href="/dashboard" className="pfm-note">
+              <span className="pfm-lIc g">{mIcon(MI.note)}</span>
+              <span className="pfm-nTx">
+                <b>{x.title || t.untitled}</b>
+                <small>{new Date(x.started).toLocaleDateString(loc, { day: "2-digit", month: "2-digit" })} · {new Date(x.started).toLocaleTimeString(loc, { hour: "2-digit", minute: "2-digit" })}</small>
+              </span>
+              <span className="pfm-nMin">{Math.max(1, Math.round(x.dur / 60))} {m.min}</span>
+            </Link>
+          ))}
+          {all.length === 0 && <p className="pfm-empty">{m.empty}</p>}
+        </section>
+      </div>
+
+      <nav className="pfm-tabs" aria-label={m.navAria}>
+        <Link href="/">{mIcon(MI.home)}<span>{m.tabHome}</span></Link>
+        <Link href="/dashboard">{mIcon(MI.clock)}<span>{m.tabHistory}</span></Link>
+        <Link href="/pricing">{mIcon(MI.card)}<span>{m.tabTopUp}</span></Link>
+        <Link href="/profile" className="on">{mIcon(MI.user)}<span>{m.tabMe}</span></Link>
+      </nav>
 
       <header className="pf-bar">
         <Link href="/" className="pf-brand" aria-label="Flash Meet">
@@ -694,6 +838,75 @@ const CSS = `
 .pf-dist b{text-align:right;color:#0a1124;font-size:11.5px}
 .pf-tips{margin:0;padding-left:16px;display:grid;gap:7px}
 .pf-tips li{font-size:11.5px;line-height:1.55;color:#41506e;font-weight:600}
+
+/* ── phone: My Page (the desktop layout above is hidden below 768px) ── */
+.pf-m,.pfm-tabs{display:none}
+@media(max-width:767px){
+  .pf-top,.pf-bar,.pf-wrap{display:none!important}
+  .pf-m{display:block;padding:0 16px 8px;background:#f6f9fd;min-height:100vh}
+  .pfm-bar{display:flex;align-items:center;gap:12px;padding:14px 0 6px}
+  .pfm-bar .pf-brand{font-size:19px;font-weight:900;letter-spacing:-.035em;display:inline-flex;align-items:center;gap:8px;color:#0b1631;text-decoration:none}
+  .pfm-bar > :last-child{margin-left:auto}
+  .pfm-title{font-size:27px;letter-spacing:-.04em;margin:10px 0 14px;font-weight:900}
+  .pfm-who{display:flex;align-items:center;gap:13px;background:#fff;border:1px solid #e7edf6;border-radius:18px;padding:14px;margin-bottom:12px}
+  .pfm-ava{width:58px;height:58px;flex:none;border-radius:50%;object-fit:cover;background:#e8eefb}
+  .pfm-ava-l{display:grid;place-items:center;font-size:22px;font-weight:800;color:#1f6bff}
+  .pfm-id{min-width:0}
+  .pfm-id b{display:block;font-size:17px;letter-spacing:-.02em}
+  .pfm-id small{display:block;font-size:12.5px;color:#6b7893;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pfm-plan{display:inline-block;margin-top:7px;font-size:11px;font-weight:800;letter-spacing:.02em;color:#8a5a00;background:#ffeec2;border-radius:99px;padding:4px 10px}
+  .pfm-credit{display:flex;gap:13px;background:#eef4ff;border:1px solid #dbe7ff;border-radius:18px;padding:14px;margin-bottom:12px}
+  .pfm-cIc{width:46px;height:46px;flex:none;border-radius:50%;background:#fff;color:#1f6bff;display:grid;place-items:center}
+  .pfm-cIc svg{width:23px;height:23px}
+  .pfm-cTx{flex:1;min-width:0}
+  .pfm-cTop{display:flex;align-items:center;gap:10px}
+  .pfm-cTop small{font-size:12.5px;color:#4f5d78;font-weight:600}
+  .pfm-cPlan{margin-left:auto;font-size:11px;font-weight:800;color:#fff;background:#1f6bff;border-radius:99px;padding:5px 11px}
+  .pfm-cBig{display:inline-block;margin-top:4px;font-size:24px;font-weight:900;letter-spacing:-.03em}
+  .pfm-cBig i{font-style:normal;font-size:16px;font-weight:800}
+  .pfm-cOf{font-size:13px;color:#6b7893;margin-left:6px}
+  .pfm-bar{position:relative;height:8px;border-radius:99px;background:#d7e4fb;margin-top:10px;display:flex;align-items:center}
+  .pfm-bar i{display:block;height:8px;border-radius:99px;background:linear-gradient(90deg,#1f6bff,#4d8cff)}
+  .pfm-bar em{position:absolute;right:0;top:-22px;font-style:normal;font-size:11.5px;font-weight:700;color:#4f5d78}
+  .pfm-acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .pfm-act{display:flex;align-items:center;justify-content:center;gap:6px;min-height:52px;padding:0 12px;border-radius:14px;
+    background:#eef4ff;color:#17223d;font-size:13.5px;font-weight:800;text-decoration:none;text-align:center;line-height:1.25}
+  .pfm-act.pri{background:linear-gradient(135deg,#1769ff,#3e86ff);color:#fff;box-shadow:0 12px 24px -16px rgba(20,104,255,.95)}
+  .pfm-chev{width:16px;height:16px;flex:none;opacity:.7}
+  .pfm-list{background:#fff;border:1px solid #e7edf6;border-radius:18px;overflow:hidden;margin-bottom:12px}
+  .pfm-list a,.pfm-out{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border:0;border-bottom:1px solid #f1f4fa;
+    background:#fff;color:#17223d;font:inherit;font-size:14.5px;font-weight:600;text-decoration:none;text-align:left;cursor:pointer}
+  .pfm-list a:last-child{border-bottom:0}
+  .pfm-list a .pfm-chev,.pfm-out .pfm-chev{margin-left:auto}
+  .pfm-lIc{width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center}
+  .pfm-lIc svg{width:19px;height:19px}
+  .pfm-lIc.g{background:#e9f8f0;color:#12a35c}
+  .pfm-lIc.b{background:#eef4ff;color:#1f6bff}
+  .pfm-lIc.s{background:#eef1f7;color:#4f5d78}
+  .pfm-lIc.p{background:#f3eeff;color:#7a5cf0}
+  .pfm-lIc.o{background:#fff4e6;color:#e08a00}
+  .pfm-lIc.r{background:#ffeced;color:#e5484d}
+  .pfm-out{border:1px solid #e7edf6;border-radius:18px;color:#e5484d;margin-bottom:14px}
+  .pfm-recent{background:#fff;border:1px solid #e7edf6;border-radius:18px;padding:14px;margin-bottom:10px}
+  .pfm-recent > header{display:flex;align-items:center;margin-bottom:10px}
+  .pfm-recent > header b{font-size:16.5px;letter-spacing:-.02em}
+  .pfm-recent > header a{margin-left:auto;font-size:12.5px;font-weight:800;color:#1f6bff;text-decoration:none}
+  .pfm-note{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid #f1f4fa;text-decoration:none;color:#17223d}
+  .pfm-note:last-child{border-bottom:0}
+  .pfm-nTx{min-width:0;flex:1}
+  .pfm-nTx b{display:block;font-size:14px;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pfm-nTx small{display:block;font-size:11.5px;color:#6b7893;margin-top:2px}
+  .pfm-nMin{font-size:11.5px;font-weight:800;color:#4f5d78;background:#eef1f7;border-radius:99px;padding:5px 10px}
+  .pfm-empty{margin:4px 0 0;font-size:13px;color:#6b7893}
+  .pfm-tabs{position:fixed;left:0;right:0;bottom:0;z-index:60;display:grid;grid-template-columns:repeat(4,1fr);
+    background:rgba(255,255,255,.97);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid #e7edf6;
+    padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+  .pfm-tabs a{display:grid;justify-items:center;gap:4px;text-decoration:none;color:#7b88a3;font-size:11.5px;font-weight:600}
+  .pfm-tabs svg{width:23px;height:23px}
+  .pfm-tabs a.on{color:#1f6bff}
+  body{padding-bottom:74px}
+}
+
 @media(max-width:1280px){.pf-wrap{grid-template-columns:240px minmax(0,1fr)}.pf-right{grid-column:1/-1;grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}.pf-nav a:nth-child(n+4){display:none}}
 @media(max-width:900px){.pf-wrap{grid-template-columns:minmax(0,1fr);padding:14px 12px 50px}.pf-side{order:2}.pf-right{order:3}
 .pf-bar{padding:10px 12px;gap:10px}.pf-nav,.pf-bar .pf-find,.pf-me div{display:none}
