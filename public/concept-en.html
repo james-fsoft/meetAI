@@ -868,7 +868,7 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
   // use cases
   // cards with a detail page link to it (under this language's home, taken from the logo link)
   const HOME = document.querySelector(".logo").getAttribute("href");
-  const cardOpen = (u, cls) => (u.link ? `<a class="${cls}" href="${HOME}/${u.link}">` : `<article class="${cls}" data-uc="${escH(u.tag)}" tabindex="0" role="button">`);
+  const cardOpen = (u, cls) => (u.link ? `<a class="${cls}" href="${HOME === "/" ? "" : HOME}/${u.link}">` : `<article class="${cls}" data-uc="${escH(u.tag)}" tabindex="0" role="button">`);
   const cardClose = (u) => (u.link ? "</a>" : "</article>");
   $("ucRow").innerHTML = USE_CASES.map((u) =>
     `${cardOpen(u, "ucCard ph")}<img loading="lazy" src="${u.img}" alt="${escH(u.t)}"><div class="ucIn"><span class="ucIc">${svg(u.icon)}</span><b>${escH(u.t)}</b><p>${escH(u.d).replace(/\n/g, ' <br class="dk">')}</p></div>${cardClose(u)}`).join("");
@@ -892,7 +892,7 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
     const key = u.img.replace(/^.*\/uc-/, "").replace(/\.jpg$/, ""), src = `/concept/ucg-${key}.jpg`, ar = Math.max(GAR[key] || 1.5, 0.8).toFixed(3);
     return `<article class="ucxCard${feat ? " ucxHero" : ""}" data-tag="${escH(u.tag)}"><div class="ucxMedia" style="--ar:${ar}"><img class="bg" src="${src}" alt="" aria-hidden="true" loading="lazy"><img class="fg" src="${src}" alt="${escH(u.t)}" loading="lazy"></div>` +
       `<div class="ucxBody"><span class="ucxTag"><i>${svg(u.icon)}</i>${escH(u.tag)}</span><h3>${escH(u.t)}</h3><p>${escH(u.d.replace(/\n/g, " "))}</p>` +
-      (u.link ? `<a class="ucxGo" href="${HOME}/${u.link}">See details ${GO}</a>` : `<button class="ucxGo ghost openTrial" type="button">Try it now ${GO}</button>`) + `</div></article>`;
+      (u.link ? `<a class="ucxGo" href="${HOME === "/" ? "" : HOME}/${u.link}">See details ${GO}</a>` : `<button class="ucxGo ghost openTrial" type="button">Try it now ${GO}</button>`) + `</div></article>`;
   };
   const FEAT = USE_CASES.filter((u) => u.link), REST = USE_CASES.filter((u) => !u.link);
   ucxFeat.innerHTML = FEAT.map((u) => galCard(u, true)).join("");

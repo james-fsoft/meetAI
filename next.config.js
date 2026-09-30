@@ -10,6 +10,11 @@ const nextConfig = {
       { source: '/concept', destination: '/vi', permanent: false },
       { source: '/concept/en', destination: '/', permanent: false },
       { source: '/concept/ko', destination: '/ko', permanent: false },
+      // the conference landing moved next to the other landings
+      { source: '/concept/conference', destination: '/vi/conference', permanent: false },
+      { source: '/concept/en/conference', destination: '/conference', permanent: false },
+      { source: '/concept/ko/conference', destination: '/ko/conference', permanent: false },
+      { source: '/en/conference', destination: '/conference', permanent: false },
     ];
   },
 };
