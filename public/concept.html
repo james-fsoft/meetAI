@@ -841,7 +841,7 @@ const USE_CASES = [
   { img: "/concept/uc-videocall.jpg", tag: "Video", icon: "video", t: "Cuộc gọi video", d: "Hiểu nhau dù ở bất kỳ\nđâu trên thế giới." },
   { img: "/concept/uc-daily.jpg", tag: "Giao tiếp", icon: "chat", t: "Giao tiếp hàng ngày", d: "Du lịch, gặp gỡ đối tác,\nbạn bè quốc tế." },
   { img: "/concept/uc-study.jpg", tag: "Học tập", icon: "cap", t: "Học tập, nghiên cứu", d: "Hiểu bài giảng, video\nnước ngoài nhanh hơn." },
-  { img: "/concept/uc-movie.jpg", tag: "Giải trí", icon: "play", t: "Xem video, phim", d: "Phụ đề thông minh\ncho mọi nội dung." },
+  { img: "/concept/uc-movie.jpg", tag: "Giải trí", href: "/cinema", cta: "Mở chế độ rạp phim", icon: "play", t: "Xem video, phim", d: "Phụ đề thông minh\ncho mọi nội dung." },
   { img: "/concept/uc-training.jpg", tag: "Công việc", icon: "mic", t: "Thuyết trình, đào tạo", d: "Khán giả quốc tế\ntheo kịp từng ý." },
 ];
 const ICONS = {
@@ -894,7 +894,7 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
     const key = u.img.replace(/^.*\/uc-/, "").replace(/\.jpg$/, ""), src = `/concept/ucg-${key}.jpg`, ar = Math.max(GAR[key] || 1.5, 0.8).toFixed(3);
     return `<article class="ucxCard${feat ? " ucxHero" : ""}" data-tag="${escH(u.tag)}"><div class="ucxMedia" style="--ar:${ar}"><img class="bg" src="${src}" alt="" aria-hidden="true" loading="lazy"><img class="fg" src="${src}" alt="${escH(u.t)}" loading="lazy"></div>` +
       `<div class="ucxBody"><span class="ucxTag"><i>${svg(u.icon)}</i>${escH(u.tag)}</span><h3>${escH(u.t)}</h3><p>${escH(u.d.replace(/\n/g, " "))}</p>` +
-      (u.link ? `<a class="ucxGo" href="${HOME === "/" ? "" : HOME}/${u.link}">Xem chi tiết ${GO}</a>` : `<button class="ucxGo ghost openTrial" type="button">Dùng thử ngay ${GO}</button>`) + `</div></article>`;
+      (u.href ? `<a class="ucxGo" href="${u.href}">${escH(u.cta)} ${GO}</a>` : u.link ? `<a class="ucxGo" href="${HOME === "/" ? "" : HOME}/${u.link}">Xem chi tiết ${GO}</a>` : `<button class="ucxGo ghost openTrial" type="button">Dùng thử ngay ${GO}</button>`) + `</div></article>`;
   };
   const FEAT = USE_CASES.filter((u) => u.link), REST = USE_CASES.filter((u) => !u.link);
   ucxFeat.innerHTML = FEAT.map((u) => galCard(u, true)).join("");
