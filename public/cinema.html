@@ -76,9 +76,6 @@ body.watching .setup{display:none}
 .wPill svg{width:13px;height:13px;opacity:.7}
 .stage{flex:1;display:grid;place-items:center;padding:60px 22px;min-height:0}
 .subs{width:100%;max-width:760px;text-align:center}
-.orig{font-size:calc(var(--fs)*.62);line-height:1.4;color:rgba(255,255,255,calc(var(--sub)*.6));margin:0 0 10px;
-  display:none;word-break:break-word}
-body.showorig .orig{display:block}
 .main{font-size:var(--fs);line-height:1.38;font-weight:500;color:rgba(255,255,255,var(--sub));margin:0;word-break:break-word}
 .main .i{color:rgba(255,255,255,calc(var(--sub)*.55))}
 .werr{margin:16px 0 0;font-size:13px;line-height:1.5;color:#ff8d8d;opacity:.85;min-height:1px}
@@ -177,7 +174,6 @@ body.sheeton .sheet{transform:none}
   </div>
   <div class="stage">
     <div class="subs">
-      <p class="orig" id="orig"></p>
       <p class="main" id="main" data-t="waiting">Phụ đề sẽ hiện ở đây khi phim bắt đầu nói.</p>
       <p class="werr" id="werr"></p>
     </div>
@@ -204,11 +200,6 @@ body.sheeton .sheet{transform:none}
     <div class="sizeBtns"><button id="fsDown" aria-label="A-">A−</button><button id="fsUp" aria-label="A+">A+</button></div>
   </div>
 
-  <div class="sw" id="origSw" role="switch" aria-checked="false" tabindex="0">
-    <span class="tx"><b data-t="origT">Hiện lời gốc</b><small data-t="origD">Hiển thị cả phụ đề gốc (ngôn ngữ phim).</small></span>
-    <span class="tog"></span>
-  </div>
-
   <div class="acts">
     <button class="bGhost" id="pause" data-t="pause">Tạm dừng</button>
     <button class="bMint" id="stop" data-t="stop">Kết thúc</button>
@@ -233,21 +224,21 @@ const I18N={
   sizeLab:'Cỡ chữ',briLab:'Độ sáng',dimT:'Ẩn nút khi đang xem',dimD:'Giúp tập trung hơn khi xem phim.',
   micT:'Cho phép micro để nhận âm thanh phim.',micD:'Chỉ xử lý âm thanh, không lưu trữ.',start:'Bắt đầu xem',
   listening:'Đang nghe',paused:'Tạm dừng',waiting:'Phụ đề sẽ hiện ở đây khi phim bắt đầu nói.',tapHint:'Chạm để mở điều khiển',
-  ctl:'Điều khiển',origT:'Hiện lời gốc',origD:'Hiển thị cả phụ đề gốc (ngôn ngữ phim).',pause:'Tạm dừng',resume:'Tiếp tục',stop:'Kết thúc',
+  ctl:'Điều khiển',pause:'Tạm dừng',resume:'Tiếp tục',stop:'Kết thúc',
   micErr:'Không mở được micro. Hãy cho phép quyền micro rồi thử lại.',netErr:'Mất kết nối — đang thử lại…',
   anonOut:'Bạn đã dùng hết 3 phút dùng thử. Đăng nhập để tiếp tục.',quotaOut:'Đã hết phút trong gói. Nâng cấp để tiếp tục.',signIn:'Đăng nhập'},
  en:{h1:'Cinema mode',lead:'Read the translation while you watch',srcLab:'Film language',auto:'Detect automatically',tgtLab:'Translate into',
   sizeLab:'Text size',briLab:'Brightness',dimT:'Hide the buttons while watching',dimD:'Fewer distractions during the film.',
   micT:'Allow the microphone to hear the film.',micD:'Audio is processed only, never stored.',start:'Start watching',
   listening:'Listening',paused:'Paused',waiting:'Captions appear here once the film starts speaking.',tapHint:'Tap to open the controls',
-  ctl:'Controls',origT:'Show the original line',origD:'Also show the film-language subtitle.',pause:'Pause',resume:'Resume',stop:'Finish',
+  ctl:'Controls',pause:'Pause',resume:'Resume',stop:'Finish',
   micErr:'Could not open the microphone. Allow microphone access and try again.',netErr:'Connection lost — retrying…',
   anonOut:'Your 3 free minutes are used up. Sign in to continue.',quotaOut:'No minutes left on your plan. Upgrade to continue.',signIn:'Sign in'},
  ko:{h1:'영화관 모드',lead:'영화를 보면서 번역을 읽으세요',srcLab:'영화 언어',auto:'자동 감지',tgtLab:'번역 언어',
   sizeLab:'글자 크기',briLab:'밝기',dimT:'볼 때 버튼 숨기기',dimD:'영화에 더 집중할 수 있습니다.',
   micT:'영화 소리를 듣기 위해 마이크를 허용하세요.',micD:'소리는 처리만 하며 저장하지 않습니다.',start:'보기 시작',
   listening:'듣는 중',paused:'일시 중지',waiting:'영화에서 말이 시작되면 자막이 여기에 표시됩니다.',tapHint:'탭하면 설정이 열립니다',
-  ctl:'설정',origT:'원문도 표시',origD:'영화 언어 자막도 함께 표시합니다.',pause:'일시 중지',resume:'계속',stop:'종료',
+  ctl:'설정',pause:'일시 중지',resume:'계속',stop:'종료',
   micErr:'마이크를 열 수 없습니다. 권한을 허용하고 다시 시도하세요.',netErr:'연결이 끊겼습니다 — 다시 시도 중…',
   anonOut:'무료 3분을 모두 사용했습니다. 로그인하면 계속할 수 있습니다.',quotaOut:'요금제의 남은 시간이 없습니다. 업그레이드하세요.',signIn:'로그인'}
 };
@@ -261,7 +252,7 @@ const st=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:v}catch(e)
 const save=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 let src=st('fm_cin_src','auto'), tgt=st('fm_cin_tgt',UI==='ko'?'ko':UI==='en'?'en':'vi');
 let fs=parseInt(st('fm_cin_fs','30'),10), bri=parseInt(st('fm_cin_bri','15'),10);
-let dimUi=st('fm_cin_dim','1')==='1', showOrig=st('fm_cin_orig','0')==='1';
+let dimUi=st('fm_cin_dim','1')==='1';
 
 function fillSelects(){
   const opts=l=>l.map(([c,n])=>`<option value="${c}">${n}</option>`).join('');
@@ -282,8 +273,6 @@ function applyPrefs(){
   $('size').value=fs; $('bri').value=bri; $('bri2').value=bri;
   $('briPc').textContent=bri+'%'; $('briPc2').textContent=bri+'%';
   $('dimSw').classList.toggle('on',dimUi); $('dimSw').setAttribute('aria-checked',String(dimUi));
-  $('origSw').classList.toggle('on',showOrig); $('origSw').setAttribute('aria-checked',String(showOrig));
-  document.body.classList.toggle('showorig',showOrig);
   $('pillTx').textContent=(paused?t('paused'):t('listening'))+' · '+langName(tgt);
 }
 
@@ -318,7 +307,7 @@ function clearErr(){$('err').textContent='';$('err').classList.add('hide');$('we
 
 /* ── Soniox realtime: mic → translated captions ────────────── */
 let stream=null,ws=null,rec=null,gen=0,stopping=false,paused=false,wake=null;
-let segOrig='',segTrans='';
+let segTrans='';
 function pickMime(){const c=['audio/webm;codecs=opus','audio/webm','audio/mp4'];
   if(window.MediaRecorder&&MediaRecorder.isTypeSupported)for(const m of c)if(MediaRecorder.isTypeSupported(m))return m;return''}
 
@@ -346,12 +335,11 @@ async function openSocket(){
   };
   s.onmessage=ev=>{let m;try{m=JSON.parse(ev.data)}catch(e){return}
     if(m.error_code){showErr(m.error_message||m.error_code);return}
-    let oI='',tI='';
+    let tI='';
     (m.tokens||[]).forEach(tk=>{const x=tk.text;if(x==null)return;
       if(x==='<end>'){flush();return}
-      if(tk.translation_status==='translation'){tk.is_final?segTrans+=x:tI+=x}
-      else{tk.is_final?segOrig+=x:oI+=x}});
-    render(oI,tI);
+      if(tk.translation_status==='translation'){tk.is_final?segTrans+=x:tI+=x}});
+    render(tI);
     if(m.finished)flush();};
   s.onerror=()=>{if(!stopping)showErr(t('netErr'))};
   s.onclose=()=>{
@@ -360,18 +348,16 @@ async function openSocket(){
     if(rec&&rec.state!=='inactive'){try{rec.stop()}catch(e){}}rec=null;
     if(!stopping&&!paused)setTimeout(()=>{if(!stopping&&!paused&&my===gen)openSocket()},700);};
 }
-// Keep only the last sentence pair on screen — a cinema subtitle, not a transcript.
-function render(oI,tI){
-  const o=(segOrig+oI).trim(), tr=(segTrans+tI).trim();
-  $('orig').textContent=o;
-  if(tr){$('main').innerHTML=esc(segTrans.trim())+(tI?'<span class="i">'+esc(tI)+'</span>':'')}
-  else if(!segTrans&&!tI&&o){$('main').innerHTML='<span class="i">'+esc(o)+'</span>'}
+// Only the last translated sentence is on screen — a cinema subtitle, not a transcript,
+// and never the film's own language.
+function render(tI){
+  if(!segTrans&&!tI)return;
+  $('main').innerHTML=esc(segTrans.trim())+(tI?(segTrans?' ':'')+'<span class="i">'+esc(tI.trim())+'</span>':'');
 }
 function flush(){
   const tr=segTrans.trim();
   if(tr)$('main').textContent=tr;
-  if(segOrig.trim())$('orig').textContent=segOrig.trim();
-  segOrig='';segTrans='';
+  segTrans='';
 }
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 
@@ -383,7 +369,7 @@ async function startWatch(){
   catch(e){showErr(t('micErr'));return}
   stopping=false;paused=false;
   document.body.classList.add('watching');
-  $('main').textContent=t('waiting');$('orig').textContent='';
+  $('main').textContent=t('waiting');
   applyPrefs();
   openSocket();
   keepAwake();
@@ -400,7 +386,7 @@ function stopAll(){
   if(stream){stream.getTracks().forEach(x=>x.stop());stream=null}
   document.body.classList.remove('watching','sheeton','dimui');
   releaseWake();
-  segOrig='';segTrans='';
+  segTrans='';
 }
 function setPaused(p){
   paused=p;
@@ -428,7 +414,7 @@ $('src').onchange=e=>{src=e.target.value;save('fm_cin_src',src)};
 function setTgt(v){tgt=v;save('fm_cin_tgt',v);$('tgt').value=v;$('tgt2').value=v;
   document.querySelectorAll('#chips .chip').forEach(c=>c.classList.toggle('on',c.dataset.c===v));
   applyPrefs();
-  if(document.body.classList.contains('watching')&&!paused){stopAudio();stopping=false;segOrig='';segTrans='';openSocket()}}
+  if(document.body.classList.contains('watching')&&!paused){stopAudio();stopping=false;segTrans='';openSocket()}}
 $('tgt').onchange=e=>setTgt(e.target.value);
 $('tgt2').onchange=e=>setTgt(e.target.value);
 $('chips').onclick=e=>{const b=e.target.closest('.chip');if(b)setTgt(b.dataset.c)};
@@ -441,7 +427,6 @@ $('fsUp').onclick=()=>{fs=Math.min(54,fs+2);save('fm_cin_fs',fs);applyPrefs()};
 const toggle=(el,get,set)=>{const go=()=>{set(!get());applyPrefs()};el.onclick=go;
   el.onkeydown=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();go()}}};
 toggle($('dimSw'),()=>dimUi,v=>{dimUi=v;save('fm_cin_dim',v?'1':'0');if(!v)document.body.classList.remove('dimui');else dimSoon()});
-toggle($('origSw'),()=>showOrig,v=>{showOrig=v;save('fm_cin_orig',v?'1':'0')});
 $('start').onclick=startWatch;
 $('pause').onclick=()=>setPaused(!paused);
 $('stop').onclick=()=>{stopAll();clearErr()};
