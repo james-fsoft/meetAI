@@ -151,7 +151,7 @@ const dayKey = (ms: number) => { const d = new Date(ms); return `${d.getFullYear
 type MDict = {
   title: string; minutes: string; of: string; left: (p: number) => string; unlimited: string;
   topUp: string; planDetail: string; planWord: string;
-  rHistory: string; rDict: string; rBilling: string; rConf: string; rHelp: string; signOut: string;
+  rHistory: string; rDict: string; rBilling: string; rConf: string; rCinema: string; rHelp: string; signOut: string;
   recent: string; seeAll: string; empty: string; min: string;
   tabHome: string; tabHistory: string; tabTopUp: string; tabMe: string; navAria: string;
 };
@@ -160,7 +160,7 @@ const M: Record<Lang, MDict> = {
     title: "My Page", minutes: "Phút còn lại", of: "phút", left: (p) => `Còn ${p}%`, unlimited: "Không giới hạn",
     topUp: "Nạp tiền / Nâng cấp", planDetail: "Xem chi tiết gói", planWord: "Gói",
     rHistory: "Lịch sử cuộc họp & ghi chú", rDict: "Từ điển chuyên ngành", rBilling: "Gói & thanh toán",
-    rConf: "Chế độ hội nghị", rHelp: "Trợ giúp & Liên hệ", signOut: "Đăng xuất",
+    rConf: "Chế độ hội nghị", rCinema: "Chế độ rạp phim", rHelp: "Trợ giúp & Liên hệ", signOut: "Đăng xuất",
     recent: "Ghi chú gần đây", seeAll: "Xem tất cả", empty: "Chưa có cuộc họp nào được lưu.", min: "phút",
     tabHome: "Trang chủ", tabHistory: "Lịch sử", tabTopUp: "Nạp tiền", tabMe: "My Page", navAria: "Thanh điều hướng",
   },
@@ -168,7 +168,7 @@ const M: Record<Lang, MDict> = {
     title: "My Page", minutes: "Minutes left", of: "minutes", left: (p) => `${p}% left`, unlimited: "Unlimited",
     topUp: "Top up / Upgrade", planDetail: "Plan details", planWord: "Plan",
     rHistory: "Meetings & notes", rDict: "Dictionary", rBilling: "Plan & billing",
-    rConf: "Conference mode", rHelp: "Help & contact", signOut: "Sign out",
+    rConf: "Conference mode", rCinema: "Cinema mode", rHelp: "Help & contact", signOut: "Sign out",
     recent: "Recent notes", seeAll: "See all", empty: "No saved meetings yet.", min: "min",
     tabHome: "Home", tabHistory: "History", tabTopUp: "Top up", tabMe: "My Page", navAria: "Navigation bar",
   },
@@ -176,7 +176,7 @@ const M: Record<Lang, MDict> = {
     title: "My Page", minutes: "남은 시간", of: "분", left: (p) => `${p}% 남음`, unlimited: "무제한",
     topUp: "충전 / 업그레이드", planDetail: "요금제 상세", planWord: "요금제",
     rHistory: "회의 & 노트 기록", rDict: "전문 용어 사전", rBilling: "요금제 & 결제",
-    rConf: "컨퍼런스 모드", rHelp: "도움말 & 문의", signOut: "로그아웃",
+    rConf: "컨퍼런스 모드", rCinema: "영화관 모드", rHelp: "도움말 & 문의", signOut: "로그아웃",
     recent: "최근 노트", seeAll: "전체 보기", empty: "저장된 회의가 아직 없습니다.", min: "분",
     tabHome: "홈", tabHistory: "기록", tabTopUp: "충전", tabMe: "My Page", navAria: "내비게이션 바",
   },
@@ -189,6 +189,7 @@ const MI = {
   stage: <path d="M3.4 4.2h17.2v10H3.4zM12 14.2v4.2M7.6 21.2 12 18.4l4.4 2.8" />,
   help: <path d="M12 21.2a9.2 9.2 0 1 0 0-18.4 9.2 9.2 0 0 0 0 18.4zM9.6 9.4a2.5 2.5 0 1 1 3.3 2.4c-.6.2-.9.8-.9 1.4v.6M12 17.2h.01" />,
   out: <path d="M9.4 3.4H5.6a1.6 1.6 0 0 0-1.6 1.6v14a1.6 1.6 0 0 0 1.6 1.6h3.8M15.4 16.2 19.6 12l-4.2-4.2M19.6 12H9.4" />,
+  film: <path d="M3.4 4.6h17.2v14.8H3.4zM8.2 4.6v14.8M15.8 4.6v14.8M3.4 12h17.2" />,
   clock: <path d="M12 3.2a8.8 8.8 0 1 1 0 17.6 8.8 8.8 0 0 1 0-17.6zM12 6.8V12l3.4 2" />,
   home: <path d="m3.4 10.6 8.6-7 8.6 7v9.6a1.4 1.4 0 0 1-1.4 1.4H4.8a1.4 1.4 0 0 1-1.4-1.4z" />,
   user: <path d="M12 11.8a3.6 3.6 0 1 0 0-7.2 3.6 3.6 0 0 0 0 7.2zM4.8 20.2c.6-4 3.5-6.2 7.2-6.2s6.6 2.2 7.2 6.2" />,
@@ -412,6 +413,7 @@ export default function ProfileClient({ email, name, avatar, since, usage }:
           <Link href="/dictionary"><span className="pfm-lIc b">{mIcon(MI.book)}</span>{m.rDict}{mIcon(MI.chev, "pfm-chev")}</Link>
           <Link href="/account"><span className="pfm-lIc s">{mIcon(MI.card)}</span>{m.rBilling}{mIcon(MI.chev, "pfm-chev")}</Link>
           <Link href="/conference-mode"><span className="pfm-lIc p">{mIcon(MI.stage)}</span>{m.rConf}{mIcon(MI.chev, "pfm-chev")}</Link>
+          <Link href="/cinema"><span className="pfm-lIc t">{mIcon(MI.film)}</span>{m.rCinema}{mIcon(MI.chev, "pfm-chev")}</Link>
           <Link href="/contact"><span className="pfm-lIc o">{mIcon(MI.help)}</span>{m.rHelp}{mIcon(MI.chev, "pfm-chev")}</Link>
         </nav>
 
@@ -885,6 +887,7 @@ const CSS = `
   .pfm-lIc.s{background:#eef1f7;color:#4f5d78}
   .pfm-lIc.p{background:#f3eeff;color:#7a5cf0}
   .pfm-lIc.o{background:#fff4e6;color:#e08a00}
+  .pfm-lIc.t{background:#e6f7f4;color:#12a695}
   .pfm-lIc.r{background:#ffeced;color:#e5484d}
   .pfm-out{border:1px solid #e7edf6;border-radius:18px;color:#e5484d;margin-bottom:14px}
   .pfm-recent{background:#fff;border:1px solid #e7edf6;border-radius:18px;padding:14px;margin-bottom:10px}
