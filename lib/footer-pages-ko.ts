@@ -124,8 +124,8 @@ export const PAGES_KO: Record<string, PageDef> = {
             title: "영상·영화",
             text: "자막이 없는 콘텐츠도 됩니다. 확장 프로그램이 탭의 소리를 직접 듣기 때문입니다.",
             img: "/concept/uc-movie.jpg",
-            href: "/extension",
-            cta: "확장 프로그램 보기",
+            href: "/cinema",
+            cta: "영화관 모드 열기",
           },
           {
             title: "발표·교육",

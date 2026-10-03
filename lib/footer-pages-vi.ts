@@ -124,8 +124,8 @@ export const PAGES_VI: Record<string, PageDef> = {
             title: "Xem video, phim",
             text: "Nội dung không có phụ đề sẵn vẫn dịch được, vì tiện ích nghe thẳng âm thanh của tab.",
             img: "/concept/uc-movie.jpg",
-            href: "/extension",
-            cta: "Xem tiện ích",
+            href: "/cinema",
+            cta: "Mở chế độ rạp phim",
           },
           {
             title: "Thuyết trình, đào tạo",

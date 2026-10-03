@@ -124,8 +124,8 @@ export const PAGES_EN: Record<string, PageDef> = {
             title: "Video & films",
             text: "Content without subtitles still works, because the extension listens to the tab’s own audio.",
             img: "/concept/uc-movie.jpg",
-            href: "/extension",
-            cta: "See the extension",
+            href: "/cinema",
+            cta: "Open cinema mode",
           },
           {
             title: "Talks & training",
