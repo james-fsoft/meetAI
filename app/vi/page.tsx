@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ConceptFrame from "../ConceptFrame";
+import { createClient, supabaseConfigured } from "@/lib/supabase-server";
 
 const LANGUAGES = { en: "/", vi: "/vi", ko: "/ko", "x-default": "/" };
 
@@ -16,6 +17,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ViLanding() {
-  return <ConceptFrame src="/concept.html" title="Flash Meet — dịch cuộc họp trực tiếp" />;
+export const dynamic = "force-dynamic";
+
+export default async function ViLanding() {
+  let signed = false;
+  if (supabaseConfigured()) {
+    try { signed = !!(await createClient().auth.getUser()).data.user; } catch {}
+  }
+  return <ConceptFrame src={`/concept.html${signed ? "?signed=1" : ""}`} title="Flash Meet — dịch cuộc họp trực tiếp" />;
 }

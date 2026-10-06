@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import ConceptFrame from "./ConceptFrame";
 import MeetingApp from "./MeetingApp";
 import { createClient, supabaseConfigured } from "@/lib/supabase-server";
@@ -21,19 +22,24 @@ export const metadata: Metadata = {
 export default async function Home({
   searchParams,
 }: {
-  searchParams?: { app?: string };
+  searchParams?: { app?: string; code?: string; next?: string };
 }) {
-  if (searchParams?.app !== "1") {
-    return <ConceptFrame src="/concept-en.html" title="Flash Meet — live meeting translation" />;
+  // Supabase sends the OAuth code to its Site URL when it will not accept our redirect,
+  // and that is this page. Hand the code to the callback instead of dropping the sign-in.
+  if (searchParams?.code) {
+    const qs = new URLSearchParams({ code: searchParams.code, next: searchParams.next || "/?app=1" });
+    redirect(`/auth/callback?${qs.toString()}`);
   }
 
   let email = "";
   let plan = "free";
   let admin = false;
+  let signed = false;
   if (supabaseConfigured()) {
     try {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
+      signed = !!user;
       email = user?.email ?? "";
       admin = isAdmin(user?.email);
       if (user) {
@@ -43,6 +49,9 @@ export default async function Home({
     } catch {
       // profile may not exist yet — fall back gracefully
     }
+  }
+  if (searchParams?.app !== "1") {
+    return <ConceptFrame src={`/concept-en.html${signed ? "?signed=1" : ""}`} title="Flash Meet — live meeting translation" />;
   }
   return <MeetingApp email={email} plan={plan} admin={admin} />;
 }

@@ -1429,5 +1429,7 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
 })();
 
 </script>
+<script>/* Signed in? Then "log in" is the wrong offer — point at the app instead. */
+try{if(new URLSearchParams(location.search).get('signed')==='1')document.querySelectorAll('a[href="/login"]').forEach(a=>{a.setAttribute('href','/?app=1');a.textContent='Open the app'});}catch(e){}</script>
 </body>
 </html>
