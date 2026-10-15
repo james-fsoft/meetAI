@@ -912,20 +912,49 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
   ucxChips.addEventListener("click", (e) => {
     const b = e.target.closest("button"); if (!b) return;
     [...ucxChips.children].forEach((x) => x.classList.toggle("on", x === b)); reveal(b.dataset.tag);
+    fmHashGo('#use-cases' + (b.dataset.tag && FM_TAG[b.dataset.tag] ? '=' + FM_TAG[b.dataset.tag] : ''));
   });
   let ucxBack = null;
-  const openUcx = (tag) => {
+  const FM_TAG = {"Work": "work", "Events": "events", "Video": "video", "Everyday": "everyday", "Study": "study", "Movies": "movies"};
+  const FM_KEY = Object.fromEntries(Object.entries(FM_TAG).map(([a, b]) => [b, a]));
+  // This page runs inside the wrapper iframe, so the address that matters is the top one.
+  const FM_W = (() => { try { const w = window.top; void w.location.href; return w; } catch (e) { return window; } })();
+  const fmHash = () => { try { return FM_W.location.hash || ""; } catch (e) { return location.hash || ""; } };
+  const fmHashGo = (h) => { try { const L = FM_W.location; if ((L.hash || "") !== h) FM_W.history.pushState(null, "", L.pathname + L.search + h); } catch (e) {} };
+  const fmHashClear = (pfx) => { if (fmHash().indexOf(pfx) === 0) fmHashGo(""); };
+  window.fmHashGo = fmHashGo; window.fmHashClear = fmHashClear;
+  const openUcx = (tag, viaHash) => {
+    if (!viaHash) fmHashGo('#use-cases' + (tag && FM_TAG[tag] ? '=' + FM_TAG[tag] : ''));
     ucxBack = document.activeElement; ucx.hidden = false; ucx.scrollTop = 0; document.documentElement.classList.add("ucxOpen");
     const pick = tag ? [...ucxChips.children].find((x) => x.dataset.tag === tag) : null;
     [...ucxChips.children].forEach((x, k) => x.classList.toggle("on", pick ? x === pick : k === 0));
     reveal(pick ? tag : "");
     requestAnimationFrame(() => ucx.classList.add("on")); setTimeout(() => $("ucxX").focus({ preventScroll: true }), 60);
   };
-  const closeUcx = () => {
+  const closeUcx = (viaHash) => {
+    if (!viaHash) fmHashClear('#use-cases');
     ucx.classList.remove("on"); document.documentElement.classList.remove("ucxOpen");
     setTimeout(() => { ucx.hidden = true; }, 320); if (ucxBack) ucxBack.focus({ preventScroll: true });
   };
-  $("ucxX").onclick = closeUcx;
+  $("ucxX").onclick = () => closeUcx();
+  const fmChip = (tag) => {
+    const pick = tag ? [...ucxChips.children].find((x) => x.dataset.tag === tag) : ucxChips.children[0];
+    [...ucxChips.children].forEach((x) => x.classList.toggle("on", x === pick));
+    reveal(pick && pick.dataset.tag ? tag : "");
+  };
+  const fmRoute = () => {
+    const h = fmHash();
+    const m = /^#use-cases(?:=([a-z-]+))?$/.exec(h);
+    if (m) { const tag = m[1] ? FM_KEY[m[1]] : ""; if (ucx.hidden) openUcx(tag, true); else fmChip(tag); return; }
+    if (!ucx.hidden) closeUcx(true);
+    const tpk = document.getElementById("tpk");
+    if (tpk) tpk.classList.toggle("on", h === "#try");
+    if (h === "#demo") { if (typeof window.fmOpenDemo === "function") window.fmOpenDemo(true); }
+    else if (typeof window.fmCloseDemo === "function") window.fmCloseDemo(true);
+  };
+  try { FM_W.addEventListener("hashchange", fmRoute); } catch (e) { addEventListener("hashchange", fmRoute); }
+  addEventListener("pageshow", fmRoute);
+  fmRoute();
   // clicking a use-case card opens the gallery already filtered to that theme
   const cardOpener = (e) => { const c = e.target.closest("[data-uc]"); if (c) openUcx(c.dataset.uc); };
   document.addEventListener("click", cardOpener);
@@ -974,7 +1003,8 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
     if (!a || a.getAttribute("href").length < 2) return;
     e.preventDefault(); goTo(a.getAttribute("href"), true);
   });
-  try { const h = window.top.location.hash; if (h.length > 1) setTimeout(() => goTo(h, false), 80); } catch (e) {}
+  try { const h = window.top.location.hash;
+    if (/^#[A-Za-z][\w-]*$/.test(h) && !/^#(use-cases|try|demo)$/.test(h)) setTimeout(() => goTo(h, false), 80); } catch (e) {}
 
   // intro video: plays in the trial-style sheet when a URL is configured, otherwise shows the use cases
   const openVideo = (e) => {
@@ -1161,18 +1191,21 @@ const escH = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&
   }
 
   /* ── modal ── */
-  function openModal() {
+  function openModal(viaHash) {
+    if (!viaHash && window.fmHashGo) window.fmHashGo('#demo');
     if (tm.classList.contains('on')) return;
     tm.classList.add('on'); tm.setAttribute('aria-hidden', 'false');
     document.documentElement.classList.add('tmOpen');
     setTimeout(() => $('tmClose').focus({ preventScroll: true }), 40);
   }
-  function closeModal() {
+  function closeModal(viaHash) {
+    if (!viaHash && window.fmHashClear) window.fmHashClear('#demo');
     if (S) { keep(S); hardStop(S); S = null; }
     tm.classList.remove('on', 'soon'); tm.setAttribute('aria-hidden', 'true');
     document.documentElement.classList.remove('tmOpen');
   }
-  $('tmClose').onclick = closeModal;
+  $('tmClose').onclick = () => closeModal();
+  window.fmOpenDemo = openModal; window.fmCloseDemo = closeModal;
   tm.addEventListener('click', (e) => { if (e.target === tm) closeModal(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && tm.classList.contains('on')) closeModal(); });
   document.querySelectorAll('.openTrial').forEach((b) => b.addEventListener('click', startTrial));
